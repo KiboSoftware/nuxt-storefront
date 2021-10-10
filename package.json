@@ -1,0 +1,74 @@
+{
+  "name": "kibo-nuxt-vue-starter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint:js": "eslint --ext \".ts,.js,.vue\" --ignore-path .gitignore .",
+    "lint:style": "stylelint \"**/*.{vue,css}\" --ignore-path .gitignore",
+    "prepare": "husky install",
+    "prettier:check": "prettier --check .",
+    "prettier:format": "prettier --write .",
+    "lint": "yarn lint:js && yarn lint:style && yarn prettier:format",
+    "test": "jest",
+    "generate-types": "graphql-codegen --config codegen.yml"
+  },
+  "lint-staged": {
+    "*.{ts,js,vue,css}": [
+      "yarn prettier --write"
+    ],
+    "*.{ts,js,vue}": [
+      "yarn eslint"
+    ],
+    "*.{css,vue}": [
+      "yarn stylelint"
+    ],
+    "*.{js}": [
+      "yarn test"
+    ]
+  },
+  "dependencies": {
+    "@kibocommerce/graphql-client": "^1.0.2",
+    "@nuxtjs/axios": "^5.13.6",
+    "@nuxtjs/composition-api": "^0.29.2",
+    "@nuxtjs/pwa": "^3.3.5",
+    "@storefront-ui/vue": "^0.11.0",
+    "core-js": "^3.15.1",
+    "cross-env": "^7.0.3",
+    "express": "^4.17.1",
+    "graphql": "^15.6.1",
+    "nuxt": "^2.15.7"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.14.7",
+    "@commitlint/cli": "^13.2.0",
+    "@commitlint/config-conventional": "^12.1.4",
+    "@graphql-codegen/cli": "2.2.0",
+    "@nuxt/types": "^2.15.7",
+    "@nuxt/typescript-build": "^2.1.0",
+    "@nuxtjs/eslint-config-typescript": "^6.0.1",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/stylelint-module": "^4.0.0",
+    "@vue/test-utils": "^1.2.1",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "^27.0.5",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-vue": "^7.19.1",
+    "husky": "^7.0.2",
+    "jest": "^27.0.5",
+    "lint-staged": "^10.5.4",
+    "nodemon": "^2.0.13",
+    "prettier": "^2.3.2",
+    "stylelint": "^13.13.1",
+    "stylelint-config-prettier": "^8.0.2",
+    "stylelint-config-standard": "^22.0.0",
+    "ts-jest": "^27.0.3",
+    "vue-jest": "^3.0.4",
+    "@graphql-codegen/typescript": "2.2.2"
+  }
+}
