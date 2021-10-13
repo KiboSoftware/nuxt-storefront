@@ -1,4 +1,5 @@
-import { format, transports, createLogger } from "winston"
+import winston from "winston"
+const { format, transports, createLogger } = winston
 const { printf, combine, timestamp, colorize, errors } = format
 
 function buildDevLogger() {

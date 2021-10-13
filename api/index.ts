@@ -19,11 +19,9 @@ app.use(routes)
 // ERROR MIDDLEWARE
 app.use(error)
 
-if (require.main === module) {
-  const port = process.env.PORT || 5000
-  app.listen(port, () => {
-    logger.info(`API server listening on port: ${port}`)
-  })
-}
+const port = process.env.API_PORT || 5000
+app.listen(port, () => {
+  logger.info(`API server listening on port: ${port}`)
+})
 
 export default app

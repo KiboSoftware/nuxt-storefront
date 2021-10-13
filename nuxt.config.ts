@@ -1,7 +1,9 @@
-export default {
+import { defineNuxtConfig } from "@nuxt/bridge"
+
+export default defineNuxtConfig({
   // Global page headers: https://go.nuxtjs.dev/config-head
   server: {
-    port: process.env.PORT || 5000,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   },
 
   head: {
@@ -28,11 +30,7 @@ export default {
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: [
-    "@nuxt/typescript-build",
-    "@nuxtjs/stylelint-module",
-    "@nuxtjs/composition-api/module",
-  ],
+  buildModules: ["@nuxtjs/stylelint-module"],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: ["@nuxtjs/axios", "@nuxtjs/pwa"],
@@ -48,4 +46,4 @@ export default {
   },
 
   serverMiddleware: [{ path: "/", handler: "~/api" }],
-}
+})
