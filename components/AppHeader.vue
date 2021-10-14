@@ -44,7 +44,6 @@
 
 <script>
 import { SfHeader, SfImage, SfIcon, SfButton } from "@storefront-ui/vue"
-import { categoryGetters } from "@vue-storefront/kibocommerce"
 import { computed, ref, onBeforeUnmount } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
@@ -71,29 +70,7 @@ export default {
     const isSearchOpen = ref(false)
     const result = ref(null)
 
-    // const wishlistItemTotals = computed(() => {
-    //   const count = wishlistGetters.getTotalItems(wishlist.value);
-    //   return count;
-    // });
-
-    // const cartTotalItems = computed(() => {
-    //   const count = cartGetters.getTotalItems(cart.value);
-    //   return count ? count.toString() : null;
-    // });
-    // const navigationCategories = computed(() => {
-    //   return categories.value
-    //     ?.filter(
-    //       (category) =>
-    //         category.childrenCategories?.length && category.isDisplayed
-    //     )
-    //     .map(categoryGetters.getTree)
-    //     .filter((category, indx) => indx < 4);
-    // });
-    const accountIcon = computed(
-      () =>
-        // isAuthenticated.value ? 'profile_fill' : 'profile'
-        "profile"
-    )
+    const accountIcon = computed(() => "profile")
     const handleSearch = debounce(async (paramValue) => {
       if (!paramValue.target) {
         term.value = paramValue
@@ -105,9 +82,6 @@ export default {
       })
       result.value = {
         products: searchSuggestions.value.products,
-        categories: searchSuggestions.value.categories?.map((element) =>
-          categoryGetters.getTree(element)
-        ),
       }
     }, 1000)
 

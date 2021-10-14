@@ -3,7 +3,6 @@
     <SfHeaderNavigationItem
       v-for="(category, index) in categories"
       :key="index"
-      v-e2e="`app-header-url_${category}`"
       class="nav-item"
       :label="category"
       :link="localePath(`/c/${category}`)"
@@ -13,7 +12,6 @@
     <SfHeaderNavigationItem
       v-for="(category, index) in categories"
       :key="index"
-      v-e2e="`app-header-url_${category}`"
       class="nav-item"
     >
       <template #mobile-navigation-item>

@@ -42,7 +42,7 @@ import {
   SfBottomModal,
   SfCharacteristic,
 } from "@storefront-ui/vue"
-import { ref, computed, getCurrentInstance } from "@vue/composition-api"
+import { ref, computed } from "@vue/composition-api"
 
 export default {
   components: {
@@ -53,14 +53,14 @@ export default {
     SfCharacteristic,
   },
 
-  setup() {
-    const root = getCurrentInstance()
-    const { locales, locale } = root.$i18n
+  setup(root, context) {
+    const { locales, locale } = context.root.$i18n
     const isLangModalOpen = ref(false)
     const availableLocales = computed(() =>
       locales.filter((i) => i.code !== locale)
     )
     return {
+      root,
       availableLocales,
       locale,
       isLangModalOpen,

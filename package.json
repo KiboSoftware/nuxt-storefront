@@ -37,8 +37,6 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/style-resources": "^1.2.1",
     "@storefront-ui/vue": "^0.11.0",
-    "@vue-storefront/core": "^2.4.3",
-    "@vue-storefront/kibocommerce": "^1.0.0-beta.0",
     "core-js": "^3.15.1",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",

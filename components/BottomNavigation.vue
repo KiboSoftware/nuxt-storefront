@@ -1,5 +1,4 @@
 <template>
-  <!-- TODO: create logic with isActive prop for BottomNavigationItems -->
   <SfBottomNavigation class="navigation-bottom smartphone-only">
     <nuxt-link to="/">
       <SfBottomNavigationItem
@@ -13,7 +12,6 @@
     <SfBottomNavigationItem icon="menu" size="20px" label="Menu" />
     <SfBottomNavigationItem icon="heart" size="20px" label="Wishlist" />
     <SfBottomNavigationItem icon="profile" size="20px" label="Account" />
-    <!-- TODO: add logic for label - if on Home then Basket, if on PDC then AddToCart etc. -->
     <SfBottomNavigationItem label="Basket" icon="add_to_cart">
       <template #icon>
         <SfCircleIcon aria-label="Add to cart">
@@ -38,24 +36,6 @@ export default {
     SfIcon,
     SfCircleIcon,
   },
-  // setup(props, { root }) {
-  //   const { toggleCartSidebar, toggleWishlistSidebar, toggleLoginModal, toggleMobileMenu, isMobileMenuOpen } = useUiState();
-  // const { isAuthenticated } = useUser();
-  // const handleAccountClick = async () => {
-  //   if (isAuthenticated.value) {
-  //     return root.$router.push('/my-account');
-  //   }
-  //   toggleLoginModal();
-  // };
-
-  //     return {
-  //       isMobileMenuOpen,
-  //       toggleWishlistSidebar,
-  //       toggleCartSidebar,
-  //       toggleMobileMenu,
-  //       handleAccountClick
-  //     };
-  //  }
 }
 </script>
 <style lang="scss" scoped>

@@ -1,4 +1,4 @@
-import { VSF_LOCALE_COOKIE } from "@vue-storefront/core"
+const KIBO_LOCALE_COOKIE = "kibo-locale"
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   server: {
@@ -87,7 +87,7 @@ export default {
       },
     },
     detectBrowserLanguage: {
-      cookieKey: VSF_LOCALE_COOKIE,
+      cookieKey: KIBO_LOCALE_COOKIE,
     },
   },
   axios: {
