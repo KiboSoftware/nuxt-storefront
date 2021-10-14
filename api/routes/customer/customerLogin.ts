@@ -7,6 +7,6 @@ export const customerLogin = async (
   res: Response,
   next: NextFunction
 ) => {
-  logger.info("Logging info")
+  logger.info("Login successfull")
   return await res.status(200).send("Login successfull.")
 }
