@@ -1,0 +1,3 @@
+export {
+    productInfo,
+} from './product';
