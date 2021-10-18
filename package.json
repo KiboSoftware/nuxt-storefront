@@ -37,7 +37,7 @@
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/style-resources": "^1.2.1",
     "@storefront-ui/vue": "^0.11.0",
-    "core-js": "^3.15.1",
+    "core-js": "^3.18.3",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
