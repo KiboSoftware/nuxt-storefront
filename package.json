@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "NODE_ENV=development nuxt",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
@@ -40,11 +40,14 @@
     "core-js": "^3.15.1",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
     "graphql": "^15.6.1",
-    "nuxt": "^2.15.7",
     "nuxt-i18n": "^6.28.1",
     "stylelint-scss": "^3.21.0",
-    "vue-i18n": "^8.26.1"
+    "vue-i18n": "^8.26.1",
+    "nuxt-edge": "latest",
+    "nuxt-helmet": "^2.0.1",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
@@ -52,6 +55,7 @@
     "@commitlint/config-conventional": "^12.1.4",
     "@graphql-codegen/cli": "2.2.0",
     "@graphql-codegen/typescript": "2.2.2",
+    "@nuxt/bridge": "npm:@nuxt/bridge-edge",
     "@nuxt/types": "^2.15.7",
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/eslint-config-typescript": "^6.0.1",

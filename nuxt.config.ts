@@ -1,8 +1,10 @@
+import { defineNuxtConfig } from "@nuxt/bridge"
 const KIBO_LOCALE_COOKIE = "kibo-locale"
-export default {
+
+export default defineNuxtConfig({
   // Global page headers: https://go.nuxtjs.dev/config-head
   server: {
-    port: process.env.PORT || 5000,
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
   },
 
   head: {
@@ -30,9 +32,7 @@ export default {
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
-    "@nuxt/typescript-build",
     "@nuxtjs/stylelint-module",
-    "@nuxtjs/composition-api/module",
     "@nuxtjs/style-resources",
   ],
 
@@ -115,4 +115,4 @@ export default {
   },
 
   serverMiddleware: [{ path: "/", handler: "~/api" }],
-}
+})
