@@ -2,10 +2,6 @@ import { defineNuxtConfig } from "@nuxt/bridge"
 const KIBO_LOCALE_COOKIE = "kibo-locale"
 
 export default defineNuxtConfig({
-  // Global page headers: https://go.nuxtjs.dev/config-head
-  server: {
-    port: process.env.PORT ? parseInt(process.env.PORT) : 3000,
-  },
 
   head: {
     title: "kibo-nuxt-vue-starter",
@@ -22,8 +18,6 @@ export default defineNuxtConfig({
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ["@storefront-ui/vue/styles.scss"],
-
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [],
 
@@ -37,7 +31,12 @@ export default defineNuxtConfig({
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios", "@nuxtjs/pwa", "nuxt-i18n"],
+  modules: [
+    "@nuxtjs/axios", 
+    "@nuxtjs/pwa", 
+    "nuxt-i18n",
+    "@storefront-ui/nuxt"
+  ],
   i18n: {
     currency: "USD",
     country: "US",
@@ -114,5 +113,19 @@ export default defineNuxtConfig({
     },
   },
 
-  serverMiddleware: [{ path: "/", handler: "~/api" }],
+  // Build Configuration: https://go.nuxtjs.dev/config-build
+  router: {
+    extendRoutes(routes:any, resolve:any) {
+      routes.push({
+        name: 'product_details_w_slug',
+        path: '/product/:id/:slug',
+        component: resolve(__dirname, 'pages/product/index.vue')
+      });
+      routes.push({
+        name: 'product_details',
+        path: '/product/:id/',
+        component: resolve(__dirname, 'pages/product/index.vue')
+      });
+    }
+  }
 })
