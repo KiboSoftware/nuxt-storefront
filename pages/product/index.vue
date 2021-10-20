@@ -158,9 +158,6 @@
   </div>
 </template>
 <script>
-import { defineComponent, useAsync, useContext } from '@nuxtjs/composition-api'
-import { ref, computed } from '@vue/composition-api';
-
 import {
   SfGallery,
   SfHeading,
@@ -176,8 +173,8 @@ import {
   SfSelect,
   SfBreadcrumbs,
   SfNotification,
-} from "@storefront-ui/vue";
-export default defineComponent({
+} from "@storefront-ui/vue"
+export default {
   name: "Product",
   components: {
     SfGallery,
@@ -195,8 +192,7 @@ export default defineComponent({
     SfBreadcrumbs,
     SfNotification,
   },
-  setup(props, context) {
-    const { id } = context.root.$route.params;
+  setup() {
     const addToCart = () => {}
     const selectColor = () => {}
     const changeTab = () => {}
@@ -334,9 +330,9 @@ export default defineComponent({
       ],
       isOpenNotification: false,
       openTab: 1,
-    };
-  }
-});
+    }
+  },
+}
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
@@ -363,11 +359,13 @@ export default defineComponent({
     --heading-title-color: var(--c-link);
     --heading-title-font-weight: var(--font-weight--bold);
     --heading-padding: 0;
+
     margin: 0 var(--spacer-sm);
     display: flex;
     justify-content: space-between;
     @include for-desktop {
       --heading-title-font-weight: var(--font-weight--semibold);
+
       margin: 0 auto;
     }
   }
@@ -397,6 +395,7 @@ export default defineComponent({
       1.4,
       var(--font-family--secondary)
     );
+
     color: var(--c-text);
     text-decoration: none;
     margin: 0 0 0 var(--spacer-xs);
@@ -425,6 +424,7 @@ export default defineComponent({
       1.6,
       var(--font-family--secondary)
     );
+
     display: flex;
     align-items: center;
     margin-top: var(--spacer-xl);
@@ -452,6 +452,7 @@ export default defineComponent({
   }
   &__tabs {
     margin: var(--spacer-lg) auto var(--spacer-2xl);
+
     --tabs-title-font-size: var(--font-size--lg);
     @include for-desktop {
       margin-top: var(--spacer-2xl);
@@ -501,6 +502,7 @@ export default defineComponent({
   bottom: 0;
   left: 0;
   right: 0;
+
   --notification-border-radius: 0;
   --notification-max-width: 100%;
   --notification-background: var(--c-link);
