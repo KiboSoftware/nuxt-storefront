@@ -33,7 +33,6 @@
   "dependencies": {
     "@kibocommerce/graphql-client": "^1.0.2",
     "@nuxtjs/axios": "^5.13.6",
-    "@nuxtjs/composition-api": "^0.29.3",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/style-resources": "^1.2.1",
     "@storefront-ui/nuxt": "^0.10.8",
@@ -43,12 +42,13 @@
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
     "graphql": "^15.6.1",
-    "nuxt-i18n": "^6.28.1",
-    "vue-i18n": "^8.26.1",
     "graphql-tag": "^2.12.5",
     "nuxt-edge": "latest",
     "nuxt-helmet": "^2.0.1",
-    "stylelint-scss": "^3.21.0"
+    "nuxt-i18n": "^6.28.1",
+    "stylelint-scss": "^3.21.0",
+    "vue-i18n": "^8.26.1",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.14.7",
