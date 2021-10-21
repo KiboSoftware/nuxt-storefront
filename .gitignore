@@ -91,3 +91,6 @@ sw.*
 
 # exclude build .output dir
 .output/
+
+# exclude .nuxt-build-jest
+.nuxt-build-jest
