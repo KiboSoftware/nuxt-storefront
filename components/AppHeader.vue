@@ -24,6 +24,7 @@
           <SfButton
             v-e2e="'app-header-account'"
             class="sf-button--pure sf-header__action"
+            @click="handleAccountClick"
           >
             <SfIcon :icon="accountIcon" size="1.25rem" />
           </SfButton>
@@ -52,6 +53,7 @@ import {
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 
 import debounce from "lodash.debounce"
+import useUiState from "../composables/useUiState"
 import LocaleSelector from "./LocaleSelector"
 import HeaderNavigation from "./HeaderNavigation"
 
@@ -71,6 +73,8 @@ export default {
     const result = ref(null)
 
     const accountIcon = computed(() => "profile")
+
+    const { toggleLoginModal } = useUiState()
     const handleSearch = debounce(async (paramValue) => {
       if (!paramValue.target) {
         term.value = paramValue
@@ -91,6 +95,10 @@ export default {
       result.value = null
     }
 
+    const handleAccountClick = () => {
+      toggleLoginModal()
+    }
+
     onBeforeUnmount(() => {
       unMapMobileObserver()
     })
@@ -101,6 +109,7 @@ export default {
       handleSearch,
       isMobile,
       removeSearchResults,
+      handleAccountClick,
     }
   },
 }

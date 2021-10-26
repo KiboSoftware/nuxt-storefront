@@ -1,13 +1,12 @@
 <template>
   <div>
-      <!-- App Header -->
+    <!-- App Header -->
     <TopBar />
     <AppHeader />
+    <LoginModal />
     <Nuxt />
     <AppFooter />
     <BottomNavigation />
-      <!-- App Footer -->
+    <!-- App Footer -->
   </div>
-
 </template>
-
