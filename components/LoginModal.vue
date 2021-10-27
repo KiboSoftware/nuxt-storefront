@@ -10,21 +10,21 @@
     </template>
     <transition name="sf-fade" mode="out-in">
       <div
-        v-if="isLogIn"
+        v-if="isLogin"
         key="log-in"
         class="modal-content"
         data-testid="login-modal"
       >
         <form class="form" @submit.prevent="() => false">
           <SfInput
-            v-model="email"
+            v-model="form.username"
             name="email"
             label="Your email"
             class="form__element"
             type="email"
           />
           <SfInput
-            v-model="password"
+            v-model="form.password"
             name="password"
             label="Password"
             type="password"
@@ -48,12 +48,7 @@
         <SfButton
           class="sf-button--text action-button"
           data-testid="forgotten-password-button"
-          @click="
-            () => {
-              isForgotten = true
-              isLogIn = false
-            }
-          "
+          @click="setIsForgottenValue(true)"
         >
           Forgotten password?
         </SfButton>
@@ -66,7 +61,7 @@
           <SfButton
             class="sf-button--text"
             data-testid="register-now-button"
-            @click="isLogIn = false"
+            @click="setIsLoginValue(false)"
           >
             Register now
           </SfButton>
@@ -96,29 +91,35 @@
       >
         <form class="form" @submit.prevent="() => false">
           <SfInput
-            v-model="firstName"
-            name="first-name"
-            label="Name"
-            class="form__element"
-          />
-          <SfInput
-            v-model="lastName"
-            name="last-name"
-            label="Last Name"
-            class="form__element"
-          />
-          <SfInput
-            v-model="email"
+            v-model="form.email"
             name="email"
             label="Your email"
             class="form__element"
             type="email"
           />
           <SfInput
-            v-model="password"
+            v-model="form.firstName"
+            name="first-name"
+            label="First Name"
+            class="form__element"
+          />
+          <SfInput
+            v-model="form.lastName"
+            name="last-name"
+            label="Last Name"
+            class="form__element"
+          />
+          <SfInput
+            v-model="form.password"
             name="password"
             label="Password"
             type="password"
+            class="form__element"
+          />
+          <SfCheckbox
+            v-model="createAccount"
+            name="create-account"
+            label="I want to create an account"
             class="form__element"
           />
           <SfButton
@@ -132,7 +133,7 @@
         <SfButton
           class="sf-button--text action-button"
           data-testid="log-in-account"
-          @click="isLogIn = true"
+          @click="setIsLoginValue(true)"
         >
           or Log In To Your Account
         </SfButton>
@@ -169,8 +170,10 @@ export default {
   setup() {
     const { isLoginModalOpen, toggleLoginModal } = useUiState()
     const form = ref({})
-    const isLogin = ref(true)
+    const isLogin = ref(false)
     const isForgotten = ref(false)
+    const rememberMe = ref(false)
+    const createAccount = ref(false)
 
     const barTitle = computed(() => {
       if (isLogin.value) {
@@ -187,6 +190,10 @@ export default {
         form.value = {}
       }
     })
+
+    const setIsLoginValue = (value: boolean) => {
+      isLogin.value = value
+    }
 
     const setIsForgottenValue = (value: boolean) => {
       isLogin.value = !value
@@ -205,20 +212,11 @@ export default {
       toggleLoginModal,
       isForgotten,
       closeModal,
+      setIsLoginValue,
       setIsForgottenValue,
       barTitle,
-    }
-  },
-  data() {
-    return {
-      isLogIn: true,
-      email: "",
-      password: "",
-      createAccount: false,
-      rememberMe: false,
-      firstName: "",
-      lastName: "",
-      openModal: false,
+      rememberMe,
+      createAccount,
     }
   },
 }
