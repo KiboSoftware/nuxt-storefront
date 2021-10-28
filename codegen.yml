@@ -1,7 +1,7 @@
 overwrite: true
-schema: "https://t17194-s21127.dev10.kubedev.kibo-dev.com/graphql"
+schema: "https://t17194-s21127.dev10.kubedevext.kibo-dev.com/graphql"
 documents: null
 generates:
-  api/types/GraphQL.ts:
+  server/types/GraphQL.ts:
     plugins:
       - "typescript"

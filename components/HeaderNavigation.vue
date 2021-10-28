@@ -1,40 +1,22 @@
 <template>
   <div v-if="!isMobile" class="sf-header__navigation desktop">
-    <SfHeaderNavigationItem
-      v-for="(category, index) in categories"
-      :key="index"
-      class="nav-item"
-      :label="category"
-      :link="localePath(`/c/${category}`)"
-    />
+    <MegaMenu />
   </div>
   <SfModal v-else :visible="isMobileMenuOpen">
-    <SfHeaderNavigationItem
-      v-for="(category, index) in categories"
-      :key="index"
-      class="nav-item"
-    >
-      <template #mobile-navigation-item>
-        <SfMenuItem
-          :label="category"
-          class="sf-header-navigation-item__menu-item"
-          :link="localePath(`/c/${category}`)"
-          @click.native="toggleMobileMenu"
-        />
-      </template>
-    </SfHeaderNavigationItem>
+    <MegaMenu />
   </SfModal>
 </template>
 
 <script>
-import { SfMenuItem, SfModal } from "@storefront-ui/vue"
+import { SfModal } from "@storefront-ui/vue"
+import MegaMenu from "./MegaMenu.vue"
 import useUiState from "~/composables/useUiState"
 
 export default {
   name: "HeaderNavigation",
   components: {
-    SfMenuItem,
     SfModal,
+    MegaMenu,
   },
   props: {
     isMobile: {

@@ -1,4 +1,6 @@
-import productDetailQuery from './product';
+import productDetailQuery from "./product"
+import categoryQuery from "./categoryQuery"
+
 // import cart from './cart';
 // import category from './category';
 // import productSearch from './productSearch';
@@ -7,6 +9,4 @@ import productDetailQuery from './product';
 // import checkout from './checkout';
 // import wishlist from './wishlist';
 
-export {
-    productDetailQuery
-}
+export { productDetailQuery, categoryQuery }
