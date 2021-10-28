@@ -1,5 +1,5 @@
 import { getGQLClient } from "../../util"
-import type { KiboIncomingMessage, Response } from "../../types"
+import type { KiboIncomingMessage, Response } from "../../types/Api"
 import { categoryQuery } from "../../queries"
 
 export default async function getCategory(

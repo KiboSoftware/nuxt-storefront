@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Category } from "../types"
-export const getMegaMenuCategory = (categories: []) => {
+import type { CategoryCollection, PrCategory } from "../../server/types/GraphQL"
+
+export const getMegaMenuCategory = (categories: PrCategory[]) => {
   return categories
     ?.filter(
-      (category: Category) =>
+      (category: PrCategory) =>
         category.childrenCategories?.length && category.isDisplayed
     )
     .filter((category, indx) => indx < 4)

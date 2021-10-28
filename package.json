@@ -37,6 +37,8 @@
     "@nuxtjs/style-resources": "^1.2.1",
     "@storefront-ui/nuxt": "^0.10.8",
     "@storefront-ui/vue": "^0.11.0",
+    "apollo-client": "^2.6.10",
+    "apollo-link": "^1.2.14",
     "core-js": "^3.15.1",
     "cross-env": "^7.0.3",
     "express": "^4.17.1",
