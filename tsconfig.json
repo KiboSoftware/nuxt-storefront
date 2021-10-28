@@ -15,8 +15,8 @@
       "~/*": ["./*"],
       "@/*": ["./*"]
     },
-    "types": ["@nuxt/types", "@nuxtjs/axios", "@types/node"],
+    "types": ["@nuxt/types", "@nuxtjs/axios", "@types/node", "jest" ],
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "nuxt.config.ts", ".nuxt", "dist"]
+  "exclude": ["node_modules", "nuxt.config.ts", ".nuxt", "dist", "server/__tests__"]
 }
