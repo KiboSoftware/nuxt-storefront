@@ -1,19 +1,25 @@
-module.exports = {
+module.exports = {  
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
     "^~/(.*)$": "<rootDir>/$1",
     "^vue$": "vue/dist/vue.common.js",
   },
-  moduleFileExtensions: ["ts", "js", "vue", "json"],
   transform: {
-    "^.+\\.ts$": "ts-jest",
-    "^.+\\.js$": "babel-jest",
-    ".*\\.(vue)$": "vue-jest",
+    '\\.(js|ts)$': [
+      'babel-jest',
+      {
+        presets: [
+          ['@babel/preset-env', { targets: { node: 'current' } }],
+          '@babel/preset-typescript'
+        ],
+        plugins: ['@babel/plugin-transform-runtime']
+      }
+    ],
+    ".*\\.(vue)$": "vue-jest"
   },
   collectCoverage: true,
-  collectCoverageFrom: [
-    "<rootDir>/components/**/*.vue",
-    "<rootDir>/pages/**/*.vue",
-  ],
-  testEnvironment: "jsdom",
+  transformIgnorePatterns: [
+    "node_modules/(?!@nuxtjs/style-resources)"
+  ],  
+  testEnvironment: 'jsdom',
 }
