@@ -1,7 +1,6 @@
 type Category = {
-  id?: Number
-  name?: String
-  slug?: String
+  categoryId: Number
+  categoryCode: String
 }
 
 interface uiHelpersReturnType {
@@ -10,7 +9,7 @@ interface uiHelpersReturnType {
 
 const useUiHelpers = (): uiHelpersReturnType => {
   const getCatLink = (category: Category) => {
-    return `/c/${category.slug}/${category.id}`
+    return `/c/${category.categoryCode}`
   }
   return {
     getCatLink,

@@ -18,7 +18,7 @@
         >
           <SfMenuItem
             :label="$t(child.content.name)"
-            :link="localePath(`/c/${child.content.name}`)"
+            :link="localePath(getCatLink(child))"
           />
         </SfListItem>
       </SfList>
