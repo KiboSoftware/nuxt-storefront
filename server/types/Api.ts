@@ -33,7 +33,7 @@ export type SearchRelatedProductsResponse = QueryResponse<
 >
 
 // CategoryCollection
-export type GetCategoryResponse = QueryResponse<
+export type CategoryTreeResponse = QueryResponse<
   "categoriesTree",
   GraphQL.CategoryCollection
 >

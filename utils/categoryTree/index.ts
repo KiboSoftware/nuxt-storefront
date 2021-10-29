@@ -3,9 +3,9 @@ import { fetcher } from "../fetcher"
 
 export const categoryApiHelper = {
   // Category
-  getCategory: (
+  getCategoryTree: (
     method: string,
     url: string,
     body: {} = {}
-  ): Promise<types.GetCategoryResponse> => fetcher(method, url, body),
+  ): Promise<types.CategoryTreeResponse> => fetcher(method, url, body),
 }

@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ref, computed } from "@vue/composition-api"
-import { categoryApiHelper } from "../../utls/category"
-import * as GraphQL from "../../server/types/GraphQL"
+import { categoryApiHelper } from "../../utils/categoryTree"
 
-const getCategoryApiPath = "/api/category/category"
+const getCategoryApiPath = "/api/category-tree/index"
 
 export const useCategory = () => {
   const categories = ref()
@@ -15,7 +13,7 @@ export const useCategory = () => {
     try {
       loading.value = true
       const url = `${getCategoryApiPath}`
-      const categoriesResponse = await categoryApiHelper.getCategory(
+      const categoriesResponse = await categoryApiHelper.getCategoryTree(
         "GET",
         url,
         {}

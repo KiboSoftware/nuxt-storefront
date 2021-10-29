@@ -7,12 +7,13 @@
   </SfModal>
 </template>
 
-<script>
+<script lang="ts">
 import { SfModal } from "@storefront-ui/vue"
+import { defineComponent } from "@vue/composition-api"
 import MegaMenu from "./MegaMenu.vue"
 import useUiState from "~/composables/useUiState"
 
-export default {
+export default defineComponent({
   name: "HeaderNavigation",
   components: {
     SfModal,
@@ -34,7 +35,7 @@ export default {
       toggleMobileMenu,
     }
   },
-}
+})
 </script>
 
 <style lang="scss" scoped>

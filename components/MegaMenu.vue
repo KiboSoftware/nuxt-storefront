@@ -1,10 +1,15 @@
 <template>
-  <SfMegaMenu :visible="visible" title="Title" transition-name="sf-fade">
+  <SfMegaMenu
+    id="SfMegaMenuColumnId"
+    :visible="visible"
+    title="Title"
+    transition-name="sf-fade"
+  >
     <SfMegaMenuColumn
       v-for="(category, key) in megaMenuCategories"
       :key="key"
       :title="category.content.name"
-      :link="localePath(`/c/${category.content.name}`)"
+      :link="localePath(getCatLink(category))"
     >
       <SfList>
         <SfListItem
@@ -22,9 +27,10 @@
 </template>
 <script lang="tsx">
 import { SfMegaMenu, SfList, SfMenuItem } from "@storefront-ui/vue"
-import { ref, onMounted, defineComponent } from "@vue/composition-api"
+import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
 import { categoryGetters } from "~/composables/getters"
-import { useCategory } from "~/composables"
+import { useCategory, useUiHelpers } from "~/composables"
+
 export default defineComponent({
   components: {
     SfMegaMenu,
@@ -34,16 +40,17 @@ export default defineComponent({
   setup() {
     const { allCategories, load: loadCategories } = useCategory()
     const visible = ref(true)
-    const megaMenuCategories = ref(allCategories.value)
+    const megaMenuCategories = computed(() => {
+      return categoryGetters.getMegaMenuCategory(allCategories.value)
+    })
+    const { getCatLink } = useUiHelpers()
 
     onMounted(async () => {
       await loadCategories()
-      megaMenuCategories.value = categoryGetters.getMegaMenuCategory(
-        allCategories.value
-      )
     })
 
     return {
+      getCatLink,
       allCategories,
       megaMenuCategories,
       visible,
@@ -52,18 +59,21 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.sf-mega-menu-column {
-  padding-right: 10px;
+#SfMegaMenuColumnId .sf-mega-menu__content {
+  padding: 0;
 }
-.sf-mega-menu-column .sf-list {
+#SfMegaMenuColumnId .sf-mega-menu-column {
+  padding-right: 70px;
+}
+#SfMegaMenuColumnId .sf-mega-menu-column .sf-list {
   display: none;
   position: absolute;
 }
-.sf-mega-menu-column:hover .sf-list {
+#SfMegaMenuColumnId .sf-mega-menu-column:hover .sf-list {
   display: block;
 }
 @media (min-width: 1024px) {
-  .sf-mega-menu-column__content {
+  #SfMegaMenuColumnId .sf-mega-menu-column__content {
     transform: none;
   }
 }
