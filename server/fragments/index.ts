@@ -1,3 +1,1 @@
-export {
-    productInfo,
-} from './product';
+export { productInfo } from "./product"
