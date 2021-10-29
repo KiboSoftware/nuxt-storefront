@@ -18,19 +18,14 @@ export type QueryResponse<K extends string, V> = ApolloQueryResult<Record<K, V>>
 export type MutationResponse<K extends string, V> = FetchResult<Record<K, V>>
 
 // product
-export type ConfigureProductResponse = QueryResponse<
-  "configureProduct",
-  GraphQL.ConfiguredProduct
->
+export type ConfigureProductProductParams = {
+  product: GraphQL.Product
+  attributes: { [x: string]: string }
+}
+export type ConfigureProductResponse = QueryResponse<"configureProduct", GraphQL.ConfiguredProduct>
 export type GetProductResponse = QueryResponse<"product", GraphQL.Product>
-export type SearchProductResponse = QueryResponse<
-  "products",
-  GraphQL.ProductSearchResult
->
-export type SearchRelatedProductsResponse = QueryResponse<
-  "products",
-  GraphQL.ProductCollection
->
+export type SearchProductResponse = QueryResponse<"products", GraphQL.ProductSearchResult>
+export type SearchRelatedProductsResponse = QueryResponse<"products", GraphQL.ProductCollection>
 
 // CategoryCollection
 export type CategoryTreeResponse = QueryResponse<

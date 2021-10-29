@@ -1,36 +1,28 @@
-export const fetcher = async (
-  method: string = "GET",
-  url: string,
-  body = {}
-) => {
-  const bearer = "Bearer " + localStorage.getItem("user_token")
+export const fetcher = async (method: string = "GET", url: string, body = {}) => {
+  const appUrl = `${window.location.origin}${url}`
+
   try {
     let response
 
     if (method === "GET") {
-      response = await fetch(url, {
+      response = await fetch(appUrl, {
         method,
-        headers: {
-          Authorization: bearer,
-          "Content-Type": "application/json",
-        },
       })
     }
 
     if (method === "POST") {
-      response = await fetch(url, {
+      response = await fetch(appUrl, {
         method,
         headers: {
-          Authorization: bearer,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
       })
     }
 
-    const data = response && response.json()
-
-    return data
+    if (response?.ok) {
+      return await response.json()
+    }
   } catch (error) {
     return error
   }

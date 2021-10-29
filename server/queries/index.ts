@@ -1,4 +1,6 @@
-import productDetailQuery from "./product"
 import categoryTreeQuery from "./categoryTreeQuery"
 
-export { productDetailQuery, categoryTreeQuery }
+export { categoryTreeQuery }
+export * from "./product/getProduct"
+export * from "./product/searchRelatedProducts"
+export * from "./product/searchProduct"
