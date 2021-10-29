@@ -1,7 +1,0 @@
-{
-  "search.exclude": {
-    "**/node_modules": false
-  },
-  "window.zoomLevel": 1,
-  "vetur.experimental.templateInterpolationService": true
-}
