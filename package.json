@@ -55,7 +55,7 @@
     "@babel/preset-typescript": "^7.15.0",
     "@commitlint/cli": "^13.2.0",
     "@commitlint/config-conventional": "^12.1.4",
-    "@graphql-codegen/cli": "2.2.0",
+    "@graphql-codegen/cli": "2.2.2",
     "@graphql-codegen/typescript": "2.2.2",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge",
     "@nuxt/types": "^2.15.7",
