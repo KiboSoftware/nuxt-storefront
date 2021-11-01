@@ -1,9 +1,8 @@
-import type { PrCategory } from "../../server/types/GraphQL"
-import type { uiHelpersReturnType } from "../types"
+import type { uiHelpersReturnType, Category } from "../types"
 
 const useUiHelpers = (): uiHelpersReturnType => {
-  const getCatLink = (category: PrCategory) => {
-    return `/c/${category.categoryCode}`
+  const getCatLink = (category: Category) => {
+    return `/c/${category.id}`
   }
   return {
     getCatLink,
