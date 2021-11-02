@@ -1,29 +1,12 @@
-import { ApolloQueryResult } from "apollo-client"
-import { FetchResult } from "apollo-link"
-import { Ref } from "@vue/composition-api"
+import { Ref, ComputedRef } from "@vue/composition-api"
+import { CustomQuery } from "@/composables/types/common"
 import * as GraphQL from "@/server/types/GraphQL"
 
-export declare type CustomQuery = Record<string, string>
-
-// QueryResponse and MutationResponse
-export type QueryResponse<K extends string, V> = ApolloQueryResult<Record<K, V>>
-export type MutationResponse<K extends string, V> = FetchResult<Record<K, V>>
-
-// useProduct
+// getProduct
 export type GetProductParams = { id: string; customQuery?: CustomQuery }
-export type GetProductResponse = QueryResponse<"product", GraphQL.Product>
+export type GetProductResponse = Promise<GraphQL.Product>
 
-export type SearchProductParams = {
-  perPage?: number
-  page?: number
-  sort?: string | {}
-  term?: string
-  filters?: string | {}
-  customQuery?: CustomQuery
-  [x: string]: string | number | {} | undefined
-}
-export type SearchProductResponse = QueryResponse<"products", GraphQL.ProductSearchResult>
-
+// configureProduct
 export type ConfigureProductParams = {
   customQuery?: CustomQuery
   id: string
@@ -32,24 +15,28 @@ export type ConfigureProductParams = {
   }
 }
 
-export type ConfigureProductResponse = QueryResponse<"configureProduct", GraphQL.ConfiguredProduct>
+export type ConfigureProductResponse = Promise<GraphQL.Product>
 
-export type GetRelatedProductsParams = {
-  id: string
-  limit: number
-  catId: string[]
+// searchSuggestions
+export type SearchSuggestionsParams = {
+  perPage?: number
+  page?: number
+  sort?: string | {}
+  term?: string
+  filters?: string | {}
   customQuery?: CustomQuery
+  [x: string]: string | number | {} | undefined
 }
 
-export type GetRelatedProductsResponse = QueryResponse<"products", GraphQL.ProductCollection>
+export type SearchSuggestionsResponse = Promise<GraphQL.ProductSearchResult>
 
-export type SearchParams = ConfigureProductParams | GetProductParams | SearchProductParams
+// Search
+export type SearchParams = ConfigureProductParams | GetProductParams | SearchSuggestionsParams
 
+// useProduct
 export type useProductResponse = {
-  search:
-    | ((params: SearchProductParams) => Promise<void>)
-    | ((params: GetRelatedProductsParams) => Promise<void>)
-  result: Ref<{}>
+  search: (params: SearchParams) => Promise<void>
+  result: ComputedRef<GraphQL.Product>
   loading: Ref<boolean>
   error: Ref<string | {}>
 }

@@ -7,17 +7,15 @@ jest.mock("@kibocommerce/graphql-client")
 describe("[api] configureProduct API handler", () => {
   const body = {
     product: { productCode: "123" },
-    attributes: { color: "red", size: "L" },
+    options: [
+      { attributeFQN: "tenant~color", value: "red" },
+      { attributeFQN: "tenant~size", value: "L" },
+    ],
   }
 
   const variablesExpectedValue = {
     productCode: body.product.productCode,
-    selectedOptions: {
-      options: [
-        { attributeFQN: "tenant~color", value: body.attributes.color },
-        { attributeFQN: "tenant~size", value: body.attributes.size },
-      ],
-    },
+    selectedOptions: { options: body.options },
     includeOptionDetails: true,
   }
 
@@ -32,7 +30,7 @@ describe("[api] configureProduct API handler", () => {
     },
   }
 
-  test("should get configured product", async () => {
+  test("should configure product", async () => {
     const response = await configureProduct(req as any, null)
     expect(response).toEqual({ data: "response" })
   })

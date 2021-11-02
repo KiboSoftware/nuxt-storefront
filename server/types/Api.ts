@@ -10,6 +10,7 @@ export interface KiboIncomingMessage extends IncomingMessage {
   searchParams?: string
   body?: {
     attributes: Record<string, string>
+    options: Record<string, string>
     product: GraphQL.Product
   }
 }

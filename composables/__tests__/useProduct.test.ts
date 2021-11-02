@@ -51,7 +51,7 @@ describe("[composable] useProduct", () => {
 
   // getProduct
   test("should get product", async () => {
-    const { search, result: products, loading, error } = useProduct("products")
+    const { search, result: products, loading, error } = useProduct()
     const params = { id: "MS-JKT-012", customQuery: undefined }
 
     await search(params as any)
@@ -62,7 +62,7 @@ describe("[composable] useProduct", () => {
 
   // configureProduct
   test("should configure product", async () => {
-    const { search, result: products, loading, error } = useProduct("products")
+    const { search, result: products, loading, error } = useProduct()
     const params = {
       id: "MS-JKT-012",
       attributes: { color: "red", size: "L" },

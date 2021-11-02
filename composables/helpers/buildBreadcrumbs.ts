@@ -1,5 +1,6 @@
-import { BreadcrumbsListReturnType } from "./types"
+import { BreadcrumbsListReturnType } from "@/composables/types"
 import { PrCategory } from "@/server/types/GraphQL"
+
 const buildBreadcrumbsList = (
   rootCat: PrCategory,
   bc: BreadcrumbsListReturnType
@@ -8,7 +9,7 @@ const buildBreadcrumbsList = (
     ...bc,
     {
       text: rootCat.content?.name,
-      link: `${rootCat.content?.slug}/${rootCat.categoryCode}`,
+      link: `/category/${rootCat.categoryCode}`,
     },
   ]
   const result = rootCat.parentCategory

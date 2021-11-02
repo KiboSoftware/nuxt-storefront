@@ -182,7 +182,7 @@ export default defineComponent({
   },
 
   setup() {
-    const url = ref("")
+    const urlAttributes = ref<{ size: String; color: String }>({ size: "", color: "" })
     const router = ref()
     let query
     let id: string
@@ -192,7 +192,7 @@ export default defineComponent({
     const changeTab = () => {}
 
     // call useProduct
-    const { search, result: products, loading, error } = useProduct("products")
+    const { search, result: products, loading, error } = useProduct()
 
     const productRef = computed(() => products.value)
     const product = reactive<Product>({
@@ -236,8 +236,8 @@ export default defineComponent({
       // Todo: loadWishlist
     })
 
-    watch([url], () => {
-      search({ id, attributes: url.value })
+    watch([urlAttributes], () => {
+      search({ id, attributes: urlAttributes.value })
     })
 
     const updateFilter = (filter: Filter) => {
@@ -248,10 +248,10 @@ export default defineComponent({
         query: attributes,
       })
 
-      url.value = attributes
+      urlAttributes.value = attributes
     }
 
-    const getProductBreadcrumbs = (product: GraphQL.Product): Breadcrumb[] => {
+    const getProductBreadcrumbs = (product: GraphQL.Product): Breadcrumb[] | undefined => {
       let bcs
       if (product && product?.categories && product?.categories[0]) {
         bcs = [
@@ -263,7 +263,7 @@ export default defineComponent({
         ]
       }
 
-      return bcs || [{ text: "", link: "" }]
+      return bcs
     }
 
     const getProductConfiguration = (product: GraphQL.Product): Configuration => {
@@ -273,14 +273,14 @@ export default defineComponent({
         product?.options.forEach((o) => {
           if (o && o.attributeDetail && o.attributeDetail.name) {
             const prop = o.attributeDetail.name.toLowerCase()
-            ret[prop] = o.values?.filter((v) => v.isSelected)?.[0]?.value
+            ret[prop] = o.values?.filter((v) => v?.isSelected)?.[0]?.value
           }
         })
       return ret
     }
 
     const getProductOptions = (
-      products: Product[] | Product,
+      products: GraphQL.Product,
       filterByAttributeName?: string[]
     ): Record<string, AgnosticAttribute | string> => {
       try {
@@ -367,15 +367,15 @@ export default defineComponent({
 
       return (
         product?.content?.productImages.map((pi) => ({
-          small: pi.imageUrl,
-          normal: pi.imageUrl,
-          big: pi.imageUrl,
+          small: pi?.imageUrl,
+          normal: pi?.imageUrl,
+          big: pi?.imageUrl,
         })) || []
       )
     }
 
     const getProductAttributes = (
-      products: Product[] | Product
+      products: GraphQL.Product
     ): Record<string, AgnosticAttribute | string> => {
       try {
         const isSingleProduct = !Array.isArray(products)

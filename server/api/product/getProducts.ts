@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { getGQLClient } from "../../util"
-import { searchRelatedProductsQuery } from "../../queries"
+import { getProductsQuery } from "../../queries"
 import { KiboIncomingMessage, Response, SearchRelatedProductsResponse } from "../../types/Api"
 
 export default async function searchRelatedProducts(
@@ -12,7 +12,7 @@ export default async function searchRelatedProducts(
   const variables = req?.searchParams
 
   return await client.query({
-    query: searchRelatedProductsQuery,
+    query: getProductsQuery,
     variables,
   })
 }
