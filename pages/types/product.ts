@@ -15,21 +15,25 @@ export type ProductGalleryItem = {
   alt: GraphQL.Maybe<string> | undefined
 }
 
-export type Breadcrumb = {
-  text: string
-  link: string
-}
+export type Breadcrumb =
+  | {
+      link: string
+    }
+  | {
+      text: string
+      link: string
+    }
 
 export type Configuration = Record<string, string> | undefined
 
 export type Product = {
-  name: string
-  description: string
+  name: string | undefined | null
+  description: string | undefined | null
   averageRating: number
   totalReviews: number
   priceRegular: number
   priceSpecial: number
-  breadcrumbs: Breadcrumb[]
+  breadcrumbs: Breadcrumb[] | undefined
   options: Record<string, AgnosticAttribute | string>
   configuration: Configuration
   properties: Record<string, AgnosticAttribute | string>

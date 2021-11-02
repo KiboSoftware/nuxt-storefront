@@ -2,7 +2,7 @@
 import gql from "graphql-tag"
 import { productInfo } from "../../fragments"
 
-export const searchRelatedProductsQuery = gql`
+export const getProductsQuery = gql`
   ${productInfo}
 
   query products($filter: String, $pageSize: Int) {
