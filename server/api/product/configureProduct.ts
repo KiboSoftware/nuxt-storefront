@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { configureProductMutation } from "../../mutations"
 import {
-  ConfigureProductProductParams,
   ConfigureProductResponse,
   KiboIncomingMessage,
+  ConfigureProductParams,
   Response,
 } from "../../types/Api"
 import { getGQLClient } from "../../util"
@@ -13,7 +13,7 @@ export default async function configureProduct(
   res: Response
 ): Promise<ConfigureProductResponse> {
   const client = getGQLClient(req, res)
-  const params = req?.body
+  const params = req?.body as ConfigureProductParams
 
   const variables = {
     productCode: params?.product?.productCode,
