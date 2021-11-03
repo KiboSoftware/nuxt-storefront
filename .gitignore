@@ -94,3 +94,6 @@ sw.*
 
 # exclude .nuxt-build-jest
 .nuxt-build-jest
+
+# exclude .vscode/
+.vscode/
