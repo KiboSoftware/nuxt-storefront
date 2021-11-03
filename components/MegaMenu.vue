@@ -8,13 +8,16 @@
     <SfMegaMenuColumn
       v-for="(category, key) in megaMenuCategories"
       :key="key"
-      :title="category.label"
+      :title="category.content.name"
       :link="localePath(getCatLink(category))"
     >
       <SfList>
-        <SfListItem v-for="child in category.items" :key="child.id">
+        <SfListItem
+          v-for="child in category.childrenCategories"
+          :key="child.id"
+        >
           <SfMenuItem
-            :label="$t(child.label)"
+            :label="$t(child.content.name)"
             :link="localePath(getCatLink(child))"
           />
         </SfListItem>
@@ -68,9 +71,6 @@ export default defineComponent({
 }
 #SfMegaMenuColumnId .sf-mega-menu-column:hover .sf-list {
   display: block;
-}
-#SfMegaMenuColumnId li {
-  display: inline;
 }
 @media (min-width: 1024px) {
   #SfMegaMenuColumnId .sf-mega-menu-column__content {
