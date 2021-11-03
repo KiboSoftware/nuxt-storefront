@@ -15,4 +15,5 @@ module.exports = {
     "no-console": "error",
     "@typescript-eslint/no-explicit-any": "error",
   },
+  ignorePatterns: ["server/types/GraphQL.ts"],
 }

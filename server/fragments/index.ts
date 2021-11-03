@@ -1,3 +1,2 @@
-export {
-    productInfo,
-} from './product';
+export * from "./categoryFragment"
+export * from "./product"
