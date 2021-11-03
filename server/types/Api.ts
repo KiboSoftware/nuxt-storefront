@@ -8,11 +8,7 @@ import * as GraphQL from "./GraphQL"
 export interface KiboIncomingMessage extends IncomingMessage {
   _kiboClient: KiboApolloClient
   searchParams?: string
-  body?: {
-    attributes: Record<string, string>
-    options: Record<string, string>
-    product: GraphQL.Product
-  }
+  body?: {}
 }
 export interface Response extends ServerResponse {}
 
@@ -23,9 +19,9 @@ export type QueryResponse<K extends string, V> = ApolloQueryResult<Record<K, V>>
 export type MutationResponse<K extends string, V> = FetchResult<Record<K, V>>
 
 // product
-export type ConfigureProductProductParams = {
+export interface ConfigureProductParams extends KiboIncomingMessage {
+  options: Record<string, string>
   product: GraphQL.Product
-  attributes: { [x: string]: string }
 }
 export type ConfigureProductResponse = QueryResponse<"configureProduct", GraphQL.ConfiguredProduct>
 export type GetProductResponse = QueryResponse<"product", GraphQL.Product>
