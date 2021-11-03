@@ -28,8 +28,8 @@
 <script lang="tsx">
 import { SfMegaMenu, SfList, SfMenuItem } from "@storefront-ui/vue"
 import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
-import { categoryGetters } from "~/composables/getters"
-import { useCategory, useUiHelpers } from "~/composables"
+import { useCategoryTree, useUiHelpers } from "@/composables"
+import { categoryGetters } from "@/composables/getters"
 
 export default defineComponent({
   components: {
@@ -38,7 +38,7 @@ export default defineComponent({
     SfMenuItem,
   },
   setup() {
-    const { allCategories, load: loadCategories } = useCategory()
+    const { allCategories, load: loadCategories } = useCategoryTree()
     const visible = ref(true)
     const megaMenuCategories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)

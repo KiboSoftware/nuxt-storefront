@@ -1,9 +1,11 @@
+import type { Ref } from "@vue/composition-api"
 import { ref, computed } from "@vue/composition-api"
-import { categoryApiHelper } from "../../utils/categoryTree"
+import apiHelper from "../utils/apiHelper"
+import * as types from "@/composables/types"
 
 const getCategoryApiPath = "/api/category-tree/index"
 
-export const useCategory = () => {
+export const useCategoryTree = (): types.UseCategoryTreeResponse => {
   const categories = ref()
   const loading = ref(false)
   const error = ref()
@@ -13,11 +15,7 @@ export const useCategory = () => {
     try {
       loading.value = true
       const url = `${getCategoryApiPath}`
-      const categoriesResponse = await categoryApiHelper.getCategoryTree(
-        "GET",
-        url,
-        {}
-      )
+      const categoriesResponse = await apiHelper.getCategoryTree("GET", url, {})
       categories.value = categoriesResponse.data.categoriesTree.items
       error.value = null
     } catch (err) {
@@ -30,7 +28,7 @@ export const useCategory = () => {
   // return
   return {
     load,
-    allCategories: categories,
+    allCategories: categories as Ref<{}>,
     loading: computed(() => loading.value),
     error: computed(() => error.value),
   }

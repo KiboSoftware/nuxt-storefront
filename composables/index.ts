@@ -1,4 +1,2 @@
-import { useCategory } from "./useCategoryTree"
-import useUiHelpers from "./useUiHelpers"
-
-export { useCategory, useUiHelpers }
+export * from "./useCategoryTree"
+export * from "./useUiHelpers"

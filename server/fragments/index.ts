@@ -1,3 +1,2 @@
-export { productInfo } from "./product"
-
-export { categoryInfo } from "./category/categoryFragment"
+export * from "./categoryFragment"
+export * from "./product"
