@@ -1798,10 +1798,10 @@
   resolved "https://registry.yarnpkg.com/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
   integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
-"@kibocommerce/graphql-client@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@kibocommerce/graphql-client/-/graphql-client-1.0.2.tgz#441ec068cf96d02fb4cc3322cfb5709838c4eefc"
-  integrity sha512-rI3QdLK2cwR2dq/rhPYOM41/QCikFH98NsUgCrKZIGPO0UTGYOeB1U1fsBx7cMGcQqSJRhgEkAIOgpmzhGH5iA==
+"@kibocommerce/graphql-client@^1.0.3-beta.7":
+  version "1.0.3-beta.7"
+  resolved "https://registry.yarnpkg.com/@kibocommerce/graphql-client/-/graphql-client-1.0.3-beta.7.tgz#72a25b06ebe806d82412d67f30cc5e192235054d"
+  integrity sha512-m/r7BDNrHLcXgSsy1zYIf3G0kQbUZJeQJVRxpdH2GhtJiStDmqlIxJouR2pwNjkKurZqXu8kTCIULLMan4MOsA==
   dependencies:
     "@apollo/client" "^3.3.2"
     apollo-cache-inmemory "^1.6.6"
@@ -8638,10 +8638,15 @@ graphql-ws@^5.4.1:
   resolved "https://registry.yarnpkg.com/graphql-ws/-/graphql-ws-5.5.1.tgz#f486fbcabe4ad31b661d1a88aadf0411f17fc219"
   integrity sha512-QP6OvCnqkdazSoZ6QboWVkCvEmDCOe6u41MzuhkCkYg+jZZbYafUlt3uC/7mvKLrlIyR44QgHOMALqBgg+Ab/w==
 
-graphql@^15.5.0, graphql@^15.6.1:
+graphql@^15.5.0:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/graphql/-/graphql-15.6.1.tgz#9125bdf057553525da251e19e96dab3d3855ddfc"
   integrity sha512-3i5lu0z6dRvJ48QP9kFxBkJ7h4Kso7PS8eahyTFz5Jm6CvQfLtNIE8LX9N6JLnXTuwR+sIYnXzaWp6anOg0QQw==
+
+graphql@^16.0.1:
+  version "16.0.1"
+  resolved "https://registry.yarnpkg.com/graphql/-/graphql-16.0.1.tgz#93a13cd4e0e38ca8d0832e79614c8578bfd34f10"
+  integrity sha512-oPvCuu6dlLdiz8gZupJ47o1clgb72r1u8NDBcQYjcV6G/iEdmE11B1bBlkhXRvV0LisP/SXRFP7tT6AgaTjpzg==
 
 gzip-size@^6.0.0:
   version "6.0.0"
