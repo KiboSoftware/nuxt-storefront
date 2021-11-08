@@ -16,10 +16,9 @@ export default defineNuxtConfig({
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
-
   // Global CSS: https://go.nuxtjs.dev/config-css
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [],
+  plugins: [`./plugins/gql-fetch.ts`],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -92,6 +91,9 @@ export default defineNuxtConfig({
       }),
     ],
   },
+  publicRuntimeConfig: {
+      baseURL: process.env.BASE_URL || 'http://localhost:3000'
+  },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
     transpile: [/^@storefront-ui/],
@@ -103,20 +105,31 @@ export default defineNuxtConfig({
         implementation: require("sass"),
       },
     },
-  },
+    },
+
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   router: {
     extendRoutes(routes: any, resolve: any) {
       routes.push({
         name: "product_details_w_slug",
-        path: "/product/:id/:slug",
+        path: "/product/:productCode/:slug",
         component: resolve(__dirname, "pages/product/index.vue"),
       })
       routes.push({
         name: "product_details",
-        path: "/product/:id/",
+        path: "/product/:productCode/",
         component: resolve(__dirname, "pages/product/index.vue"),
+      })
+      routes.push({
+        name: "product_details_w_slug_c",
+        path: "/p/:productCode/:slug",
+        component: resolve(__dirname, "pages/product/pdp.vue"),
+      })
+      routes.push({
+        name: "product_details_c",
+        path: "/p/:productCode/",
+        component: resolve(__dirname, "pages/product/pdp.vue"),
       })
     },
   },
