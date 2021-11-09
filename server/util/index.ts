@@ -1,1 +1,1 @@
-export { getGQLClient } from './getGQLClient';
+export { getGQLClient } from "./getGQLClient"

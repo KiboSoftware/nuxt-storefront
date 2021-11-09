@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import winston from "winston"
 const { format, transports, createLogger } = winston
 const { printf, combine, timestamp, colorize, errors } = format
 
 function buildDevLogger() {
-  const logFormat = printf(({ level, message, timestamp, stack }) => {
+  const logFormat = printf(({ level, message, timestamp, stack }: any) => {
     return `${timestamp} ${level}: ${stack || message}`
   })
 
@@ -26,10 +27,7 @@ function buildDevLogger() {
   const config = {
     level: process.env.LOG_LEVEL || "debug",
     format,
-    transports: [
-      new transports.File({ filename: "logfile.log" }),
-      new transports.Console(),
-    ],
+    transports: [new transports.File({ filename: "logfile.log" }), new transports.Console()],
   }
 
   return createLogger(config)
