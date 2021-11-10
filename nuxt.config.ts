@@ -92,11 +92,11 @@ export default defineNuxtConfig({
     ],
   },
   publicRuntimeConfig: {
-      baseURL: process.env.BASE_URL || 'http://localhost:3000'
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: [/^@storefront-ui/, 'leaflet', 'hammerjs'],
+    transpile: [/^@storefront-ui/, "leaflet", "hammerjs"],
     loaders: {
       sass: {
         implementation: require("sass"),
@@ -105,12 +105,11 @@ export default defineNuxtConfig({
         implementation: require("sass"),
       },
     },
-    },
-
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   router: {
-    extendRoutes(routes: any, resolve: any) {
+    extendRoutes(routes, resolve) {
       routes.push({
         name: "product_details_w_slug",
         path: "/product/:productCode/:slug",
@@ -120,16 +119,6 @@ export default defineNuxtConfig({
         name: "product_details",
         path: "/product/:productCode/",
         component: resolve(__dirname, "pages/product/index.vue"),
-      })
-      routes.push({
-        name: "product_details_w_slug_c",
-        path: "/p/:productCode/:slug",
-        component: resolve(__dirname, "pages/product/pdp.vue"),
-      })
-      routes.push({
-        name: "product_details_c",
-        path: "/p/:productCode/",
-        component: resolve(__dirname, "pages/product/pdp.vue"),
       })
     },
   },

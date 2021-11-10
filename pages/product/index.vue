@@ -1,18 +1,14 @@
 <template>
   <div id="product">
-    <SfBreadcrumbs
-      v-if="product.breadcrumbs"
-      class="breadcrumbs desktop-only"
-      :breadcrumbs="product.breadcrumbs"
-    />
+    <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="product">
       <LazyHydrate when-idle>
-        <SfGallery :images="product.productGallery" class="product__gallery" />
+        <SfGallery :images="productGallery" class="product__gallery" />
       </LazyHydrate>
       <div class="product__info">
         <div class="product__header">
           <SfHeading
-            :title="product.name"
+            :title="productGetters.getName(product)"
             :level="3"
             class="sf-heading--no-underline sf-heading--left"
           />
@@ -25,12 +21,14 @@
         </div>
         <div class="product__price-and-rating">
           <SfPrice
-            :regular="$n(product.priceRegular, 'currency')"
-            :special="product.priceSpecial && $n(product.priceRegular, 'currency')"
+            :regular="$n(productGetters.getPrice(product), 'currency')"
+            :special="
+              product.price.salePrice && $n(productGetters.getSalePrice(product), 'currency')
+            "
           />
           <div>
             <div class="product__rating">
-              <SfRating :score="product.averageRating" :max="5" />
+              <SfRating :score="0" :max="5" />
               <a v-if="!!product.totalReviews" href="#" class="product__count">
                 ({{ product.totalReviews }})
               </a>
@@ -41,7 +39,7 @@
           </div>
         </div>
         <div>
-          <p class="product__description desktop-only" v-html="product.description"></p>
+          <p class="product__description desktop-only" v-html="description"></p>
           <SfButton
             data-cy="product-btn_size-guide"
             class="sf-button--text desktop-only product__guide"
@@ -49,32 +47,23 @@
             {{ $t("Size guide") }}
           </SfButton>
           <SfSelect
-            v-if="product.options && product.options.size"
+            v-for="option in options"
+            :key="option.attributeFQN"
             data-cy="product-select_size"
-            :value="product.configuration.size"
-            label="Size"
+            :value="productGetters.getOptionSelectedValue(option)"
+            :label="productGetters.getOptionName(option)"
             class="sf-select--underlined product__select-size"
-            :required="true"
-            @input="(size) => updateFilter({ size })"
+            :required="option.isRequired"
+            @input="(value) => selectOption({ value }, option)"
           >
-            <SfSelectOption v-for="size in product.options.size" :key="size" :value="size">
-              {{ size }}
+            <SfSelectOption
+              v-for="optionVal in option.values"
+              :key="optionVal.value"
+              :value="optionVal.value"
+            >
+              {{ optionVal.stringValue }}
             </SfSelectOption>
           </SfSelect>
-          <div
-            v-if="product.options && product.options.color && product.options.color.length > 1"
-            class="product__colors desktop-only"
-          >
-            <p class="product__color-label">{{ $t("Color") }}:</p>
-            <SfColor
-              v-for="(color, i) in product.options.color"
-              :key="i"
-              data-cy="product-color_update"
-              :color="color"
-              class="product__color"
-              @click="updateFilter({ color })"
-            />
-          </div>
           <SfAddToCart v-model="qty" class="product__add-to-cart" @click="addToCart" />
           <SfButton class="sf-button--text desktop-only product__save"> Save for later </SfButton>
           <SfButton class="sf-button--text desktop-only product__compare">
@@ -88,7 +77,7 @@
                 {{ $t("Product description") }}
               </div>
               <SfProperty
-                v-for="(p, i) in product.properties"
+                v-for="(p, i) in properties"
                 :key="i"
                 :name="i"
                 :value="p.join(', ')"
@@ -105,19 +94,6 @@
         </LazyHydrate>
       </div>
     </div>
-
-    <transition name="slide">
-      <SfNotification
-        class="notification smartphone-only"
-        :visible="isOpenNotification"
-        :message="`${qty} x ${productRef.name} (size: ${selectedSize}, color: ${selectedColor}) has been added to cart`"
-        @click:close="isOpenNotification = false"
-      >
-        <template #icon>
-          <span></span>
-        </template>
-      </SfNotification>
-    </transition>
   </div>
 </template>
 
@@ -132,35 +108,17 @@ import {
   SfProperty,
   SfButton,
   SfAddToCart,
-  SfColor,
   SfSelect,
   SfBreadcrumbs,
-  SfNotification,
 } from "@storefront-ui/vue"
 
-import {
-  getCurrentInstance,
-  defineComponent,
-  watch,
-  ref,
-  reactive,
-  computed,
-  onMounted,
-} from "@vue/composition-api"
+import { defineComponent, computed } from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
-import type {
-  Product,
-  Breadcrumb,
-  ProductGalleryItem,
-  Configuration,
-  Filter,
-  AgnosticAttribute,
-} from "@/pages/types"
 
-import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
-import * as GraphQL from "@/server/types/GraphQL"
-import { useProduct } from "@/composables"
+import { useAsync } from "@nuxtjs/composition-api"
+import { useProductSSR } from "@/composables/useProductSSR"
+import { productGetters } from "@/composables/getters"
 
 export default defineComponent({
   name: "Product",
@@ -174,291 +132,44 @@ export default defineComponent({
     SfProperty,
     SfButton,
     SfAddToCart,
-    SfColor,
     SfSelect,
     SfBreadcrumbs,
-    SfNotification,
     LazyHydrate,
   },
 
-  setup() {
-    const urlAttributes = ref<{ size: String; color: String }>({ size: "", color: "" })
-    const router = ref()
-    let query
-    let id: string
+  setup(_, context) {
+    const { productCode } = context.root.$route.params
+    const { load, product, configure } = useProductSSR(productCode)
 
+    useAsync(async () => {
+      await load(productCode)
+    }, null)
+
+    const description = computed(() => productGetters.getDescription(product.value))
+    const breadcrumbs = computed(() => productGetters.getBreadcrumbs(product.value))
+    const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
+    const rating = computed(() => productGetters.getRating(product.value))
+    const properties = computed(() => productGetters.getProperties(product.value))
+    const options = computed(() => productGetters.getOptions(product.value))
     const addToCart = () => {}
-    const selectColor = () => {}
     const changeTab = () => {}
-
-    // call useProduct
-    const { search, result: products, loading, error } = useProduct()
-
-    const productRef = computed(() => products.value)
-    const product = reactive<Product>({
-      name: "",
-      description: "",
-      averageRating: 0,
-      totalReviews: 0,
-      priceRegular: 0,
-      priceSpecial: 0,
-      breadcrumbs: [],
-      options: {},
-      configuration: {},
-      properties: {},
-      productGallery: [],
-    })
-
-    watch([productRef], () => {
-      product.name = productRef.value?.content?.productName
-      product.description = productRef?.value.content?.productFullDescription
-      product.averageRating = 0
-      product.totalReviews = 0
-      product.priceRegular = productRef.value?.price?.price || 0
-      product.priceSpecial = productRef.value?.price?.salePrice || 0
-      product.breadcrumbs = getProductBreadcrumbs(productRef.value)
-      product.options = getProductOptions(productRef.value)
-      product.configuration = getProductConfiguration(productRef.value)
-      product.properties = getProductAttributes(productRef.value)
-      product.productGallery = getProductGallary(productRef.value)
-    })
-
-    onMounted(async () => {
-      const vm = getCurrentInstance()
-      router.value = vm?.root.type.router
-      query = router.value.history.current.query
-      id = router.value.history.current.params.id
-
-      await search({ id, attributes: query })
-
-      // Todo: searchRelatedProducts
-      // Todo: searchReviews
-      // Todo: loadWishlist
-    })
-
-    watch([urlAttributes], () => {
-      search({ id, attributes: urlAttributes.value })
-    })
-
-    const updateFilter = (filter: Filter) => {
-      const attributes = { ...product.configuration, ...filter }
-
-      router.value.push({
-        path: router.value.history.current.path,
-        query: attributes,
-      })
-
-      urlAttributes.value = attributes
+    const selectOption = async ({ value }, { attributeFQN }) => {
+      await configure({ value, attributeFQN }, product.value?.productCode, options.value)
     }
-
-    const getProductBreadcrumbs = (product: GraphQL.Product): Breadcrumb[] | undefined => {
-      let bcs
-      if (product && product?.categories && product?.categories[0]) {
-        bcs = [
-          { text: "Home", link: "/" },
-          ...buildBreadcrumbs(product?.categories[0]).map((b) => ({
-            ...b,
-            link: `/c/${b.link}`,
-          })),
-        ]
-      }
-
-      return bcs
-    }
-
-    const getProductConfiguration = (product: GraphQL.Product): Configuration => {
-      const ret: Record<string, string> = {}
-
-      if (product && product.options)
-        product?.options.forEach((o) => {
-          if (o && o.attributeDetail && o.attributeDetail.name) {
-            const prop = o.attributeDetail.name.toLowerCase()
-            ret[prop] = o.values?.filter((v) => v?.isSelected)?.[0]?.value
-          }
-        })
-      return ret
-    }
-
-    const getProductOptions = (
-      products: GraphQL.Product,
-      filterByAttributeName?: string[]
-    ): Record<string, AgnosticAttribute | string> => {
-      try {
-        const isSingleProduct = !Array.isArray(products)
-        const productList = (isSingleProduct ? [products] : products) as Product[]
-
-        if (!products || !productList[0].options) {
-          return {}
-        }
-
-        const formatAttributes = (product: Product): AgnosticAttribute[] => {
-          const attributes = []
-          const options = filterByAttributeName
-            ? product.options?.filter((p) =>
-                filterByAttributeName.includes(p.attributeDetail?.name.toLowerCase())
-              )
-            : product.options
-
-          options.forEach((p) => {
-            attributes.push(
-              ...p.values.map((val) => {
-                if (val.value !== null)
-                  return {
-                    name: p.attributeDetail?.name,
-                    value: val.value.toString() as string,
-                    label: val.value ?? (val.value.toString() as string),
-                  }
-
-                return null
-              })
-            )
-          })
-          return attributes
-        }
-
-        const reduceToUniques = (prev, curr) => {
-          try {
-            const isAttributeExist = prev.some(
-              (el) => el.name === curr.name && el.value === curr.value
-            )
-            if (!isAttributeExist) {
-              prev.push(curr)
-            }
-          } catch (ex) {
-            // eslint-disable-next-line no-console
-            console.log(ex, prev, curr)
-          }
-
-          return prev
-        }
-
-        const reduceByAttributeName = (prev, curr) => ({
-          ...prev,
-          [curr.name.toLowerCase()]: [...(prev[curr.name.toLowerCase()] || []), curr.value],
-        })
-
-        const list = productList
-          .map(formatAttributes)
-          .reduce((prev, curr) => {
-            prev.push(...curr)
-            return prev
-          }, [])
-          .reduce(reduceToUniques, [])
-          .reduce(reduceByAttributeName, {})
-        return list
-      } catch (ex) {
-        // eslint-disable-next-line no-console
-        console.log(ex)
-        return {}
-      }
-    }
-
-    const getProductGallary = (product: GraphQL.Product): ProductGalleryItem[] => {
-      return getGallery(product).map((img) => ({
-        mobile: { url: img.small },
-        desktop: { url: img.normal },
-        big: { url: img.big },
-        alt: product?.content?.productName,
-      }))
-    }
-
-    const getGallery = (product: GraphQL.Product) => {
-      if (!product || !product.content || !product.content.productImages) return [] // JSON.stringify(product) === "{}"
-
-      return (
-        product?.content?.productImages.map((pi) => ({
-          small: pi?.imageUrl,
-          normal: pi?.imageUrl,
-          big: pi?.imageUrl,
-        })) || []
-      )
-    }
-
-    const getProductAttributes = (
-      products: GraphQL.Product
-    ): Record<string, AgnosticAttribute | string> => {
-      try {
-        const isSingleProduct = !Array.isArray(products)
-        const productList = (isSingleProduct ? [products] : products) as Product[]
-
-        if (!products || !productList[0].properties) {
-          return {}
-        }
-
-        const formatAttributes = (product: Product): AgnosticAttribute[] => {
-          const attributes = []
-          product.properties
-            .filter((p) => p.isHidden !== true)
-            .forEach((p) => {
-              attributes.push(
-                ...p.values.map((val) => {
-                  if (val.value !== null)
-                    return {
-                      name: p.attributeDetail?.name,
-                      value: val.value.toString() as string,
-                      label: val.stringValue ?? (val.value.toString() as string),
-                    }
-
-                  return null
-                })
-              )
-            })
-          return attributes
-        }
-
-        const reduceToUniques = (prev, curr) => {
-          try {
-            const isAttributeExist = prev.some(
-              (el) => el.name === curr.name && el.value === curr.value
-            )
-            if (!isAttributeExist) {
-              prev.push(curr)
-            }
-          } catch (ex) {
-            // eslint-disable-next-line no-console
-            console.log(ex, prev, curr)
-          }
-
-          return prev
-        }
-
-        const reduceByAttributeName = (prev, curr) => ({
-          ...prev,
-          [curr.name]: [...(prev[curr.name] || []), curr.value],
-        })
-
-        const list = productList
-          .map(formatAttributes)
-          .reduce((prev, curr) => {
-            prev.push(...curr)
-            return prev
-          }, [])
-          .reduce(reduceToUniques, [])
-
-        return list.reduce(reduceByAttributeName, {})
-      } catch (ex) {
-        // eslint-disable-next-line no-console
-        console.log(ex)
-        return {}
-      }
-    }
-
     return {
-      updateFilter,
-      changeTab,
-      addToCart,
-      selectColor,
       current: 1,
-      selectedColor: "beige",
-      selectedSize: undefined,
+      addToCart,
+      changeTab,
+      selectOption,
+      rating,
       qty: 1,
-
+      breadcrumbs,
+      options,
+      productGallery,
+      description,
+      properties,
+      productGetters,
       product,
-      productRef,
-      loading,
-      error,
-
-      selected: false,
       isOpenNotification: false,
       openTab: 1,
     }
