@@ -10,9 +10,9 @@ const authTicketMemCache = {
   },
 }
 const apiAuthClient = new APIAuthClient(getApiConfig(), fetch, authTicketMemCache)
-const userAuthClient = new ShopperAuthClient(getApiConfig(), fetch, apiAuthClient)
+const shopperAuthClient = new ShopperAuthClient(getApiConfig(), fetch, apiAuthClient)
 
 export {
     apiAuthClient,
-    userAuthClient
+    shopperAuthClient
 }
