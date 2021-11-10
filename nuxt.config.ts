@@ -93,6 +93,7 @@ export default defineNuxtConfig({
   },
   publicRuntimeConfig: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
+    userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo-at",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
