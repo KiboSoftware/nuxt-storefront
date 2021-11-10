@@ -7,6 +7,7 @@ import * as GraphQL from "./GraphQL"
 
 export interface KiboIncomingMessage extends IncomingMessage {
   _kiboClient: KiboApolloClient
+  _userClaims: string
   searchParams?: string
   body?: any
 }

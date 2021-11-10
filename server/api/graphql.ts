@@ -1,6 +1,6 @@
+import type { KiboIncomingMessage, Response } from "../types/Api"
 import { fetch } from "ohmyfetch"
-import { KiboIncomingMessage, Response } from "../types/Api"
-import { apiAuthClient } from "../util/api-auth-client"
+import { apiAuthClient } from "../lib/auth-clients"
 export default async (req: KiboIncomingMessage, res: Response) => {
   try {
     const body = req.body
@@ -10,6 +10,7 @@ export default async (req: KiboIncomingMessage, res: Response) => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authToken}`,
+        'x-vol-user-claims': req._userClaims,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
