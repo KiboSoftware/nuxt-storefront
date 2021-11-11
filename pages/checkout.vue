@@ -118,7 +118,7 @@ export default {
     SfButton,
   },
   data() {
-      const countries = [], months = [], years = []
+      const countries = []; const months = []; const years = []
     return {
       countries,
       months,
@@ -303,7 +303,7 @@ export default {
   },
   watch: {
     shipping(newVal, oldVal) {
-      if (newVal.shippingMethod != oldVal.shippingMethod) {
+      if (newVal.shippingMethod !== oldVal.shippingMethod) {
         const method = this.shippingMethods.find(
           (method) => method.value === newVal.shippingMethod
         );

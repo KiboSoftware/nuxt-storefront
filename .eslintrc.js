@@ -8,7 +8,7 @@ module.exports = {
   plugins: [],
   // add your custom rules here
   rules: {
-    "no-console": "error",
+    "no-console": "warn",
     "@typescript-eslint/no-explicit-any": "error",
     "import/named": "off",
   },

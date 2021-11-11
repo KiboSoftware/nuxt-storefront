@@ -2,6 +2,10 @@ import { Ref, ComputedRef } from "@vue/composition-api"
 import { CustomQuery } from "@/composables/types/common"
 import * as GraphQL from "@/server/types/GraphQL"
 
+export type ConfigureOption = {
+  attributeFQN: string
+  value: string
+}
 // getProduct
 export type GetProductParams = { id: string; customQuery?: CustomQuery }
 export type GetProductResponse = Promise<GraphQL.Product>

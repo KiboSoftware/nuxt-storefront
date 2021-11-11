@@ -1,5 +1,5 @@
-import type { KiboIncomingMessage, Response } from "../types/Api"
 import { fetch } from "ohmyfetch"
+import type { KiboIncomingMessage, Response } from "../types/Api"
 import { apiAuthClient } from "../lib/auth-clients"
 export default async (req: KiboIncomingMessage, res: Response) => {
   try {
