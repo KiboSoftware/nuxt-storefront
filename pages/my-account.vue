@@ -41,8 +41,7 @@
   </div>
 </template>
 <script>
-import { SfBreadcrumbs, SfContentPages } from "@storefront-ui/vue";
-import {
+import { SfBreadcrumbs, SfContentPages ,
   SfMyProfile,
   SfShippingDetails,
   SfMyNewsletter,

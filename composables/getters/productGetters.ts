@@ -1,6 +1,6 @@
-import { Breadcrumb } from "~~/pages/types"
-import { Product, ProductOption } from "~~/server/types/GraphQL"
 import { buildBreadcrumbs } from "../helpers/buildBreadcrumbs"
+import { Breadcrumb } from "~~/pages/types"
+import { Product, ProductOption, ProductOptionValue } from "~~/server/types/GraphQL"
 
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
@@ -36,8 +36,9 @@ export const getBreadcrumbs = (product: Product): Breadcrumb[] => {
   return [...homeCrumb, ...productCrumbs]
 }
 export const getProperties = (product: Product) => {
-  const reducer = (accum: any, property: any): any => {
-    const values = property?.values?.map((val: any) => val?.value || val?.stringValue)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const reducer = (accum: any, property: any) => {
+    const values = property?.values?.map((val: ProductOptionValue) => val?.value || val?.stringValue)
     const key = property?.attributeDetail?.name as string
     accum[key] = values
     return accum

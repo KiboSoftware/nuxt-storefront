@@ -8,7 +8,8 @@ import * as GraphQL from "./GraphQL"
 export interface KiboIncomingMessage extends IncomingMessage {
   _kiboClient: KiboApolloClient
   _userClaims: string
-  searchParams?: string
+  searchParams?: Record<string, string>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any
 }
 export interface Response extends ServerResponse {}
