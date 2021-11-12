@@ -1,3 +1,4 @@
 /* istanbul ignore file */
 export * from "./categoryGetters"
-export * from './productGetters';
+export * from "./productGetters"
+export * from "./user"

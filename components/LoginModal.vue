@@ -9,13 +9,8 @@
       />
     </template>
     <transition name="sf-fade" mode="out-in">
-      <div
-        v-if="isLogin"
-        key="log-in"
-        class="modal-content"
-        data-testid="login-modal"
-      >
-        <form class="form" @submit.prevent="() => false">
+      <div v-if="isLogin" key="log-in" class="modal-content" data-testid="login-modal">
+        <form class="form" @submit.prevent="handleLogin()">
           <SfInput
             v-model="form.username"
             name="email"
@@ -37,12 +32,18 @@
             label="Remember me"
             class="form__element form__checkbox"
           />
+          <span v-if="error.login" style="color: red">
+            {{ error.login }}
+          </span>
+
           <SfButton
             type="submit"
             class="sf-button--full-width form__submit"
             data-testid="log-in-button"
           >
-            Log In
+            <SfLoader :class="{ loader: loading }" :loading="loading">
+              <div>{{ $t("Login") }}</div>
+            </SfLoader>
           </SfButton>
         </form>
         <SfButton
@@ -53,11 +54,7 @@
           Forgotten password?
         </SfButton>
         <div class="aside">
-          <SfHeading
-            title="Don't have an account yet?"
-            :level="3"
-            class="aside__heading"
-          />
+          <SfHeading title="Don't have an account yet?" :level="3" class="aside__heading" />
           <SfButton
             class="sf-button--text"
             data-testid="register-now-button"
@@ -83,12 +80,7 @@
           </SfButton>
         </form>
       </div>
-      <div
-        v-else
-        key="sign-up"
-        class="modal-content"
-        data-testid="signin-modal"
-      >
+      <div v-else key="sign-up" class="modal-content" data-testid="signin-modal">
         <form class="form" @submit.prevent="() => false">
           <SfInput
             v-model="form.email"
@@ -142,8 +134,7 @@
   </SfModal>
 </template>
 <script lang="ts">
-import { ref, watch, computed } from "@vue/composition-api"
-
+import { ref, watch, computed, reactive } from "@vue/composition-api"
 import {
   SfModal,
   SfInput,
@@ -155,6 +146,8 @@ import {
 } from "@storefront-ui/vue"
 
 import useUiState from "../composables/useUiState"
+import { useUser } from "../composables/useUser"
+import { userGetters } from "../composables/getters/user"
 
 export default {
   name: "LoginModal",
@@ -168,12 +161,22 @@ export default {
     SfLoader,
   },
   setup() {
+    const { user, login, loading, error: userError, isAuthenticated } = useUser()
     const { isLoginModalOpen, toggleLoginModal } = useUiState()
     const form = ref({})
     const isLogin = ref(false)
     const isForgotten = ref(false)
     const rememberMe = ref(false)
     const createAccount = ref(false)
+    const error = reactive({
+      login: null,
+      register: null,
+    })
+
+    const resetErrorValues = () => {
+      error.login = null
+      error.register = null
+    }
 
     const barTitle = computed(() => {
       if (isLogin.value) {
@@ -200,16 +203,38 @@ export default {
       isForgotten.value = value
     }
 
+    const handleForm = (fn) => async () => {
+      resetErrorValues()
+      await fn({ user: form.value })
+      const hasUserErrors = userGetters.hasLoginError(userError.value)
+      if (hasUserErrors) {
+        const loginError = userError.value
+        error.login = loginError.login?.extensions?.response?.body?.message
+        error.register = loginError.register?.message
+        return user
+      } else {
+        toggleLoginModal()
+      }
+    }
+
     const closeModal = () => {
       setIsForgottenValue(false)
       toggleLoginModal()
     }
 
+    const handleLogin = async () => {
+      await handleForm(login)()
+    }
+
     return {
       form,
+      error,
+      userError,
+      loading,
       isLogin,
       isLoginModalOpen,
       toggleLoginModal,
+      handleLogin,
       isForgotten,
       closeModal,
       setIsLoginValue,
@@ -217,6 +242,9 @@ export default {
       barTitle,
       rememberMe,
       createAccount,
+      login,
+      isAuthenticated,
+      user,
     }
   },
 }

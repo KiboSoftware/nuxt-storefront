@@ -1,9 +1,6 @@
 <template>
   <div id="my-account">
-    <SfBreadcrumbs
-      class="breadcrumbs desktop-only"
-      :breadcrumbs="breadcrumbs"
-    />
+    <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <SfContentPages
       title="My Account"
       :active="activePage"
@@ -41,13 +38,18 @@
   </div>
 </template>
 <script>
-import { SfBreadcrumbs, SfContentPages ,
+import {
+  SfBreadcrumbs,
+  SfContentPages,
   SfMyProfile,
   SfShippingDetails,
   SfMyNewsletter,
   SfOrderHistory,
-} from "@storefront-ui/vue";
-export default {
+} from "@storefront-ui/vue"
+import { defineComponent, reactive } from "@vue/composition-api"
+import { useUser } from "../composables/useUser"
+
+export default defineComponent({
   name: "MyAccount",
   components: {
     SfBreadcrumbs,
@@ -57,8 +59,51 @@ export default {
     SfMyNewsletter,
     SfOrderHistory,
   },
-  data() {
+  middleware: ["authenticated"],
+  setup() {
+    const { user, load: loadUser, logout } = useUser()
+    const account = reactive({
+      firstName: "John",
+      lastName: "Dog",
+      email: "johndog@email.com",
+      password: "a*23Et",
+      shipping: [
+        {
+          firstName: "John",
+          lastName: "Dog",
+          streetName: "Sezame Street",
+          apartment: "24/193A",
+          city: "Wroclaw",
+          state: "Lower Silesia",
+          zipCode: "53-540",
+          country: "Poland",
+          phoneNumber: "(00)560 123 456",
+        },
+        {
+          firstName: "John",
+          lastName: "Dog",
+          streetName: "Sezame Street",
+          apartment: "20/193A",
+          city: "Wroclaw",
+          state: "Lower Silesia",
+          zipCode: "53-603",
+          country: "Poland",
+          phoneNumber: "(00)560 123 456",
+        },
+      ],
+      orders: [
+        ["#45", "23th June, 2021", "Visa card", "$412.00", "Finalised"],
+        ["#46", "26th June, 2021", "Paypal", "$132.00", "Finalised"],
+        ["#47", "28th June, 2021", "Mastercard", "$12.00", "Finalised"],
+        ["#48", "28th June, 2021", "Paypal", "$20.00", "In process"],
+      ],
+    })
+
     return {
+      logout,
+      user,
+      loadUser,
+      account,
       activePage: "My profile",
       breadcrumbs: [
         {
@@ -74,55 +119,24 @@ export default {
           },
         },
       ],
-      account: {
-        firstName: "John",
-        lastName: "Dog",
-        email: "johndog@email.com",
-        password: "a*23Et",
-        shipping: [
-          {
-            firstName: "John",
-            lastName: "Dog",
-            streetName: "Sezame Street",
-            apartment: "24/193A",
-            city: "Wroclaw",
-            state: "Lower Silesia",
-            zipCode: "53-540",
-            country: "Poland",
-            phoneNumber: "(00)560 123 456",
-          },
-          {
-            firstName: "John",
-            lastName: "Dog",
-            streetName: "Sezame Street",
-            apartment: "20/193A",
-            city: "Wroclaw",
-            state: "Lower Silesia",
-            zipCode: "53-603",
-            country: "Poland",
-            phoneNumber: "(00)560 123 456",
-          },
-        ],
-        orders: [
-          ["#45", "23th June, 2021", "Visa card", "$412.00", "Finalised"],
-          ["#46", "26th June, 2021", "Paypal", "$132.00", "Finalised"],
-          ["#47", "28th June, 2021", "Mastercard", "$12.00", "Finalised"],
-          ["#48", "28th June, 2021", "Paypal", "$20.00", "In process"],
-        ],
-      },
       countries: [],
-    };
+    }
   },
   methods: {
-    changeActivePage(title) {
+    async changeActivePage(title) {
       if (title === "Log out") {
-        alert("You are logged out!");
-        return;
+        await this.logout()
+        this.$root.context.redirect(`/`)
+        return
       }
-      this.activePage = title;
+
+      this.activePage = title
+      this.$root.context.app.router.push(
+        `/my-account/${(title || "").toLowerCase().replace(" ", "-")}`
+      )
     },
   },
-};
+})
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
@@ -136,11 +150,9 @@ export default {
 }
 .my-account {
   @include for-mobile {
-    --content-pages-sidebar-category-title-font-weight: var(
-      --font-weight--normal
-    );
-    --content-pages-sidebar-category-title-margin: var(--spacer-sm)
-      var(--spacer-sm) var(--spacer-sm) var(--spacer-base);
+    --content-pages-sidebar-category-title-font-weight: var(--font-weight--normal);
+    --content-pages-sidebar-category-title-margin: var(--spacer-sm) var(--spacer-sm)
+      var(--spacer-sm) var(--spacer-base);
   }
   @include for-desktop {
     --content-pages-sidebar-category-title-margin: var(--spacer-xl) 0 0 0;

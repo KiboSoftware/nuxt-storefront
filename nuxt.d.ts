@@ -8,6 +8,7 @@
 /// <reference types="@nuxtjs/pwa" />
 /// <reference types="nuxt-i18n" />
 /// <reference types="@storefront-ui/nuxt" />
+/// <reference types="cookie-universal-nuxt" />
 /// <reference types="@nuxt/components" />
 /// <reference types="@nuxt/telemetry" />
 /// <reference path=".nuxt/nitro.d.ts" />
