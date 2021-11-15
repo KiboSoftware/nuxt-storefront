@@ -95,6 +95,9 @@ export default defineNuxtConfig({
       require.resolve("@storefront-ui/shared/styles/_helpers.scss", {
         paths: [process.cwd()],
       }),
+      "./assets/styles/_variables.scss",
+      "./assets/styles/components/_atoms.scss",
+      "./assets/styles/components/_molecules.scss",
     ],
   },
   publicRuntimeConfig: {
