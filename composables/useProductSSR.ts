@@ -1,13 +1,13 @@
-import { mergeProducts } from "./helpers/mergeProduct";
-import type { ConfigureOption } from './types'
+import { mergeProducts } from "./helpers/mergeProduct"
+import type { ConfigureOption } from "./types"
 import { useState, useNuxtApp } from "#app"
 import { Product, ProductOption } from "~~/server/types/GraphQL"
 import { getProductQuery } from "~~/gql/queries"
 import { configureProductMutation } from "~~/gql/mutations"
 
-
 export const useProductSSR = (referenceKey: string) => {
   const nuxt = useNuxtApp()
+  console.log("nuxt product : ", nuxt)
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const product = useState(`use-product-${referenceKey}`, (): Product => {
     return {} as Product
@@ -29,7 +29,11 @@ export const useProductSSR = (referenceKey: string) => {
     loading.value = false
   }
 
-  const configure = async (updatedOption: ConfigureOption, productCode: string, options: ProductOption[]) => {
+  const configure = async (
+    updatedOption: ConfigureOption,
+    productCode: string,
+    options: ProductOption[]
+  ) => {
     try {
       const selectedOptions = options
         .map((opt) => {
@@ -48,7 +52,7 @@ export const useProductSSR = (referenceKey: string) => {
         productCode,
         selectedOptions: {
           options: selectedOptions,
-        }
+        },
       }
 
       loading.value = true

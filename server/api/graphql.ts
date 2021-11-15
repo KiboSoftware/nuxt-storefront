@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { fetch } from "ohmyfetch"
 import type { KiboIncomingMessage, Response } from "../types/Api"
 import { apiAuthClient } from "../lib/auth-clients"
@@ -10,7 +11,7 @@ export default async (req: KiboIncomingMessage, res: Response) => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${authToken}`,
-        'x-vol-user-claims': req._userClaims,
+        "x-vol-user-claims": req._userClaims,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),

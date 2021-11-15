@@ -27,7 +27,13 @@ export default defineNuxtConfig({
   buildModules: ["@nuxtjs/stylelint-module", "@nuxtjs/style-resources"],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/axios", "@nuxtjs/pwa", "nuxt-i18n", "@storefront-ui/nuxt"],
+  modules: [
+    "@nuxtjs/axios",
+    "@nuxtjs/pwa",
+    "nuxt-i18n",
+    "@storefront-ui/nuxt",
+    "cookie-universal-nuxt",
+  ],
   i18n: {
     currency: "USD",
     country: "US",
@@ -96,7 +102,7 @@ export default defineNuxtConfig({
   },
   publicRuntimeConfig: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
-    userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo-at",
+    userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo_at",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
@@ -125,5 +131,6 @@ export default defineNuxtConfig({
         component: resolve(__dirname, "pages/product/index.vue"),
       })
     },
+    middleware: [],
   },
 })
