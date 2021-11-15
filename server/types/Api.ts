@@ -11,6 +11,7 @@ export interface KiboIncomingMessage extends IncomingMessage {
   searchParams?: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   body?: any
+  originalUrl?: string
 }
 export interface Response extends ServerResponse {}
 
@@ -31,7 +32,4 @@ export type SearchProductResponse = QueryResponse<"products", GraphQL.ProductSea
 export type SearchRelatedProductsResponse = QueryResponse<"products", GraphQL.ProductCollection>
 
 // CategoryCollection
-export type CategoryTreeResponse = QueryResponse<
-  "categoriesTree",
-  GraphQL.CategoryCollection
->
+export type CategoryTreeResponse = QueryResponse<"categoriesTree", GraphQL.CategoryCollection>
