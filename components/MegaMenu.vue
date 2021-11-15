@@ -1,10 +1,5 @@
 <template>
-  <SfMegaMenu
-    id="SfMegaMenuColumnId"
-    :visible="visible"
-    title="Title"
-    transition-name="sf-fade"
-  >
+  <SfMegaMenu id="SfMegaMenuColumnId" :visible="visible" title="Title" transition-name="sf-fade">
     <SfMegaMenuColumn
       v-for="(category, key) in megaMenuCategories"
       :key="key"
@@ -12,14 +7,8 @@
       :link="localePath(getCatLink(category))"
     >
       <SfList>
-        <SfListItem
-          v-for="child in category.childrenCategories"
-          :key="child.id"
-        >
-          <SfMenuItem
-            :label="$t(child.content.name)"
-            :link="localePath(getCatLink(child))"
-          />
+        <SfListItem v-for="child in category.childrenCategories" :key="child.id">
+          <SfMenuItem :label="$t(child.content.name)" :link="localePath(getCatLink(child))" />
         </SfListItem>
       </SfList>
     </SfMegaMenuColumn>
@@ -28,8 +17,8 @@
 <script lang="tsx">
 import { SfMegaMenu, SfList, SfMenuItem } from "@storefront-ui/vue"
 import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
-import { useCategoryTree, useUiHelpers } from "@/composables"
-import { categoryGetters } from "@/composables/getters"
+import { useCategoryTree, useUiHelpers } from "../composables"
+import { categoryGetters } from "../composables/getters"
 
 export default defineComponent({
   components: {
@@ -38,7 +27,7 @@ export default defineComponent({
     SfMenuItem,
   },
   setup() {
-    const { allCategories, load: loadCategories } = useCategoryTree()
+    const { categories: allCategories, load: loadCategories } = useCategoryTree()
     const visible = ref(true)
     const megaMenuCategories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)
