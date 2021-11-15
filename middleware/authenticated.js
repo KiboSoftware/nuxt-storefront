@@ -10,7 +10,7 @@ export default async ({ app }) => {
   let userId = null
   const encodedCookie = app.$cookies.get("kibo_at")
   if (encodedCookie) {
-    const cookie = await tryParse(Buffer.from(encodedCookie, "base64").toString("ascii"))
+    const cookie = tryParse(Buffer.from(encodedCookie, "base64").toString("ascii"))
     userId = cookie && cookie.userId
   }
   if (!userId) {
