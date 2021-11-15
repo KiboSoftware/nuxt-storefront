@@ -1,42 +1,21 @@
 export const loginMutation = `
 mutation login($loginInput:CustomerUserAuthInfoInput!) {
   account:createCustomerAuthTicket(customerUserAuthInfoInput:$loginInput) {
-    customerAccount {
-      emailAddress
-      userName
-      firstName
-      lastName
+      customerAccount {
+        id
+        userId
+        firstName
+        lastName
+        emailAddress
+        userName
+        isAnonymous
+      }
+      accessToken
+      accessTokenExpiration
+      refreshToken
+      refreshTokenExpiration
       userId
-      isAnonymous
-      isLocked
-      isActive
-      acceptsMarketing
-      hasExternalPassword
-      id
-      customerSet
-      commerceSummary{
-        totalOrderAmount {
-          amount
-        }
-        orderCount
-        wishlistCount
-        visitsCount
-    }
-    auditInfo {
-    updateDate
-    createDate
-    updateBy
-    createBy
-  },
-  customerSinceDate
-  accountType
-}
-accessToken
-accessTokenExpiration
-refreshToken
-refreshTokenExpiration
-userId
-jwtAccessToken
-}
+      jwtAccessToken
+  }
 }
 `

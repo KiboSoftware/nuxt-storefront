@@ -35,13 +35,7 @@
 
 <script>
 import { SfHeader, SfImage, SfIcon, SfButton } from "@storefront-ui/vue"
-import {
-  computed,
-  ref,
-  onBeforeUnmount,
-  getCurrentInstance,
-  defineComponent,
-} from "@vue/composition-api"
+import { computed, ref, onBeforeUnmount, defineComponent } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
   mapMobileObserver,
@@ -55,6 +49,7 @@ import LocaleSelector from "./LocaleSelector"
 import HeaderNavigation from "./HeaderNavigation"
 import { useUser } from "@/composables/useUser"
 import { userGetters } from "@/composables/getters"
+import { useNuxtApp } from "#app"
 
 export default defineComponent({
   components: {
@@ -68,15 +63,14 @@ export default defineComponent({
   directives: { clickOutside },
   // setup(props, { root }) {
   setup() {
+    const nuxt = useNuxtApp()
+    const app = nuxt.nuxt2Context.app
     const { user, load: loadUser } = useUser()
     const isSearchOpen = ref(false)
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
     const result = ref(null)
-    const router = ref()
-    const instance = getCurrentInstance()
-    router.value = instance?.root.type.router
 
     const accountIcon = computed(() => {
       return isAuthenticated.value ? "profile_fill" : "profile"
@@ -105,7 +99,7 @@ export default defineComponent({
 
     const handleAccountClick = () => {
       if (isAuthenticated.value) {
-        return router.value.push("/my-account")
+        return app.router.push("/my-account")
       }
       toggleLoginModal()
     }
@@ -113,16 +107,6 @@ export default defineComponent({
     useAsync(async () => {
       await loadUser()
     }, null)
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // watch(isAuthenticated, (newVal, oldVal) => {
-    //   if (newVal.value) {
-    //     loadUser()
-    //   }
-    // })
-    // onMounted(async () => {
-    //   await loadUser()
-    // })
 
     onBeforeUnmount(() => {
       unMapMobileObserver()
@@ -137,7 +121,6 @@ export default defineComponent({
       isMobile,
       removeSearchResults,
       handleAccountClick,
-      router,
       isAuthenticated,
     }
   },

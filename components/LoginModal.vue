@@ -32,8 +32,8 @@
             label="Remember me"
             class="form__element form__checkbox"
           />
-          <span v-if="error.login" style="color: red">
-            {{ error.login }}
+          <span v-if="userError.login" style="color: red">
+            {{ userError.login.message }}
           </span>
 
           <SfButton
@@ -134,7 +134,7 @@
   </SfModal>
 </template>
 <script lang="ts">
-import { ref, watch, computed, reactive } from "@vue/composition-api"
+import { ref, watch, computed } from "@vue/composition-api"
 import {
   SfModal,
   SfInput,
@@ -168,15 +168,6 @@ export default {
     const isForgotten = ref(false)
     const rememberMe = ref(false)
     const createAccount = ref(false)
-    const error = reactive({
-      login: null,
-      register: null,
-    })
-
-    const resetErrorValues = () => {
-      error.login = null
-      error.register = null
-    }
 
     const barTitle = computed(() => {
       if (isLogin.value) {
@@ -204,15 +195,9 @@ export default {
     }
 
     const handleForm = (fn) => async () => {
-      resetErrorValues()
-      await fn({ user: form.value })
-      const hasUserErrors = userGetters.hasLoginError(userError.value)
-      if (hasUserErrors) {
-        const loginError = userError.value
-        error.login = loginError.login?.extensions?.response?.body?.message
-        error.register = loginError.register?.message
-        return user
-      } else {
+      await fn(form.value)
+      const hasUserErrors = userGetters.hasUserError(userError.value)
+      if (!hasUserErrors) {
         toggleLoginModal()
       }
     }
@@ -228,7 +213,6 @@ export default {
 
     return {
       form,
-      error,
       userError,
       loading,
       isLogin,

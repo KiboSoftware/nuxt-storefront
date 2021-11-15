@@ -1,8 +1,9 @@
 import { computed, reactive } from "@vue/composition-api"
 import { getCurrentUser } from "../../gql/queries"
 import { loginMutation } from "../../gql/mutations"
-import { LogInUserParams, User } from "../types"
+import { User } from "../types"
 import { storeClientCookie, removeClientCookie } from "../helpers/cookieHelper"
+import * as GraphQLTypes from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
@@ -38,21 +39,21 @@ export const useUser = () => {
   }
 
   // User
-  const login = async (params: LogInUserParams) => {
+  const login = async (params: GraphQLTypes.CustomerUserAuthInfoInput) => {
     const user = {
       loginInput: {
-        username: params.user.username,
-        password: params.user.password,
+        username: params.username,
+        password: params.password,
       },
     }
     try {
       loading.value = true
-      const customerAccount = await fetcher({
+      const response = await fetcher({
         query: loginMutation,
         variables: user,
       })
-      if (customerAccount.data.account && customerAccount.data.account.userId) {
-        const account = customerAccount.data.account
+      if (response?.data?.account?.userId) {
+        const account = response.data.account
         // set cookie
         const cookie = {
           accessToken: account.accessToken,
@@ -62,10 +63,11 @@ export const useUser = () => {
           userId: account?.refreshToken,
         }
         storeClientCookie(authCookieName, cookie)
-        load()
+        await load()
         resetErrorValues()
-      } else if (customerAccount.errors) error.login = customerAccount.errors[0]
-      else return false
+      } else if (response.errors) {
+        error.login = response.errors[0]
+      } else return false
     } catch (err) {
     } finally {
       loading.value = false
@@ -78,7 +80,7 @@ export const useUser = () => {
       loading.value = true
       error.login = null
       await removeClientCookie(authCookieName)
-      load()
+      await load()
     } catch (err) {
     } finally {
       loading.value = false
