@@ -1,0 +1,23 @@
+.sf-badge {
+  --badge-padding: 0.625rem;
+  --badge-width: 3.75rem;
+  --badge-height: 2.313rem;
+  --badge-background: var(--c-white);
+  --badge-color: ar(--_c-dark-primary);
+  --badge-border: 1px solid var(--_c-dark-primary);
+  --badge-font: var(--font-family--primary);
+  --badge-font-line-height: 1.188rem;
+  @include font(
+    --badge-font,
+    var(--font-weight--normal),
+    var(--font-size--base),
+    --badge-font-line-height,
+    var(--font-family--secondary)
+  );
+  @include for-desktop {
+    &:active {
+      background-color: var(--_c-dark-primary);
+      color: var(--c-white);
+    }
+  }
+}

@@ -1,0 +1,17 @@
+.sf-color {
+  --color-width: 2rem;
+  --color-height: 2rem;
+
+  border: 0.3125rem solid #fff;
+  margin: 1px;
+
+  @include for-desktop {
+    &.is-active,
+    &:hover {
+      transform: none;
+    }
+    &:active {
+      outline: 1px solid #000;
+    }
+  }
+}
