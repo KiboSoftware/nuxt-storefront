@@ -9,6 +9,21 @@ export const categoryTreeQuery = `
         ...categoryInfo
         childrenCategories {
           ...categoryInfo
+          childrenCategories {
+            ...categoryInfo
+            childrenCategories {
+              ...categoryInfo
+              childrenCategories {
+                ...categoryInfo
+                childrenCategories {
+                  ...categoryInfo
+                  childrenCategories {
+                    ...categoryInfo
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }

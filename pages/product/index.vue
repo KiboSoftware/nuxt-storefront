@@ -41,12 +41,13 @@
         </div>
 
         <div class="product__price-and-rating">
-          <div>
-            <SfPrice
-              :regular="$n(priceRegular, 'currency')"
-              :special="priceSpecial && $n(priceSpecial, 'currency')"
-            />
-          </div>
+          <SfPrice
+            :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+            :special="
+              product.price.salePrice &&
+              $n(productGetters.getSalePrice(product).special, 'currency')
+            "
+          />
 
           <div class="product__rating">
             <SfRating :score="3" :max="5" />
