@@ -132,6 +132,11 @@ export default defineNuxtConfig({
         path: "/product/:productCode/",
         component: resolve(__dirname, "pages/product/index.vue"),
       })
+      routes.push({
+        name: "categories",
+        path: "/c/:categoryCode",
+        component: resolve(__dirname, "pages/category/index.vue"),
+      })
     },
     middleware: [],
   },

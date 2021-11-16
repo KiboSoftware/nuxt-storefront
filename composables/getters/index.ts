@@ -2,3 +2,4 @@
 export * from "./categoryGetters"
 export * from "./productGetters"
 export * from "./user"
+export * from "./facetGetters"

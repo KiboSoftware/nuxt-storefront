@@ -9,8 +9,19 @@ export const getRating = (product: Product) => {
   const attr = product?.properties?.find((property) => property?.attributeFQN === ratingAttrFQN)
   return attr?.values?.pop()?.value
 }
-export const getPrice = (product: Product): number => product.price?.price || 0
+export const getPrice = (product: Product): { regular: number; special: number } => {
+  return {
+    regular: product?.price?.price || 0,
+    special: product?.price?.salePrice || 0,
+  }
+}
 export const getSalePrice = (product: Product): number => product?.price?.salePrice || 0
+
+export const getSlug = (product: Product): string => product?.content?.seoFriendlyUrl || ""
+
+export const getCoverImage = (product: Product): string =>
+  product?.content?.productImages?.[0]?.imageUrl || ""
+
 export const getDescription = (product: Product): string =>
   product?.content?.productFullDescription || ""
 
@@ -38,18 +49,20 @@ export const getBreadcrumbs = (product: Product): Breadcrumb[] => {
 export const getProperties = (product: Product) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reducer = (accum: any, property: any) => {
-    const values = property?.values?.map((val: ProductOptionValue) => val?.value || val?.stringValue)
+    const values = property?.values?.map(
+      (val: ProductOptionValue) => val?.value || val?.stringValue
+    )
     const key = property?.attributeDetail?.name as string
     accum[key] = values
     return accum
   }
   return product?.properties?.filter((attr) => !attr?.isHidden).reduce(reducer, {})
 }
-export const getOptionSelectedValue = (option: ProductOption) =>  {
-   const selectedValue = option?.values?.find(value => value?.isSelected)
-   return selectedValue?.value || selectedValue?.stringValue
+export const getOptionSelectedValue = (option: ProductOption) => {
+  const selectedValue = option?.values?.find((value) => value?.isSelected)
+  return selectedValue?.value || selectedValue?.stringValue
 }
-export const getOptionName = (option:ProductOption): string => option?.attributeDetail?.name || ''
+export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
 
 export const productGetters = {
@@ -63,5 +76,7 @@ export const productGetters = {
   getProperties,
   getOptionSelectedValue,
   getOptionName,
-  getOptions
+  getOptions,
+  getSlug,
+  getCoverImage,
 }

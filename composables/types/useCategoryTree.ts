@@ -7,6 +7,12 @@ export type QueryResponse<K extends string, V> = ApolloQueryResult<Record<K, V>>
 
 export interface uiHelpersReturnType {
   getCatLink?: (category: GraphQL.PrCategory) => string
+  getFacetsFromURL: () => {
+    categoryCode: string
+    page: number
+    itemsPerPage: number
+    phrase: string
+  }
 }
 
 // categories
