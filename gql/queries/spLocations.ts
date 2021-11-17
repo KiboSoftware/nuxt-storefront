@@ -1,6 +1,6 @@
 export const getSpLocations = `
-query GetISPULocations{
-    spLocations(filter: ""){
+query GetISPULocations($filter: String){
+    spLocations(filter: $filter){
       items {
       code
       name

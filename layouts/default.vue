@@ -5,7 +5,8 @@
     <div class="content">
       <Nuxt />
     </div>
-
+    <StoreLocatorModal />
+    <Nuxt />
     <AppFooter />
     <BottomNavigation />
   </div>

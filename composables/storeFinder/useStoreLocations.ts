@@ -1,12 +1,12 @@
-import { Location } from "./../server/types/GraphQL"
-import { getSpLocations } from "./../gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"
+import { getSpLocations } from "~~/gql/queries/spLocations"
+import { Location } from "~~/server/types/GraphQL"
 
 export const useStoreLocations = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const locations = useState(`use-storeLocations`, (): Location => {
-    return {} as Location
+  const locations = useState(`use-storeLocations`, (): Location[] => {
+    return [] as Location[]
   })
   const loading = useState(`use-storeLocations-loading`, () => false)
   const error = useState(`use-storeLocations-error`, () => null)
@@ -27,7 +27,7 @@ export const useStoreLocations = () => {
   return {
     locations,
     search,
-    loading,
-    error,
+    loading: computed(() => loading.value),
+    error: computed(() => error),
   }
 }

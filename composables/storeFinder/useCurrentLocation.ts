@@ -33,7 +33,7 @@ export const useCurrentLocation = () => {
   return {
     currentLocation,
     loadWithNavigator,
-    loading,
-    error,
+    loading: computed(() => loading.value),
+    error: computed(() => error),
   }
 }

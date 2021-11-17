@@ -17,6 +17,24 @@
           <SfButton
             v-e2e="'app-header-account'"
             class="sf-button--pure sf-header__action"
+            @click="handleStoreLocatorClick"
+          >
+            <SfIcon icon="marker_fill" size="1.25rem" />
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+              "
+            >
+              <span style="font-size: 12px">{{ purchaseLocation.name }}</span>
+              <!-- <span style="font-size: 12px">{{ purchaseLocation.address.address1 }}</span> -->
+            </div>
+          </SfButton>
+          <SfButton
+            v-e2e="'app-header-account'"
+            class="sf-button--pure sf-header__action"
             @click="handleAccountClick"
           >
             <SfIcon :icon="accountIcon" size="1.25rem" />
@@ -45,10 +63,12 @@ import {
 import debounce from "lodash.debounce"
 import { useAsync } from "@nuxtjs/composition-api"
 import useUiState from "../composables/useUiState"
-import LocaleSelector from "./LocaleSelector"
+import { usePurchaseLocation } from "../composables"
 import HeaderNavigation from "./HeaderNavigation"
+import LocaleSelector from "./LocaleSelector"
 import { useUser } from "@/composables/useUser"
 import { userGetters } from "@/composables/getters"
+
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -66,6 +86,9 @@ export default defineComponent({
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { user, load: loadUser } = useUser()
+
+    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+
     const isSearchOpen = ref(false)
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
@@ -76,7 +99,7 @@ export default defineComponent({
       return isAuthenticated.value ? "profile_fill" : "profile"
     })
 
-    const { toggleLoginModal } = useUiState()
+    const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
     const handleSearch = debounce(async (paramValue) => {
       if (!paramValue.target) {
         term.value = paramValue
@@ -106,7 +129,12 @@ export default defineComponent({
 
     useAsync(async () => {
       await loadUser()
+      await loadPurchaseLocation()
     }, null)
+
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
+    }
 
     onBeforeUnmount(() => {
       unMapMobileObserver()
@@ -122,6 +150,8 @@ export default defineComponent({
       removeSearchResults,
       handleAccountClick,
       isAuthenticated,
+      handleStoreLocatorClick,
+      purchaseLocation,
     }
   },
 })
