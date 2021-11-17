@@ -1,4 +1,8 @@
 .sf-button {
   --button-height: 2.625rem;
   --button-border-radius: 0.188rem;
+
+  &--text {
+    height: 1.15rem;
+  }
 }

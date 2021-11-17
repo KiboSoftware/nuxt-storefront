@@ -1,0 +1,26 @@
+.sf-gallery {
+  &__thumbs {
+    width: 7.437rem;
+    flex-basis: 7.437rem;
+  }
+
+  &__item {
+    border: 1px black solid;
+    flex-basis: 7.437rem;
+  }
+
+  &__stage {
+    border: 1px black solid;
+    max-width: 31.625rem;
+  }
+}
+
+.sf-gallery .sf-image {
+  object-fit: contain;
+
+  @include for-mobile {
+    ::v-deep .sf-image {
+      height: 50vh;
+    }
+  }
+}
