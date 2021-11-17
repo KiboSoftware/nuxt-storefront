@@ -20,7 +20,7 @@
       1.6,
       var(--font-family--primary)
     );
-    @include border(--search-bar-border, 1px, solid, var(--c-dark-variant));
+    @include border(--search-bar-border, 1px, solid, var(--_c-gray-middle));
     &:focus {
       --search-bar-border-color: var(--_c-green-primary);
     }

@@ -1,0 +1,10 @@
+.sf-rating {
+  &__icon {
+    --icon-size: 1.125rem !important;
+    --icon-color: var(--_c-green-primary);
+    --icon-color-negative: var(--_c-gray-middle);
+    &--negative {
+      --icon-color: var(--icon-color-negative);
+    }
+  }
+}
