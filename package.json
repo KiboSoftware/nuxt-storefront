@@ -14,7 +14,10 @@
     "prettier:format": "prettier --write .",
     "lint": "yarn lint:js && yarn lint:style && yarn prettier:format",
     "test": "jest",
-    "generate-types": "graphql-codegen --config codegen.yml"
+    "generate-types": "graphql-codegen --config codegen.yml",
+    "prebuild": "node ./.build/preBuild.js",
+    "predev": "yarn prebuild"
+
   },
   "lint-staged": {
     "*.{ts,js,vue,css}": [
