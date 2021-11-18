@@ -46,7 +46,7 @@
     <div class="main section">
       <div class="sidebar desktop-only">
         <LazyHydrate when-idle>
-          <SfAccordion :open="activeCategory" :show-chevron="true">
+          <SfAccordion :show-chevron="true">
             <SfAccordionItem
               v-for="(accordion, i) in categoryTree"
               :key="i"
@@ -418,36 +418,32 @@ export default {
     const { getFacetsFromURL, getCatLink } = useUiHelpers()
     const { categoryCode } = getFacetsFromURL()
     const { result, search, loading } = useFacet(categoryCode)
+
+    const visibleCategories = (categories, categoriesVisible = 5) => {
+      showMoreButton.value = !showMoreButton.value
+      navCategories.value = categories?.slice(0, categoriesVisible)
+    }
+
+    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const navCategories = ref([])
     const showMoreButton = ref(false)
+    const categoryName = computed(() => {
+      const categories = categoryTree.value
+      return categories && categories[0]?.content?.name
+    })
+    const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
+    const childrenCategories = computed(() => {
+      const categories = categoryTree.value
+      return categories && categories[0]?.childrenCategories
+    })
 
     useAsync(async () => {
       await search(getFacetsFromURL())
       visibleCategories(childrenCategories.value)
     }, null)
-
-    const products = computed(() => result?.value?.products)
-    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
-    const categoryTree = computed(() => result?.value?.categories)
-    const activeCategory = computed(() => categoryTree[0]?.content?.name)
-    const categoryName = computed(() => {
-      const categories = categoryTree.value
-      return categories && categories[0]?.content?.name
-    })
-    const childrenCategories = computed(() => {
-      const categories = categoryTree.value
-      return categories && categories[0]?.childrenCategories
-    })
-    const visibleCategories = (categories, categoriesVisible = 5) => {
-      showMoreButton.value = !showMoreButton.value
-      navCategories.value = categories.slice(0, categoriesVisible)
-    }
-
     return {
-      products,
       breadcrumbs,
       categoryTree,
-      activeCategory,
       loading,
       getFacetsFromURL,
       getCatLink,
