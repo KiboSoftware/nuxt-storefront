@@ -1,7 +1,6 @@
 <template>
   <div>
-    <TopBar />
-    <AppHeader />
+    <AppHeaderCustom />
     <LoginModal />
     <div class="content">
       <Nuxt />

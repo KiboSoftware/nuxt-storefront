@@ -24,7 +24,14 @@ export default defineNuxtConfig({
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: ["@nuxtjs/stylelint-module", "@nuxtjs/style-resources"],
+  buildModules: ["@nuxtjs/stylelint-module", "@nuxtjs/style-resources", "@nuxtjs/fontawesome"],
+  fontawesome: {
+    icons: {
+      solid: true,
+      brands: true,
+      regular: true,
+    },
+  },
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [

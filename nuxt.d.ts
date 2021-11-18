@@ -3,6 +3,7 @@
 
 /// <reference types="@nuxtjs/stylelint-module" />
 /// <reference types="@nuxtjs/style-resources" />
+/// <reference types="@nuxtjs/fontawesome" />
 /// <reference types="@nuxt/bridge-edge" />
 /// <reference types="@nuxtjs/axios" />
 /// <reference types="@nuxtjs/pwa" />

@@ -34,6 +34,7 @@
     ]
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@kibocommerce/graphql-client": "^1.0.3-beta.7",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.3.5",
@@ -62,6 +63,8 @@
     "@babel/preset-typescript": "^7.15.0",
     "@commitlint/cli": "^13.2.0",
     "@commitlint/config-conventional": "^12.1.4",
+    "@fortawesome/free-brands-svg-icons": "^5.15.4",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@graphql-codegen/cli": "2.2.0",
     "@graphql-codegen/typescript": "2.2.2",
     "@nuxt/bridge": "npm:@nuxt/bridge-edge",
@@ -69,6 +72,7 @@
     "@nuxt/typescript-build": "^2.1.0",
     "@nuxtjs/eslint-config-typescript": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/fontawesome": "^1.1.2",
     "@nuxtjs/stylelint-module": "^4.0.0",
     "@types/jest": "^27.0.2",
     "@vue/test-utils": "^1.2.1",
