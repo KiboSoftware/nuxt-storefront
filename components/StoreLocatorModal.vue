@@ -115,7 +115,7 @@ export default {
     const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
     const { currentLocation, loadWithNavigator } = useCurrentLocation()
     const { locations, search: searchStoreLocations } = useStoreLocations()
-    const { set } = usePurchaseLocation()
+    const { set, load: loadPurchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
 
     useAsync(async () => {
@@ -128,6 +128,7 @@ export default {
 
     const closeModal = () => {
       toggleStoreLocatorModal()
+      selectedStore.value = ""
     }
 
     const storeDetails = computed(() => {
@@ -137,6 +138,7 @@ export default {
     const handleStoreChange = (locationCode: string) => {
       selectedStore.value = locationCode
       set(locationCode)
+      loadPurchaseLocation()
     }
 
     return {

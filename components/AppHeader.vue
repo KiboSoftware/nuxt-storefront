@@ -28,7 +28,7 @@
                 justify-content: center;
               "
             >
-              <span style="font-size: 12px">{{ purchaseLocation.name }}</span>
+              <span style="font-size: 12px">{{ selectedLocation }}</span>
               <!-- <span style="font-size: 12px">{{ purchaseLocation.address.address1 }}</span> -->
             </div>
           </SfButton>
@@ -67,7 +67,7 @@ import { usePurchaseLocation } from "../composables"
 import HeaderNavigation from "./HeaderNavigation"
 import LocaleSelector from "./LocaleSelector"
 import { useUser } from "@/composables/useUser"
-import { userGetters } from "@/composables/getters"
+import { storeLocationGetters, userGetters } from "@/composables/getters"
 
 import { useNuxtApp } from "#app"
 
@@ -140,6 +140,10 @@ export default defineComponent({
       unMapMobileObserver()
     })
 
+    const selectedLocation = computed(() =>
+      storeLocationGetters.getPurchaseLocation(purchaseLocation.value)
+    )
+
     return {
       user,
       loadUser,
@@ -151,7 +155,7 @@ export default defineComponent({
       handleAccountClick,
       isAuthenticated,
       handleStoreLocatorClick,
-      purchaseLocation,
+      selectedLocation,
     }
   },
 })

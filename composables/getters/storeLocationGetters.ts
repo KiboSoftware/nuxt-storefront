@@ -5,6 +5,10 @@ interface ITimeDetails {
   closeTime: string
 }
 
+const getPurchaseLocation = (purchaseLocation: Location): string => {
+  return purchaseLocation.name as string
+}
+
 const getCode = (location: Location): string => {
   return location.code as string
 }
@@ -75,4 +79,5 @@ export const storeLocationGetters = {
   getState,
   getZip,
   getHours,
+  getPurchaseLocation,
 }
