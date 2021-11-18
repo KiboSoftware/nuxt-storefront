@@ -11,7 +11,9 @@ export const usePurchaseLocation = () => {
   const app = nuxt.nuxt2Context.app
 
   const purchaseLocation = useState(`use-purchaseLocation`, (): Location => {
-    return {} as Location
+    return {
+      name: "Select My Store",
+    } as Location
   })
   const loading = useState(`use-purchaseLocation-loading`, () => false)
   const error = useState(`use-purchaseLocation-error`, () => null)

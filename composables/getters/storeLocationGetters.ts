@@ -54,7 +54,7 @@ const getLocations = (locations: Location[]) => {
         phone: getPhone(location),
         address1: getAddress1(location),
         address2: getAddress2(location),
-        StreetAddress: `${getAddress1(location)}, ${getAddress2(location)}`,
+        streetAddress: `${getAddress1(location)}, ${getAddress2(location)}`,
         cityStateZip: `${getCity(location)}, ${getState(location)}, ${getZip(location)}`,
         city: getCity(location),
         state: getState(location),

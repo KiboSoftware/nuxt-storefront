@@ -17,9 +17,9 @@ query GetISPULocations($filter: String){
       tuesday { openTime closeTime}
       wednesday { openTime closeTime}
       thursday { openTime closeTime}
+      friday { openTime closeTime}
       saturday { openTime closeTime}
       sunday { openTime closeTime}
-      friday { openTime closeTime}
       }
       geo {
       lat
