@@ -10,7 +10,8 @@
     &:hover {
       transform: none;
     }
-    &:active {
+    &:active,
+    &--active {
       outline: 1px solid #000;
     }
   }

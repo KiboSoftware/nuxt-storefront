@@ -21,7 +21,8 @@
       border-color: var(--_c-green-primary);
     }
     @include for-desktop {
-      &:active {
+      &:active,
+      &--active {
         background-color: var(--_c-white);
         color: var(--c-white);
         border-width: 3px;
