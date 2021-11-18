@@ -1,10 +1,40 @@
 <template>
-  <div id="product">
+  <div>
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
+
     <div class="product">
-      <LazyHydrate when-idle>
-        <SfGallery :images="productGallery" class="product__gallery" />
-      </LazyHydrate>
+      <div>
+        <div class="product__gallery">
+          <LazyHydrate when-idle>
+            <SfGallery
+              :images="productGallery"
+              :thumb-width="115"
+              :thumb-height="115"
+              :image-width="506"
+              :image-height="506"
+            />
+          </LazyHydrate>
+        </div>
+
+        <div class="product__specs">
+          <SfHeading
+            title="Product Specs"
+            :level="4"
+            class="
+              sf-heading--product-spec sf-heading--no-underline sf-heading--left
+              product__heading
+            "
+          />
+          <div class="sf-list--product-spec">
+            <SfList>
+              <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
+                {{ i }}: {{ p.join(", ") }}
+              </SfListItem>
+            </SfList>
+          </div>
+        </div>
+      </div>
+
       <div class="product__info">
         <div class="product__header">
           <SfHeading
@@ -19,6 +49,7 @@
             class="product__drag-icon smartphone-only"
           />
         </div>
+
         <div class="product__price-and-rating">
           <SfPrice
             :regular="$n(productGetters.getPrice(product), 'currency')"
@@ -26,72 +57,99 @@
               product.price.salePrice && $n(productGetters.getSalePrice(product), 'currency')
             "
           />
-          <div>
-            <div class="product__rating">
-              <SfRating :score="0" :max="5" />
-              <a v-if="!!product.totalReviews" href="#" class="product__count">
-                ({{ product.totalReviews }})
-              </a>
-            </div>
+
+          <div class="product__rating">
+            <SfRating :score="3" :max="5" />
+            <a v-if="!!product.totalReviews" href="#" class="product__count">
+              ({{ product.totalReviews }})
+            </a>
+
             <SfButton class="sf-button--text" data-testid="read-all-reviews" @click="changeTab(2)">
-              Read all reviews
+              {{ $t("WriteReview") }}
             </SfButton>
           </div>
         </div>
-        <div>
-          <p class="product__description desktop-only" v-html="description"></p>
-          <SfButton
-            data-cy="product-btn_size-guide"
-            class="sf-button--text desktop-only product__guide"
-          >
-            {{ $t("Size guide") }}
-          </SfButton>
-          <SfSelect
-            v-for="option in options"
-            :key="option.attributeFQN"
-            data-cy="product-select_size"
-            :value="productGetters.getOptionSelectedValue(option)"
-            :label="productGetters.getOptionName(option)"
-            class="sf-select--underlined product__select-size"
-            :required="option.isRequired"
-            @input="(value) => selectOption({ value }, option)"
-          >
-            <SfSelectOption
-              v-for="optionVal in option.values"
-              :key="optionVal.value"
-              :value="optionVal.value"
+
+        <div class="product__content">
+          <div class="product__description desktop-only" v-html="description"></div>
+
+          <div v-if="productColors && productColors.values" class="product__colors desktop-only">
+            <div class="product__color-label">{{ $t("Color") }}:</div>
+
+            <SfColor
+              v-for="(obj, i) in productColors.values"
+              :key="i"
+              data-cy="product-color_update"
+              :color="obj.value"
+              :class="{ 'sf-color--active': obj.isSelected }"
+              @click="
+                selectOption({ value: obj.value }, { attributeFQN: productColors.attributeFQN })
+              "
+            />
+          </div>
+
+          <div v-if="productSizes && productSizes.values" class="product__size">
+            <div
+              v-for="obj in productSizes.values"
+              :key="obj.value"
+              class="sf-badge"
+              :class="{ 'sf-badge--active': obj.isSelected }"
+              @click="
+                selectOption({ value: obj.value }, { attributeFQN: productSizes.attributeFQN })
+              "
             >
-              {{ optionVal.stringValue }}
-            </SfSelectOption>
-          </SfSelect>
-          <SfAddToCart v-model="qty" class="product__add-to-cart" @click="addToCart" />
-          <SfButton class="sf-button--text desktop-only product__save"> Save for later </SfButton>
-          <SfButton class="sf-button--text desktop-only product__compare">
-            Add to compare
-          </SfButton>
+              {{ obj.value }}
+            </div>
+          </div>
+
+          <SfDivider class="divider-first" />
+          <SfRadio
+            ref="homeRef"
+            name="Shipping"
+            value="home"
+            label="Ship to Home"
+            details="Available to Ship"
+            class="sf-radio"
+          />
+          <SfRadio
+            ref="storeRef"
+            name="Shipping"
+            value="store"
+            label="Pickup in Store"
+            details="Available at: Downtown Store"
+            class="sf-radio"
+          />
+          <SfDivider class="divider-second" />
+
+          <div class="add-to-cart-wrapper">
+            <div class="qty">Qty:</div>
+            <SfAddToCart v-model="qty" class="product__add-to-cart" @click="addToCart" />
+
+            <button
+              class="one-click-chekout color-secondary sf-button"
+              :aria-disabled="false"
+              :link="null"
+            >
+              1-Click Checkout
+            </button>
+          </div>
+
+          <button class="add-to-wishlist color-light sf-button" :aria-disabled="false" :link="null">
+            Add to wishlist
+          </button>
+
+          <div>
+            <SfHeading
+              title="Product Information"
+              :level="4"
+              class="sf-heading--no-underline sf-heading--left product__heading"
+            />
+
+            <div class="product__description">
+              {{ $t("Product description") }}
+            </div>
+          </div>
         </div>
-        <LazyHydrate when-idle>
-          <SfTabs id="tabs" :open-tab="openTab" class="product__tabs" @click:tab="changeTab">
-            <SfTab data-cy="product-tab_description" title="Description">
-              <div class="product__description">
-                {{ $t("Product description") }}
-              </div>
-              <SfProperty
-                v-for="(p, i) in properties"
-                :key="i"
-                :name="i"
-                :value="p.join(', ')"
-                class="product__property"
-              >
-                <template v-if="i === 'Category'" #value>
-                  <SfButton class="product__property__button sf-button--text">
-                    {{ p }}
-                  </SfButton>
-                </template>
-              </SfProperty>
-            </SfTab>
-          </SfTabs>
-        </LazyHydrate>
       </div>
     </div>
   </div>
@@ -104,12 +162,13 @@ import {
   SfPrice,
   SfRating,
   SfIcon,
-  SfTabs,
-  SfProperty,
   SfButton,
   SfAddToCart,
-  SfSelect,
   SfBreadcrumbs,
+  SfColor,
+  SfDivider,
+  SfRadio,
+  SfList,
 } from "@storefront-ui/vue"
 
 import { defineComponent, computed } from "@vue/composition-api"
@@ -119,6 +178,7 @@ import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
 import { useProductSSR } from "@/composables/useProductSSR"
 import { productGetters } from "@/composables/getters"
+import { useNuxtApp } from "#app"
 
 export default defineComponent({
   name: "Product",
@@ -128,18 +188,22 @@ export default defineComponent({
     SfPrice,
     SfRating,
     SfIcon,
-    SfTabs,
-    SfProperty,
     SfButton,
     SfAddToCart,
-    SfSelect,
     SfBreadcrumbs,
     LazyHydrate,
+    SfColor,
+    SfDivider,
+    SfRadio,
+    SfList,
   },
 
   setup(_, context) {
     const { productCode } = context.root.$route.params
     const { load, product, configure } = useProductSSR(productCode)
+    const nuxt = useNuxtApp()
+    const colorAttributeFQN = nuxt.nuxt2Context.$config.colorAttributeFQN
+    const sizeAttributeFQN = nuxt.nuxt2Context.$config.sizeAttributeFQN
 
     useAsync(async () => {
       await load(productCode)
@@ -151,40 +215,45 @@ export default defineComponent({
     const rating = computed(() => productGetters.getRating(product.value))
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
+    const productColors = computed(() =>
+      options.value?.find(
+        (obj) => obj?.attributeFQN?.toLowerCase() === colorAttributeFQN.toLowerCase()
+      )
+    )
+    const productSizes = computed(() =>
+      options.value?.find(
+        (obj) => obj?.attributeFQN.toLowerCase() === sizeAttributeFQN.toLowerCase()
+      )
+    )
+
     const addToCart = () => {}
-    const changeTab = () => {}
+
     const selectOption = async ({ value }, { attributeFQN }) => {
       await configure({ value, attributeFQN }, product.value?.productCode, options.value)
     }
+
     return {
       current: 1,
       addToCart,
-      changeTab,
       selectOption,
       rating,
       qty: 1,
       breadcrumbs,
       options,
+      productColors,
+      productSizes,
       productGallery,
       description,
       properties,
       productGetters,
       product,
       isOpenNotification: false,
-      openTab: 1,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
-#product {
-  box-sizing: border-box;
-  @include for-desktop {
-    max-width: 1272px;
-    margin: 0 auto;
-  }
-}
 .product {
   @include for-desktop {
     display: flex;
@@ -193,23 +262,16 @@ export default defineComponent({
   &__info {
     margin: var(--spacer-sm) auto;
     @include for-desktop {
-      max-width: 32.625rem;
-      margin: 0 0 0 7.5rem;
+      max-width: 36.35rem;
+      margin: 0 0 0 5.5rem;
     }
   }
 
   &__header {
-    --heading-title-color: var(--c-link);
-    --heading-title-font-weight: var(--font-weight--bold);
-    --heading-padding: 0;
-
-    margin: 0 var(--spacer-sm);
     display: flex;
     justify-content: space-between;
     @include for-desktop {
-      --heading-title-font-weight: var(--font-weight--semibold);
-
-      margin: 0 auto;
+      margin: 0 0;
     }
   }
 
@@ -219,19 +281,15 @@ export default defineComponent({
 
   &__price-and-rating {
     margin: 0 var(--spacer-sm) var(--spacer-base);
-    align-items: center;
+    align-items: flex-start;
     @include for-desktop {
-      display: flex;
-      justify-content: space-between;
-      margin: var(--spacer-sm) 0 var(--spacer-lg) 0;
+      margin: var(--spacer-xs) 0 0 0;
     }
   }
 
   &__rating {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin: var(--spacer-xs) 0 var(--spacer-xs);
+    gap: var(--spacer-xs);
   }
 
   &__count {
@@ -257,11 +315,12 @@ export default defineComponent({
       var(--font-family--primary)
     );
   }
-  &__select-size {
-    margin: 0 var(--spacer-sm);
-    @include for-desktop {
-      margin: 0;
-    }
+
+  &__size {
+    display: flex;
+    margin: 21px 0;
+    gap: 10px;
+    cursor: pointer;
   }
 
   &__colors {
@@ -275,15 +334,11 @@ export default defineComponent({
 
     display: flex;
     align-items: center;
-    margin-top: var(--spacer-xl);
   }
 
   &__color-label {
-    margin: 0 var(--spacer-lg) 0 0;
-  }
-
-  &__color {
-    margin: 0 var(--spacer-2xs);
+    margin: 0 0 0 0;
+    font-size: 12px;
   }
 
   &__add-to-cart {
@@ -302,15 +357,6 @@ export default defineComponent({
 
   &__compare {
     margin-top: 0;
-  }
-
-  &__tabs {
-    margin: var(--spacer-lg) auto var(--spacer-2xl);
-
-    --tabs-title-font-size: var(--font-size--lg);
-    @include for-desktop {
-      margin-top: var(--spacer-2xl);
-    }
   }
 
   &__property {
@@ -350,23 +396,33 @@ export default defineComponent({
     }
   }
 
-  &__gallery {
-    flex: 1;
-    ::v-deep .sf-image {
-      object-fit: contain;
-      height: 80vh;
+  &__heading {
+    margin: var(--spacer-sm) auto;
+    @include for-desktop {
+      margin: 2.5rem 0 0 0;
     }
-    @include for-mobile {
-      ::v-deep .sf-image {
-        object-fit: contain;
-        height: 50vh;
-      }
-    }
+  }
+
+  &__specs {
+    width: 21rem;
+    margin-top: 2.81rem;
   }
 }
 
-.breadcrumbs {
-  margin: var(--spacer-base) auto var(--spacer-lg);
+.sf-heading {
+  &--product-spec {
+    border: solid;
+    border: 1px solid #cdcdcd;
+    border-bottom: none;
+    padding-left: 1.31rem;
+  }
+}
+
+.sf-list {
+  &--product-spec {
+    padding: 0.675rem 1.31rem;
+    border: 1px solid #cdcdcd;
+  }
 }
 
 @keyframes moveicon {
@@ -379,5 +435,78 @@ export default defineComponent({
   100% {
     transform: translate3d(0, 0, 0);
   }
+}
+
+.divider-first {
+  margin-bottom: var(--spacer-sm);
+}
+
+.divider-second {
+  margin-top: var(--spacer-sm);
+}
+
+// Add to cart button
+.add-to-cart-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--spacer-sm);
+  margin: var(--spacer-sm) 0 var(--spacer-xs) 0;
+}
+
+.qty {
+  font-size: 1.125rem;
+}
+
+.sf-add-to-cart.product__add-to-cart {
+  margin: 0 0 0 0;
+  width: 21rem;
+  display: flex;
+  align-items: center;
+}
+::v-deep .sf-add-to-cart__select-quantity.sf-quantity-selector {
+  background-color: white;
+}
+
+::v-deep .sf-quantity-selector {
+  width: 8rem;
+}
+
+::v-deep .sf-add-to-cart__button.sf-button {
+  width: 11.6rem; //186px
+  height: var(--spacer-xl);
+  border-radius: 4px;
+}
+
+::v-deep .sf-quantity-selector__button.sf-button {
+  padding: 0;
+  border: 0.5px solid #2b2b2b;
+  border-radius: 100%;
+  height: var(--spacer-base);
+  width: var(--spacer-base);
+}
+
+::v-deep .sf-input__wrapper {
+  margin: var(--spacer-2xs) var(--spacer-sm);
+  border: 1px solid #2b2b2b;
+  width: 2.68rem;
+  height: 2.31rem;
+  font-size: 1rem;
+}
+
+.one-click-chekout {
+  width: 11.6rem; //186px
+  height: var(--spacer-xl);
+  border-radius: 4px;
+  font-weight: normal;
+}
+
+.add-to-wishlist {
+  width: 11.6rem;
+  height: var(--spacer-xl);
+  border-radius: 4px;
+  margin-left: 200px;
+  font-weight: normal;
+  background-color: #fafafa;
+  border: 1px solid #cdcdcd;
 }
 </style>
