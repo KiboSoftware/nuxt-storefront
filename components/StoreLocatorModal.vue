@@ -122,8 +122,12 @@ export default {
       await searchStoreLocations()
     }, null)
 
-    const handleCurrentLocation = () => {
-      loadWithNavigator()
+    const handleCurrentLocation = async () => {
+      await loadWithNavigator()
+      await searchStoreLocations({
+        latitude: currentLocation.value.latitude,
+        longitude: currentLocation.value.longitude,
+      })
     }
 
     const closeModal = () => {
@@ -160,9 +164,6 @@ export default {
 .sf-modal {
   --modal-width: 39.375rem;
   --modal-content-padding: 0;
-  // &__content {
-  //   padding: var(--modal-content-padding, var(--spacer-base) 0);
-  // }
 }
 .title {
   font-weight: 700;

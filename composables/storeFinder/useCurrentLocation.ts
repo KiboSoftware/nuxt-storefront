@@ -1,32 +1,35 @@
 import { useState } from "#app"
 
-interface ILocation {
-  longitude: number
-  latitude: number
+export interface ILocation {
+  longitude: string
+  latitude: string
 }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getCurrentPosition = (): Promise<any> =>
+  new Promise((resolve, reject) => window.navigator.geolocation.getCurrentPosition(resolve, reject))
+
 export const useCurrentLocation = () => {
   const currentLocation = useState(`use-current-location`, (): ILocation => {
     return {
-      latitude: 0,
-      longitude: 0,
+      latitude: "",
+      longitude: "",
     }
   })
   const loading = useState(`use-current-location-loading`, () => false)
   const error = useState(`use-current-location-error`, (): string | null => null)
-  const loadWithNavigator = () => {
+  const loadWithNavigator = async () => {
     if (process.browser) {
-      window.navigator.geolocation.getCurrentPosition(
-        (response) => {
-          currentLocation.value = {
-            latitude: response.coords.latitude,
-            longitude: response.coords.longitude,
-          }
-        },
-        (err) => (error.value = err.message),
-        {
-          enableHighAccuracy: true,
+      loading.value = true
+      try {
+        const response: { coords: ILocation } = await getCurrentPosition()
+        currentLocation.value = {
+          latitude: String(response.coords.latitude),
+          longitude: String(response.coords.longitude),
         }
-      )
+        loading.value = false
+      } catch (reject) {
+        loading.value = false
+      }
     }
   }
 
