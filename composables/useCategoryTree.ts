@@ -1,25 +1,29 @@
-import type { Ref } from "@vue/composition-api"
-import { ref, computed } from "@vue/composition-api"
-import apiHelper from "../utils/apiHelper"
+import { computed } from "@vue/composition-api"
+import { categoryTreeQuery } from "../gql/queries"
+import * as GraphQLTypes from "@/server/types/GraphQL"
 import * as types from "@/composables/types"
 
-const getCategoryApiPath = "/api/category-tree/index"
-
 export const useCategoryTree = (): types.UseCategoryTreeResponse => {
-  const categories = ref()
-  const loading = ref(false)
-  const error = ref()
+  const nuxt = useNuxtApp()
+  const fetcher = nuxt.nuxt2Context.$gqlFetch
+  const categories = useState(`use-category-tree-categories`, (): GraphQLTypes.PrCategory[] => {
+    return [] as GraphQLTypes.PrCategory[]
+  })
+
+  const loading = useState(`use-category-tree-loading`, () => false)
+  const error = useState(`use-category-tree-error`, () => null)
 
   // load
   const load = async () => {
     try {
       loading.value = true
-      const url = `${getCategoryApiPath}`
-      const categoriesResponse = await apiHelper.getCategoryTree("GET", url, {})
-      categories.value = categoriesResponse.data.categoriesTree.items
+      const response = await fetcher({
+        query: categoryTreeQuery,
+        variables: {},
+      })
+      categories.value = response.data.categoriesTree.items
       error.value = null
     } catch (err) {
-      error.value = err
     } finally {
       loading.value = false
     }
@@ -28,8 +32,8 @@ export const useCategoryTree = (): types.UseCategoryTreeResponse => {
   // return
   return {
     load,
-    allCategories: categories as Ref<{}>,
+    categories,
     loading: computed(() => loading.value),
-    error: computed(() => error.value),
+    error: computed(() => error),
   }
 }

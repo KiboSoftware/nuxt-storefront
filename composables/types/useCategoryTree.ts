@@ -15,7 +15,7 @@ export type CategoriesResponse = QueryResponse<"items", GraphQL.PrCategory>
 // useCategoryTree
 export type UseCategoryTreeResponse = {
   load: () => Promise<void>
-  allCategories: Ref<{}>
+  categories: Ref<GraphQL.PrCategory[]>
   loading: Ref<boolean>
   error: Ref<string | {}>
 }

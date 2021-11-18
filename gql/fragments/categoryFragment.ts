@@ -1,6 +1,4 @@
-import { gql } from "graphql-tag"
-
-export const categoryInfo = gql`
+export const categoryInfo = `
   fragment categoryInfo on PrCategory {
     categoryId
     categoryCode

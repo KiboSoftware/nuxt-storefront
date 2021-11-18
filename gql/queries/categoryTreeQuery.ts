@@ -1,7 +1,6 @@
-import { gql } from "graphql-tag"
 import { categoryInfo } from "../fragments"
 
-export const categoryTreeQuery = gql`
+export const categoryTreeQuery = `
   ${categoryInfo}
 
   query {
