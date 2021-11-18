@@ -38,8 +38,7 @@ export default {
   "Show on page": "Show on page",
   Done: "Done",
   "Clear all": "Clear all",
-  Empty:
-    "Looks like you haven’t added any items to the bag yet. Start shopping to fill it in.",
+  Empty: "Looks like you haven’t added any items to the bag yet. Start shopping to fill it in.",
   "Help & FAQs": "Help & FAQs",
   Download: "Download our application.",
   "Find out more": "Find out more",
@@ -74,8 +73,7 @@ export default {
   "Info after order":
     "You can log to your account using e-mail and password defined earlier. On your account you can edit your profile data, check history of transactions, edit subscription to newsletter.",
   "Allow order notifications": "Allow order notifications",
-  Feedback:
-    "Your feedback is important to us. Let us know what we could improve.",
+  Feedback: "Your feedback is important to us. Let us know what we could improve.",
   "Send my feedback": "Send my feedback",
   "Go back to shop": "Go back to shop",
   "Read all reviews": "Read all reviews",
@@ -151,11 +149,11 @@ export default {
     "If the message is not arriving in your inbox, try another email address you might’ve used to register.",
   "Sign in": "Sign in",
   Register: "Register",
-  "Password Changed":
-    "Password successfuly changed. You can now go back to homepage and sign in.",
+  "Password Changed": "Password successfuly changed. You can now go back to homepage and sign in.",
   Password: "Password",
   "Repeat Password": "Repeat Password",
   "Forgot Password Modal Email": "Email you are using to sign in:",
   forgotPasswordConfirmation:
     "Thanks! If there is an account registered with the {0} email, you will find message with a password reset link in your inbox.",
+  WriteReview: "Write a Review",
 }

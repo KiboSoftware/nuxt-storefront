@@ -5,13 +5,17 @@
   }
 
   &__item {
-    border: 1px black solid;
+    border: 1px solid #979797;
     flex-basis: 7.437rem;
   }
 
   &__stage {
-    border: 1px black solid;
+    border: 1px solid #979797;
     max-width: 31.625rem;
+    @include for-desktop {
+      width: 31.625rem;
+      height: 31.625rem;
+    }
   }
 }
 

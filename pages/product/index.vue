@@ -19,7 +19,7 @@
         <div class="product__specs">
           <SfHeading
             title="Product Specs"
-            :level="3"
+            :level="4"
             class="
               sf-heading--product-spec sf-heading--no-underline sf-heading--left
               product__heading
@@ -65,43 +65,37 @@
             </a>
 
             <SfButton class="sf-button--text" data-testid="read-all-reviews" @click="changeTab(2)">
-              Write a Review
+              {{ $t("WriteReview") }}
             </SfButton>
           </div>
         </div>
 
         <div class="product__content">
           <div class="product__description desktop-only" v-html="description"></div>
-          <div class="product__colors desktop-only">
+
+          <div v-if="productColors && productColors.values" class="product__colors desktop-only">
             <div class="product__color-label">{{ $t("Color") }}:</div>
+
             <SfColor
-              v-for="(obj, i) in options.find((obj) => obj.attributeFQN.includes('color')).values"
+              v-for="(obj, i) in productColors.values"
               :key="i"
               data-cy="product-color_update"
               :color="obj.value"
+              :class="{ 'sf-color--active': obj.isSelected }"
               @click="
-                selectOption(
-                  { value: obj.value },
-                  { attributeFQN: 'Tenant~color' },
-                  'sf-color--active',
-                  $event
-                )
+                selectOption({ value: obj.value }, { attributeFQN: productColors.attributeFQN })
               "
             />
           </div>
 
-          <div class="product__size">
+          <div v-if="productSizes && productSizes.values" class="product__size">
             <div
-              v-for="obj in options.find((obj) => obj.attributeFQN.includes('size')).values"
+              v-for="obj in productSizes.values"
               :key="obj.value"
               class="sf-badge"
+              :class="{ 'sf-badge--active': obj.isSelected }"
               @click="
-                selectOption(
-                  { value: obj.value },
-                  { attributeFQN: 'Tenant~size' },
-                  'sf-badge--active',
-                  $event
-                )
+                selectOption({ value: obj.value }, { attributeFQN: productSizes.attributeFQN })
               "
             >
               {{ obj.value }}
@@ -147,7 +141,7 @@
           <div>
             <SfHeading
               title="Product Information"
-              :level="3"
+              :level="4"
               class="sf-heading--no-underline sf-heading--left product__heading"
             />
 
@@ -184,6 +178,7 @@ import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
 import { useProductSSR } from "@/composables/useProductSSR"
 import { productGetters } from "@/composables/getters"
+import { useNuxtApp } from "#app"
 
 export default defineComponent({
   name: "Product",
@@ -206,6 +201,9 @@ export default defineComponent({
   setup(_, context) {
     const { productCode } = context.root.$route.params
     const { load, product, configure } = useProductSSR(productCode)
+    const nuxt = useNuxtApp()
+    const colorAttributeFQN = nuxt.nuxt2Context.$config.colorAttributeFQN
+    const sizeAttributeFQN = nuxt.nuxt2Context.$config.sizeAttributeFQN
 
     useAsync(async () => {
       await load(productCode)
@@ -217,39 +215,39 @@ export default defineComponent({
     const rating = computed(() => productGetters.getRating(product.value))
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
+    const productColors = computed(() =>
+      options.value?.find(
+        (obj) => obj?.attributeFQN?.toLowerCase() === colorAttributeFQN.toLowerCase()
+      )
+    )
+    const productSizes = computed(() =>
+      options.value?.find(
+        (obj) => obj?.attributeFQN.toLowerCase() === sizeAttributeFQN.toLowerCase()
+      )
+    )
+
     const addToCart = () => {}
-    const changeTab = () => {}
 
-    const selectOption = async ({ value }, { attributeFQN }, className, event) => {
-      applyActiveClass(className, event?.target)
+    const selectOption = async ({ value }, { attributeFQN }) => {
       await configure({ value, attributeFQN }, product.value?.productCode, options.value)
-    }
-
-    const applyActiveClass = (className, htmlElement) => {
-      if (htmlElement) {
-        const htmlElementActive = document.getElementsByClassName(className)[0]
-
-        if (htmlElementActive) htmlElementActive.classList.remove(className)
-        htmlElement.classList.add(className)
-      }
     }
 
     return {
       current: 1,
       addToCart,
-      changeTab,
       selectOption,
       rating,
       qty: 1,
       breadcrumbs,
       options,
+      productColors,
+      productSizes,
       productGallery,
       description,
       properties,
       productGetters,
       product,
       isOpenNotification: false,
-      openTab: 1,
     }
   },
 })
