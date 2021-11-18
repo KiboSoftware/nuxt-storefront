@@ -7,6 +7,13 @@ const getCategoryTree = (searchData: { categories: Maybe<Array<Maybe<PrCategory>
   return searchData?.categories
 }
 
+const getCategoryTree = (searchData: { categories: Maybe<Array<Maybe<PrCategory>>> }) => {
+  if (!searchData) {
+    return []
+  }
+  return searchData?.categories
+}
+
 const getBreadcrumbs = (searchData: {
   categories: Maybe<Array<Maybe<PrCategory>>>
 }): Breadcrumb[] => {
