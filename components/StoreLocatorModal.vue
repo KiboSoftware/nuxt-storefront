@@ -40,7 +40,7 @@
 </template>
 <script lang="ts">
 import { SfModal, SfSearchBar } from "@storefront-ui/vue"
-import { useAsync } from "@nuxtjs/composition-api"
+import { computed, ref, useAsync } from "@nuxtjs/composition-api"
 import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
 import useUiState from "@/composables/useUiState"
 import { useCurrentLocation } from "@/composables/storeFinder/useCurrentLocation"
