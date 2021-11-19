@@ -62,7 +62,7 @@
             Cancel
           </button>
           <button
-            class="color-primary sf-button sf-button--small"
+            :class="handleSetStoreButtonStatus"
             :aria-disabled="false"
             :link="null"
             @click="setStore"
@@ -129,6 +129,12 @@ export default {
       closeModal()
     }
 
+    const handleSetStoreButtonStatus = computed(() => {
+      return `color-primary sf-button sf-button--small ${
+        !selectedStore.value ? "is-disabled--button" : null
+      }`
+    })
+
     return {
       currentLocation,
       isStoreLocatorOpen,
@@ -138,6 +144,7 @@ export default {
       handleStoreChange,
       handleCurrentLocation,
       toggleStoreLocatorModal,
+      handleSetStoreButtonStatus,
       setStore,
       closeModal,
     }
