@@ -32,7 +32,7 @@
             label="Remember me"
             class="form__element form__checkbox"
           />
-          <span v-if="userError.login" style="color: red; display: flex; justify-content: center">
+          <span v-if="userError.login" class="login-error-message">
             {{ userError.login.message }}
           </span>
 
@@ -269,5 +269,10 @@ export default {
 
     margin: 0 0 var(--spacer-sm) 0;
   }
+}
+.login-error-message {
+  color: red;
+  display: flex;
+  justify-content: center;
 }
 </style>

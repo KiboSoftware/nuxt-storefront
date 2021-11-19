@@ -158,7 +158,8 @@ export default defineComponent({
   &__icons {
     display: flex;
     flex: 1;
-    justify-content: flex-end;
+    justify-content: space-evenly;
+    justify-items: center;
   }
   &__search {
     width: 100% !important;
