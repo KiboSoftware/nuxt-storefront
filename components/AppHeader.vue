@@ -34,9 +34,19 @@
           <SfButton class="sf-button--pure sf-header__action">
             <SfIcon class="sf-header__icon" icon="heart" size="1.25rem" />
           </SfButton>
-          <SfButton v-e2e="'app-header-cart'" class="sf-button--pure sf-header__action">
+          <SfButton
+            v-e2e="'app-header-cart'"
+            class="sf-button--pure sf-header__action"
+            @click="toggleCartSidebar"
+          >
             <SfIcon class="sf-header__icon" icon="empty_cart" size="1.25rem" />
+            <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
+              totalItemsInCart
+            }}</SfBadge>
           </SfButton>
+        </div>
+        <div>
+          <button @click="addToCart({ product, quantity: 1 })">Add Product to Cart</button>
         </div>
       </template>
     </SfHeader>
@@ -44,8 +54,8 @@
 </template>
 
 <script>
-import { SfHeader, SfImage, SfIcon, SfButton } from "@storefront-ui/vue"
-import { computed, ref, onBeforeUnmount, defineComponent } from "@vue/composition-api"
+import { SfHeader, SfImage, SfIcon, SfBadge, SfButton } from "@storefront-ui/vue"
+import { computed, ref, onBeforeUnmount } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
   mapMobileObserver,
@@ -60,7 +70,8 @@ import HeaderNavigation from "./HeaderNavigation"
 import LocaleSelector from "./LocaleSelector"
 import { useUser } from "@/composables/useUser"
 import { storeLocationGetters, userGetters } from "@/composables/getters"
-
+import { useCart } from "@/composables/useCart"
+import { userGetters, cartGetters } from "@/composables/getters"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -69,6 +80,7 @@ export default defineComponent({
     SfImage,
     LocaleSelector,
     SfIcon,
+    SfBadge,
     SfButton,
     HeaderNavigation,
   },
@@ -108,6 +120,18 @@ export default defineComponent({
 
     const isMobile = computed(() => mapMobileObserver().isMobile.get())
 
+    const { cart, load: loadCart, addToCart } = useCart()
+    // added temporary - to be removed after product page is developed
+    const product = {
+      productCode: "MS-BUND-001",
+      isPackagedStandAlone: true,
+      variationProductCode: null,
+      options: null,
+    }
+    const totalItemsInCart = computed(() => {
+      const count = cartGetters.getTotalItems(cart.value)
+      return count ? count.toString() : null
+    })
     const removeSearchResults = () => {
       result.value = null
     }
@@ -121,6 +145,7 @@ export default defineComponent({
 
     useAsync(async () => {
       await loadUser()
+      await loadCart()
       await loadPurchaseLocation()
     }, null)
 
@@ -150,6 +175,8 @@ export default defineComponent({
       isAuthenticated,
       handleStoreLocatorClick,
       selectedLocation,
+      loadCart,
+      totalItemsInCart,
     }
   },
 })
