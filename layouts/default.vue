@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppHeaderCustom />
+    <KiboAppHeader />
     <LoginModal />
     <div class="content">
       <Nuxt />
