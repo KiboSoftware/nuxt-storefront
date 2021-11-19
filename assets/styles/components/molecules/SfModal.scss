@@ -15,13 +15,13 @@
     height: var(--modal-height);
     border: var(--modal-border);
     max-height: var(--modal-max-height);
+    overflow-y: none;
     background-color: var(--modal-background, var(--c-white));
     &::-webkit-scrollbar {
       width: 0;
     }
   }
   &__content {
-    overflow-y: auto;
     padding: var(--modal-content-padding, var(--spacer-base) var(--spacer-sm));
     @include font(
       --modal-content-font,

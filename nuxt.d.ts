@@ -12,4 +12,7 @@
 /// <reference types="cookie-universal-nuxt" />
 /// <reference types="@nuxt/components" />
 /// <reference types="@nuxt/telemetry" />
+/// <reference path=".nuxt/nitro.d.ts" />
+/// <reference types="unplugin-vue2-script-setup/types" />
+/// <reference path=".nuxt/auto-imports.d.ts" />
 export {}

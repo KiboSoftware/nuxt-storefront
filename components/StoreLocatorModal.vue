@@ -7,35 +7,71 @@
     :persistent="false"
     @close="closeModal"
   >
-    <p class="title">Select Store</p>
-    <div class="section-border"></div>
-    <div class="location-search">
-      <SfSearchBar
-        placeholder="Zip Code"
-        class="Search-bar"
-        :value="null"
-        :icon="{ size: '1.25rem', color: '#43464E' }"
-        aria-label="Search"
+    <template #modal-bar>
+      <SfBar
+        class="sf-modal__bar smartphone-only"
+        :close="true"
+        :title="$t(barTitle)"
+        @click:close="closeModal"
       />
-      <button class="color-primary sf-button sf-button--small" :aria-disabled="false" :link="null">
-        Search
-      </button>
-    </div>
-    <p>
-      <span class="current-location" @click="handleCurrentLocation">{{
-        $t("current location")
-      }}</span>
-    </p>
-    <div class="store-count section-border">
-      <p>{{ storeDetails.length }} stores within 100 miles</p>
-    </div>
-    <div v-for="location in storeDetails" :key="location.code">
-      <KiboStoreDetails
-        :location="location"
-        :selected-store="selectedStore"
-        @change="handleStoreChange(location.code)"
-      />
-    </div>
+    </template>
+    <transition name="sf-fade" mode="out-in">
+      <div class="modal-content">
+        <p class="title">Select Store</p>
+        <div class="section-border"></div>
+        <div class="location-search">
+          <SfSearchBar
+            placeholder="Zip Code"
+            class="Search-bar"
+            :value="null"
+            :icon="{ size: '1.25rem', color: '#43464E' }"
+            aria-label="Search"
+          />
+          <button
+            class="color-primary sf-button sf-button--small"
+            :aria-disabled="false"
+            :link="null"
+          >
+            Search
+          </button>
+        </div>
+        <p>
+          <span class="current-location" @click="handleCurrentLocation">{{
+            $t("current location")
+          }}</span>
+        </p>
+        <div class="store-count section-border">
+          <p>{{ storeDetails.length }} stores within 100 miles</p>
+        </div>
+        <div class="store-container">
+          <div v-for="location in storeDetails" :key="location.code">
+            <KiboStoreDetails
+              :location="location"
+              :selected-store="selectedStore"
+              @change="handleStoreChange(location.code)"
+            />
+          </div>
+        </div>
+        <div class="action-buttons">
+          <button
+            class="color-light sf-button sf-button--small"
+            :aria-disabled="false"
+            :link="null"
+            @click="closeModal"
+          >
+            Cancel
+          </button>
+          <button
+            class="color-primary sf-button sf-button--small"
+            :aria-disabled="false"
+            :link="null"
+            @click="setStore"
+          >
+            Set Store
+          </button>
+        </div>
+      </div>
+    </transition>
   </SfModal>
 </template>
 <script lang="ts">
@@ -85,8 +121,12 @@ export default {
 
     const handleStoreChange = (locationCode: string) => {
       selectedStore.value = locationCode
-      set(locationCode)
+    }
+
+    const setStore = () => {
+      set(selectedStore.value)
       loadPurchaseLocation()
+      closeModal()
     }
 
     return {
@@ -98,6 +138,7 @@ export default {
       handleStoreChange,
       handleCurrentLocation,
       toggleStoreLocatorModal,
+      setStore,
       closeModal,
     }
   },
@@ -139,6 +180,10 @@ export default {
   border-top: 1px solid var(--c-light);
   padding: var(--spacer-2xs) var(--spacer-sm);
 }
+.store-container {
+  max-height: 40vh;
+  overflow-y: auto;
+}
 .store-details {
   padding: var(--spacer-base) var(--spacer-lg);
 }
@@ -162,5 +207,10 @@ export default {
 }
 .sf-button--pure {
   --button-height: 1.625rem;
+}
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacer-sm) var(--spacer-lg);
 }
 </style>

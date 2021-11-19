@@ -58,7 +58,6 @@
         </SfAccordion>
       </template>
     </SfRadio>
-    <div class="section-border"></div>
   </div>
 </template>
 
@@ -96,7 +95,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
 .store-details {
-  padding: var(--spacer-base) var(--spacer-lg);
+  padding: var(--spacer-base) var(--spacer-base) var(--spacer-base) var(--spacer-lg);
+  border-bottom: 1px solid var(--c-light);
 }
 .section-border {
   border-bottom: 1px solid var(--c-light);
