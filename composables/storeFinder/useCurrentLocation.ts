@@ -1,3 +1,4 @@
+import { computed } from "@vue/composition-api"
 import { GeoCoords } from "@/composables/types"
 import { useState } from "#app"
 

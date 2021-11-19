@@ -1,3 +1,4 @@
+import { computed } from "@vue/composition-api"
 import { Location, GeoCoords } from "@/composables/types"
 import { getSpLocations } from "@/gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"

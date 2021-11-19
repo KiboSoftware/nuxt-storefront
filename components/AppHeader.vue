@@ -132,11 +132,11 @@ export default defineComponent({
       unMapMobileObserver()
     })
 
-    const selectedLocation = computed(() =>
-      purchaseLocation.value
+    const selectedLocation = computed(() => {
+      return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
         : "Select My Store"
-    )
+    })
 
     return {
       user,

@@ -1,3 +1,4 @@
+import { computed } from "@vue/composition-api"
 import { Location } from "@/composables/types"
 import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
@@ -10,9 +11,7 @@ export const usePurchaseLocation = () => {
   const storeLocationCookie = nuxt.nuxt2Context.$config.storeLocationCookie
 
   const purchaseLocation = useState(`use-purchaseLocation`, (): Location => {
-    return {
-      name: "",
-    } as Location
+    return {} as Location
   })
   const loading = useState(`use-purchaseLocation-loading`, () => false)
   const error = useState(`use-purchaseLocation-error`, () => null)

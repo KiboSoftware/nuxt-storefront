@@ -2,6 +2,7 @@ import { computed } from "@vue/composition-api"
 import { categoryTreeQuery } from "../gql/queries"
 import * as GraphQLTypes from "@/server/types/GraphQL"
 import * as types from "@/composables/types"
+import { useNuxtApp, useState } from "#app"
 
 export const useCategoryTree = (): types.UseCategoryTreeResponse => {
   const nuxt = useNuxtApp()
