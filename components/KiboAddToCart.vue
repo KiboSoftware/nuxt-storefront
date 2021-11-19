@@ -4,7 +4,7 @@
       <div class="column">
         <SfQuantitySelector
           :qty="qty"
-          :max="quantityleft"
+          :max="quantityLeft"
           aria-label="Quantity"
           :disabled="disabled"
           class="sf-add-to-cart__select-quantity"
@@ -22,7 +22,7 @@
     </slot>
     <slot name="item-left-span">
       <div class="column">
-        <span class="quantity-left">{{ quantityleft }} item(s) left</span>
+        <span class="quantity-left">{{ quantityLeft }} item(s) left</span>
       </div>
     </slot>
     <slot name="add-to-wishlist">
@@ -34,14 +34,17 @@
     </slot>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from "@vue/composition-api"
 import { SfButton, SfQuantitySelector } from "@storefront-ui/vue"
-export default {
-  name: "CustomAddToCart",
+
+export default defineComponent({
+  name: "KiboAddToCart",
   components: {
     SfButton,
     SfQuantitySelector,
   },
+
   model: {
     prop: "qty",
   },
@@ -61,31 +64,38 @@ export default {
       type: [Number, String],
       default: 1,
     },
-    quantityleft: {
+    quantityLeft: {
       type: [Number, String],
       default: 0,
     },
   },
-  methods: {
-    addToWishList() {
-      this.$emit("addItemWishlist", this.qty)
-    },
-    addToCart() {
-      this.$emit("addItemToCart", this.qty)
-    },
+  setup(props, context) {
+    const addToWishList = () => {
+      context.emit("addItemWishlist", props.qty)
+    }
+
+    const addToCart = () => {
+      context.emit("addItemToCart", props.qty)
+    }
+
+    return {
+      addToWishList,
+      addToCart,
+    }
   },
-}
+})
 </script>
 <style lang="scss" scoped>
+$cart-button-width: 11.6rem; //186px
 .sf-add-to-cart {
   flex-wrap: wrap;
   &__button {
-    width: 11.6rem; //186px
+    width: $cart-button-width;
   }
 }
 .sf-add-to-wishlist {
   &__button {
-    width: 11.6rem; //186px
+    width: $cart-button-width;
     background-color: var(--_c-white-primary);
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-dark-primary);
@@ -96,10 +106,10 @@ export default {
   font-size: var(--font-size--xs);
   font-style: italic;
   line-height: var(--font-size--sm);
-  padding-left: 20px;
+  padding-left: calc(var(--spacer-sm) + var(--spacer-2xs));
 }
 .column {
   flex: 50%;
-  margin-bottom: 12px;
+  margin-bottom: calc(var(--spacer-sm) - var(--spacer-2xs));
 }
 </style>
