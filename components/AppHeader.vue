@@ -20,16 +20,8 @@
             @click="handleStoreLocatorClick"
           >
             <SfIcon icon="marker_fill" size="1.25rem" />
-            <div
-              style="
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                justify-content: center;
-              "
-            >
+            <div class="selected-store">
               <span style="font-size: 12px">{{ selectedLocation }}</span>
-              <!-- <span style="font-size: 12px">{{ purchaseLocation.address.address1 }}</span> -->
             </div>
           </SfButton>
           <SfButton
@@ -141,7 +133,9 @@ export default defineComponent({
     })
 
     const selectedLocation = computed(() =>
-      storeLocationGetters.getPurchaseLocation(purchaseLocation.value)
+      purchaseLocation.value
+        ? storeLocationGetters.getName(purchaseLocation.value)
+        : "Select My Store"
     )
 
     return {
@@ -179,6 +173,12 @@ export default defineComponent({
   .sf-header-navigation-item__item--mobile {
     display: none;
   }
+}
+.selected-store {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .cart-badge {

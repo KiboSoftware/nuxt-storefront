@@ -1,7 +1,6 @@
-import { ILocation } from "./useCurrentLocation"
+import { Location, GeoCoords } from "@/composables/types"
+import { getSpLocations } from "@/gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"
-import { getSpLocations } from "~~/gql/queries/spLocations"
-import { Location } from "~~/server/types/GraphQL"
 
 export const useStoreLocations = () => {
   const nuxt = useNuxtApp()
@@ -12,7 +11,7 @@ export const useStoreLocations = () => {
   const loading = useState(`use-storeLocations-loading`, () => false)
   const error = useState(`use-storeLocations-error`, () => null)
 
-  const search = async (coords?: ILocation) => {
+  const search = async (coords?: GeoCoords) => {
     try {
       loading.value = true
       const response = await fetcher({

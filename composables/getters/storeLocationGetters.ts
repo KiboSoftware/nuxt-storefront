@@ -1,12 +1,8 @@
-import { Location } from "~~/server/types/GraphQL"
+import { Location } from "@/server/types/GraphQL"
 
-interface ITimeDetails {
+interface TimeDetails {
   openTime: string
   closeTime: string
-}
-
-const getPurchaseLocation = (purchaseLocation: Location): string => {
-  return purchaseLocation.name as string
 }
 
 const getCode = (location: Location): string => {
@@ -42,10 +38,10 @@ const getZip = (location: Location): string => {
 }
 
 const getHours = (location: Location) => {
-  return Object.entries(location.regularHours as []).map((value: (string | ITimeDetails)[]) => {
+  return Object.entries(location.regularHours as []).map((value: (string | TimeDetails)[]) => {
     return {
       day: value[0],
-      ...(value[1] as ITimeDetails),
+      ...(value[1] as TimeDetails),
     }
   })
 }
@@ -79,5 +75,4 @@ export const storeLocationGetters = {
   getState,
   getZip,
   getHours,
-  getPurchaseLocation,
 }

@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { defineNuxtConfig } from "@nuxt/bridge"
 const KIBO_LOCALE_COOKIE = "kibo-locale"
+const LOCATION_COOKIE = "kibo_purchase_location"
 
 export default defineNuxtConfig({
   head: {
@@ -111,8 +112,9 @@ export default defineNuxtConfig({
   publicRuntimeConfig: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
     userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo_at",
-    colorAttributeFQN: "tenant~color",
-    sizeAttributeFQN: "tenant~size",
+    colorAttributeFQN: "Tenant~color",
+    sizeAttributeFQN: "Tenant~size",
+    storeLocationCookie: LOCATION_COOKIE,
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

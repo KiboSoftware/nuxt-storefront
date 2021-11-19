@@ -1,15 +1,12 @@
+import { GeoCoords } from "@/composables/types"
 import { useState } from "#app"
 
-export interface ILocation {
-  longitude: string
-  latitude: string
-}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCurrentPosition = (): Promise<any> =>
   new Promise((resolve, reject) => window.navigator.geolocation.getCurrentPosition(resolve, reject))
 
 export const useCurrentLocation = () => {
-  const currentLocation = useState(`use-current-location`, (): ILocation => {
+  const currentLocation = useState(`use-current-location`, (): GeoCoords => {
     return {
       latitude: "",
       longitude: "",
@@ -21,13 +18,14 @@ export const useCurrentLocation = () => {
     if (process.browser) {
       loading.value = true
       try {
-        const response: { coords: ILocation } = await getCurrentPosition()
+        const response: { coords: GeoCoords } = await getCurrentPosition()
         currentLocation.value = {
           latitude: String(response.coords.latitude),
           longitude: String(response.coords.longitude),
         }
         loading.value = false
-      } catch (reject) {
+      } catch (err) {
+        error.value = err instanceof GeolocationPositionError ? err.message : null
         loading.value = false
       }
     }

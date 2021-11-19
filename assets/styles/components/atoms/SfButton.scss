@@ -1,19 +1,15 @@
 .sf-button {
   --button-height: 2.625rem;
   --button-border-radius: 0.188rem;
-
-  &--text {
-    height: 1.15rem;
-    --button-text-transform: "capitalize";
-    @include font(
-      --button-font,
-      var(--font-weight--normal),
-      var(--font-size--base),
-      1.2,
-      var(--font-family--secondary)
-    );
-    &__small {
-      --button-height: 1.625rem;
-    }
+  --button-text-transform: "capitalize";
+  @include font(
+    --button-font,
+    var(--font-weight--normal),
+    var(--font-size--base),
+    1.2,
+    var(--font-family--secondary)
+  );
+  &--small {
+    --button-height: 1.625rem;
   }
 }

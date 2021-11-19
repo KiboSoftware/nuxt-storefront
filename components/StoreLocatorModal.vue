@@ -17,99 +17,43 @@
         :icon="{ size: '1.25rem', color: '#43464E' }"
         aria-label="Search"
       />
-      <button class="color-primary sf-button sf-button__small" :aria-disabled="false" :link="null">
+      <button class="color-primary sf-button sf-button--small" :aria-disabled="false" :link="null">
         Search
       </button>
     </div>
-    <p><span class="current-location" @click="handleCurrentLocation">Use Current Location</span></p>
+    <p>
+      <span class="current-location" @click="handleCurrentLocation">{{
+        $t("current location")
+      }}</span>
+    </p>
     <div class="store-count section-border">
       <p>{{ storeDetails.length }} stores within 100 miles</p>
     </div>
     <div v-for="location in storeDetails" :key="location.code">
-      <div class="store-details">
-        <SfRadio
-          class="sf-radio--transparent"
-          :name="location.code"
-          :value="location.code"
-          :label="location.name"
-          :required="false"
-          :selected="selectedStore"
-          @change="handleStoreChange(location.code)"
-        >
-          <template #details>
-            <p class="sf-radio__details">
-              {{ location.streetAddress }}
-            </p>
-            <p class="sf-radio__details">
-              {{ location.cityStateZip }}
-            </p>
-          </template>
-          <template #description>
-            <SfAccordion
-              open=""
-              :first-open="false"
-              :multiple="false"
-              transition="sf-slide-left"
-              :show-chevron="true"
-            >
-              <SfAccordionItem header="Store Info">
-                <template #header="{ header, isOpen, accordionClick }">
-                  <SfButton
-                    :aria-pressed="isOpen.toString()"
-                    :aria-expanded="isOpen.toString()"
-                    :class="{ 'is-open': false }"
-                    class="sf-button--pure sf-accordion-item__header"
-                    @click="accordionClick"
-                  >
-                    {{ header }}
-                    <SfChevron
-                      tabindex="0"
-                      class="sf-accordion-item__chevron"
-                      :class="{ 'sf-chevron--top': isOpen }"
-                    />
-                  </SfButton>
-                </template>
-                <p class="sf-radio__details">Get Directions ({{ location.phone }})</p>
-                <p class="sf-radio__details">{{ location.streetAddress }}</p>
-                <p class="sf-radio__details">{{ location.cityStateZip }}</p>
-                <p class="sf-radio__storeHoursLabel">Store Hours</p>
-                <div v-for="hours in location.hours" :key="hours[0]">
-                  <div class="sf-property--value-in-middle sf-property">
-                    <span class="sf-property__name">{{ hours.day }}</span>
-                    <span class="sf-property__value">
-                      {{ hours.openTime }} - {{ hours.closeTime }}
-                    </span>
-                  </div>
-                </div>
-              </SfAccordionItem>
-            </SfAccordion>
-          </template>
-        </SfRadio>
-        <div class="section-border"></div>
-      </div>
+      <KiboStoreDetails
+        :location="location"
+        :selected-store="selectedStore"
+        @change="handleStoreChange(location.code)"
+      />
     </div>
   </SfModal>
 </template>
 <script lang="ts">
-import { SfModal, SfRadio, SfSearchBar, SfAccordion, SfChevron, SfButton } from "@storefront-ui/vue"
-
+import { SfModal, SfSearchBar } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
-import useUiState from "../composables/useUiState"
-import { useCurrentLocation } from "../composables/storeFinder/useCurrentLocation"
-import { useStoreLocations } from "../composables/storeFinder/useStoreLocations"
-import { usePurchaseLocation } from "../composables/storeFinder/usePurchaseLocation"
-
+import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
+import useUiState from "@/composables/useUiState"
+import { useCurrentLocation } from "@/composables/storeFinder/useCurrentLocation"
+import { useStoreLocations } from "@/composables/storeFinder/useStoreLocations"
+import { usePurchaseLocation } from "@/composables/storeFinder/usePurchaseLocation"
 import { storeLocationGetters } from "@/composables/getters"
 
 export default {
   name: "LoginModal",
   components: {
     SfModal,
-    SfRadio,
     SfSearchBar,
-    SfAccordion,
-    SfChevron,
-    SfButton,
+    KiboStoreDetails,
   },
   setup() {
     const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
@@ -176,11 +120,11 @@ export default {
   align-items: stretch;
   padding: var(--spacer-lg) var(--spacer-base) var(--spacer-2xs) var(--spacer-lg);
 }
-.sf-button__small {
+.sf-button--small {
   margin-left: 2%;
 }
 .Search-bar {
-  flex: 1 !important;
+  flex: 1;
 }
 .current-location {
   text-decoration: underline;
@@ -212,7 +156,7 @@ export default {
 
 .sf-radio--transparent {
   &__content {
-    display: flex !important;
+    display: flex;
     justify-content: flex-start;
   }
 }
