@@ -1,7 +1,7 @@
 import { getCurrentInstance, ref } from "@vue/composition-api"
-import type { PrCategory } from "../server/types/GraphQL"
-
 import type { uiHelpersReturnType } from "./types"
+
+import type { PrCategory } from "~~/server/types/GraphQL"
 
 export const useUiHelpers = (): uiHelpersReturnType => {
   const router = ref()
