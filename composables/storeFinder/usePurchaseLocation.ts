@@ -9,7 +9,6 @@ export const usePurchaseLocation = () => {
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const app = nuxt.nuxt2Context.app
   const storeLocationCookie = nuxt.nuxt2Context.$config.storeLocationCookie
-
   const purchaseLocation = useState(`use-purchaseLocation`, (): Location => {
     return {} as Location
   })
@@ -29,6 +28,7 @@ export const usePurchaseLocation = () => {
         })
         purchaseLocation.value = response.data.spLocations.items[0]
       } catch (error) {
+        console.log(error)
         loading.value = false
       }
     }

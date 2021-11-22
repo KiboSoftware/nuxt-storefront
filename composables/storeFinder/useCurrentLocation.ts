@@ -1,10 +1,7 @@
 import { computed } from "@vue/composition-api"
+import { getCurrentUserPosition } from "./utils/getUserCurrentPosition"
 import { GeoCoords } from "@/composables/types"
 import { useState } from "#app"
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getCurrentPosition = (): Promise<any> =>
-  new Promise((resolve, reject) => window.navigator.geolocation.getCurrentPosition(resolve, reject))
 
 export const useCurrentLocation = () => {
   const currentLocation = useState(`use-current-location`, (): GeoCoords => {
@@ -19,7 +16,7 @@ export const useCurrentLocation = () => {
     if (process.browser) {
       loading.value = true
       try {
-        const response: { coords: GeoCoords } = await getCurrentPosition()
+        const response: { coords: GeoCoords } = await getCurrentUserPosition()
         currentLocation.value = {
           latitude: String(response.coords.latitude),
           longitude: String(response.coords.longitude),
