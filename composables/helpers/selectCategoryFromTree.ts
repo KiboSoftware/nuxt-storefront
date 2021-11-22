@@ -1,8 +1,6 @@
-import * as GraphQL from "../../server/types/GraphQL"
+import * as GraphQL from "~~/server/types/GraphQL"
 function addParent(category: GraphQL.PrCategory, newParent: GraphQL.PrCategory): void {
-  if (category.parentCategory) {
-    return addParent(category.parentCategory, newParent)
-  }
+  if (category.parentCategory) return addParent(category.parentCategory, newParent)
   category.parentCategory = Object.assign({}, newParent)
 }
 

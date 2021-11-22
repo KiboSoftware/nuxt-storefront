@@ -1,6 +1,6 @@
 import { ref, computed } from "@vue/composition-api"
-import { categoryTreeQuery } from "../gql/queries"
-import { selectCategoryFromTree } from "./helpers/selectCategoryFromTree"
+import { categoryTreeQuery } from "~~/gql/queries"
+import { selectCategoryFromTree } from "~~/composables/helpers/selectCategoryFromTree"
 import { useState, useNuxtApp } from "#app"
 
 export const useFacet = (referenceKey: string) => {
