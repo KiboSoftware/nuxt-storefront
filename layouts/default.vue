@@ -13,6 +13,10 @@
 </template>
 
 <style>
+html,
+body {
+  font-family: "Roboto", serif;
+}
 .content {
   max-width: 81.75rem;
   margin: 0 auto;
