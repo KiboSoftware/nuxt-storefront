@@ -2,13 +2,10 @@ import { Cart, CartItem, Maybe, CrProductOption } from "~~/server/types/GraphQL"
 
 export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getCartItemName = (item: CartItem) => item?.product?.name
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getCartItemImage = (item: CartItem) => item?.product?.imageUrl
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getCartItemPrice = (
   item: CartItem
 ): { regular: Maybe<number> | undefined; special: Maybe<number> | undefined } => {
@@ -18,7 +15,6 @@ export const getCartItemPrice = (
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const getCartItemQty = (item: CartItem): number => item?.quantity
 
 export const getCartItemAttributes = (
@@ -29,7 +25,7 @@ export const getCartItemAttributes = (
   if (Array.isArray(filterByAttributeName) && filterByAttributeName.length) {
     filterByAttributeName.forEach((attr: string) => {
       attributes[attr] = "N/A"
-      item.product?.options?.filter((o) => {
+      item?.product?.options?.filter((o) => {
         if (
           filterByAttributeName.includes(o?.name?.toLowerCase()) &&
           attr === o?.name?.toLowerCase()
@@ -57,7 +53,7 @@ function getTotals(cart: Cart) {
   return {
     total: cart?.total,
     subtotal: cart?.subtotal,
-    special: [cart?.orderDiscounts]?.length > 0 ? cart?.discountedSubtotal : cart?.subtotal,
+    special: cart?.orderDiscounts ? cart?.discountedSubtotal : cart?.subtotal,
   }
 }
 

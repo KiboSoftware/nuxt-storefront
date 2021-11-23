@@ -34,19 +34,12 @@
           <SfButton class="sf-button--pure sf-header__action">
             <SfIcon class="sf-header__icon" icon="heart" size="1.25rem" />
           </SfButton>
-          <SfButton
-            v-e2e="'app-header-cart'"
-            class="sf-button--pure sf-header__action"
-            @click="toggleCartSidebar"
-          >
+          <SfButton v-e2e="'app-header-cart'" class="sf-button--pure sf-header__action">
             <SfIcon class="sf-header__icon" icon="empty_cart" size="1.25rem" />
             <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
               totalItemsInCart
             }}</SfBadge>
           </SfButton>
-        </div>
-        <div>
-          <button @click="addToCart({ product, quantity: 1 })">Add Product to Cart</button>
         </div>
       </template>
     </SfHeader>
@@ -120,14 +113,8 @@ export default defineComponent({
 
     const isMobile = computed(() => mapMobileObserver().isMobile.get())
 
-    const { cart, load: loadCart, addToCart } = useCart()
-    // added temporary - to be removed after product page is developed
-    const product = {
-      productCode: "MS-BUND-001",
-      isPackagedStandAlone: true,
-      variationProductCode: null,
-      options: null,
-    }
+    const { cart, load: loadCart } = useCart()
+
     const totalItemsInCart = computed(() => {
       const count = cartGetters.getTotalItems(cart.value)
       return count ? count.toString() : null
