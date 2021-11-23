@@ -6,7 +6,7 @@ import * as getCurrentUserPosition from "../storeFinder/utils/getUserCurrentPosi
 Vue.use(VueCompositionApi)
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
-    return init
+    return { value: init() }
   }),
 }))
 

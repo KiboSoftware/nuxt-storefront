@@ -7,7 +7,7 @@ Vue.use(VueCompositionApi)
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
-    return init
+    return { value: init() }
   }),
   useNuxtApp: jest.fn().mockReturnValue({
     nuxt2Context: {

@@ -17,7 +17,7 @@
     </template>
     <transition name="sf-fade" mode="out-in">
       <div class="modal-content">
-        <p class="title">Select Store</p>
+        <p class="title">{{ $t("Select Store") }}</p>
         <div class="section-border"></div>
         <div class="location-search">
           <SfSearchBar
@@ -59,7 +59,7 @@
             :link="null"
             @click="closeModal"
           >
-            Cancel
+            {{ $t("Cancel") }}
           </button>
           <button
             :class="handleSetStoreButtonStatus"
@@ -67,7 +67,7 @@
             :link="null"
             @click="setStore"
           >
-            Set Store
+            {{ $t("Set Store") }}
           </button>
         </div>
       </div>
@@ -76,7 +76,7 @@
 </template>
 <script lang="ts">
 import { SfModal, SfSearchBar } from "@storefront-ui/vue"
-import { computed, ref, useAsync } from "@nuxtjs/composition-api"
+import { computed, ref } from "@nuxtjs/composition-api"
 import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
 import useUiState from "@/composables/useUiState"
 import { useCurrentLocation } from "@/composables/storeFinder/useCurrentLocation"
@@ -97,10 +97,6 @@ export default {
     const { locations, search: searchStoreLocations } = useStoreLocations()
     const { set, load: loadPurchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
-
-    useAsync(async () => {
-      await searchStoreLocations()
-    }, null)
 
     const handleCurrentLocation = async () => {
       await loadWithNavigator()

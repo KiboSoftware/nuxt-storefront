@@ -157,4 +157,7 @@ export default {
     "Thanks! If there is an account registered with the {0} email, you will find message with a password reset link in your inbox.",
   WriteReview: "Write a Review",
   "current location": "Use Current Location",
+  "Select Store": "Select Store",
+  Search: "Search",
+  "Set Store": "Set Store",
 }
