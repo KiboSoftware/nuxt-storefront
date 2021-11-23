@@ -14,10 +14,12 @@
     --badge-font-line-height,
     var(--font-family--secondary)
   );
-  &--gray {
+  &.disabled {
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-gray-middle);
+    pointer-events: none;
   }
+
   @include for-desktop {
     &--active {
       background-color: var(--_c-dark-primary);
