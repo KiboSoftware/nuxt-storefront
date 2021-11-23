@@ -16,7 +16,7 @@
       <!--@slot Custom content that will replace default Add to cart button design.-->
       <div class="column">
         <SfButton class="sf-add-to-cart__button" :disabled="disabled" @click="addToCart">
-          Add to cart
+          {{ labelAddToCart }}
         </SfButton>
       </div>
     </slot>
@@ -28,7 +28,7 @@
     <slot name="add-to-wishlist">
       <div class="column">
         <SfButton class="sf-add-to-wishlist__button" :disabled="disabled" @click="addToWishList">
-          Add to Wishlist
+          {{ labelAddToWishlist }}
         </SfButton>
       </div>
     </slot>
@@ -39,7 +39,7 @@ import { defineComponent } from "@vue/composition-api"
 import { SfButton, SfQuantitySelector } from "@storefront-ui/vue"
 
 export default defineComponent({
-  name: "KiboAddToCart",
+  name: "KiboProductActions",
   components: {
     SfButton,
     SfQuantitySelector,
@@ -67,6 +67,14 @@ export default defineComponent({
     quantityLeft: {
       type: [Number, String],
       default: 0,
+    },
+    labelAddToCart: {
+      type: String,
+      default: "Add to cart",
+    },
+    labelAddToWishlist: {
+      type: String,
+      default: "Add to Wishlist",
     },
   },
   setup(props, context) {
