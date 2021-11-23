@@ -3,7 +3,7 @@
   --badge-width: 3.75rem;
   --badge-height: 2.313rem;
   --badge-background: var(--c-white);
-  --badge-color: ar(--_c-dark-primary);
+  --badge-color: var(--_c-dark-primary);
   --badge-border: 1px solid var(--_c-dark-primary);
   --badge-font: var(--font-family--primary);
   --badge-font-line-height: 1.188rem;
@@ -14,6 +14,10 @@
     --badge-font-line-height,
     var(--font-family--secondary)
   );
+  &--gray {
+    border: 1px solid var(--_c-gray-middle);
+    color: var(--_c-gray-middle);
+  }
   @include for-desktop {
     &--active {
       background-color: var(--_c-dark-primary);
