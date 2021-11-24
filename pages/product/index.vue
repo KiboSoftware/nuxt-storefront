@@ -498,7 +498,7 @@ export default defineComponent({
   margin-top: var(--spacer-sm);
 }
 .textBoxOptions {
-  margin-top: 32px;
+  margin-top: 2rem;
 }
 // Add to cart button
 .add-to-cart-wrapper {
@@ -549,7 +549,7 @@ export default defineComponent({
 }
 
 .one-click-chekout {
-  width: 11.6rem; //186px
+  width: 11.6rem;
   height: var(--spacer-xl);
   border-radius: 4px;
   font-weight: normal;
