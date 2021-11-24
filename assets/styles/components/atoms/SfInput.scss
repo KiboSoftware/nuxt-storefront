@@ -12,6 +12,9 @@
   }
   &__wrapper {
     border: none;
+    input {
+      width: 100%;
+    }
   }
 
   input[type="date"] ~ *,
