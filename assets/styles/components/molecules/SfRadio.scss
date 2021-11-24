@@ -17,8 +17,7 @@
     border-radius: 100%;
     transition: none;
     &.is-active {
-      border-width: 3px;
-      border-color: var(--_c-green-primary);
+      border: 3px solid var(--_c-green-primary);
     }
     @include for-desktop {
       &active,
@@ -29,23 +28,15 @@
       }
     }
   }
+  &.is-active {
+    background: var(--_c-white);
+  }
   &:hover {
     .sf-radio__checkmark {
-      border-color: var(--_c-green-primary);
+      border: 3px solid var(--_c-green-primary);
     }
   }
-  &__content {
-    display: flex;
-    justify-content: flex-start;
-  }
-  &__details {
-    color: var(--_c-dark-primary);
-    font-size: var(--font-size--xs);
-    font-family: var(--font-family--primary);
-    line-height: 0.875rem;
-    font-style: italic;
-    margin: 0 auto auto 0.625rem;
-  }
+
   @include for-desktop {
     .sf-radio__container {
       padding: 0.438rem;
