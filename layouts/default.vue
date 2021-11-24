@@ -15,7 +15,7 @@
 <style>
 html,
 body {
-  font-family: "Roboto", serif;
+  font-family: "Roboto", sans-serif;
   font-size: 1rem;
   line-height: 1.25rem;
   font-weight: 400;
