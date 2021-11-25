@@ -26,12 +26,16 @@
         </div>
 
         <div class="sf-header__icons">
-          <SfButton v-e2e="'app-header-location'" class="sf-button--pure sf-header__action">
+          <SfButton
+            v-e2e="'app-header-location'"
+            class="sf-button--pure sf-header__action"
+            @click="handleStoreLocatorClick"
+          >
             <SfIcon class="sf-header__icon">
               <font-awesome-icon icon="map-marker-alt" class="fa-icon" />
             </SfIcon>
             <div class="kibo-header__icon">
-              <span class="kibo-header__icon-name"> Location</span>
+              <span class="kibo-header__icon-name"> {{ selectedLocation }}</span>
             </div>
           </SfButton>
           <SfButton
@@ -77,8 +81,9 @@ import {
 import { useAsync } from "@nuxtjs/composition-api"
 import useUiState from "../composables/useUiState"
 import * as logo from "../assets/kibo_logo.png"
+import { usePurchaseLocation } from "../composables"
 import { useUser } from "@/composables/useUser"
-import { userGetters } from "@/composables/getters"
+import { userGetters, storeLocationGetters } from "@/composables/getters"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -95,6 +100,8 @@ export default defineComponent({
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { user, load: loadUser } = useUser()
+    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+
     const searchValue = ref("")
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
@@ -104,7 +111,7 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal } = useUiState()
+    const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
 
     const isMobile = computed(() => mapMobileObserver().isMobile.get())
 
@@ -121,10 +128,21 @@ export default defineComponent({
 
     useAsync(async () => {
       await loadUser()
+      await loadPurchaseLocation()
     }, null)
+
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
+    }
 
     onBeforeUnmount(() => {
       unMapMobileObserver()
+    })
+
+    const selectedLocation = computed(() => {
+      return Object.keys(purchaseLocation.value).length
+        ? storeLocationGetters.getName(purchaseLocation.value)
+        : "Select My Store"
     })
 
     return {
@@ -138,6 +156,8 @@ export default defineComponent({
       searchValue,
       logo,
       title: "Kibo",
+      handleStoreLocatorClick,
+      selectedLocation,
     }
   },
 })

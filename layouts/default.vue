@@ -2,10 +2,10 @@
   <div>
     <KiboAppHeader />
     <LoginModal />
+    <StoreLocatorModal />
     <div class="content">
       <Nuxt />
     </div>
-    <StoreLocatorModal />
     <Nuxt />
     <AppFooter />
     <BottomNavigation />
