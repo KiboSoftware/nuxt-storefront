@@ -31,10 +31,14 @@
           >
             <SfIcon :icon="accountIcon" size="1.25rem" />
           </SfButton>
-          <SfButton class="sf-button--pure sf-header__action">
+          <SfButton class="sf-button--pure sf-header__action" link="/cart">
             <SfIcon class="sf-header__icon" icon="heart" size="1.25rem" />
           </SfButton>
-          <SfButton v-e2e="'app-header-cart'" class="sf-button--pure sf-header__action">
+          <SfButton
+            v-e2e="'app-header-cart'"
+            class="sf-button--pure sf-header__action"
+            link="/cart"
+          >
             <SfIcon class="sf-header__icon" icon="empty_cart" size="1.25rem" />
             <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
               totalItemsInCart
@@ -203,5 +207,9 @@ export default defineComponent({
   position: absolute;
   bottom: 40%;
   left: 40%;
+}
+
+.sf-link {
+  --button-width: var(--spacer-base);
 }
 </style>

@@ -3,17 +3,34 @@
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart">
       <div v-if="totalItems" class="detailed-cart__aside">
-        <SfOrderSummary
-          :products="products"
-          :shipping-methods="shippingMethods"
-          :total-items="totalItems"
-        />
+        <div class="sf-property--full-width sf-property">
+          <span class="sf-property__name-noBold">Order Subtotal</span>
+          <span class="sf-property__value"> $170.00 </span>
+        </div>
+        <div class="sf-property--full-width sf-property">
+          <span class="sf-property__name-noBold">Store Pickup</span>
+          <span class="sf-property__value"> Free </span>
+        </div>
+        <div><hr class="sf-divider" /></div>
+        <div class="sf-property--full-width sf-property">
+          <span class="sf-property__name">Estimated Order Total</span>
+          <span class="sf-property__value"> $170.00 </span>
+        </div>
+        <div class="checkout-button">
+          <button
+            class="color-primary sf-button sf-button--full-width"
+            :aria-disabled="false"
+            :link="null"
+          >
+            Checkout
+          </button>
+        </div>
       </div>
       <div class="detailed-cart__main">
         <transition name="sf-fade" mode="out-in">
           <div v-if="totalItems" key="detailed-cart" class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
-              <SfCollectedProduct
+              <KiboCollectedProduct
                 v-for="product in products"
                 :key="product.id"
                 v-model="product.qty"
@@ -35,20 +52,28 @@
                   </div>
                 </template>
                 <template #actions>
-                  <div class="actions desktop-only">
-                    <SfButton class="sf-button--text actions__button">Edit</SfButton>
-                    <SfButton class="sf-button--text actions__button">Save for later</SfButton>
-                    <SfButton class="sf-button--text actions__button">Add to compare</SfButton>
-                    <SfButton class="sf-button--text actions__button"
-                      >Add message or gift wrap</SfButton
-                    >
-                    <span class="actions__description">
-                      Usually arrives in 5-13 business days. A shipping timeline specific to your
-                      destination can be viewed in Checkout.
-                    </span>
+                  <div class="actions">
+                    <SfRadio
+                      name="shipToHome"
+                      value="store"
+                      label="Ship to Home"
+                      :disabled="false"
+                      selected=""
+                      :required="false"
+                    />
+                    <SfRadio
+                      name="pickup"
+                      value="store"
+                      label="Pickup in Store"
+                      details="Available at: Downtown store"
+                      description="Change Store"
+                      :disabled="false"
+                      selected=""
+                      :required="false"
+                    />
                   </div>
                 </template>
-              </SfCollectedProduct>
+              </KiboCollectedProduct>
             </transition-group>
           </div>
           <div v-else key="empty-cart" class="empty-cart">
@@ -74,24 +99,24 @@
 </template>
 <script>
 import {
-  SfCollectedProduct,
   SfButton,
   SfImage,
   SfProperty,
   SfHeading,
   SfBreadcrumbs,
-  SfOrderSummary,
+  SfRadio,
 } from "@storefront-ui/vue"
+import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
 export default {
   name: "DetailedCart",
   components: {
-    SfCollectedProduct,
     SfBreadcrumbs,
     SfImage,
     SfButton,
     SfHeading,
     SfProperty,
-    SfOrderSummary,
+    KiboCollectedProduct,
+    SfRadio,
   },
   data() {
     return {
@@ -111,9 +136,9 @@ export default {
       ],
       products: [
         {
-          title: "Cream Beach Bag Modern Style",
+          title: "Hoka Ocean Print",
           id: "CBB1",
-          image: "assets/storybook/Home/productA.jpg",
+          image: "https://m.media-amazon.com/images/I/61Tux6Jej-L._UY500_.jpg",
           price: { regular: "50.00" },
           configuration: [
             { name: "Size", value: "XS" },
@@ -124,7 +149,8 @@ export default {
         {
           title: "Cream Beach Bag Modern Style",
           id: "CBB2",
-          image: "assets/storybook/Home/productB.jpg",
+          image:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
           price: { regular: "50.00" },
           configuration: [
             { name: "Size", value: "XS" },
@@ -135,60 +161,14 @@ export default {
         {
           title: "Cream Beach Bag Modern Style",
           id: "CBB3",
-          image: "assets/storybook/Home/productC.jpg",
+          image:
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
           price: { regular: "50.00" },
           configuration: [
             { name: "Size", value: "XS" },
             { name: "Color", value: "White" },
           ],
           qty: "1",
-        },
-      ],
-      shippingMethods: [
-        {
-          isOpen: false,
-          price: "Free",
-          delivery: "Delivery from 3 to 7 business days",
-          label: "Pickup in the store",
-          value: "store",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$15.90",
-          delivery: "Delivery from 4 to 6 business days",
-          label: "Delivery to home",
-          value: "home",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$9.90",
-          delivery: "Delivery from 4 to 6 business days",
-          label: "Paczkomaty InPost",
-          value: "inpost",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$11.00",
-          delivery: "Delivery within 48 hours",
-          label: "48 hours coffee",
-          value: "coffee",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$14.00",
-          delivery: "Delivery within 24 hours",
-          label: "Urgent 24h",
-          value: "urgent",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
         },
       ],
     }
@@ -235,8 +215,7 @@ export default {
 
   &__aside {
     box-sizing: border-box;
-    width: 100%;
-    background: var(--c-light);
+    border: 2px solid var(--_c-white-secondary);
     padding: var(--spacer-base) var(--spacer-sm);
   }
   @include for-desktop {
@@ -250,7 +229,7 @@ export default {
       flex: 0 0 26.8125rem;
       order: 1;
       margin: 0 0 0 var(--spacer-xl);
-      padding: var(--spacer-xl);
+      height: 100%;
     }
   }
 }
@@ -284,28 +263,6 @@ export default {
   }
 }
 
-.actions {
-  &__button {
-    display: block;
-    margin: 0 0 var(--spacer-xs) 0;
-    color: var(--c-text);
-
-    &:hover {
-      color: var(--c-text-muted);
-    }
-  }
-
-  &__description {
-    font-family: var(--font-family--primary);
-    font-size: var(--font-size--sm);
-    font-weight: var(--font-weight--light);
-    color: var(--c-text-muted);
-    position: absolute;
-    bottom: 0;
-    padding-bottom: var(--spacer-lg);
-  }
-}
-
 .empty-cart {
   --heading-title-color: var(--c-primary);
   --heading-title-margin: 0 0 var(--spacer-base) 0;
@@ -331,5 +288,45 @@ export default {
       --button-width: 20.9375rem;
     }
   }
+}
+
+.sf-divider {
+  margin: var(--spacer-base) 0 var(--spacer-base) 0;
+}
+
+.sf-property {
+  padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
+  &__name {
+    @include font(
+      --property-name-font,
+      var(--font-weight--semibold),
+      var(--font-size--base),
+      1.2,
+      var(--font-family--secondary)
+    );
+  }
+  &__name-noBold {
+    @include font(
+      --property-name-font,
+      var(--font-weight--normal),
+      var(--font-size--base),
+      1.2,
+      var(--font-family--secondary)
+    );
+  }
+  &__value {
+    @include font(
+      --property-value-font,
+      var(--font-weight--normal),
+      var(--font-size--base),
+      1.2,
+      var(--font-family--secondary)
+    );
+  }
+}
+
+.checkout-button {
+  width: 100%;
+  margin-top: var(--spacer-base);
 }
 </style>
