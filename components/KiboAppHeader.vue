@@ -138,7 +138,7 @@ export default defineComponent({
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
-    const term = ref(getFacetsFromURL().phrase)
+    const term = ref("")
     const isSearchOpen = ref(false)
     const results = ref(null)
     const searchBarRef = ref(null)
