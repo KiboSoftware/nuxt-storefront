@@ -12,6 +12,7 @@ const state = reactive({
   isCategoryGridView: true,
   isFilterSidebarOpen: false,
   isMobileMenuOpen: false,
+  isStoreLocatorOpen: false,
 })
 
 const useUiState = () => {
@@ -36,6 +37,12 @@ const useUiState = () => {
   const toggleLoginModal = () => {
     if (state.isMobileMenuOpen) toggleMobileMenu()
     state.isLoginModalOpen = !state.isLoginModalOpen
+  }
+
+  const isStoreLocatorOpen = computed(() => state.isStoreLocatorOpen)
+  const toggleStoreLocatorModal = () => {
+    if (state.isMobileMenuOpen) toggleMobileMenu()
+    state.isStoreLocatorOpen = !state.isStoreLocatorOpen
   }
 
   const isNewsletterModalOpen = computed(() => state.isNewsletterModalOpen)
@@ -72,6 +79,8 @@ const useUiState = () => {
     changeToCategoryListView,
     toggleFilterSidebar,
     toggleMobileMenu,
+    toggleStoreLocatorModal,
+    isStoreLocatorOpen,
   }
 }
 
