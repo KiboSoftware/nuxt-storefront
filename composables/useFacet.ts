@@ -1,13 +1,16 @@
-import { ref, computed } from "@vue/composition-api"
-import { categoryTreeQuery } from "~~/gql/queries"
-import { selectCategoryFromTree } from "~~/composables/helpers/selectCategoryFromTree"
+import { computed } from "@vue/composition-api"
+import { categoryTreeQuery } from "@/gql/queries"
+import { selectCategoryFromTree } from "@/composables/helpers/selectCategoryFromTree"
 import { useState, useNuxtApp } from "#app"
 
 export const useFacet = (referenceKey: string) => {
+  console.log("referencekey", referenceKey)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  // const result = useState(`use-facet-result-${referenceKey}`, () => {return {}})
-  const result = ref({})
+  const result = useState(`use-facet-result-${referenceKey}`, () => {
+    return {}
+  })
+  // const result = ref({})
   const loading = useState(`use-facet-loading-${referenceKey}`, () => false)
   const error = useState(`use-facet-error-${referenceKey}`, () => null)
   const search = async (params: { categoryCode: string }) => {

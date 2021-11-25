@@ -46,50 +46,23 @@
     <div class="main section">
       <div class="sidebar desktop-only">
         <LazyHydrate when-idle>
-          <SfAccordion :show-chevron="true">
-            <SfAccordionItem
-              v-for="(accordion, i) in categoryTree"
-              :key="i"
-              :header="accordion.content.name"
-            >
-              <template #header="{ header, isOpen, accordionClick }">
-                <SfButton
-                  :aria-pressed="isOpen.toString()"
-                  :aria-expanded="isOpen.toString()"
-                  :class="{ 'is-open': false }"
-                  class="sf-button--pure sf-accordion-item__header"
-                  @click="accordionClick"
-                >
-                  {{ header }}
-                  <slot name="additional-info" />
-                  <SfChevron
-                    tabindex="0"
-                    class="sf-accordion-item__chevron"
-                    :class="{ 'sf-chevron--top': isOpen }"
+          <SfLoader :class="{ 'loading--categories': loading }" :loading="loading">
+            <div>
+              <div class="category-title">{{ categoryTitle }}</div>
+              <SfList class="list">
+                <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
+                  <SfMenuItem
+                    :label="item.content.name"
+                    :count="`(${item.count})`"
+                    :link="localePath(getCatLink(item))"
                   />
-                </SfButton>
-              </template>
-              <template>
-                <SfList class="list">
-                  <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
-                    <SfMenuItem
-                      :label="item.content.name"
-                      :count="`(${item.count})`"
-                      :link="localePath(getCatLink(item))"
-                    />
-                  </SfListItem>
-                </SfList>
-                <div v-if="showMoreButton && accordion.childrenCategories.length > 5">
+                </SfListItem>
+                <div v-if="showMoreButton && childrenCategories && childrenCategories.length > 5">
                   <SfButton
                     font-size="13px"
-                    class="sf-button--text navbar__button navbar__button--plus"
+                    class="sf-button--text navbar__button navbar__button--plus list__item"
                     aria-label="View More"
-                    @click="
-                      visibleCategories(
-                        accordion.childrenCategories,
-                        accordion.childrenCategories.length
-                      )
-                    "
+                    @click="visibleCategories(childrenCategories, childrenCategories.length)"
                   >
                     <SfIcon size="18px" color="#43464E" icon="plus" class="navbar__plus-icon" />
                     View More
@@ -102,9 +75,9 @@
                 >
                   <SfIcon size="18px" color="#43464E" icon="chevron_left" />Back
                 </SfLink>
-              </template>
-            </SfAccordionItem>
-          </SfAccordion>
+              </SfList>
+            </div>
+          </SfLoader>
         </LazyHydrate>
       </div>
     </div>
@@ -117,11 +90,10 @@ import {
   SfList,
   SfIcon,
   SfMenuItem,
-  SfAccordion,
   SfComponentSelect,
   SfBreadcrumbs,
   SfLink,
-  SfChevron,
+  SfLoader,
 } from "@storefront-ui/vue"
 import { ref, computed } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
@@ -137,17 +109,15 @@ export default {
     SfIcon,
     SfList,
     SfMenuItem,
-    SfAccordion,
     SfComponentSelect,
     SfBreadcrumbs,
     LazyHydrate,
     SfLink,
-    SfChevron,
+    SfLoader,
   },
   setup() {
     const { getFacetsFromURL, getCatLink } = useUiHelpers()
-    const { categoryCode } = getFacetsFromURL()
-    const { result, search, loading } = useFacet(categoryCode)
+    const { result, search, loading } = useFacet("category-listing")
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
       showMoreButton.value = !showMoreButton.value
@@ -167,9 +137,15 @@ export default {
       return categories && categories[0]?.childrenCategories
     })
 
+    const categoryTitle = computed(() => {
+      const categories = categoryTree.value
+      const title = categories?.[0]?.content?.name
+      return title
+    })
+
     useAsync(async () => {
       await search(getFacetsFromURL())
-      visibleCategories(childrenCategories.value)
+      await visibleCategories(childrenCategories.value)
     }, null)
     return {
       breadcrumbs,
@@ -183,6 +159,8 @@ export default {
       showMoreButton,
       categoryName,
       currentPage: 1,
+      childrenCategories,
+      categoryTitle,
       sortBy: "Latest",
       isFilterSidebarOpen: false,
       isGridView: true,
@@ -352,5 +330,13 @@ export default {
       margin-top: 3.75rem;
     }
   }
+}
+.category-title {
+  color: #2b2b2b;
+  font-size: 18px;
+  font-family: var(--font-family--primary);
+  line-height: 22px;
+  text-align: left;
+  margin: 0 0 1rem 0;
 }
 </style>

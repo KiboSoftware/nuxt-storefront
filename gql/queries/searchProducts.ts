@@ -1,4 +1,4 @@
-import { searchResults } from "~~/gql/fragments"
+import { searchResults } from "@/gql/fragments"
 
 export const searchProductsQuery = `
 query ProductSearch($query:String, $startIndex:Int,
