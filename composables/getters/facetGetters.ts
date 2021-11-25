@@ -1,6 +1,6 @@
-import { buildBreadcrumbs } from "~~/composables/helpers/buildBreadcrumbs"
-import { Breadcrumb } from "~~/pages/types"
-import { Maybe, PrCategory } from "~~/server/types/GraphQL"
+import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
+import { Breadcrumb } from "@/pages/types"
+import { Maybe, PrCategory } from "@/server/types/GraphQL"
 
 const getCategoryTree = (searchData: { categories: Maybe<Array<Maybe<PrCategory>>> }) => {
   if (!searchData) return []

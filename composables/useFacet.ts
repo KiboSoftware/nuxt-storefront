@@ -4,13 +4,11 @@ import { selectCategoryFromTree } from "@/composables/helpers/selectCategoryFrom
 import { useState, useNuxtApp } from "#app"
 
 export const useFacet = (referenceKey: string) => {
-  console.log("referencekey", referenceKey)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const result = useState(`use-facet-result-${referenceKey}`, () => {
     return {}
   })
-  // const result = ref({})
   const loading = useState(`use-facet-loading-${referenceKey}`, () => false)
   const error = useState(`use-facet-error-${referenceKey}`, () => null)
   const search = async (params: { categoryCode: string }) => {
@@ -37,7 +35,7 @@ export const useFacet = (referenceKey: string) => {
   return {
     search,
     result,
-    loading: computed(() => loading.value),
+    loading,
     error: computed(() => error.value),
   }
 }

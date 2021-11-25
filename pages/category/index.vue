@@ -4,7 +4,7 @@
     <div class="navbar section">
       <div class="navbar__main">
         <div class="navbar__aside desktop-only">
-          <SfHeading :level="3" :title="categoryName" class="navbar__title" />
+          <SfHeading :level="3" :title="categoryName" />
         </div>
         <div class="navbar__sort desktop-only">
           <span class="navbar__label">Sort by:</span>
@@ -100,6 +100,7 @@ import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
 import { useUiHelpers, useFacet } from "~/composables"
 import { productGetters, facetGetters } from "@/composables/getters"
+import { useState } from "#app"
 
 export default {
   name: "Category",
@@ -117,15 +118,17 @@ export default {
   },
   setup() {
     const { getFacetsFromURL, getCatLink } = useUiHelpers()
-    const { result, search, loading } = useFacet("category-listing")
+    const { result, search, loading } = useFacet(`category-listing`)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
       showMoreButton.value = !showMoreButton.value
-      navCategories.value = categories?.slice(0, categoriesVisible)
+      navCategories.value = categories.slice(0, categoriesVisible)
     }
 
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
-    const navCategories = ref([])
+    const navCategories = useState("nav-categories", () => {
+      return []
+    })
     const showMoreButton = ref(false)
     const categoryName = computed(() => {
       const categories = categoryTree.value
