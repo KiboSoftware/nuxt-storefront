@@ -105,7 +105,6 @@ export default defineNuxtConfig({
     userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo_at",
     colorAttributeFQN: "tenant~color",
     sizeAttributeFQN: "tenant~size",
-    giftWrappingAttributeFQN: "tenant~gift-wrapping",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
