@@ -17,7 +17,6 @@
 
   text-decoration: var(--price-#{$type}-text-decoration, $text-decoration);
 }
-
 .sf-price {
   display: flex;
   flex-wrap: var(--price-flex-wrap, wrap);
