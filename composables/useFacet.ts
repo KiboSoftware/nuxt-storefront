@@ -4,6 +4,7 @@ import { selectCategoryFromTree } from "@/composables/helpers/selectCategoryFrom
 import { useState, useNuxtApp } from "#app"
 
 export const useFacet = (referenceKey: string) => {
+  console.log("referencekey", referenceKey)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const result = useState(`use-facet-result-${referenceKey}`, () => {
