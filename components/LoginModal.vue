@@ -32,7 +32,7 @@
             label="Remember me"
             class="form__element form__checkbox"
           />
-          <span v-if="userError.login" style="color: red">
+          <span v-if="userError.login" class="login-error-message">
             {{ userError.login.message }}
           </span>
 
@@ -40,6 +40,7 @@
             type="submit"
             class="sf-button--full-width form__submit"
             data-testid="log-in-button"
+            :disabled="loading"
           >
             <SfLoader :class="{ loader: loading }" :loading="loading">
               <div>{{ $t("Login") }}</div>
@@ -208,7 +209,8 @@ export default {
     }
 
     const handleLogin = async () => {
-      await handleForm(login)()
+      const userInput = form.value
+      if (userInput.username && userInput.password) await handleForm(login)()
     }
 
     return {
@@ -267,5 +269,10 @@ export default {
 
     margin: 0 0 var(--spacer-sm) 0;
   }
+}
+.login-error-message {
+  color: red;
+  display: flex;
+  justify-content: center;
 }
 </style>
