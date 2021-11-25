@@ -17,31 +17,21 @@
         </div>
 
         <div class="product__specs">
-          <SfHeading
-            title="Product Specs"
-            :level="4"
-            class="
-              sf-heading--product-spec sf-heading--no-underline sf-heading--left
-              product__heading
-            "
-          />
-          <div class="sf-list--product-spec">
-            <SfList>
-              <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
-                {{ i }}: {{ p.join(", ") }}
-              </SfListItem>
-            </SfList>
-          </div>
+          <SfAccordion open="" :first-open="false" :multiple="false" transition="" show-chevron>
+            <SfAccordionItem header="Product Specs">
+              <SfList class="accordion-list">
+                <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
+                  {{ i }}: {{ p.join(", ") }}
+                </SfListItem>
+              </SfList>
+            </SfAccordionItem>
+          </SfAccordion>
         </div>
       </div>
 
       <div class="product__info">
         <div class="product__header">
-          <SfHeading
-            :title="productGetters.getName(product)"
-            :level="3"
-            class="sf-heading--no-underline sf-heading--left"
-          />
+          <SfHeading :title="productGetters.getName(product)" :level="3" />
           <SfIcon
             icon="drag"
             size="42px"
@@ -51,18 +41,16 @@
         </div>
 
         <div class="product__price-and-rating">
-          <SfPrice
-            :regular="$n(productGetters.getPrice(product), 'currency')"
-            :special="
-              product.price.salePrice && $n(productGetters.getSalePrice(product), 'currency')
-            "
-          />
+          <div>
+            <SfPrice
+              :regular="$n(priceRegular, 'currency')"
+              :special="priceSpecial && $n(priceSpecial, 'currency')"
+            />
+          </div>
 
           <div class="product__rating">
             <SfRating :score="3" :max="5" />
-            <a v-if="!!product.totalReviews" href="#" class="product__count">
-              ({{ product.totalReviews }})
-            </a>
+            <a href="#" class="product__count"> ({{ totalReviews }}) </a>
 
             <SfButton class="sf-button--text" data-testid="read-all-reviews" @click="changeTab(2)">
               {{ $t("WriteReview") }}
@@ -73,32 +61,102 @@
         <div class="product__content">
           <div class="product__description desktop-only" v-html="description"></div>
 
-          <div v-if="productColors && productColors.values" class="product__colors desktop-only">
+          <div
+            v-if="
+              productOptions && productOptions.colourOptions && productOptions.colourOptions.values
+            "
+            class="product__colors desktop-only"
+          >
             <div class="product__color-label">{{ $t("Color") }}:</div>
 
             <SfColor
-              v-for="(obj, i) in productColors.values"
+              v-for="(option, i) in productOptions.colourOptions.values"
               :key="i"
               data-cy="product-color_update"
-              :color="obj.value"
-              :class="{ 'sf-color--active': obj.isSelected }"
+              :color="option.value"
+              :class="{ 'sf-color--active': option.isSelected }"
               @click="
-                selectOption({ value: obj.value }, { attributeFQN: productColors.attributeFQN })
+                selectOption(
+                  { value: option.value },
+                  { attributeFQN: productOptions.colourOptions.attributeFQN }
+                )
               "
             />
           </div>
 
-          <div v-if="productSizes && productSizes.values" class="product__size">
+          <div
+            v-if="productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values"
+            class="product__size"
+          >
             <div
-              v-for="obj in productSizes.values"
-              :key="obj.value"
+              v-for="option in productOptions.sizeOptions.values"
+              :key="option.value"
               class="sf-badge"
-              :class="{ 'sf-badge--active': obj.isSelected }"
+              :class="{ 'sf-badge--active': option.isSelected }"
               @click="
-                selectOption({ value: obj.value }, { attributeFQN: productSizes.attributeFQN })
+                selectOption(
+                  { value: option.value },
+                  { attributeFQN: productOptions.sizeOptions.attributeFQN }
+                )
               "
             >
-              {{ obj.value }}
+              {{ option.value }}
+            </div>
+          </div>
+
+          <div v-if="productOptions && productOptions.listOptions">
+            <SfSelect
+              v-for="option in productOptions.listOptions"
+              :key="option.attributeFQN"
+              data-cy="product-select_size"
+              :value="productGetters.getOptionSelectedValue(option)"
+              :label="productGetters.getOptionName(option)"
+              :required="option.isRequired"
+              @input="(value) => selectOption({ value }, option)"
+            >
+              <SfSelectOption
+                v-for="optionVal in option.values"
+                :key="optionVal.value"
+                :value="optionVal.value"
+              >
+                {{ optionVal.stringValue }}
+              </SfSelectOption>
+            </SfSelect>
+          </div>
+
+          <div v-if="productOptions && productOptions.yesNoOptions">
+            <div v-for="option in productOptions.yesNoOptions" :key="option.name">
+              <SfCheckbox
+                :name="option.attributeFQN"
+                :label="option.attributeDetail.name"
+                hint-message=""
+                :required="option.isRequired"
+                info-message=""
+                error-message=""
+                valid
+                :disabled="false"
+                :selected="option.values.isSelected"
+              />
+            </div>
+          </div>
+
+          <div v-if="productOptions && productOptions.textBoxOptions">
+            <div
+              v-for="option in productOptions.textBoxOptions"
+              :key="option.name"
+              class="textBoxOptions"
+            >
+              <SfInput
+                value=""
+                :label="option.attributeDetail.name"
+                :name="option.attributeFQN"
+                type="text"
+                valid
+                error-message="Error message value of form input. It appears if `valid` is `false`."
+                :required="option.isRequired"
+                :disabled="false"
+                :has-show-password="false"
+              />
             </div>
           </div>
 
@@ -141,11 +199,11 @@
           <div>
             <SfHeading
               title="Product Information"
-              :level="4"
+              :level="3"
               class="sf-heading--no-underline sf-heading--left product__heading"
             />
 
-            <div class="product__description">
+            <div v-if="product && product.content" class="product__description">
               {{ $t("Product description") }}
             </div>
           </div>
@@ -169,6 +227,10 @@ import {
   SfDivider,
   SfRadio,
   SfList,
+  SfSelect,
+  SfCheckbox,
+  SfInput,
+  SfAccordion,
 } from "@storefront-ui/vue"
 
 import { defineComponent, computed } from "@vue/composition-api"
@@ -178,7 +240,6 @@ import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
 import { useProductSSR } from "@/composables/useProductSSR"
 import { productGetters } from "@/composables/getters"
-import { useNuxtApp } from "#app"
 
 export default defineComponent({
   name: "Product",
@@ -196,14 +257,15 @@ export default defineComponent({
     SfDivider,
     SfRadio,
     SfList,
+    SfSelect,
+    SfCheckbox,
+    SfInput,
+    SfAccordion,
   },
 
   setup(_, context) {
     const { productCode } = context.root.$route.params
     const { load, product, configure } = useProductSSR(productCode)
-    const nuxt = useNuxtApp()
-    const colorAttributeFQN = nuxt.nuxt2Context.$config.colorAttributeFQN
-    const sizeAttributeFQN = nuxt.nuxt2Context.$config.sizeAttributeFQN
 
     useAsync(async () => {
       await load(productCode)
@@ -212,19 +274,14 @@ export default defineComponent({
     const description = computed(() => productGetters.getDescription(product.value))
     const breadcrumbs = computed(() => productGetters.getBreadcrumbs(product.value))
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
+
+    const priceRegular = computed(() => productGetters.getPrice(product.value))
+    const priceSpecial = computed(() => productGetters.getSalePrice(product.value))
     const rating = computed(() => productGetters.getRating(product.value))
+    const totalReviews = computed(() => productGetters.getProductTotalReviews())
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
-    const productColors = computed(() =>
-      options.value?.find(
-        (obj) => obj?.attributeFQN?.toLowerCase() === colorAttributeFQN.toLowerCase()
-      )
-    )
-    const productSizes = computed(() =>
-      options.value?.find(
-        (obj) => obj?.attributeFQN.toLowerCase() === sizeAttributeFQN.toLowerCase()
-      )
-    )
+    const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
 
     const addToCart = () => {}
 
@@ -236,12 +293,14 @@ export default defineComponent({
       current: 1,
       addToCart,
       selectOption,
+      priceRegular,
+      priceSpecial,
       rating,
+      totalReviews,
       qty: 1,
       breadcrumbs,
       options,
-      productColors,
-      productSizes,
+      productOptions,
       productGallery,
       description,
       properties,
@@ -280,40 +339,26 @@ export default defineComponent({
   }
 
   &__price-and-rating {
-    margin: 0 var(--spacer-sm) var(--spacer-base);
     align-items: flex-start;
+
     @include for-desktop {
-      margin: var(--spacer-xs) 0 0 0;
+      margin: 1rem 0;
     }
   }
 
   &__rating {
     display: flex;
+    margin: 0.5rem 0 0 0;
     gap: var(--spacer-xs);
   }
 
   &__count {
-    @include font(
-      --count-font,
-      var(--font-weight--normal),
-      var(--font-size--sm),
-      1.4,
-      var(--font-family--secondary)
-    );
-
     color: var(--c-text);
     text-decoration: none;
-    margin: 0 0 0 var(--spacer-xs);
   }
 
   &__description {
-    @include font(
-      --product-description-font,
-      var(--font-weight--light),
-      var(--font-size--base),
-      1.6,
-      var(--font-family--primary)
-    );
+    margin-top: 0.5em;
   }
 
   &__size {
@@ -409,19 +454,27 @@ export default defineComponent({
   }
 }
 
-.sf-heading {
-  &--product-spec {
-    border: solid;
-    border: 1px solid #cdcdcd;
-    border-bottom: none;
-    padding-left: 1.31rem;
+::v-deep .sf-accordion-item {
+  width: 21rem;
+  border: 1px solid #cdcdcd;
+  background-color: #f7f7f7;
+  button {
+    border-bottom: 1px solid #cdcdcd;
+    padding: 0 1.31rem;
+    font-weight: bold;
   }
-}
 
-.sf-list {
-  &--product-spec {
+  &__content {
     padding: 0.675rem 1.31rem;
-    border: 1px solid #cdcdcd;
+  }
+
+  li {
+    font-size: 14px;
+    margin: 0.5rem 0;
+  }
+
+  .is-open {
+    color: #2b2b2b;
   }
 }
 
@@ -444,7 +497,9 @@ export default defineComponent({
 .divider-second {
   margin-top: var(--spacer-sm);
 }
-
+.textBoxOptions {
+  margin-top: 2rem;
+}
 // Add to cart button
 .add-to-cart-wrapper {
   display: flex;
@@ -472,7 +527,7 @@ export default defineComponent({
 }
 
 ::v-deep .sf-add-to-cart__button.sf-button {
-  width: 11.6rem; //186px
+  width: 11.6rem;
   height: var(--spacer-xl);
   border-radius: 4px;
 }
@@ -485,7 +540,7 @@ export default defineComponent({
   width: var(--spacer-base);
 }
 
-::v-deep .sf-input__wrapper {
+::v-deep .add-to-cart-wrapper .sf-input__wrapper {
   margin: var(--spacer-2xs) var(--spacer-sm);
   border: 1px solid #2b2b2b;
   width: 2.68rem;
@@ -494,7 +549,7 @@ export default defineComponent({
 }
 
 .one-click-chekout {
-  width: 11.6rem; //186px
+  width: 11.6rem;
   height: var(--spacer-xl);
   border-radius: 4px;
   font-weight: normal;
