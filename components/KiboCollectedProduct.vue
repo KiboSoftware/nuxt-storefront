@@ -24,11 +24,8 @@
         />
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
-        <SfQuantitySelector
-          :qty="quantity"
-          class="kibo-collected-product__quantity-selector"
-          @input="$emit('input', $event)"
-        />
+        <p>Qty:</p>
+        <SfQuantitySelector :qty="quantity" @input="$emit('input', $event)" />
       </div>
       <div class="kibo-collectedProduct__details-wrapper">
         <SfAccordion open="" show-chevron>
@@ -64,17 +61,26 @@
           name="pickup"
           value="store"
           label="Pickup in Store"
-          details="Available at: Downtown store"
-          description="Change Store"
           :disabled="false"
           selected=""
           :required="false"
-        />
+        >
+          <template #details v-bind="{ details }">
+            <p v-if="getPurchaseLocation" class="sf-radio__details">
+              {{ getPurchaseLocation }}
+            </p>
+          </template>
+          <template #description v-bind="{ description }">
+            <p class="sf-radio__description" @click="handleStoreLocatorClick">
+              {{ getPurchaseLocation ? "Change Store" : "Select Store" }}
+            </p>
+          </template>
+        </SfRadio>
       </div>
     </div>
     <div class="kibo-collectedProduct__remove">
       <SfButton class="kibo-collectedProduct__remove-button" link="/cart">
-        <SfIcon class="sf-header__icon" icon="cross" size="1.25rem" />
+        <font-awesome-icon :icon="['fas', 'trash-alt']" />
       </SfButton>
     </div>
   </div>
@@ -92,8 +98,9 @@ import {
   SfAccordion,
   SfRadio,
 } from "@storefront-ui/vue"
+import useUiState from "../composables/useUiState"
 
-export default {
+export default defineComponent({
   name: "KiboCollectedProduct",
   components: {
     SfButton,
@@ -168,181 +175,46 @@ export default {
       type: [String, Object],
       default: "",
     },
-  },
-  computed: {
-    componentIs() {
-      return this.link ? "SfLink" : "div"
-    },
-    quantity() {
-      return typeof this.qty === "string" ? Number(this.qty) : this.qty
+    purchaseLocation: {
+      type: String,
+      default: "",
     },
   },
-  methods: {
-    removeHandler() {
-      this.$emit("click:remove")
-    },
+  setup(props, context) {
+    const { toggleStoreLocatorModal } = useUiState()
+
+    const removeHandler = () => {
+      context.emit("click:remove")
+    }
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
+    }
+
+    const componentIs = computed(() => {
+      return props.link ? "SfLink" : "div"
+    })
+
+    const quantity = computed(() => {
+      return typeof props.qty === "string" ? Number(props.qty) : props.qty
+    })
+
+    const getPurchaseLocation = computed(() => {
+      return props.purchaseLocation !== "Select My Store"
+        ? `Available at: ${props.purchaseLocation}`
+        : ""
+    })
+
+    return {
+      removeHandler,
+      handleStoreLocatorClick,
+      componentIs,
+      quantity,
+      getPurchaseLocation,
+    }
   },
-}
+})
 </script>
-<style lang="scss">
-.kibo-collectedProduct {
-  height: auto;
-  width: 100%;
-  display: flex;
-  flex: 1;
-  box-sizing: border-box;
-  padding: 1%;
-  position: relative;
-  border: 2px solid var(--_c-white-secondary) !important;
-  margin: var(--collected-product-margin, 0 0 var(--spacer-sm) 0);
-
-  &__verticalDivider {
-    height: auto;
-    width: 1px;
-    background: var(--_c-white-secondary);
-  }
-
-  &__info {
-    flex: 1;
-  }
-
-  &__fullfilment {
-    flex: 1;
-    padding-top: var(--collected-product-padding-top, var(--spacer-sm));
-  }
-
-  &__fullfilment-options {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100%;
-    margin: var(--collected-product-main-margin, 0 0 0 var(--spacer-sm));
-  }
-
-  &__remove {
-    position: absolute;
-    right: 0;
-  }
-
-  &__remove-button {
-    --button-border-width: 0;
-    --button-background: transparent;
-    --button-color: var(--c-text);
-    --button-text-transform: none;
-    --button-text-decoration: underline;
-    --button-font-size: var(--font-size--xs);
-    --button-font-weight: var(--font-weight--medium);
-    --button-box-shadow: none;
-
-    display: inline;
-    &:hover {
-      --button-background: transparent;
-      --button-color: var(--c-primary);
-    }
-    &:active {
-      --button-color: var(--c-gray);
-    }
-    @each $color, $map in $colors-map {
-      $primary: map-get($map, "primary");
-      &.color-#{$color} {
-        --button-background: transparent;
-        &:hover {
-          --button-color: #{$primary};
-        }
-        &:active {
-          --button-color: var(--c-gray);
-          --button-background: transparent;
-        }
-      }
-    }
-  }
-
-  &__details-wrapper,
-  &__quantitySelector-wrapper,
-  &__price-wrapper,
-  &__title-wrapper {
-    flex: 1;
-    margin: var(--collected-product-main-margin, 0 0 0 var(--spacer-sm));
-  }
-
-  &__image {
-    padding: var(--spacer-sm) var(--spacer-sm) 0 var(--spacer-sm);
-    max-width: 10rem;
-    max-height: var(--spacer-base);
-  }
-
-  &__quantity-selector {
-    --quantity-selector-background: var(--c-light);
-  }
-
-  &__price,
-  &__title {
-    margin: var(--collected-product-title-margin, 0 var(--spacer-base) var(--spacer-xs) 0);
-    color: var(--collected-product-title-color, var(--c-link));
-
-    --link-text-decoration: none;
-    @include font(
-      --collected-product-title-font,
-      var(--font-weight--normal),
-      var(--font-size--base),
-      1.6,
-      var(--font-family--secondary)
-    );
-  }
-}
-
-.sf-accordion-item {
-  &__header {
-    display: flex;
-    justify-content: flex-start;
-    @include font(
-      --accordion-item-header-font,
-      var(--font-weight--medium),
-      var(--font-size--xs),
-      1,
-      var(--font-family--primary)
-    );
-  }
-
-  &__chevron {
-    display: var(--accordion-item-chevron-display, none);
-    flex: 0 0 auto;
-    font-size: 12px;
-    margin-left: var(--spacer-sm);
-  }
-
-  @include for-desktop {
-    --accordion-item-header-padding: var(--spacer-xs) 0;
-    --accordion-item-header-font-size: var(--font-size--sm);
-    --accordion-item-header-font-weight: var(--font-weight--normal);
-    --accordion-item-header-border-width: 0;
-    --accordion-item-content-border-width: 0;
-    --accordion-item-content-padding: var(--spacer-2xs) 0;
-  }
-}
-
-.sf-property {
-  padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
-  &__name {
-    @include font(
-      --property-name-font,
-      var(--font-weight--semibold),
-      var(--font-size--xs),
-      1.2,
-      var(--font-family--secondary)
-    );
-  }
-  &__value {
-    @include font(
-      --property-value-font,
-      var(--font-weight--normal),
-      var(--font-size--xs),
-      1.2,
-      var(--font-family--secondary)
-    );
-  }
-}
-
+<style lang="scss" scoped>
 .sf-radio {
   &__label,
   &__details,
