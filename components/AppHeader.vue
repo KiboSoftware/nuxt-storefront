@@ -62,9 +62,8 @@ import { usePurchaseLocation } from "../composables"
 import HeaderNavigation from "./HeaderNavigation"
 import LocaleSelector from "./LocaleSelector"
 import { useUser } from "@/composables/useUser"
-import { storeLocationGetters, userGetters } from "@/composables/getters"
+import { storeLocationGetters, userGetters, cartGetters } from "@/composables/getters"
 import { useCart } from "@/composables/useCart"
-import { userGetters, cartGetters } from "@/composables/getters"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
