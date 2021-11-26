@@ -1,11 +1,13 @@
-import { useNuxtApp } from "#app"
+import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "~~/gql/queries/cart"
 import { addToCartMutation } from "~~/gql/mutations"
 
 export const useCart = () => {
-  const cart = ref({})
-  const loading = ref(false)
-  const error = ref(null)
+  const cart = useState(`use-cart-result`, () => {
+    return {}
+  })
+  const loading = useState(`use-cart-result`, () => false)
+  const error = useState(`use-cart-result`, () => null)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
 
