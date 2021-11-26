@@ -107,6 +107,7 @@ export default defineNuxtConfig({
       "./assets/styles/components/_atoms.scss",
       "./assets/styles/components/_molecules.scss",
       "./assets/styles/components/_organisms.scss",
+      "./assets/styles/components/_custom.scss",
     ],
   },
   publicRuntimeConfig: {

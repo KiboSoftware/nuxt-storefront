@@ -1,6 +1,9 @@
 <template>
   <div id="detailed-cart">
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
+    <div class="detailed-cart__title-wrapper">
+      <h3 class="sf-heading__title h3">Shopping Cart</h3>
+    </div>
     <div class="detailed-cart">
       <div v-if="totalItems" class="detailed-cart__aside">
         <div class="sf-property--full-width sf-property">
@@ -34,6 +37,7 @@
                 v-for="product in products"
                 :key="product.id"
                 v-model="product.qty"
+                :purchase-location="selectedLocation"
                 :image="product.image"
                 :title="product.title"
                 :regular-price="product.price.regular && `$${product.price.regular}`"
@@ -41,38 +45,6 @@
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
-                <template #configuration>
-                  <div class="collected-product__properties">
-                    <SfProperty
-                      v-for="(property, key) in product.configuration"
-                      :key="key"
-                      :name="property.name"
-                      :value="property.value"
-                    />
-                  </div>
-                </template>
-                <template #actions>
-                  <div class="actions">
-                    <SfRadio
-                      name="shipToHome"
-                      value="store"
-                      label="Ship to Home"
-                      :disabled="false"
-                      selected=""
-                      :required="false"
-                    />
-                    <SfRadio
-                      name="pickup"
-                      value="store"
-                      label="Pickup in Store"
-                      details="Available at: Downtown store"
-                      description="Change Store"
-                      :disabled="false"
-                      selected=""
-                      :required="false"
-                    />
-                  </div>
-                </template>
               </KiboCollectedProduct>
             </transition-group>
           </div>
@@ -98,96 +70,105 @@
   </div>
 </template>
 <script>
-import {
-  SfButton,
-  SfImage,
-  SfProperty,
-  SfHeading,
-  SfBreadcrumbs,
-  SfRadio,
-} from "@storefront-ui/vue"
+import { SfButton, SfImage, SfHeading, SfBreadcrumbs } from "@storefront-ui/vue"
+import { useAsync } from "@nuxtjs/composition-api"
+import { defineComponent } from "@vue/composition-api"
+import { usePurchaseLocation } from "@/composables"
+import useUiState from "@/composables/useUiState"
 import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
-export default {
+import { storeLocationGetters } from "@/composables/getters"
+
+export default defineComponent({
   name: "DetailedCart",
   components: {
     SfBreadcrumbs,
     SfImage,
     SfButton,
     SfHeading,
-    SfProperty,
     KiboCollectedProduct,
-    SfRadio,
   },
-  data() {
+  setup() {
+    const { toggleStoreLocatorModal } = useUiState()
+    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+    const breadcrumbs = [
+      {
+        text: "Home",
+        route: {
+          link: "/",
+        },
+      },
+      {
+        text: "Cart",
+        route: {
+          link: "/cart",
+        },
+      },
+    ]
+    const products = [
+      {
+        title: "Hoka Ocean Print",
+        id: "CBB1",
+        image: "https://m.media-amazon.com/images/I/61Tux6Jej-L._UY500_.jpg",
+        price: { regular: "50.00" },
+        configuration: [
+          { name: "Size", value: "XS" },
+          { name: "Color", value: "White" },
+        ],
+        qty: "1",
+      },
+      {
+        title: "Cream Beach Bag Modern Style",
+        id: "CBB2",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
+        price: { regular: "50.00" },
+        configuration: [
+          { name: "Size", value: "XS" },
+          { name: "Color", value: "White" },
+        ],
+        qty: "2",
+      },
+      {
+        title: "Cream Beach Bag Modern Style",
+        id: "CBB3",
+        image:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
+        price: { regular: "50.00" },
+        configuration: [
+          { name: "Size", value: "XS" },
+          { name: "Color", value: "White" },
+        ],
+        qty: "1",
+      },
+    ]
+
+    useAsync(async () => {
+      await loadPurchaseLocation()
+    }, null)
+
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
+    }
+
+    const totalItems = computed(() => {
+      return products.reduce((totalItems, product) => totalItems + parseInt(product.qty, 10), 0)
+    })
+
+    const selectedLocation = computed(() => {
+      return Object.keys(purchaseLocation.value).length
+        ? storeLocationGetters.getName(purchaseLocation.value)
+        : "Select My Store"
+    })
+
     return {
-      breadcrumbs: [
-        {
-          text: "Home",
-          route: {
-            link: "#",
-          },
-        },
-        {
-          text: "Cart",
-          route: {
-            link: "#",
-          },
-        },
-      ],
-      products: [
-        {
-          title: "Hoka Ocean Print",
-          id: "CBB1",
-          image: "https://m.media-amazon.com/images/I/61Tux6Jej-L._UY500_.jpg",
-          price: { regular: "50.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: "1",
-        },
-        {
-          title: "Cream Beach Bag Modern Style",
-          id: "CBB2",
-          image:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
-          price: { regular: "50.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: "2",
-        },
-        {
-          title: "Cream Beach Bag Modern Style",
-          id: "CBB3",
-          image:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
-          price: { regular: "50.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: "1",
-        },
-      ],
+      products,
+      breadcrumbs,
+      selectedLocation,
+      totalItems,
+      handleStoreLocatorClick,
     }
   },
-  computed: {
-    totalItems() {
-      return this.products.reduce(
-        (totalItems, product) => totalItems + parseInt(product.qty, 10),
-        0
-      )
-    },
-  },
-  methods: {
-    removeHandler(product) {
-      const products = [...this.products]
-      this.products = products.filter((element) => element.id !== product.id)
-    },
-  },
-}
+})
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
@@ -202,7 +183,7 @@ export default {
 }
 
 .breadcrumbs {
-  padding: var(--spacer-base) 0;
+  padding: var(--spacer-base) 0 0 0;
 }
 
 .detailed-cart {
@@ -231,6 +212,11 @@ export default {
       margin: 0 0 0 var(--spacer-xl);
       height: 100%;
     }
+  }
+
+  &__title-wrapper {
+    width: 100%;
+    padding: 0 0 var(--spacer-sm) 0;
   }
 }
 
