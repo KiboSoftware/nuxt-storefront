@@ -86,7 +86,11 @@
               <span class="kibo-header__icon-name"> My Account</span>
             </div>
           </SfButton>
-          <SfButton v-e2e="'app-header-cart'" class="sf-button--pure sf-header__action">
+          <SfButton
+            v-e2e="'app-header-cart'"
+            class="sf-button--pure sf-header__action"
+            link="/cart"
+          >
             <SfIcon class="sf-header__icon">
               <font-awesome-icon icon="shopping-cart" class="fa-icon" />
             </SfIcon>

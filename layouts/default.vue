@@ -18,10 +18,10 @@ body {
   font-size: 1rem;
   line-height: 1.25rem;
   font-weight: 400;
+  margin: 0;
 }
 
 .content {
-  max-width: 90.063rem;
-  margin: 0 auto;
+  max-width: 100vw;
 }
 </style>
