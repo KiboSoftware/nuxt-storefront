@@ -6,7 +6,6 @@
     <div class="content">
       <Nuxt />
     </div>
-    <Nuxt />
     <AppFooter />
     <BottomNavigation />
   </div>

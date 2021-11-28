@@ -5,7 +5,6 @@ import VueCompositionAPI, { reactive, computed } from "@vue/composition-api"
 Vue.use(VueCompositionAPI)
 
 const state = reactive({
-  isCartSidebarOpen: false,
   isWishlistSidebarOpen: false,
   isLoginModalOpen: false,
   isNewsletterModalOpen: false,
@@ -19,12 +18,6 @@ const useUiState = () => {
   const isMobileMenuOpen = computed(() => state.isMobileMenuOpen)
   const toggleMobileMenu = () => {
     state.isMobileMenuOpen = !state.isMobileMenuOpen
-  }
-
-  const isCartSidebarOpen = computed(() => state.isCartSidebarOpen)
-  const toggleCartSidebar = () => {
-    if (state.isMobileMenuOpen) toggleMobileMenu()
-    state.isCartSidebarOpen = !state.isCartSidebarOpen
   }
 
   const isWishlistSidebarOpen = computed(() => state.isWishlistSidebarOpen)
@@ -64,14 +57,12 @@ const useUiState = () => {
   }
 
   return {
-    isCartSidebarOpen,
     isWishlistSidebarOpen,
     isLoginModalOpen,
     isNewsletterModalOpen,
     isCategoryGridView,
     isFilterSidebarOpen,
     isMobileMenuOpen,
-    toggleCartSidebar,
     toggleWishlistSidebar,
     toggleLoginModal,
     toggleNewsletterModal,
