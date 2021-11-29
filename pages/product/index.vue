@@ -30,8 +30,8 @@
       </div>
 
       <div class="product__info">
-        <div class="product__header">
-          <SfHeading :title="productGetters.getName(product)" :level="3" />
+        <div>
+          <h3 class="sf-heading__title h3">{{ productName }}</h3>
           <SfIcon
             icon="drag"
             size="42px"
@@ -59,7 +59,7 @@
         </div>
 
         <div class="product__content">
-          <div class="product__description desktop-only" v-html="description"></div>
+          <div class="product__description desktop-only" v-html="shortDescription"></div>
 
           <div
             v-if="
@@ -74,7 +74,7 @@
               :key="i"
               data-cy="product-color_update"
               :color="option.value"
-              :class="{ 'sf-color--active': option.isSelected }"
+              :class="{ 'sf-color--active': option.isSelected, disabled: false }"
               @click="
                 selectOption(
                   { value: option.value },
@@ -92,7 +92,7 @@
               v-for="option in productOptions.sizeOptions.values"
               :key="option.value"
               class="sf-badge"
-              :class="{ 'sf-badge--active': option.isSelected }"
+              :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
               @click="
                 selectOption(
                   { value: option.value },
@@ -161,51 +161,29 @@
           </div>
 
           <SfDivider class="divider-first" />
-          <SfRadio
-            ref="homeRef"
-            name="Shipping"
-            value="home"
-            label="Ship to Home"
-            details="Available to Ship"
-            class="sf-radio"
+
+          <KiboFulfillmentOptions
+            :fulfillment-options="fulfillmentOptions"
+            selcted="store"
+            @change="selectFulfillmentOption"
           />
-          <SfRadio
-            ref="storeRef"
-            name="Shipping"
-            value="store"
-            label="Pickup in Store"
-            details="Available at: Downtown Store"
-            class="sf-radio"
-          />
+
           <SfDivider class="divider-second" />
 
           <div class="add-to-cart-wrapper">
-            <div class="qty">Qty:</div>
-            <SfAddToCart v-model="qty" class="product__add-to-cart" @click="addToCart" />
-
-            <button
-              class="one-click-chekout color-secondary sf-button"
-              :aria-disabled="false"
-              :link="null"
-            >
-              1-Click Checkout
-            </button>
+            <KiboProductActions
+              v-model="qtySelected"
+              :quantity-left="quantityLeft"
+              label-add-to-cart="Add to Cart"
+              label-add-to-wishlist="Add to Wishlist"
+              @addItemToCart="addToCart"
+              @addItemWishlist="addToWishList"
+            />
           </div>
 
-          <button class="add-to-wishlist color-light sf-button" :aria-disabled="false" :link="null">
-            Add to wishlist
-          </button>
-
           <div>
-            <SfHeading
-              title="Product Information"
-              :level="3"
-              class="sf-heading--no-underline sf-heading--left product__heading"
-            />
-
-            <div v-if="product && product.content" class="product__description">
-              {{ $t("Product description") }}
-            </div>
+            <h4 class="sf-heading__title h4">Product Information</h4>
+            <div class="product__description desktop-only" v-html="description"></div>
           </div>
         </div>
       </div>
@@ -216,16 +194,13 @@
 <script lang="ts">
 import {
   SfGallery,
-  SfHeading,
   SfPrice,
   SfRating,
   SfIcon,
   SfButton,
-  SfAddToCart,
   SfBreadcrumbs,
   SfColor,
   SfDivider,
-  SfRadio,
   SfList,
   SfSelect,
   SfCheckbox,
@@ -238,6 +213,8 @@ import { defineComponent, computed } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 
 import { useAsync } from "@nuxtjs/composition-api"
+import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
+import KiboProductActions from "@/components/KiboProductActions.vue"
 import { useProductSSR } from "@/composables/useProductSSR"
 import { productGetters } from "@/composables/getters"
 
@@ -245,22 +222,21 @@ export default defineComponent({
   name: "Product",
   components: {
     SfGallery,
-    SfHeading,
     SfPrice,
     SfRating,
     SfIcon,
     SfButton,
-    SfAddToCart,
     SfBreadcrumbs,
     LazyHydrate,
     SfColor,
     SfDivider,
-    SfRadio,
     SfList,
     SfSelect,
     SfCheckbox,
     SfInput,
     SfAccordion,
+    KiboFulfillmentOptions,
+    KiboProductActions,
   },
 
   setup(_, context) {
@@ -271,7 +247,9 @@ export default defineComponent({
       await load(productCode)
     }, null)
 
+    const productName = computed(() => productGetters.getName(product.value))
     const description = computed(() => productGetters.getDescription(product.value))
+    const shortDescription = computed(() => productGetters.getShortDescription(product.value))
     const breadcrumbs = computed(() => productGetters.getBreadcrumbs(product.value))
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
 
@@ -283,15 +261,50 @@ export default defineComponent({
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
 
-    const addToCart = () => {}
-
+    // Options section
     const selectOption = async ({ value }, { attributeFQN }) => {
       await configure({ value, attributeFQN }, product.value?.productCode, options.value)
     }
 
+    // Add to Cart
+    const quantityLeft = computed(() => 5)
+    const qtySelected = useState(`pdp-selected-qty`, () => 1)
+
+    const addToCart = () => {
+      console.log("Add to Cart qunatity: ", qtySelected.value)
+    }
+    const addToWishList = () => {
+      console.log("Add to Whislist qunatity: ", qtySelected.value)
+    }
+
+    // Fullfillment Options
+    const fulfillmentOptions = useState(`pdp-fulfillment-options`, () => [
+      {
+        name: "fulfillment",
+        value: "home",
+        label: "Ship to Home",
+        details: "Available to Ship",
+        required: "false",
+      },
+      {
+        name: "fulfillment",
+        value: "store",
+        label: "Pickup in Store",
+        details: "Available at: Downtown Store",
+        required: "false",
+      },
+    ])
+
+    const selectFulfillmentOption = (selectedFulfillmentOption: string) => {
+      console.log("Selected fullfillment option: ", selectedFulfillmentOption)
+    }
+
     return {
       current: 1,
+      quantityLeft,
+      qtySelected,
       addToCart,
+      addToWishList,
       selectOption,
       priceRegular,
       priceSpecial,
@@ -302,11 +315,15 @@ export default defineComponent({
       options,
       productOptions,
       productGallery,
+      productName,
       description,
+      shortDescription,
       properties,
       productGetters,
       product,
       isOpenNotification: false,
+      fulfillmentOptions,
+      selectFulfillmentOption,
     }
   },
 })
@@ -326,13 +343,13 @@ export default defineComponent({
     }
   }
 
-  &__header {
-    display: flex;
-    justify-content: space-between;
-    @include for-desktop {
-      margin: 0 0;
-    }
-  }
+  // &__header {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   @include for-desktop {
+  //     margin: 0 0;
+  //   }
+  // }
 
   &__drag-icon {
     animation: moveicon 1s ease-in-out infinite;
@@ -500,68 +517,12 @@ export default defineComponent({
 .textBoxOptions {
   margin-top: 2rem;
 }
-// Add to cart button
+
 .add-to-cart-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--spacer-sm);
   margin: var(--spacer-sm) 0 var(--spacer-xs) 0;
 }
 
-.qty {
-  font-size: 1.125rem;
-}
-
-.sf-add-to-cart.product__add-to-cart {
-  margin: 0 0 0 0;
-  width: 21rem;
-  display: flex;
-  align-items: center;
-}
-::v-deep .sf-add-to-cart__select-quantity.sf-quantity-selector {
-  background-color: white;
-}
-
-::v-deep .sf-quantity-selector {
-  width: 8rem;
-}
-
-::v-deep .sf-add-to-cart__button.sf-button {
-  width: 11.6rem;
-  height: var(--spacer-xl);
-  border-radius: 4px;
-}
-
-::v-deep .sf-quantity-selector__button.sf-button {
-  padding: 0;
-  border: 0.5px solid #2b2b2b;
-  border-radius: 100%;
-  height: var(--spacer-base);
-  width: var(--spacer-base);
-}
-
-::v-deep .add-to-cart-wrapper .sf-input__wrapper {
-  margin: var(--spacer-2xs) var(--spacer-sm);
-  border: 1px solid #2b2b2b;
-  width: 2.68rem;
-  height: 2.31rem;
-  font-size: 1rem;
-}
-
-.one-click-chekout {
-  width: 11.6rem;
-  height: var(--spacer-xl);
-  border-radius: 4px;
-  font-weight: normal;
-}
-
-.add-to-wishlist {
-  width: 11.6rem;
-  height: var(--spacer-xl);
-  border-radius: 4px;
-  margin-left: 200px;
-  font-weight: normal;
-  background-color: #fafafa;
-  border: 1px solid #cdcdcd;
+.h4 {
+  font-weight: bold;
 }
 </style>
