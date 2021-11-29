@@ -9,6 +9,7 @@
         :label="fulfillmentOption.label"
         :details="fulfillmentOption.details"
         :required="fulfillmentOption.required"
+        :selected="selectedOption == fulfillmentOption.value ? fulfillmentOption.value : ''"
         class="sf-radio"
         @change="selectFulfillment(fulfillmentOption)"
       />
@@ -27,12 +28,17 @@ export default defineComponent({
   },
 
   model: {
-    prop: "fulfillmentOption",
+    prop: "selectedOption",
+    event: "change",
   },
   props: {
     fulfillmentOptions: {
       type: Array,
       default: () => [],
+    },
+    selectedOption: {
+      type: String,
+      default: "",
     },
   },
   setup(_, context) {
