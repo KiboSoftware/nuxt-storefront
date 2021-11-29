@@ -9,7 +9,7 @@ const buildBreadcrumbsList = (
     ...bc,
     {
       text: rootCat.content?.name,
-      link: `/category/${rootCat.categoryCode}`,
+      link: `${rootCat.categoryCode}`,
     },
   ]
   const result = rootCat.parentCategory

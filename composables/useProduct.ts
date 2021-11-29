@@ -13,7 +13,7 @@ const getProduct = async (params: types.GetProductParams): types.GetProductRespo
   const url = `${getProductApiPath}?productCode=${productCode}`
 
   const response = await apiHelper.getProduct("GET", url, {})
-  return response.data?.product || {}
+  return response.data?.product
 }
 
 const configureProduct = async (
@@ -48,7 +48,7 @@ const searchSuggestions = async (
   const url = `${searchProductApiPath}?productCode=${productCode}`
   const response = await apiHelper.searchSuggestions("GET", url, {})
 
-  return response.data?.products || {}
+  return response.data?.products
 }
 
 export const useProduct = (): types.useProductResponse => {
