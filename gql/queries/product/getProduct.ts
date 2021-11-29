@@ -1,5 +1,5 @@
 /* eslint-disable import/no-named-as-default */
-import { productInfo } from "../../fragments"
+import { productInfo } from "@/gql/fragments"
 
 export const getProductQuery = `
   ${productInfo}

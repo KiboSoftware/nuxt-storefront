@@ -1,6 +1,6 @@
 /* eslint-disable import/no-named-as-default */
 import gql from "graphql-tag"
-import { productInfo } from "../../fragments"
+import { productInfo } from "@/gql/fragments"
 
 export const getProductsQuery = gql`
   ${productInfo}
