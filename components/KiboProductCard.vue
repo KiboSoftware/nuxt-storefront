@@ -391,29 +391,30 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .kibo-product-card {
-  height: 282px;
+  height: 17.625rem;
   padding: 0;
 }
 .kpc-sf-color {
   border: none;
   width: 0.875rem;
   height: 0.875rem;
-  margin-right: 12px;
+  margin-right: 0.75rem;
   @include for-desktop {
     &.is-active,
     &:hover {
       transform: none;
     }
     &--active {
-      border: 1.15px solid #fff;
-      width: 18px;
-      height: 18px;
-      outline: 1px solid #2b2b2b;
+      border: 1.15px solid var(--c-white);
+      width: 1.125rem;
+      height: 1.125rem;
+      outline: 1px solid var(--_c-dark-primary);
     }
   }
 }
 .kpc-sf-color-picker {
-  top: 9rem;
+  top: 9.875rem;
+  margin-bottom: 0.875rem;
 }
 .kpc-title-button {
   top: 9.875rem;
