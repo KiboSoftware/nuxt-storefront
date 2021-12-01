@@ -85,7 +85,7 @@ import { usePurchaseLocation } from "@/composables/storeFinder/usePurchaseLocati
 import { storeLocationGetters } from "@/composables/getters"
 
 export default {
-  name: "LoginModal",
+  name: "StoreLocatorModal",
   components: {
     SfModal,
     SfSearchBar,

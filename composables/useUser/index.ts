@@ -40,7 +40,7 @@ export const useUser = () => {
 
   // User
   const login = async (params: GraphQLTypes.CustomerUserAuthInfoInput) => {
-    const user = {
+    const userCredentials = {
       loginInput: {
         username: params.username,
         password: params.password,
@@ -50,7 +50,7 @@ export const useUser = () => {
       loading.value = true
       const response = await fetcher({
         query: loginMutation,
-        variables: user,
+        variables: userCredentials,
       })
       if (response?.data?.account?.userId) {
         const account = response.data.account
@@ -59,10 +59,11 @@ export const useUser = () => {
           accessToken: account.accessToken,
           accessTokenExpiration: account.accessTokenExpiration,
           refreshToken: account.refreshToken,
-          refreshTokenExpiration: account.refreshToken,
-          userId: account?.refreshToken,
+          refreshTokenExpiration: account.refreshTokenExpiration,
+          userId: account?.userId,
         }
         storeClientCookie(authCookieName, cookie)
+        // user.value = response.data?.account.customerAccount
         await load()
         resetErrorValues()
       } else if (response.errors) {

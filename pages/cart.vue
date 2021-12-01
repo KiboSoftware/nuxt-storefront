@@ -5,20 +5,27 @@
       <h3 class="sf-heading__title h3">Shopping Cart</h3>
     </div>
     <div class="detailed-cart">
-      <div v-if="totalItems" class="detailed-cart__aside">
+      <div v-if="cartItems.length" class="detailed-cart__aside">
         <div class="sf-property--full-width sf-property">
           <span class="sf-property__name-noBold">Order Subtotal</span>
-          <span class="sf-property__value"> $170.00 </span>
-        </div>
-        <div class="sf-property--full-width sf-property">
-          <span class="sf-property__name-noBold">Store Pickup</span>
-          <span class="sf-property__value"> Free </span>
+          <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
         </div>
         <div><hr class="sf-divider" /></div>
+        <div class="promo">
+          <SfInput name="promo" placeholder="Enter Promo Code" class="promo__input" type="text" />
+          <button
+            class="color-primary sf-button sf-button--small"
+            :aria-disabled="false"
+            :link="null"
+          >
+            Apply
+          </button>
+        </div>
         <div class="sf-property--full-width sf-property">
           <span class="sf-property__name">Estimated Order Total</span>
-          <span class="sf-property__value"> $170.00 </span>
+          <span class="sf-property__value"> ${{ cartOrder.total }}</span>
         </div>
+
         <div class="checkout-button">
           <button
             class="color-primary sf-button sf-button--full-width"
@@ -31,17 +38,20 @@
       </div>
       <div class="detailed-cart__main">
         <transition name="sf-fade" mode="out-in">
-          <div v-if="totalItems" key="detailed-cart" class="collected-product-list">
+          <div v-if="cartItems.length" key="detailed-cart" class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
               <KiboCollectedProduct
-                v-for="product in products"
-                :key="product.id"
-                v-model="product.qty"
+                v-for="cartItem in cartItems"
+                :key="cartItem.id"
+                v-model="cartItem.quantity"
                 :purchase-location="selectedLocation"
-                :image="product.image"
-                :title="product.title"
-                :regular-price="product.price.regular && `$${product.price.regular}`"
-                :special-price="product.price.special && `$${product.price.special}`"
+                :image="cartItem.product.imageUrl"
+                :title="cartItem.product.name"
+                :regular-price="cartItem.product.price.price && `$${cartItem.product.price.price}`"
+                :special-price="
+                  cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
+                "
+                :options="cartItem.product.options"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
@@ -70,13 +80,13 @@
   </div>
 </template>
 <script>
-import { SfButton, SfImage, SfHeading, SfBreadcrumbs } from "@storefront-ui/vue"
+import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import { usePurchaseLocation } from "@/composables"
+import { usePurchaseLocation, useCart } from "@/composables"
 import useUiState from "@/composables/useUiState"
 import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
-import { storeLocationGetters } from "@/composables/getters"
+import { cartGetters, storeLocationGetters } from "@/composables/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -85,23 +95,22 @@ export default defineComponent({
     SfImage,
     SfButton,
     SfHeading,
+    SfInput,
     KiboCollectedProduct,
   },
   setup() {
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+    const { cart, load: loadCart } = useCart()
+
     const breadcrumbs = [
       {
         text: "Home",
-        route: {
-          link: "/",
-        },
+        link: "/",
       },
       {
         text: "Cart",
-        route: {
-          link: "/cart",
-        },
+        link: "/cart",
       },
     ]
     const products = [
@@ -144,15 +153,12 @@ export default defineComponent({
 
     useAsync(async () => {
       await loadPurchaseLocation()
+      await loadCart()
     }, null)
 
     const handleStoreLocatorClick = () => {
       toggleStoreLocatorModal()
     }
-
-    const totalItems = computed(() => {
-      return products.reduce((totalItems, product) => totalItems + parseInt(product.qty, 10), 0)
-    })
 
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
@@ -160,11 +166,15 @@ export default defineComponent({
         : "Select My Store"
     })
 
+    const cartItems = computed(() => cartGetters.getItems(cart.value))
+    const cartOrder = computed(() => cartGetters.getTotals(cart.value))
+
     return {
       products,
       breadcrumbs,
       selectedLocation,
-      totalItems,
+      cartItems,
+      cartOrder,
       handleStoreLocatorClick,
     }
   },
@@ -261,7 +271,7 @@ export default defineComponent({
   flex-direction: column;
 
   &__image {
-    --image-width: 13.1875rem;
+    --image-width: 15.1875rem;
 
     margin: var(--spacer-2xl) 0;
   }
@@ -314,5 +324,23 @@ export default defineComponent({
 .checkout-button {
   width: 100%;
   margin-top: var(--spacer-base);
+}
+
+.promo {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  padding: var(--spacer-sm) 0;
+  &__input {
+    flex: 1;
+  }
+}
+
+.sf-button--small {
+  margin-left: 2%;
+}
+
+.sf-input {
+  --input-text-indent: var(--spacer-sm);
 }
 </style>

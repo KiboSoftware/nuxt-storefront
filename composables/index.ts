@@ -1,6 +1,7 @@
 export * from "./useCategoryTree"
 export * from "./useUiHelpers"
 export * from "./useSearchRelatedProducts"
+export * from "./useCart"
 export * from "./storeFinder/usePurchaseLocation"
 export * from "./storeFinder/useCurrentLocation"
 export * from "./storeFinder/useStoreLocations"
