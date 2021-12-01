@@ -1,13 +1,7 @@
 <template>
   <div class="kibo-collectedProduct">
     <div class="kibo-collectedProduct__image">
-      <SfImage
-        :src="image"
-        :alt="title"
-        width="100%"
-        height="100%"
-        class="sf-collected-product__image"
-      />
+      <SfImage :src="image" :alt="title" width="100%" height="100%" />
     </div>
     <div class="kibo-collectedProduct__info">
       <div class="kibo-collectedProduct__title-wrapper">
@@ -28,19 +22,13 @@
         <SfQuantitySelector :qty="quantity" @input="$emit('input', $event)" />
       </div>
       <div class="kibo-collectedProduct__details-wrapper">
-        <SfAccordion open="" show-chevron>
+        <SfAccordion v-if="options.length" open="Details" show-chevron>
           <SfAccordionItem header="Details">
-            <div class="sf-property">
-              <span class="sf-property__name">Color</span>
-              <span class="sf-property__value"> Blue </span>
-            </div>
-            <div class="sf-property">
-              <span class="sf-property__name">Size</span>
-              <span class="sf-property__value"> XL </span>
-            </div>
-            <div class="sf-property">
-              <span class="sf-property__name">SKU</span>
-              <span class="sf-property__value"> MS-4567J </span>
+            <div v-for="(option, index) in options" :key="index">
+              <div class="sf-property">
+                <span class="sf-property__name">{{ option.name }}</span>
+                <span class="sf-property__value"> {{ option.value }}</span>
+              </div>
             </div>
           </SfAccordionItem>
         </SfAccordion>
@@ -179,6 +167,11 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    options: {
+      type: Array,
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default: [],
+    },
   },
   setup(props, context) {
     const { toggleStoreLocatorModal } = useUiState()
@@ -215,11 +208,10 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.sf-radio {
-  &__label,
-  &__details,
-  &__description {
-    font-size: var(--font-size--xs);
+.sf-image {
+  &__image {
+    object-fit: contain;
+    background: var(--c-white);
   }
 }
 </style>
