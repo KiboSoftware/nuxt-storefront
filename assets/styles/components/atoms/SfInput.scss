@@ -86,6 +86,10 @@
       var(--font-family--primary)
     );
 
+    &::-webkit-input-placeholder {
+      font-size: var(--font-size--sm);
+      line-height: 1;
+    }
     &:focus,
     &:placeholder-shown,
     &:-webkit-autofill,
