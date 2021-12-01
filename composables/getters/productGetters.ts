@@ -5,6 +5,8 @@ import { Product, ProductOption, ProductOptionValue } from "~~/server/types/Grap
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
 
+export const getProductId = (product: Product): string => product?.productCode || ""
+
 export const getRating = (product: Product) => {
   const attr = product?.properties?.find((property) => property?.attributeFQN === ratingAttrFQN)
   return attr?.values?.pop()?.value
@@ -124,4 +126,5 @@ export const productGetters = {
   getSegregatedOptions,
   getSlug,
   getCoverImage,
+  getProductId,
 }

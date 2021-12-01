@@ -338,7 +338,6 @@ export default defineComponent({
       const defaultClass = "sf-button--pure sf-product-card__wishlist-icon"
       return `${defaultClass} ${props.isInWishlist ? "on-wishlist" : ""}`
     })
-
     const toggleIsInWishlist = () => {
       context.emit("click:wishlist", !props.isInWishlist)
     }
@@ -393,6 +392,9 @@ export default defineComponent({
 .kibo-product-card {
   height: 17.625rem;
   padding: 0;
+  .sf-image {
+    object-fit: contain;
+  }
 }
 .kpc-sf-color {
   border: none;

@@ -64,7 +64,7 @@
                     aria-label="View More"
                     @click="visibleCategories(childrenCategories, childrenCategories.length)"
                   >
-                    <SfIcon size="18px" color="#43464E" icon="plus" class="navbar__plus-icon" />
+                    <SfIcon size="0.813rem" color="#2B2B2B" icon="plus" class="navbar__plus-icon" />
                     View More
                   </SfButton>
                 </div>
@@ -73,13 +73,91 @@
                   class="navbar__button navbar__button--back"
                   :link="breadcrumbs[breadcrumbs.length - 2].link"
                 >
-                  <SfIcon size="18px" color="#43464E" icon="chevron_left" />Back
+                  <SfIcon size="0.813rem" color="#2B2B2B" icon="chevron_left" />Back
                 </SfLink>
               </SfList>
             </div>
           </SfLoader>
         </LazyHydrate>
       </div>
+      <SfLoader
+        :class="{ 'loading--products': productSearchLoading }"
+        :loading="productSearchLoading"
+      >
+        <div class="products" v-if="!loading">
+          <transition-group
+            v-if="isGridView"
+            appear
+            name="products__slide"
+            tag="div"
+            class="products__grid"
+          >
+            <KiboProductCard
+              v-for="(product, i) in products"
+              :key="productGetters.getSlug(product)"
+              :style="{ '--index': i }"
+              :title="productGetters.getName(product)"
+              :image="productGetters.getCoverImage(product)"
+              :scoreRating="3"
+              :maxRating="5"
+              wishlistIcon=""
+              isInWishlistIcon=""
+              :isInWishlist="false"
+              :show-add-to-cart-button="true"
+              :regularPrice="`$${productGetters.getPrice(product).regular}`"
+              :special-price="
+                productGetters.getPrice(product).special && productGetters.getPrice(product).special
+              "
+              :link="localePath(`/product/${productGetters.getProductId(product)}`)"
+              imageWidth="12.563rem"
+              imageHeight="12.563rem"
+              class="products__product-card"
+            />
+          </transition-group>
+          <transition-group v-else appear name="products__slide" tag="div" class="products__list">
+            <SfProductCardHorizontal
+              v-for="(product, i) in products"
+              :key="productGetters.getSlug(product)"
+              :style="{ '--index': i }"
+              :title="productGetters.getName(product)"
+              :description="productGetters.getDescription(product)"
+              :image="productGetters.getCoverImage(product)"
+              :regularPrice="`$${productGetters.getPrice(product).regular}`"
+              :special-price="
+                productGetters.getPrice(product).special && productGetters.getPrice(product).special
+              "
+              :max-rating="5"
+              class="products__product-card-horizontal"
+            >
+              <template #configuration>
+                <SfProperty
+                  class="desktop-only"
+                  name="Size"
+                  value="XS"
+                  style="margin: 0 0 1rem 0"
+                />
+                <SfProperty class="desktop-only" name="Color" value="white" />
+              </template>
+              <template #actions>
+                <SfButton
+                  class="sf-button--text desktop-only"
+                  style="margin: 0 0 1rem auto; display: block"
+                  @click="$emit('click:add-to-wishlist')"
+                >
+                  Save for later
+                </SfButton>
+                <SfButton
+                  class="sf-button--text desktop-only"
+                  style="margin: 0 0 0 auto; display: block"
+                  @click="$emit('click:add-to-compare')"
+                >
+                  Add to compare
+                </SfButton>
+              </template>
+            </SfProductCardHorizontal>
+          </transition-group>
+        </div>
+      </SfLoader>
     </div>
   </div>
 </template>
@@ -94,13 +172,15 @@ import {
   SfBreadcrumbs,
   SfLink,
   SfLoader,
+  SfProductCardHorizontal,
 } from "@storefront-ui/vue"
 import { ref, computed } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
-import { useUiHelpers, useFacet } from "~/composables"
-import { productGetters, facetGetters } from "@/composables/getters"
+import { useUiHelpers, useFacet, useProductSearch } from "~/composables"
+import { productGetters, facetGetters, productSearchGetters } from "@/composables/getters"
 import { useState } from "#app"
+import KiboProductCard from "@/components/KiboProductCard.vue"
 
 export default {
   name: "Category",
@@ -115,15 +195,24 @@ export default {
     LazyHydrate,
     SfLink,
     SfLoader,
+    SfProductCardHorizontal,
+    KiboProductCard,
   },
   setup() {
     const { getFacetsFromURL, getCatLink } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
+    const {
+      result: productSearchResult,
+      search: productSearch,
+      loading: productSearchLoading,
+    } = useProductSearch(`product-search`)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
       showMoreButton.value = !showMoreButton.value
       navCategories.value = categories.slice(0, categoriesVisible)
     }
+
+    const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
 
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const navCategories = useState("nav-categories", () => {
@@ -148,6 +237,7 @@ export default {
 
     useAsync(async () => {
       await search(getFacetsFromURL())
+      await productSearch(getFacetsFromURL())
       await visibleCategories(childrenCategories.value)
     }, null)
     return {
@@ -157,7 +247,10 @@ export default {
       getFacetsFromURL,
       getCatLink,
       productGetters,
+      productSearchLoading,
+      productSearchResult,
       visibleCategories,
+      products,
       navCategories,
       showMoreButton,
       categoryName,
@@ -250,9 +343,11 @@ export default {
       order: 1;
     }
     &--plus {
+      font-size: 0.813rem;
       margin: var(--spacer-sm) 0;
     }
     &--back {
+      font-size: 0.813rem;
       margin: var(--spacer-sm) 0 0 0;
     }
   }
@@ -316,10 +411,76 @@ export default {
   border-width: 0 1px 1px 0;
 }
 .list {
-  --menu-item-font-size: var(--font-size--sm);
+  --menu-item-font-size: 0.813rem;
+
+  padding-left: 0.375rem;
   &__item {
     &:not(:last-of-type) {
       --list-item-margin: 0 0 var(--spacer-sm) 0;
+    }
+  }
+}
+.products {
+  box-sizing: border-box;
+  flex: 1;
+  margin: 0;
+  &__grid {
+    justify-content: center;
+    @include for-desktop {
+      justify-content: flex-start;
+    }
+  }
+  &__grid,
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  &__product-card-horizontal {
+    flex: 0 0 100%;
+    ::v-deep .sf-image {
+      object-fit: contain;
+    }
+    @include for-mobile {
+      ::v-deep .sf-image {
+        --image-width: 5.3125rem;
+        --image-height: 7.0625rem;
+      }
+    }
+  }
+  &__slide-enter {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  &__slide-enter-active {
+    transition: all 0.2s ease;
+    transition-delay: calc(0.1s * var(--index));
+  }
+  @include for-desktop {
+    &__grid {
+      margin: var(--spacer-sm) 0 0 3.125rem;
+    }
+    &__pagination {
+      display: flex;
+      justify-content: flex-start;
+      margin: var(--spacer-xl) 0 0 0;
+    }
+    &__product-card-horizontal {
+      margin: var(--spacer-lg) 0;
+    }
+    &__product-card {
+      flex: 1 1 25%;
+    }
+    &__list {
+      margin: 0 0 0 var(--spacer-sm);
+    }
+  }
+  &__show-on-page {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+    &__label {
+      font-family: var(--font-family--secondary);
+      font-size: var(--font-size--sm);
     }
   }
 }
@@ -331,6 +492,11 @@ export default {
   &--categories {
     @include for-desktop {
       margin-top: 3.75rem;
+    }
+  }
+  &--products {
+    @include for-desktop {
+      margin-top: 2.063rem;
     }
   }
 }
