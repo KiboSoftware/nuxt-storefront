@@ -20,7 +20,7 @@ body {
   font-weight: 400;
 }
 .content {
-  max-width: 81.75rem;
+  max-width: 90.063rem;
   margin: 0 auto;
 }
 </style>

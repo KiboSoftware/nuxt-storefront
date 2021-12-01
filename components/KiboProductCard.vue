@@ -26,6 +26,7 @@
             :alt="title"
             :width="imageWidth"
             :height="imageHeight"
+            @click="closeSearchDialog()"
           />
         </SfButton>
       </slot>
@@ -103,6 +104,7 @@
         class="sf-button--pure sf-product-card__link kpc-title-button"
         data-testid="product-link"
         v-on="$listeners"
+        @click="closeSearchDialog()"
       >
         <h3 class="kpc-title">
           {{ title }}
@@ -338,7 +340,6 @@ export default defineComponent({
       const defaultClass = "sf-button--pure sf-product-card__wishlist-icon"
       return `${defaultClass} ${props.isInWishlist ? "on-wishlist" : ""}`
     })
-
     const toggleIsInWishlist = () => {
       context.emit("click:wishlist", !props.isInWishlist)
     }
@@ -362,15 +363,15 @@ export default defineComponent({
         })
       }
     }
-
     const toggleColorPicker = () => {
       openColorPicker.value = !openColorPicker.value
     }
-
+    const closeSearchDialog = () => {
+      context.emit("closeSearchBox")
+    }
     onBeforeUnmount(() => {
       unMapMobileObserver()
     })
-
     return {
       isAddingToCart,
       openColorPicker,
@@ -385,6 +386,7 @@ export default defineComponent({
       onAddToCart,
       handleSelectedColor,
       toggleColorPicker,
+      closeSearchDialog,
     }
   },
 })

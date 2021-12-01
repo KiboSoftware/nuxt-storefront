@@ -1,6 +1,11 @@
 import { buildBreadcrumbs } from "../helpers/buildBreadcrumbs"
 import { Breadcrumb } from "~~/pages/types"
-import { Product, ProductOption, ProductOptionValue } from "~~/server/types/GraphQL"
+import {
+  Product,
+  ProductOption,
+  ProductOptionValue,
+  SearchSuggestionResult,
+} from "~~/server/types/GraphQL"
 
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
@@ -65,6 +70,33 @@ export const getOptionSelectedValue = (option: ProductOption) => {
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
+export const getSearchSuggestions = (suggestionSearch: SearchSuggestionResult) => {
+  const productSuggeastionGroup = suggestionSearch.suggestionGroups.find(
+    (sg) => sg.name === "Pages"
+  )
+  const products = productSuggeastionGroup?.suggestions?.map((p) => {
+    return {
+      productCode: p?.suggestion?.productCode,
+      productImageUrls: p?.suggestion?.productImageUrls,
+      productName: p?.suggestion?.productName,
+    }
+  })
+  const categorySuggeastionGroup = suggestionSearch.suggestionGroups.find(
+    (sg) => sg.name === "Categories"
+  )
+  const categories = categorySuggeastionGroup?.suggestions
+    ?.map((p) => {
+      return {
+        categoryCode: p?.suggestion?.categoryCode,
+        categoryId: p?.suggestion?.categoryId,
+        name: p?.suggestion?.content?.name,
+        isDisplayed: p?.suggestion?.isDisplayed,
+      }
+    })
+    .filter((cat) => cat.isDisplayed)
+
+  return { products, categories }
+}
 
 export const getSegregatedOptions = (product: Product) => {
   const options = product?.options
@@ -124,4 +156,5 @@ export const productGetters = {
   getSegregatedOptions,
   getSlug,
   getCoverImage,
+  getSearchSuggestions,
 }

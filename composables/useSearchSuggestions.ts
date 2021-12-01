@@ -21,8 +21,10 @@ export const useSearchSuggestions = () => {
         })
         result.value = response.data.suggestionSearch
       }
-    } catch (err) {}
-    loading.value = false
+    } catch (err) {
+    } finally {
+      loading.value = false
+    }
   }
 
   return {
