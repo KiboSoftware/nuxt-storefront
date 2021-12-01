@@ -1,7 +1,21 @@
 .sf-input {
   --input-height: 3.438rem;
 
+  &__wrapper,
+  input {
+    border-radius: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
   border: none;
+
+  &__bar {
+    display: none;
+  }
 
   &__label {
     position: relative;
@@ -28,7 +42,12 @@
 
     border-radius: var(--spacer-2xs);
     height: 2.125rem;
+    text-indent: var(--input-text-indent, 1px);
 
+    &::-webkit-input-placeholder {
+      font-size: var(--font-size--sm);
+      line-height: 1;
+    }
     &:focus,
     &:placeholder-shown,
     &:-webkit-autofill,

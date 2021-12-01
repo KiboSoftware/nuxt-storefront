@@ -148,6 +148,7 @@ import {
 
 import useUiState from "../composables/useUiState"
 import { useUser } from "../composables/useUser"
+import { useCart } from "../composables"
 import { userGetters } from "../composables/getters/user"
 
 export default {
@@ -162,7 +163,13 @@ export default {
     SfLoader,
   },
   setup() {
+    interface loginForm {
+      username: string
+      password: string
+    }
     const { user, login, loading, error: userError, isAuthenticated } = useUser()
+    const { load: loadCart } = useCart()
+
     const { isLoginModalOpen, toggleLoginModal } = useUiState()
     const form = ref({})
     const isLogin = ref(false)
@@ -209,8 +216,11 @@ export default {
     }
 
     const handleLogin = async () => {
-      const userInput = form.value
-      if (userInput.username && userInput.password) await handleForm(login)()
+      const userInput = form.value as loginForm
+      if (userInput.username && userInput.password) {
+        await handleForm(login)()
+        await loadCart()
+      }
     }
 
     return {

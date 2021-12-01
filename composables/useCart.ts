@@ -6,8 +6,8 @@ export const useCart = () => {
   const cart = useState(`use-cart-result`, () => {
     return {}
   })
-  const loading = useState(`use-cart-result`, () => false)
-  const error = useState(`use-cart-result`, () => null)
+  const loading = useState(`use-cart-loading`, () => false)
+  const error = useState(`use-cart-error`, () => null)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
 
