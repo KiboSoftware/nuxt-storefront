@@ -21,16 +21,16 @@
         <div class="section-border"></div>
         <div class="location-search">
           <SfSearchBar
-            placeholder="Zip Code"
+            v-model="zipCodeInput"
+            placeholder="Enter Zip Code"
             class="Search-bar"
-            :value="null"
-            :icon="{ size: '1.25rem', color: '#43464E' }"
             aria-label="Search"
           />
           <button
             class="color-primary sf-button sf-button--small"
             :aria-disabled="false"
             :link="null"
+            @click="searchByZipCode"
           >
             Search
           </button>
@@ -52,7 +52,7 @@
             />
           </div>
         </div>
-        <div class="action-buttons">
+        <div v-if="storeDetails.length" class="action-buttons">
           <button
             class="color-light sf-button sf-button--small"
             :aria-disabled="false"
@@ -97,6 +97,7 @@ export default {
     const { locations, search: searchStoreLocations } = useStoreLocations()
     const { set, load: loadPurchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
+    const zipCodeInput = ref("")
 
     const handleCurrentLocation = async () => {
       await loadWithNavigator()
@@ -131,15 +132,21 @@ export default {
       }`
     })
 
+    const searchByZipCode = async () => {
+      await searchStoreLocations(zipCodeInput.value)
+    }
+
     return {
       currentLocation,
       isStoreLocatorOpen,
       locations,
       storeDetails,
       selectedStore,
+      zipCodeInput,
       handleStoreChange,
       handleCurrentLocation,
       toggleStoreLocatorModal,
+      searchByZipCode,
       handleSetStoreButtonStatus,
       setStore,
       closeModal,
@@ -148,8 +155,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 .sf-modal {
   --modal-width: 39.375rem;
   --modal-content-padding: 0;
@@ -179,7 +184,7 @@ export default {
 .current-location {
   text-decoration: underline;
   cursor: pointer;
-  font-size: var(--font-size--base);
+  font-size: var(--font-size--sm);
   padding: var(--spacer-2xs) var(--spacer-lg);
 }
 

@@ -12,14 +12,18 @@ export const useStoreLocations = () => {
   const loading = useState(`use-storeLocations-loading`, () => false)
   const error = useState(`use-storeLocations-error`, () => null)
 
-  const search = async (coords?: GeoCoords) => {
+  const search = async (param: GeoCoords | string) => {
     try {
       loading.value = true
       const response = await fetcher({
         query: getSpLocations,
-        ...(coords && {
-          variables: { filter: `geo near(${coords?.latitude},${coords?.longitude},160934)` },
-        }),
+        ...(typeof param === "string"
+          ? {
+              variables: { filter: `geo near(${param},160934)` },
+            }
+          : {
+              variables: { filter: `geo near(${param?.latitude},${param?.longitude},160934)` },
+            }),
       })
       locations.value = response.data.spLocations.items
     } catch (error) {
