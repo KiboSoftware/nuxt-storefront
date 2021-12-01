@@ -1,7 +1,18 @@
+<<<<<<< HEAD
 import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
 import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
 import { Location } from "@/composables/types/storeFinder"
+=======
+import { buildBreadcrumbs } from "../helpers/buildBreadcrumbs"
+import { Breadcrumb } from "~~/pages/types"
+import {
+  Product,
+  ProductOption,
+  ProductOptionValue,
+  SearchSuggestionResult,
+} from "~~/server/types/GraphQL"
+>>>>>>> 17704dd (feat(search) : implement search type ahead resolve conflicts)
 
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
