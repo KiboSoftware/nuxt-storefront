@@ -11,7 +11,7 @@
       <SfBar
         class="sf-modal__bar smartphone-only"
         :close="true"
-        :title="$t(barTitle)"
+        :title="$t('Select Store')"
         @click:close="closeModal"
       />
     </template>
@@ -27,7 +27,9 @@
             aria-label="Search"
           />
           <button
-            class="color-primary sf-button sf-button--small"
+            :class="`color-primary sf-button sf-button--small ${
+              !zipCodeInput ? 'is-disabled--button' : ''
+            }`"
             :aria-disabled="false"
             :link="null"
             @click="searchByZipCode"
@@ -41,7 +43,9 @@
           }}</span>
         </p>
         <div class="store-count section-border">
-          <p>{{ storeDetails.length }} stores within 100 miles</p>
+          <p :class="getStoreCountText.color">
+            {{ getStoreCountText.text }}
+          </p>
         </div>
         <div class="store-container">
           <div v-for="location in storeDetails" :key="location.code">
@@ -75,7 +79,7 @@
   </SfModal>
 </template>
 <script lang="ts">
-import { SfModal, SfSearchBar } from "@storefront-ui/vue"
+import { SfModal, SfSearchBar, SfBar } from "@storefront-ui/vue"
 import { computed, ref } from "@nuxtjs/composition-api"
 import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
 import useUiState from "@/composables/useUiState"
@@ -89,6 +93,7 @@ export default {
   components: {
     SfModal,
     SfSearchBar,
+    SfBar,
     KiboStoreDetails,
   },
   setup() {
@@ -98,18 +103,24 @@ export default {
     const { set, load: loadPurchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
     const zipCodeInput = ref("")
+    const initialState = ref(true)
 
     const handleCurrentLocation = async () => {
+      zipCodeInput.value = ""
       await loadWithNavigator()
       await searchStoreLocations({
         latitude: currentLocation.value.latitude,
         longitude: currentLocation.value.longitude,
       })
+      initialState.value = false
     }
 
     const closeModal = () => {
       toggleStoreLocatorModal()
       selectedStore.value = ""
+      locations.value = []
+      zipCodeInput.value = ""
+      initialState.value = true
     }
 
     const storeDetails = computed(() => {
@@ -134,7 +145,26 @@ export default {
 
     const searchByZipCode = async () => {
       await searchStoreLocations(zipCodeInput.value)
+      initialState.value = false
     }
+
+    const getStoreCountText = computed(() => {
+      if (storeDetails.value.length) {
+        return {
+          color: "black",
+          text: `${storeDetails.value.length} store within 100 miles`,
+        }
+      } else if (initialState.value) {
+        return {
+          color: "black",
+          text: "Find stores within 100 miles",
+        }
+      }
+      return {
+        color: "red",
+        text: `No Results - 0 stores within 100 miles`,
+      }
+    })
 
     return {
       currentLocation,
@@ -150,6 +180,7 @@ export default {
       handleSetStoreButtonStatus,
       setStore,
       closeModal,
+      getStoreCountText,
     }
   },
 }
@@ -194,6 +225,7 @@ export default {
   align-items: center;
   border-top: 1px solid var(--c-light);
   padding: var(--spacer-2xs) var(--spacer-sm);
+  font-size: var(--font-size--sm);
 }
 
 .store-container {
@@ -234,5 +266,10 @@ export default {
   display: flex;
   justify-content: flex-end;
   padding: var(--spacer-sm) var(--spacer-lg);
+}
+
+.red {
+  color: red;
+  font-style: italic;
 }
 </style>

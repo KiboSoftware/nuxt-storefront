@@ -27,6 +27,7 @@ export const useStoreLocations = () => {
       })
       locations.value = response.data.spLocations.items
     } catch (error) {
+      locations.value = []
       loading.value = false
     }
     loading.value = false
