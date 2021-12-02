@@ -10,7 +10,12 @@ export const getRating = (product: Product) => {
   return attr?.values?.pop()?.value
 }
 export const getProductTotalReviews = (): number => 0
-export const getPrice = (product: Product): number => product?.price?.price || 0
+export const getPrice = (product: Product): { regular: number; special: number } => {
+  return {
+    regular: product?.price?.price || 0,
+    special: product?.price?.salePrice || 0,
+  }
+}
 export const getSalePrice = (product: Product): number => product?.price?.salePrice || 0
 export const getDescription = (product: Product): string =>
   product?.content?.productFullDescription || ""

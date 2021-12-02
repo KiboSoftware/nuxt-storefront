@@ -45,8 +45,11 @@
             <div class="product__price-and-rating">
               <div>
                 <SfPrice
-                  :regular="$n(priceRegular, 'currency')"
-                  :special="priceSpecial && $n(priceSpecial, 'currency')"
+                  :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+                  :special="
+                    product.price.salePrice &&
+                    $n(productGetters.getSalePrice(product).special, 'currency')
+                  "
                 />
               </div>
 
@@ -267,8 +270,6 @@ export default defineComponent({
     const breadcrumbs = computed(() => productGetters.getBreadcrumbs(product.value))
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
 
-    const priceRegular = computed(() => productGetters.getPrice(product.value))
-    const priceSpecial = computed(() => productGetters.getSalePrice(product.value))
     const rating = computed(() => productGetters.getRating(product.value))
     const totalReviews = computed(() => productGetters.getProductTotalReviews())
     const properties = computed(() => productGetters.getProperties(product.value))
@@ -322,8 +323,6 @@ export default defineComponent({
       addToCart,
       addToWishList,
       selectOption,
-      priceRegular,
-      priceSpecial,
       rating,
       totalReviews,
       qty: 1,
