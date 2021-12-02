@@ -25,7 +25,8 @@ export const getCoverImage = (product: Product): string =>
 
 export const getDescription = (product: Product): string =>
   product?.content?.productFullDescription || ""
-
+export const getShortDescription = (product: Product): string =>
+  product?.content?.productShortDescription || ""
 export const getSFProductGallery = (product: Product) => {
   return product?.content?.productImages?.map((content) => ({
     mobile: { url: content?.imageUrl },
@@ -115,6 +116,7 @@ export const productGetters = {
   getPrice,
   getSalePrice,
   getDescription,
+  getShortDescription,
   getSFProductGallery,
   getBreadcrumbs,
   getProperties,

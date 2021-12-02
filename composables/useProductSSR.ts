@@ -7,6 +7,7 @@ import { configureProductMutation } from "~~/gql/mutations"
 
 export const useProductSSR = (referenceKey: string) => {
   const nuxt = useNuxtApp()
+
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const product = useState(`use-product-${referenceKey}`, (): Product => {
     return {} as Product
