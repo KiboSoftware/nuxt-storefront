@@ -59,10 +59,11 @@ export const useUser = () => {
           accessToken: account.accessToken,
           accessTokenExpiration: account.accessTokenExpiration,
           refreshToken: account.refreshToken,
-          refreshTokenExpiration: account.refreshToken,
-          userId: account?.refreshToken,
+          refreshTokenExpiration: account.refreshTokenExpiration,
+          userId: account?.userId,
         }
         storeClientCookie(authCookieName, cookie)
+
         await load()
         resetErrorValues()
       } else if (response.errors) {
