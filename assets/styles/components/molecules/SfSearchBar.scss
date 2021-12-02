@@ -10,6 +10,10 @@
     --icon-size: var(--spacer-sm);
 
     display: var(--search-bar-icon-display, block);
+    svg {
+      transform: scale(-1, 1);
+      fill: var(--_c-gray-primary);
+    }
   }
   &__input {
     border-radius: var(--spacer-2xs);
