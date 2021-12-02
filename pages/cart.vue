@@ -2,12 +2,14 @@
   <div id="detailed-cart">
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart__title-wrapper">
-      <h3 class="sf-heading__title h3">Shopping Cart</h3>
+      <h3 class="sf-heading__title h3">
+        {{ $t("Shopping Cart") }} ({{ cartItems.length }} {{ $t("Items") }})
+      </h3>
     </div>
     <div class="detailed-cart">
       <div v-if="cartItems.length" class="detailed-cart__aside">
         <div class="sf-property--full-width sf-property">
-          <span class="sf-property__name-noBold">Order Subtotal</span>
+          <span class="sf-property__name-noBold">{{ $t("Order Subtotal") }}</span>
           <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
         </div>
         <div><hr class="sf-divider" /></div>
@@ -18,11 +20,11 @@
             :aria-disabled="false"
             :link="null"
           >
-            Apply
+            {{ $t("Apply") }}
           </button>
         </div>
         <div class="sf-property--full-width sf-property">
-          <span class="sf-property__name">Estimated Order Total</span>
+          <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
           <span class="sf-property__value"> ${{ cartOrder.total }}</span>
         </div>
 
@@ -32,7 +34,7 @@
             :aria-disabled="false"
             :link="null"
           >
-            Checkout
+            {{ $t("Checkout") }}
           </button>
         </div>
       </div>
@@ -70,9 +72,9 @@
               description="Looks like you haven’t added any items to the cart yet. Start
                 shopping to fill it in."
             />
-            <SfButton class="sf-button--full-width color-primary empty-cart__button"
-              >Start shopping</SfButton
-            >
+            <SfButton class="sf-button--full-width color-primary empty-cart__button">{{
+              $t("Start shopping")
+            }}</SfButton>
           </div>
         </transition>
       </div>
@@ -226,7 +228,7 @@ export default defineComponent({
 
   &__title-wrapper {
     width: 100%;
-    padding: 0 0 var(--spacer-sm) 0;
+    padding: 0 0 var(--spacer-lg) 0;
   }
 }
 
