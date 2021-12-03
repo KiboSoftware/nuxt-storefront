@@ -1,4 +1,3 @@
-
 export const productPrices = `
 fragment productPrices on Product {
       price {
@@ -10,7 +9,7 @@ fragment productPrices on Product {
         upper { price, salePrice }
       }
     }
-`;
+`
 export const productAttributes = `
 fragment productAttributes on Product {
   properties {
@@ -25,7 +24,7 @@ fragment productAttributes on Product {
     }
  }
 }
-`;
+`
 export const productContent = `
 fragment productContent on Product {
   content {
@@ -40,7 +39,7 @@ fragment productContent on Product {
     }
   }
 }
-`;
+`
 export const productOptions = `
 fragment productOptions on Product {
   options {
@@ -60,9 +59,10 @@ fragment productOptions on Product {
     }
   }
 }
-`;
+`
 export const productInfo = `
 fragment productInfo on Product {
+        fulfillmentTypesSupported
         productCode
         productUsage
         isPackagedStandAlone
@@ -97,4 +97,4 @@ ${productPrices}
 ${productAttributes}
 ${productContent}
 ${productOptions}
-`;
+`

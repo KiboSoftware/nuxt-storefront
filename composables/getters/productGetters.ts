@@ -66,6 +66,14 @@ export const getOptionSelectedValue = (option: ProductOption) => {
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
+export const getFullfillmentOptions = (product: Product) =>
+  product.fulfillmentTypesSupported.map((option) => ({
+    name: "fulfillment",
+    value: option,
+    label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
+    details: option === "DirectShip" ? "Available to Ship" : "Available at: Downtown Store",
+    required: "false",
+  }))
 
 export const getSegregatedOptions = (product: Product) => {
   const options = product?.options
@@ -87,7 +95,7 @@ export const getSegregatedOptions = (product: Product) => {
   const listOptions = options?.filter(
     (option) =>
       option?.attributeDetail?.inputType?.toLowerCase() === "list" &&
-      !colorAndSizeOptions.includes(option?.attributeFQN?.toLowerCase())
+      !colorAndSizeOptions.includes(option?.attributeFQN)
   )
 
   const yesNoOptions = options?.filter(
@@ -125,5 +133,6 @@ export const productGetters = {
   getOptions,
   getSegregatedOptions,
   getSlug,
+  getFullfillmentOptions,
   getCoverImage,
 }

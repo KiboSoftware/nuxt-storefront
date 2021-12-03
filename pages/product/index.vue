@@ -177,7 +177,7 @@
 
               <KiboFulfillmentOptions
                 :fulfillment-options="fulfillmentOptions"
-                selcted="store"
+                selected-option="DirectShip"
                 @change="selectFulfillmentOption"
               />
 
@@ -293,22 +293,7 @@ export default defineComponent({
     }
 
     // Fullfillment Options
-    const fulfillmentOptions = useState(`pdp-fulfillment-options`, () => [
-      {
-        name: "fulfillment",
-        value: "home",
-        label: "Ship to Home",
-        details: "Available to Ship",
-        required: "false",
-      },
-      {
-        name: "fulfillment",
-        value: "store",
-        label: "Pickup in Store",
-        details: "Available at: Downtown Store",
-        required: "false",
-      },
-    ])
+    const fulfillmentOptions = computed(() => productGetters.getFullfillmentOptions(product.value))
 
     const selectFulfillmentOption = (selectedFulfillmentOption: string) => {
       console.log("Selected fullfillment option: ", selectedFulfillmentOption)
