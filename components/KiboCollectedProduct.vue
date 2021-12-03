@@ -21,16 +21,12 @@
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
         <p>Qty:</p>
-        <<<<<<< HEAD
         <SfQuantitySelector
           :qty="quantity"
           :min="1"
           :max="10"
           @input="handleQuantitySelectorInput"
         />
-        =======
-        <SfQuantitySelector :qty="quantity" @input="$emit('input', $event)" />
-        >>>>>>> e7741d7 (detailed cart styles added)
       </div>
       <div class="kibo-collectedProduct__details-wrapper">
         <SfAccordion v-if="options.length" open="Details" show-chevron>
