@@ -10,12 +10,12 @@
         <div class="flex-grow-3">
           <SfList class="outer-list">
             <SfListItem v-for="child in category.childrenCategories" :key="child.id">
-              <SfMenuItem class="sf-title" :label="$t(child.content.name)" />
+              <SfMenuItem class="sf-title" :label="child.content.name" />
               <SfMenuItem :link="localePath(getCatLink(child))" :label="$t('ShopAll')" />
               <SfList>
                 <SfListItem v-for="children in child.childrenCategories" :key="children.id">
                   <SfMenuItem
-                    :label="$t(children.content.name)"
+                    :label="children.content.name"
                     :link="localePath(getCatLink(children))"
                   />
                 </SfListItem>
