@@ -36,35 +36,10 @@
     </div>
     <div class="kibo-collectedProduct__verticalDivider"></div>
     <div class="kibo-collectedProduct__fullfilment">
-      <div class="kibo-collectedProduct__fullfilment-options">
-        <SfRadio
-          name="shipToHome"
-          value="store"
-          label="Ship to Home"
-          :disabled="false"
-          selected=""
-          :required="false"
-        />
-        <SfRadio
-          name="pickup"
-          value="store"
-          label="Pickup in Store"
-          :disabled="false"
-          selected=""
-          :required="false"
-        >
-          <template #details v-bind="{ details }">
-            <p v-if="getPurchaseLocation" class="sf-radio__details">
-              {{ getPurchaseLocation }}
-            </p>
-          </template>
-          <template #description v-bind="{ description }">
-            <p class="sf-radio__description" @click="handleStoreLocatorClick">
-              {{ getPurchaseLocation ? "Change Store" : "Select Store" }}
-            </p>
-          </template>
-        </SfRadio>
-      </div>
+      <KiboFulfillmentOptions
+        :fulfillment-options="supportedFulfillmentTypes"
+        @click="handleStoreLocatorClick"
+      />
     </div>
     <div class="kibo-collectedProduct__remove">
       <SfButton class="kibo-collectedProduct__remove-button" link="/cart">
@@ -87,6 +62,7 @@ import {
   SfRadio,
 } from "@storefront-ui/vue"
 import useUiState from "../composables/useUiState"
+import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 
 export default defineComponent({
   name: "KiboCollectedProduct",
@@ -101,6 +77,7 @@ export default defineComponent({
     SfProperty,
     SfAccordion,
     SfRadio,
+    KiboFulfillmentOptions,
   },
   model: {
     prop: "qty",
@@ -172,6 +149,11 @@ export default defineComponent({
       // eslint-disable-next-line vue/require-valid-default-prop
       default: [],
     },
+    supportedFulfillmentTypes: {
+      type: [Object],
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default: [],
+    },
   },
   setup(props, context) {
     const { toggleStoreLocatorModal } = useUiState()
@@ -191,18 +173,11 @@ export default defineComponent({
       return typeof props.qty === "string" ? Number(props.qty) : props.qty
     })
 
-    const getPurchaseLocation = computed(() => {
-      return props.purchaseLocation !== "Select My Store"
-        ? `Available at: ${props.purchaseLocation}`
-        : ""
-    })
-
     return {
       removeHandler,
       handleStoreLocatorClick,
       componentIs,
       quantity,
-      getPurchaseLocation,
     }
   },
 })
