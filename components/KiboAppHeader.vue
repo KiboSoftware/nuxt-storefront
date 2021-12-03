@@ -15,7 +15,7 @@
           </SfLink>
         </div>
 
-        <div style="flex: 0.35"></div>
+        <div class="kibo-header__spacer"></div>
         <div v-click-outside="closeSearch" class="kibo-header__search-bar">
           <KiboSearchBar
             ref="searchBarRef"
@@ -354,6 +354,9 @@ export default defineComponent({
   }
   &__icon-name {
     font-size: var(--font-size--xs);
+  }
+  &__spacer {
+    flex: 0.35;
   }
 }
 .kibo-top-bar {
