@@ -150,7 +150,7 @@ import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer"
-import { ref, defineComponent, onBeforeUnmount } from "@vue/composition-api"
+import { computed, ref, defineComponent, onBeforeUnmount } from "@vue/composition-api"
 export default defineComponent({
   name: "KiboProductCard",
   components: {
