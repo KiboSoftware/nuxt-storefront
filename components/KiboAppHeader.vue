@@ -106,7 +106,9 @@
 
       <div class="line-2"></div>
 
-      <div class="kibo-mega-menu"></div>
+      <div class="kibo-mega-menu">
+        <MegaMenu />
+      </div>
     </div>
   </div>
 </template>
