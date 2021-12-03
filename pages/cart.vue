@@ -54,6 +54,7 @@
                   cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
                 "
                 :options="cartItem.product.options"
+                :supported-fulfillment-types="cartItemFulfillmentTypes(cartItem)"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
@@ -88,7 +89,7 @@ import { defineComponent } from "@vue/composition-api"
 import { usePurchaseLocation, useCart } from "@/composables"
 import useUiState from "@/composables/useUiState"
 import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
-import { cartGetters, storeLocationGetters } from "@/composables/getters"
+import { cartGetters, productGetters, storeLocationGetters } from "@/composables/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -115,43 +116,6 @@ export default defineComponent({
         link: "/cart",
       },
     ]
-    const products = [
-      {
-        title: "Hoka Ocean Print",
-        id: "CBB1",
-        image: "https://m.media-amazon.com/images/I/61Tux6Jej-L._UY500_.jpg",
-        price: { regular: "50.00" },
-        configuration: [
-          { name: "Size", value: "XS" },
-          { name: "Color", value: "White" },
-        ],
-        qty: "1",
-      },
-      {
-        title: "Cream Beach Bag Modern Style",
-        id: "CBB2",
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
-        price: { regular: "50.00" },
-        configuration: [
-          { name: "Size", value: "XS" },
-          { name: "Color", value: "White" },
-        ],
-        qty: "2",
-      },
-      {
-        title: "Cream Beach Bag Modern Style",
-        id: "CBB3",
-        image:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjNDZCdOLLTDKRvtbZaMGX5l_89OIXjTrAjA&usqp=CAU",
-        price: { regular: "50.00" },
-        configuration: [
-          { name: "Size", value: "XS" },
-          { name: "Color", value: "White" },
-        ],
-        qty: "1",
-      },
-    ]
 
     useAsync(async () => {
       await loadPurchaseLocation()
@@ -171,13 +135,17 @@ export default defineComponent({
     const cartItems = computed(() => cartGetters.getItems(cart.value))
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
+    const cartItemFulfillmentTypes = (cartItem) => {
+      return productGetters.getFullfillmentOptions(cartItem.product, purchaseLocation.value)
+    }
+
     return {
-      products,
       breadcrumbs,
       selectedLocation,
       cartItems,
       cartOrder,
       handleStoreLocatorClick,
+      cartItemFulfillmentTypes,
     }
   },
 })

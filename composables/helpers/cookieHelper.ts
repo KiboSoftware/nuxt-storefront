@@ -1,7 +1,6 @@
 import type { UserAuthTicket } from "@kibocommerce/graphql-client"
 
 export const storeClientCookie = (cookieName: string, cookieValue: UserAuthTicket | string) => {
-  console.log("cookie", cookieValue)
   const date = new Date()
   date.setTime(date.getTime() + 5 * 24 * 60 * 60 * 1000) // max age for cookie, 5 days
   const expires = "expires=" + date.toUTCString()
