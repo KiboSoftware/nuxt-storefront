@@ -2,10 +2,10 @@
   <div v-show="visible" class="custom-search-header">
     <div class="search-container">
       <div class="search-product left">
-        <div class="suggestion-title"><h3>Top Suggestions</h3></div>
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
+        <div class="suggestion-title"><h3>Top Suggestions</h3></div>
         <div class="result-list">
           <div v-if="result.products && result.products.length > 0" class="product-card-list">
             <template v-for="(product, index) in result.products">
@@ -29,10 +29,10 @@
       </div>
       <div class="vertical-line"></div>
       <div class="search-category right">
-        <div class="suggestion-title"><h3>Categories</h3></div>
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
+        <div class="suggestion-title"><h3>Categories</h3></div>
         <div class="result-list scroll">
           <ul v-if="result.categories && result.categories.length > 0">
             <li

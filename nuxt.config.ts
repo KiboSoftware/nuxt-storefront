@@ -163,7 +163,7 @@ export default defineNuxtConfig({
       })
       routes.push({
         name: "search_details",
-        path: "/search/:searchStr",
+        path: "/search/",
         component: resolve(__dirname, "pages/search.vue"),
       })
     },

@@ -121,7 +121,7 @@ import { usePurchaseLocation } from "../composables"
 import KiboSearchSuggestion from "./KiboSearchSuggestion.vue"
 import KiboSearchBar from "./KiboSearchBar.vue"
 import { useUser } from "@/composables/useUser"
-import { userGetters, storeLocationGetters, productGetters } from "@/composables/getters"
+import { userGetters, storeLocationGetters, searchSuggestionGetters } from "@/composables/getters"
 import { useUiHelpers } from "@/composables"
 import { useSearchSuggestions } from "@/composables/useSearchSuggestions"
 import { useNuxtApp } from "#app"
@@ -177,7 +177,7 @@ export default defineComponent({
           term.value = paramValue.target.value
         }
         await search(term.value)
-        searchSuggestionResult.value = productGetters.getSearchSuggestions(result.value)
+        searchSuggestionResult.value = searchSuggestionGetters.getSearchSuggestions(result.value)
       } catch (err) {}
     }, 1000)
 
@@ -195,7 +195,7 @@ export default defineComponent({
       if (term.value) {
         const searchStr = term.value
         closeSearch()
-        return app.router.push({ path: "/search", query: { searchStr } })
+        return app.router.push({ path: "/search", query: { phrase: searchStr } })
       }
     }
 
