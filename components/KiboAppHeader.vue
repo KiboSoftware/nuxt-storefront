@@ -118,8 +118,6 @@ import { useAsync } from "@nuxtjs/composition-api"
 import useUiState from "../composables/useUiState"
 import * as logo from "../assets/kibo_logo.png"
 import { usePurchaseLocation } from "../composables"
-import KiboSearchSuggestion from "./KiboSearchSuggestion.vue"
-import KiboSearchBar from "./KiboSearchBar.vue"
 import { useUser } from "@/composables/useUser"
 import { userGetters, storeLocationGetters, productGetters } from "@/composables/getters"
 import { useUiHelpers } from "@/composables"
@@ -133,8 +131,6 @@ export default defineComponent({
     SfButton,
     SfMenuItem,
     SfLink,
-    KiboSearchSuggestion,
-    KiboSearchBar,
   },
   directives: { clickOutside },
   setup() {

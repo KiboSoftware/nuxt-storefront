@@ -58,13 +58,11 @@
 import { defineComponent } from "@vue/composition-api"
 import { SfLoader } from "@storefront-ui/vue"
 import { useUiHelpers } from "../composables"
-import KiboProductCard from "./KiboProductCard.vue"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
   components: {
     SfLoader,
-    KiboProductCard,
   },
 
   props: {
