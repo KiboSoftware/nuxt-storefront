@@ -1,6 +1,7 @@
-import { buildBreadcrumbs } from "../helpers/buildBreadcrumbs"
-import { Breadcrumb } from "~~/pages/types"
-import { Product, ProductOption, ProductOptionValue } from "~~/server/types/GraphQL"
+import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
+import { Breadcrumb } from "@/pages/types"
+import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
+import { Location } from "@/composables/types/storeFinder"
 
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
@@ -66,12 +67,17 @@ export const getOptionSelectedValue = (option: ProductOption) => {
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
-export const getFullfillmentOptions = (product: Product) =>
+export const getFullfillmentOptions = (product: Product, purchaseLocation: Location) =>
   product.fulfillmentTypesSupported.map((option) => ({
     name: "fulfillment",
     value: option,
     label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
-    details: option === "DirectShip" ? "Available to Ship" : "Available at: Downtown Store",
+    details:
+      option === "DirectShip"
+        ? "Available to Ship"
+        : purchaseLocation?.name
+        ? `Available at: ${purchaseLocation.name}`
+        : "",
     required: "false",
   }))
 
