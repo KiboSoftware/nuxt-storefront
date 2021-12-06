@@ -178,6 +178,7 @@
               <KiboFulfillmentOptions
                 :fulfillment-options="fulfillmentOptions"
                 selected-option="DirectShip"
+                @click="handleStoreLocatorClick"
                 @change="selectFulfillmentOption"
               />
 
@@ -232,7 +233,9 @@ import { useAsync } from "@nuxtjs/composition-api"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import KiboProductActions from "@/components/KiboProductActions.vue"
 import { useProductSSR } from "@/composables/useProductSSR"
-import { productGetters } from "@/composables/getters"
+import useUiState from "@/composables/useUiState"
+import { productGetters, storeLocationGetters } from "@/composables/getters"
+import { usePurchaseLocation } from "@/composables"
 
 export default defineComponent({
   name: "Product",
@@ -259,9 +262,12 @@ export default defineComponent({
   setup(_, context) {
     const { productCode } = context.root.$route.params
     const { load, product, configure, loading, error } = useProductSSR(productCode)
+    const { toggleStoreLocatorModal } = useUiState()
+    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
 
     useAsync(async () => {
       await load(productCode)
+      await loadPurchaseLocation()
     }, null)
 
     const productName = computed(() => productGetters.getName(product.value))
@@ -299,6 +305,17 @@ export default defineComponent({
       console.log("Selected fullfillment option: ", selectedFulfillmentOption)
     }
 
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
+    }
+
+    // Selected Purchase Location
+    const selectedLocation = computed(() => {
+      return Object.keys(purchaseLocation.value).length
+        ? storeLocationGetters.getName(purchaseLocation.value)
+        : "Select My Store"
+    })
+
     return {
       loading,
       error,
@@ -308,6 +325,7 @@ export default defineComponent({
       addToCart,
       addToWishList,
       selectOption,
+      selectedLocation,
       rating,
       totalReviews,
       qty: 1,
@@ -323,6 +341,7 @@ export default defineComponent({
       product,
       isOpenNotification: false,
       fulfillmentOptions,
+      handleStoreLocatorClick,
       selectFulfillmentOption,
     }
   },

@@ -9,25 +9,22 @@
         :label="fulfillmentOption.label"
         :details="fulfillmentOption.details"
         :required="fulfillmentOption.required"
+        :disabled="fulfillmentOption.disabled"
         :selected="selectedOption == fulfillmentOption.value ? fulfillmentOption.value : ''"
         class="sf-radio"
         @change="selectFulfillment(fulfillmentOption)"
       >
-        <template
-          v-if="fulfillmentOption.label === 'Pickup in Store'"
-          #details
-          v-bind="{ details }"
-        >
+        <template v-if="fulfillmentOption.label === pickupInStore" #details v-bind="{ details }">
           <p class="sf-radio__details">
             {{ fulfillmentOption.details }}
           </p>
         </template>
         <template
-          v-if="fulfillmentOption.label === 'Pickup in Store'"
+          v-if="fulfillmentOption.label === pickupInStore && fulfillmentOption.disabled !== true"
           #description
           v-bind="{ description }"
         >
-          <p class="sf-radio__description" @click="handleStoreLocatorClick">
+          <p class="sf-radio__details" @click="handleStoreLocatorClick">
             {{ cartItemPurchaseLocation ? "Change Store" : "Select Store" }}
           </p>
         </template>
@@ -39,6 +36,8 @@
 import { defineComponent } from "@vue/composition-api"
 import { SfRadio } from "@storefront-ui/vue"
 import { Fulfillment } from "./types/fulfillment"
+import { useNuxtApp } from "#app"
+
 export default defineComponent({
   name: "KiboFulfillmentOptions",
   components: {
@@ -63,6 +62,11 @@ export default defineComponent({
     },
   },
   setup(_, context) {
+    const nuxt = useNuxtApp()
+    const pickupInStore = nuxt.nuxt2Context.$config.fullfillmentOptions.find(
+      (option) => option.value === "InStorePickup"
+    ).label
+
     const selectFulfillment = (fulfillmentOption: Fulfillment) => {
       context.emit("change", fulfillmentOption.value)
     }
@@ -72,6 +76,7 @@ export default defineComponent({
     return {
       selectFulfillment,
       handleStoreLocatorClick,
+      pickupInStore,
     }
   },
 })
@@ -89,7 +94,7 @@ export default defineComponent({
     font-family: var(--font-family--primary);
     line-height: 0.875rem;
     font-style: italic;
-    margin: 0 auto auto 0.625rem;
+    margin: 0 0 auto 0.625rem;
   }
 }
 </style>

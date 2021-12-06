@@ -67,19 +67,29 @@ export const getOptionSelectedValue = (option: ProductOption) => {
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
-export const getFullfillmentOptions = (product: Product, purchaseLocation: Location) =>
-  product.fulfillmentTypesSupported.map((option) => ({
+export const getFullfillmentOptions = (product: Product, purchaseLocation: Location) => {
+  const nuxt = useNuxtApp()
+  const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
+
+  const result = fullfillmentOptions.map((option) => ({
     name: "fulfillment",
-    value: option,
-    label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
+    value: option.value,
+    label: option.label,
     details:
-      option === "DirectShip"
-        ? "Available to Ship"
+      option.value === "DirectShip"
+        ? option.details
         : purchaseLocation?.name
-        ? `Available at: ${purchaseLocation.name}`
+        ? `${option.details}: ${purchaseLocation.name}`
         : "",
-    required: "false",
+    required: option.isRequired,
+    disabled:
+      product.fulfillmentTypesSupported.filter(
+        (type) => type.toLowerCase() === option.value.toLowerCase()
+      ).length === 0,
   }))
+
+  return result
+}
 
 export const getSegregatedOptions = (product: Product) => {
   const options = product?.options
