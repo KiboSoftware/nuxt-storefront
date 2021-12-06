@@ -4,7 +4,7 @@
     <div class="navbar section">
       <div class="navbar__main">
         <div class="navbar__aside desktop-only">
-          <SfHeading :level="3" :title="categoryName" class="category-name" />
+          <SfHeading :level="1" :title="categoryName" class="category-name" />
         </div>
         <div class="navbar__sort desktop-only">
           <span class="navbar__label">Sort by:</span>
