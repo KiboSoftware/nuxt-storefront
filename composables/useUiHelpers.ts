@@ -30,8 +30,13 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     }
   }
 
+  const getProductLink = (productCode: string) => {
+    return `/product/${productCode}`
+  }
+
   return {
     getCatLink,
     getFacetsFromURL,
+    getProductLink,
   }
 }

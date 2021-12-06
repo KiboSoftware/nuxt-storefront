@@ -13,6 +13,7 @@ export interface uiHelpersReturnType {
     itemsPerPage: number
     phrase: string
   }
+  getProductLink: (productCode: string) => string
 }
 
 // categories

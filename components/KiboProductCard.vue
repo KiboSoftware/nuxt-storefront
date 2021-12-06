@@ -392,6 +392,7 @@ export default defineComponent({
 .kibo-product-card {
   height: 17.625rem;
   padding: 0;
+  margin: 0 0 4.688rem 0;
   .sf-image {
     object-fit: contain;
   }
@@ -420,7 +421,7 @@ export default defineComponent({
 }
 .kpc-title-button {
   top: 9.875rem;
-  height: 1.188rem;
+  height: 2rem;
 }
 .kpc-title {
   margin: 0;
@@ -430,6 +431,9 @@ export default defineComponent({
   font-family: var(--font-family--primary);
   color: var(--_c-dark-primary);
   font-weight: var(--font-weight--normal);
+  word-break: break-all;
+  overflow: hidden;
+  width: 201px;
 }
 .kpc-price {
   margin-top: 10rem;

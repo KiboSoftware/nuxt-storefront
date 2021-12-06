@@ -20,8 +20,6 @@ export const getPrice = (product: Product): { regular: number; special: number }
 }
 export const getSalePrice = (product: Product): number => product?.price?.salePrice || 0
 
-export const getSlug = (product: Product): string => product?.content?.seoFriendlyUrl || ""
-
 export const getCoverImage = (product: Product): string =>
   product?.content?.productImages?.[0]?.imageUrl || ""
 
@@ -124,7 +122,6 @@ export const productGetters = {
   getOptionName,
   getOptions,
   getSegregatedOptions,
-  getSlug,
   getCoverImage,
   getProductId,
 }
