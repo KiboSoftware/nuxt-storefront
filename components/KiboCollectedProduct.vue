@@ -19,7 +19,12 @@
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
         <p>Qty:</p>
-        <SfQuantitySelector :qty="quantity" @input="$emit('input', $event)" />
+        <SfQuantitySelector
+          :qty="quantity"
+          :min="1"
+          :max="10"
+          @input="handleQuantitySelectorInput"
+        />
       </div>
       <div class="kibo-collectedProduct__details-wrapper">
         <SfAccordion v-if="options.length" open="Details" show-chevron>
@@ -42,7 +47,7 @@
       />
     </div>
     <div class="kibo-collectedProduct__remove">
-      <SfButton class="kibo-collectedProduct__remove-button" link="/cart">
+      <SfButton class="kibo-collectedProduct__remove-button" @click="handleRemoveCartItem">
         <font-awesome-icon :icon="['fas', 'trash-alt']" />
       </SfButton>
     </div>
@@ -63,6 +68,7 @@ import {
 } from "@storefront-ui/vue"
 import useUiState from "../composables/useUiState"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
+import { useCart } from "@/composables"
 
 export default defineComponent({
   name: "KiboCollectedProduct",
@@ -154,9 +160,14 @@ export default defineComponent({
       // eslint-disable-next-line vue/require-valid-default-prop
       default: [],
     },
+    cartItemId: {
+      type: String,
+      default: "",
+    },
   },
   setup(props, context) {
     const { toggleStoreLocatorModal } = useUiState()
+    const { updateCartItemQuantity, removeCartItem } = useCart()
 
     const removeHandler = () => {
       context.emit("click:remove")
@@ -173,9 +184,20 @@ export default defineComponent({
       return typeof props.qty === "string" ? Number(props.qty) : props.qty
     })
 
+    const handleQuantitySelectorInput = async ($event) => {
+      context.emit("input", $event)
+      await updateCartItemQuantity(props.cartItemId, Number($event))
+    }
+
+    const handleRemoveCartItem = async () => {
+      await removeCartItem(props.cartItemId)
+    }
+
     return {
       removeHandler,
       handleStoreLocatorClick,
+      handleQuantitySelectorInput,
+      handleRemoveCartItem,
       componentIs,
       quantity,
     }

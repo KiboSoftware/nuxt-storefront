@@ -1,4 +1,3 @@
-import { computed } from "@vue/composition-api"
 import { Location } from "@/composables/types"
 import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
@@ -46,7 +45,7 @@ export const usePurchaseLocation = () => {
     purchaseLocation,
     load,
     set,
-    loading: computed(() => loading.value),
-    error: computed(() => error),
+    loading,
+    error,
   }
 }

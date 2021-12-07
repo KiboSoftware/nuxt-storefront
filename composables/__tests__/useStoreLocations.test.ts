@@ -22,7 +22,7 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] useStoreLocations", () => {
-  const { locations, search } = useStoreLocations()
+  const { locations, search, loading, error } = useStoreLocations()
 
   test("search: should search stores", async () => {
     await search()
@@ -30,5 +30,7 @@ describe("[composable] useStoreLocations", () => {
       { code: "store_location1" },
       { code: "store_location2" },
     ])
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeNull()
   })
 })

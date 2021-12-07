@@ -31,11 +31,13 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] usePurchaseLocation", () => {
-  const { purchaseLocation, load, set } = usePurchaseLocation()
+  const { purchaseLocation, load, set, loading, error } = usePurchaseLocation()
 
   test("load: should load purchase location from cookies and fetch store details from server and save as purchaseLocation", async () => {
     await load()
     expect(purchaseLocation.value).toStrictEqual({ code: "purchase_location_value" })
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeNull()
   })
 
   test("set: should set cookie if locationCode parameter is not null", () => {

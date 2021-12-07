@@ -46,6 +46,7 @@
                 v-for="cartItem in cartItems"
                 :key="cartItem.id"
                 v-model="cartItem.quantity"
+                :cart-item-id="cartItem.id"
                 :purchase-location="selectedLocation"
                 :image="cartItem.product.imageUrl"
                 :title="cartItem.product.name"
