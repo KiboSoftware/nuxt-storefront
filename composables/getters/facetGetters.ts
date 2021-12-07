@@ -10,18 +10,16 @@ const getCategoryTree = (searchData: { categories: Maybe<Array<Maybe<PrCategory>
 const getBreadcrumbs = (searchData: {
   categories: Maybe<Array<Maybe<PrCategory>>>
 }): Breadcrumb[] => {
-  if (!searchData) return []
-  let bcs
-  if (searchData && searchData?.categories && searchData?.categories[0]) {
-    bcs = [
-      { text: "Home", link: "/" },
-      ...buildBreadcrumbs(searchData?.categories[0]).map((b) => ({
-        ...b,
-        link: `/c/${b.link}`,
-      })),
-    ]
+  const homeCrumb = [{ text: "Home", link: "/" }]
+  if (!searchData?.categories?.[0]) {
+    return homeCrumb
   }
-  return bcs || []
+  const categoryCrumbs = buildBreadcrumbs(searchData?.categories[0]).map((b) => ({
+    ...b,
+    link: `/c/${b.link}`,
+  }))
+
+  return [...homeCrumb, ...categoryCrumbs]
 }
 
 export const facetGetters = {

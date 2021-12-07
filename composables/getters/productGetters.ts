@@ -6,6 +6,8 @@ import { Location } from "@/composables/types/storeFinder"
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
 
+export const getProductId = (product: Product): string => product?.productCode || ""
+
 export const getRating = (product: Product) => {
   const attr = product?.properties?.find((property) => property?.attributeFQN === ratingAttrFQN)
   return attr?.values?.pop()?.value
@@ -18,8 +20,6 @@ export const getPrice = (product: Product): { regular: number; special: number }
   }
 }
 export const getSalePrice = (product: Product): number => product?.price?.salePrice || 0
-
-export const getSlug = (product: Product): string => product?.content?.seoFriendlyUrl || ""
 
 export const getCoverImage = (product: Product): string =>
   product?.content?.productImages?.[0]?.imageUrl || ""
@@ -152,4 +152,5 @@ export const productGetters = {
   getSlug,
   getFullfillmentOptions,
   getCoverImage,
+  getProductId,
 }

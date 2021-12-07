@@ -14,6 +14,18 @@
     --badge-font-line-height,
     var(--font-family--secondary)
   );
+  &--number {
+    --badge-min-width: 0.625rem;
+    --badge-min-height: 0.625rem;
+    --badge-padding: 0;
+    --badge-border-radius: 100%;
+    --badge-background: var(--c-white);
+    --badge-border: 0.031rem solid var(--_c-dark-primary);
+
+    width: 0.625rem;
+    height: 0.625rem;
+    font-size: var(--spacer-xs);
+  }
   &.disabled {
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-gray-middle);
