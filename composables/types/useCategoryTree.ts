@@ -5,14 +5,18 @@ import * as GraphQL from "@/server/types/GraphQL"
 // QueryResponse
 export type QueryResponse<K extends string, V> = ApolloQueryResult<Record<K, V>>
 
+export interface getFacetsFromURLResponse {
+  categoryCode: string
+  page: number
+  itemsPerPage: number
+  phrase: string
+  filters: []
+  sort: string
+}
 export interface uiHelpersReturnType {
   getCatLink?: (category: GraphQL.PrCategory) => string
-  getFacetsFromURL: () => {
-    categoryCode: string
-    page: number
-    itemsPerPage: number
-    phrase: string
-  }
+  getFacetsFromURL: () => getFacetsFromURLResponse
+  setTermForUrl: (query: string) => void
   getProductLink: (productCode: string) => string
 }
 

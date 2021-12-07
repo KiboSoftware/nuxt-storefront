@@ -18,11 +18,38 @@
         <div style="flex: 0.3"></div>
         <div class="kibo-header__search-bar">
           <SfSearchBar
-            :value="searchValue"
-            placeholder="Search for items"
+            ref="searchBarRef"
+            v-click-outside="closeSearch"
+            :placeholder="$t('Search for items')"
             aria-label="Search"
             class="sf-header__search"
-          />
+            :value="term"
+            @input="handleSearch"
+            @keydown.enter="handleSearch($event)"
+            @focus="isSearchOpen = true"
+            @keydown.esc="closeSearch"
+          >
+            <template #icon>
+              <SfButton
+                v-if="!!term"
+                class="sf-search-bar__button sf-button--pure"
+                @click="closeOrFocusSearchBar"
+              >
+                <span class="sf-search-bar__icon">
+                  <SfIcon color="var(--c-text)" size="18px" icon="cross" />
+                </span>
+              </SfButton>
+              <SfButton
+                v-else
+                class="sf-search-bar__button sf-button--pure"
+                @click="isSearchOpen ? (isSearchOpen = false) : (isSearchOpen = true)"
+              >
+                <span class="sf-search-bar__icon">
+                  <SfIcon color="var(--c-text)" size="20px" icon="search" />
+                </span>
+              </SfButton>
+            </template>
+          </SfSearchBar>
         </div>
 
         <div class="sf-header__icons">
@@ -71,12 +98,13 @@
 
 <script lang="ts">
 import { SfImage, SfIcon, SfButton, SfSearchBar, SfMenuItem, SfLink } from "@storefront-ui/vue"
-import { computed, ref, onBeforeUnmount, defineComponent } from "@vue/composition-api"
+import { computed, ref, onBeforeUnmount, defineComponent, watch } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
+import debounce from "lodash.debounce"
 
 import { useAsync } from "@nuxtjs/composition-api"
 import useUiState from "../composables/useUiState"
@@ -84,6 +112,8 @@ import * as logo from "../assets/kibo_logo.png"
 import { usePurchaseLocation } from "../composables"
 import { useUser } from "@/composables/useUser"
 import { userGetters, storeLocationGetters } from "@/composables/getters"
+import { useUiHelpers } from "@/composables"
+import { useSearchSuggestions } from "@/composables/useSearchSuggestions"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -97,6 +127,8 @@ export default defineComponent({
   },
   directives: { clickOutside },
   setup() {
+    const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
+    const { result, search, loading } = useSearchSuggestions()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { user, load: loadUser } = useUser()
@@ -106,14 +138,60 @@ export default defineComponent({
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
-    const result = ref(null)
+    const term = ref("")
+    const isSearchOpen = ref(false)
+    const results = ref(null)
+    const searchBarRef = ref(null)
     const accountIcon = computed(() => {
       return isAuthenticated.value ? "fas" : "far"
     })
 
     const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
 
+    const closeSearch = () => {
+      if (!isSearchOpen.value) return
+
+      term.value = ""
+      isSearchOpen.value = false
+    }
+
+    const handleSearch = debounce(async (paramValue) => {
+      loading.value = true
+      if (!paramValue.target) {
+        term.value = paramValue
+      } else {
+        term.value = paramValue.target.value
+      }
+
+      await search(term.value)
+      loading.value = false
+      isSearchOpen.value = true
+      // @todo use result to show it in search suggestion dialog
+    }, 1000)
+
     const isMobile = computed(() => mapMobileObserver().isMobile.get())
+
+    const closeOrFocusSearchBar = () => {
+      if (isMobile.value) {
+        return closeSearch()
+      } else {
+        term.value = ""
+        return searchBarRef.value.$el.children[0].focus()
+      }
+    }
+
+    watch(
+      () => term.value,
+      (newVal, oldVal) => {
+        const shouldSearchBeOpened =
+          !isMobile.value &&
+          term.value.length > 0 &&
+          ((!oldVal && newVal) || (newVal.length !== oldVal.length && isSearchOpen.value === false))
+        if (shouldSearchBeOpened) {
+          isSearchOpen.value = true
+        }
+      }
+    )
 
     const removeSearchResults = () => {
       result.value = null
@@ -154,6 +232,17 @@ export default defineComponent({
       handleAccountClick,
       isAuthenticated,
       searchValue,
+      closeSearch,
+      closeOrFocusSearchBar,
+      setTermForUrl,
+      getFacetsFromURL,
+      getCatLink,
+      term,
+      isSearchOpen,
+      handleSearch,
+      result,
+      searchBarRef,
+      results,
       logo,
       title: "Kibo",
       handleStoreLocatorClick,
