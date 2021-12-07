@@ -17,6 +17,7 @@ export interface uiHelpersReturnType {
   getCatLink?: (category: GraphQL.PrCategory) => string
   getFacetsFromURL: () => getFacetsFromURLResponse
   setTermForUrl: (query: string) => void
+  getProductLink: (productCode: string) => string
 }
 
 // categories

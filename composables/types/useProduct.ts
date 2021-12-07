@@ -5,6 +5,7 @@ import * as GraphQL from "@/server/types/GraphQL"
 export type ConfigureOption = {
   attributeFQN: string
   value: string
+  shopperEnteredValue: string
 }
 // getProduct
 export type GetProductParams = { id: string; customQuery?: CustomQuery }

@@ -57,9 +57,14 @@ export const useUiHelpers = (): uiHelpersReturnType => {
       .reduce(reduceFilters(query), {})
   }
 
+  const getProductLink = (productCode: string) => {
+    return `/product/${productCode}`
+  }
+
   return {
     getCatLink,
     setTermForUrl,
     getFacetsFromURL,
+    getProductLink,
   }
 }

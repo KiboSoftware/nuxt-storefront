@@ -114,6 +114,20 @@ export default defineNuxtConfig({
     userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo_at",
     colorAttributeFQN: "Tenant~color",
     sizeAttributeFQN: "Tenant~size",
+    fullfillmentOptions: [
+      {
+        value: "DirectShip",
+        label: "Ship to Home",
+        details: "Available to Ship",
+        isRequired: false,
+      },
+      {
+        value: "InStorePickup",
+        label: "Pickup in Store",
+        details: "Available at",
+        isRequired: false,
+      },
+    ],
     storeLocationCookie: LOCATION_COOKIE,
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
