@@ -63,7 +63,8 @@ export const getProperties = (product: Product) => {
 }
 export const getOptionSelectedValue = (option: ProductOption) => {
   const selectedValue = option?.values?.find((value) => value?.isSelected)
-  return selectedValue?.value || selectedValue?.stringValue
+  const result = selectedValue?.value || selectedValue?.stringValue || selectedValue?.isSelected
+  return result
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
@@ -83,7 +84,7 @@ export const getFullfillmentOptions = (product: Product, purchaseLocation: Locat
         : "",
     required: option.isRequired,
     disabled:
-      product.fulfillmentTypesSupported.filter(
+      product?.fulfillmentTypesSupported?.filter(
         (type) => type.toLowerCase() === option.value.toLowerCase()
       ).length === 0,
   }))

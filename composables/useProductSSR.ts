@@ -1,7 +1,7 @@
 import { mergeProducts } from "./helpers/mergeProduct"
 import type { ConfigureOption } from "./types"
 import { useState, useNuxtApp } from "#app"
-import { Product, ProductOption } from "~~/server/types/GraphQL"
+import { Product } from "~~/server/types/GraphQL"
 import { getProductQuery } from "~~/gql/queries"
 import { configureProductMutation } from "~~/gql/mutations"
 
@@ -29,29 +29,12 @@ export const useProductSSR = (referenceKey: string) => {
     loading.value = false
   }
 
-  const configure = async (
-    updatedOption: ConfigureOption,
-    productCode: string,
-    options: ProductOption[]
-  ) => {
+  const configure = async (updatedOption: ConfigureOption[], productCode: string) => {
     try {
-      const selectedOptions = options
-        .map((opt) => {
-          const { attributeFQN, values } = opt as ProductOption
-          let value
-          if (attributeFQN === updatedOption.attributeFQN) {
-            value = updatedOption.value
-          } else {
-            value = values?.find((val) => val?.isSelected)?.value
-          }
-          return { attributeFQN, value }
-        })
-        .filter((opt) => opt.value)
-
       const variables = {
         productCode,
         selectedOptions: {
-          options: selectedOptions,
+          options: updatedOption,
         },
       }
 
@@ -60,6 +43,7 @@ export const useProductSSR = (referenceKey: string) => {
         query: configureProductMutation,
         variables,
       })
+
       const configuredProduct = response.data.configureProduct
       product.value = mergeProducts(product.value, configuredProduct)
     } catch (error) {

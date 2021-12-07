@@ -67,7 +67,6 @@ jest.mock("#app", () => ({
 
 describe("[composable] useProductSSR", () => {
   const productCode = "MS-JKT-012"
-  // const { product, configure, load, loading, error } = useProductSSR(productCode)
 
   // getProduct
   test("load: should load product", async () => {
@@ -81,7 +80,10 @@ describe("[composable] useProductSSR", () => {
   // configureProduct
   test("load: should configure product", async () => {
     const { product, configure, loading, error } = useProductSSR(productCode)
-    await configure({ value: "Black", attributeFQN: "Tenant~color" }, productCode, [])
+    await configure(
+      [{ attributeFQN: "Tenant~color", value: "Black", shopperEnteredValue: undefined }],
+      productCode
+    )
     expect(product.value).toEqual(configureProductResponse)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()

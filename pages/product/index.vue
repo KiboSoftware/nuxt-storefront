@@ -3,7 +3,6 @@
     <SfLoader :loading="loading">
       <div>
         <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
-
         <div class="product">
           <div>
             <div class="product__gallery">
@@ -43,7 +42,7 @@
             </div>
 
             <div class="product__price-and-rating">
-              <div>
+              <div v-if="product && product.price">
                 <SfPrice
                   :regular="$n(productGetters.getPrice(product).regular, 'currency')"
                   :special="
@@ -86,12 +85,7 @@
                   data-cy="product-color_update"
                   :color="option.value"
                   :class="{ 'sf-color--active': option.isSelected, disabled: false }"
-                  @click="
-                    selectOption(
-                      { value: option.value },
-                      { attributeFQN: productOptions.colourOptions.attributeFQN }
-                    )
-                  "
+                  @click="selectOption(productOptions.colourOptions.attributeFQN, option.value)"
                 />
               </div>
 
@@ -106,12 +100,7 @@
                   :key="option.value"
                   class="sf-badge"
                   :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
-                  @click="
-                    selectOption(
-                      { value: option.value },
-                      { attributeFQN: productOptions.sizeOptions.attributeFQN }
-                    )
-                  "
+                  @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
                 >
                   {{ option.value }}
                 </div>
@@ -125,7 +114,7 @@
                   :value="productGetters.getOptionSelectedValue(option)"
                   :label="productGetters.getOptionName(option)"
                   :required="option.isRequired"
-                  @input="(value) => selectOption({ value }, option)"
+                  @input="(value) => selectOption(option.attributeFQN, value)"
                 >
                   <SfSelectOption
                     v-for="optionVal in option.values"
@@ -148,7 +137,15 @@
                     error-message=""
                     valid
                     :disabled="false"
-                    :selected="option.values.isSelected"
+                    :selected="productGetters.getOptionSelectedValue(option) ? true : false"
+                    @change="
+                      (value) =>
+                        selectOption(
+                          option.attributeFQN,
+                          undefined,
+                          productGetters.getOptionSelectedValue(option) ? false : true
+                        )
+                    "
                   />
                 </div>
               </div>
@@ -160,8 +157,8 @@
                   class="textBoxOptions"
                 >
                   <SfInput
-                    value=""
                     :label="option.attributeDetail.name"
+                    :value="option.values[0].value"
                     :name="option.attributeFQN"
                     type="text"
                     valid
@@ -169,6 +166,14 @@
                     :required="option.isRequired"
                     :disabled="false"
                     :has-show-password="false"
+                    @input="
+                      (shopperEnteredValue) =>
+                        updateShopperEnteredValues(
+                          option.attributeFQN,
+                          undefined,
+                          shopperEnteredValue
+                        )
+                    "
                   />
                 </div>
               </div>
@@ -177,7 +182,8 @@
 
               <KiboFulfillmentOptions
                 :fulfillment-options="fulfillmentOptions"
-                selected-option="DirectShip"
+                :cart-item-purchase-location="purchaseLocation.name"
+                :selected-option="selectedFulfillmentOption"
                 @click="handleStoreLocatorClick"
                 @change="selectFulfillmentOption"
               />
@@ -234,7 +240,7 @@ import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import KiboProductActions from "@/components/KiboProductActions.vue"
 import { useProductSSR } from "@/composables/useProductSSR"
 import useUiState from "@/composables/useUiState"
-import { productGetters, storeLocationGetters } from "@/composables/getters"
+import { productGetters } from "@/composables/getters"
 import { usePurchaseLocation } from "@/composables"
 
 export default defineComponent({
@@ -264,6 +270,7 @@ export default defineComponent({
     const { load, product, configure, loading, error } = useProductSSR(productCode)
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+    const selectedFulfillmentOption = ref()
 
     useAsync(async () => {
       await load(productCode)
@@ -283,8 +290,34 @@ export default defineComponent({
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
 
     // Options section
-    const selectOption = async ({ value }, { attributeFQN }) => {
-      await configure({ value, attributeFQN }, product.value?.productCode, options.value)
+    let shopperEnteredValues = []
+
+    const updateShopperEnteredValues = (attributeFQN, value, shopperEnteredValue) => {
+      const itemToBeUpdated = shopperEnteredValues.find(
+        (item) => item.attributeFQN === attributeFQN
+      )
+
+      if (itemToBeUpdated) {
+        itemToBeUpdated.value = value
+        itemToBeUpdated.shopperEnteredValue = shopperEnteredValue
+      } else {
+        const itemToBeAdded = {
+          attributeFQN,
+          value,
+          shopperEnteredValue,
+        }
+
+        shopperEnteredValues.push(itemToBeAdded)
+      }
+
+      shopperEnteredValues = [
+        ...shopperEnteredValues.filter((item) => item.shopperEnteredValue !== false),
+      ]
+    }
+
+    const selectOption = async (attributeFQN, value, shopperEnteredValue = undefined) => {
+      updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
+      await configure(shopperEnteredValues, product.value?.productCode)
     }
 
     // Add to Cart
@@ -292,29 +325,28 @@ export default defineComponent({
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
     const addToCart = () => {
+      // Todo: Add to cart
       console.log("Add to Cart qunatity: ", qtySelected.value)
     }
+
     const addToWishList = () => {
+      // Todo: Add to wishlist
       console.log("Add to Whislist qunatity: ", qtySelected.value)
     }
 
-    // Fullfillment Options
-    const fulfillmentOptions = computed(() => productGetters.getFullfillmentOptions(product.value))
+    // Get Fullfillment Options
+    const fulfillmentOptions = computed(() =>
+      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
+    )
 
-    const selectFulfillmentOption = (selectedFulfillmentOption: string) => {
-      console.log("Selected fullfillment option: ", selectedFulfillmentOption)
+    const selectFulfillmentOption = (selectedOption: string) => {
+      // Todo: Selected fullfillment option
+      selectedFulfillmentOption.value = selectedOption
     }
 
     const handleStoreLocatorClick = () => {
       toggleStoreLocatorModal()
     }
-
-    // Selected Purchase Location
-    const selectedLocation = computed(() => {
-      return Object.keys(purchaseLocation.value).length
-        ? storeLocationGetters.getName(purchaseLocation.value)
-        : "Select My Store"
-    })
 
     return {
       loading,
@@ -325,7 +357,7 @@ export default defineComponent({
       addToCart,
       addToWishList,
       selectOption,
-      selectedLocation,
+      purchaseLocation,
       rating,
       totalReviews,
       qty: 1,
@@ -341,8 +373,10 @@ export default defineComponent({
       product,
       isOpenNotification: false,
       fulfillmentOptions,
+      selectedFulfillmentOption,
       handleStoreLocatorClick,
       selectFulfillmentOption,
+      updateShopperEnteredValues,
     }
   },
 })
