@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
 import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
 import { Location } from "@/composables/types/storeFinder"
-=======
-import { buildBreadcrumbs } from "../helpers/buildBreadcrumbs"
-import { Location } from "../types"
-import { Breadcrumb } from "~~/pages/types"
-import { Product, ProductOption, ProductOptionValue } from "~~/server/types/GraphQL"
->>>>>>> 0f8eee7 (PR points resolved)
 
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
@@ -141,20 +134,6 @@ export const getSegregatedOptions = (product: Product) => {
   return productOptions
 }
 
-export const getFullfillmentOptions = (product: Product, purchaseLocation: Location) =>
-  product.fulfillmentTypesSupported.map((option) => ({
-    name: "fulfillment",
-    value: option,
-    label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
-    details:
-      option === "DirectShip"
-        ? "Available to Ship"
-        : purchaseLocation?.name
-        ? `Available at: ${purchaseLocation.name}`
-        : "",
-    required: "false",
-  }))
-
 export const productGetters = {
   getName,
   getRating,
@@ -172,9 +151,5 @@ export const productGetters = {
   getSegregatedOptions,
   getFullfillmentOptions,
   getCoverImage,
-<<<<<<< HEAD
   getProductId,
-=======
-  getFullfillmentOptions,
->>>>>>> 0f8eee7 (PR points resolved)
 }

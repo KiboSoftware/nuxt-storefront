@@ -17,8 +17,7 @@
 <script lang="tsx">
 import { SfMegaMenu, SfList, SfMenuItem } from "@storefront-ui/vue"
 import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
-import { useCategoryTree, useUiHelpers } from "@/composables"
-import { categoryGetters } from "@/composables/getters"
+import { useCategoryTree, useUiHelpers, categoryGetters } from "@/composables"
 
 export default defineComponent({
   components: {

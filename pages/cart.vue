@@ -87,10 +87,15 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import { usePurchaseLocation, useCart } from "@/composables"
-import useUiState from "@/composables/useUiState"
+import {
+  usePurchaseLocation,
+  useCart,
+  useUiState,
+  cartGetters,
+  productGetters,
+  storeLocationGetters,
+} from "@/composables"
 import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
-import { cartGetters, productGetters, storeLocationGetters } from "@/composables/getters"
 
 export default defineComponent({
   name: "DetailedCart",

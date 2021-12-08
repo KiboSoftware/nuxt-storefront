@@ -66,9 +66,8 @@ import {
   SfAccordion,
   SfRadio,
 } from "@storefront-ui/vue"
-import useUiState from "../composables/useUiState"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import { useCart } from "@/composables"
+import { useCart, useUiState } from "@/composables"
 
 export default defineComponent({
   name: "KiboCollectedProduct",

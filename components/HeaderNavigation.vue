@@ -11,7 +11,7 @@
 import { SfModal } from "@storefront-ui/vue"
 import { defineComponent } from "@vue/composition-api"
 import MegaMenu from "./MegaMenu.vue"
-import useUiState from "~/composables/useUiState"
+import { useUiState } from "@/composables"
 
 export default defineComponent({
   name: "HeaderNavigation",
