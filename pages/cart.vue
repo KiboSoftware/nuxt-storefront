@@ -89,7 +89,7 @@ import { defineComponent } from "@vue/composition-api"
 import { usePurchaseLocation, useCart } from "@/composables"
 import useUiState from "@/composables/useUiState"
 import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
-import { cartGetters, productGetters, storeLocationGetters } from "@/composables/getters"
+import { cartGetters, storeLocationGetters } from "@/composables/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -103,7 +103,7 @@ export default defineComponent({
   },
   setup() {
     const { toggleStoreLocatorModal } = useUiState()
-    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
 
     const breadcrumbs = [
@@ -118,7 +118,6 @@ export default defineComponent({
     ]
 
     useAsync(async () => {
-      await loadPurchaseLocation()
       await loadCart()
     }, null)
 
@@ -136,7 +135,7 @@ export default defineComponent({
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
     const cartItemFulfillmentTypes = (cartItem) => {
-      return productGetters.getFullfillmentOptions(cartItem.product, purchaseLocation.value)
+      return cartGetters.getFullfillmentOptions(cartItem, purchaseLocation.value)
     }
 
     return {
