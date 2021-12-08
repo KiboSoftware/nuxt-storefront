@@ -149,7 +149,6 @@ export const productGetters = {
   getOptionName,
   getOptions,
   getSegregatedOptions,
-  getSlug,
   getFullfillmentOptions,
   getCoverImage,
   getProductId,
