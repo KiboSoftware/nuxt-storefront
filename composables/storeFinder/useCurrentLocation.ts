@@ -1,4 +1,3 @@
-import { computed } from "@vue/composition-api"
 import { getCurrentUserPosition } from "./utils/getUserCurrentPosition"
 import { GeoCoords } from "@/composables/types"
 import { useState } from "#app"
@@ -32,7 +31,7 @@ export const useCurrentLocation = () => {
   return {
     currentLocation,
     loadWithNavigator,
-    loading: computed(() => loading.value),
-    error: computed(() => error),
+    loading: loading.value,
+    error: error.value,
   }
 }

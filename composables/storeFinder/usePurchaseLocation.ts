@@ -1,4 +1,3 @@
-import { computed } from "@vue/composition-api"
 import { Location } from "@/composables/types"
 import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
@@ -9,7 +8,7 @@ export const usePurchaseLocation = () => {
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const app = nuxt.nuxt2Context.app
   const storeLocationCookie = nuxt.nuxt2Context.$config.storeLocationCookie
-  const purchaseLocation = useState(`use-purchaseLocation`, (): Location => {
+  const purchaseLocation = useState(`use-purchaseLocation`, (): Location | null => {
     return {} as Location
   })
   const loading = useState(`use-purchaseLocation-loading`, () => false)
@@ -28,7 +27,7 @@ export const usePurchaseLocation = () => {
         })
         purchaseLocation.value = response.data.spLocations.items[0]
       } catch (error) {
-        purchaseLocation.value = {}
+        purchaseLocation.value = null
         loading.value = false
       }
     }
@@ -46,7 +45,7 @@ export const usePurchaseLocation = () => {
     purchaseLocation,
     load,
     set,
-    loading: computed(() => loading.value),
-    error: computed(() => error),
+    loading: loading.value,
+    error: error.value,
   }
 }

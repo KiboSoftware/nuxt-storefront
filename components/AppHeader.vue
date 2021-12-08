@@ -148,7 +148,7 @@ export default defineComponent({
     })
 
     const selectedLocation = computed(() => {
-      return Object.keys(purchaseLocation.value).length
+      return purchaseLocation.value && Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
         : "Select My Store"
     })

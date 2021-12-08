@@ -1,4 +1,3 @@
-import { computed } from "@vue/composition-api"
 import { Location, GeoCoords } from "@/composables/types"
 import { getSpLocations } from "@/gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"
@@ -6,7 +5,7 @@ import { useState, useNuxtApp } from "#app"
 export const useStoreLocations = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const locations = useState(`use-storeLocations`, (): Location[] => {
+  const locations = useState(`use-storeLocations`, (): Location[] | null => {
     return [] as Location[]
   })
   const loading = useState(`use-storeLocations-loading`, () => false)
@@ -27,7 +26,7 @@ export const useStoreLocations = () => {
       })
       locations.value = response.data.spLocations.items
     } catch (error) {
-      locations.value = []
+      locations.value = null
       loading.value = false
     }
     loading.value = false
@@ -36,7 +35,7 @@ export const useStoreLocations = () => {
   return {
     locations,
     search,
-    loading: computed(() => loading.value),
-    error: computed(() => error),
+    loading: loading.value,
+    error: error.value,
   }
 }
