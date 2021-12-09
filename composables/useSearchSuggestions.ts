@@ -19,9 +19,10 @@ export const useSearchSuggestions = () => {
           query: getSearchSuggestions,
           variables: { query },
         })
-        result.value = response.data.suggestionSearch
+        result.value = response?.data?.suggestionSearch
       }
     } catch (err) {
+      console.log("error : ", error)
     } finally {
       loading.value = false
     }

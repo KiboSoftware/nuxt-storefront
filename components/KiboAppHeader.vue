@@ -115,11 +115,9 @@ import {
 import debounce from "lodash.debounce"
 
 import { useAsync } from "@nuxtjs/composition-api"
-import useUiState from "../composables/useUiState"
-import * as logo from "../assets/kibo_logo.png"
-import { usePurchaseLocation } from "../composables"
-import KiboSearchSuggestion from "./KiboSearchSuggestion.vue"
-import KiboSearchBar from "./KiboSearchBar.vue"
+import useUiState from "@/composables/useUiState"
+import * as logo from "@/assets/kibo_logo.png"
+import { usePurchaseLocation } from "@/composables"
 import { useUser } from "@/composables/useUser"
 import { userGetters, storeLocationGetters, searchSuggestionGetters } from "@/composables/getters"
 import { useUiHelpers } from "@/composables"
@@ -133,8 +131,6 @@ export default defineComponent({
     SfButton,
     SfMenuItem,
     SfLink,
-    KiboSearchSuggestion,
-    KiboSearchBar,
   },
   directives: { clickOutside },
   setup() {
@@ -171,11 +167,7 @@ export default defineComponent({
       searchSuggestionResult.value = {}
       try {
         isSearchOpen.value = true
-        if (!paramValue.target) {
-          term.value = paramValue
-        } else {
-          term.value = paramValue.target.value
-        }
+        term.value = paramValue.target ? paramValue.target.value : paramValue
         await search(term.value)
         searchSuggestionResult.value = searchSuggestionGetters.getSearchSuggestions(result.value)
       } catch (err) {}
