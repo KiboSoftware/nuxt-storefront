@@ -261,6 +261,7 @@ export default defineComponent({
 
 .sf-property {
   padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
+
   &__name {
     @include font(
       --property-name-font,
@@ -270,6 +271,7 @@ export default defineComponent({
       var(--font-family--secondary)
     );
   }
+
   &__name-noBold {
     @include font(
       --property-name-font,
@@ -279,6 +281,7 @@ export default defineComponent({
       var(--font-family--secondary)
     );
   }
+
   &__value {
     @include font(
       --property-value-font,
@@ -300,6 +303,7 @@ export default defineComponent({
   width: 100%;
   align-items: stretch;
   padding: var(--spacer-sm) 0;
+
   &__input {
     flex: 1;
   }
