@@ -1,3 +1,4 @@
+import { Location } from "../types"
 import { Cart, CartItem, Maybe, CrProductOption } from "~~/server/types/GraphQL"
 
 export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
@@ -83,6 +84,20 @@ export const getDiscounts = (cart: Cart) => {
   }))
 }
 
+export const getFullfillmentOptions = (item: CartItem, purchaseLocation: Location) =>
+  item?.product.fulfillmentTypesSupported.map((option) => ({
+    name: "fulfillment",
+    value: option,
+    label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
+    details:
+      option === "DirectShip"
+        ? "Available to Ship"
+        : purchaseLocation?.name
+        ? `Available at: ${purchaseLocation.name}`
+        : "",
+    required: "false",
+  }))
+
 export const cartGetters = {
   getTotals,
   getShippingPrice: getCartShippingPrice,
@@ -97,4 +112,5 @@ export const cartGetters = {
   getTotalItems: getCartTotalItems,
   getCoupons,
   getDiscounts,
+  getFullfillmentOptions,
 }

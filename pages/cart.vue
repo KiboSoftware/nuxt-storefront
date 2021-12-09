@@ -109,7 +109,7 @@ export default defineComponent({
   },
   setup() {
     const { toggleStoreLocatorModal } = useUiState()
-    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
 
     const breadcrumbs = [
@@ -124,7 +124,6 @@ export default defineComponent({
     ]
 
     useAsync(async () => {
-      await loadPurchaseLocation()
       await loadCart()
     }, null)
 

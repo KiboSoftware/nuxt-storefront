@@ -15,18 +15,17 @@
           </SfLink>
         </div>
 
-        <div style="flex: 0.3"></div>
-        <div class="kibo-header__search-bar">
-          <SfSearchBar
+        <div style="flex: 0.35"></div>
+        <div v-click-outside="closeSearch" class="kibo-header__search-bar">
+          <KiboSearchBar
             ref="searchBarRef"
-            v-click-outside="closeSearch"
             :placeholder="$t('Search for items')"
             aria-label="Search"
             class="sf-header__search"
             :value="term"
+            :loading="loading"
             @input="handleSearch"
-            @keydown.enter="handleSearch($event)"
-            @focus="isSearchOpen = true"
+            @keydown.enter="gotoSearchResult()"
             @keydown.esc="closeSearch"
           >
             <template #icon>
@@ -49,10 +48,19 @@
                 </span>
               </SfButton>
             </template>
-          </SfSearchBar>
+          </KiboSearchBar>
+          <div class="search-suggestion-div">
+            <KiboSearchSuggestion
+              :visible="isSearchOpen"
+              :result="searchSuggestionResult"
+              :loading="loading"
+              @closeDialog="closeSearch()"
+            >
+            </KiboSearchSuggestion>
+          </div>
         </div>
 
-        <div class="sf-header__icons">
+        <div v-if="!isMobile" class="sf-header__icons">
           <SfButton
             v-e2e="'app-header-location'"
             class="sf-button--pure sf-header__action"
@@ -122,7 +130,6 @@ import {
 import debounce from "lodash.debounce"
 
 import { useAsync } from "@nuxtjs/composition-api"
-import * as logo from "@/assets/kibo_logo.png"
 import {
   usePurchaseLocation,
   useCart,
@@ -132,16 +139,17 @@ import {
   useSearchSuggestions,
   userGetters,
   storeLocationGetters,
+  searchSuggestionGetters,
   cartGetters,
 } from "@/composables"
 import { useNuxtApp } from "#app"
+import * as logo from "@/assets/kibo_logo.png"
 
 export default defineComponent({
   components: {
     SfImage,
     SfIcon,
     SfButton,
-    SfSearchBar,
     SfMenuItem,
     SfLink,
     SfBadge,
@@ -169,6 +177,7 @@ export default defineComponent({
     })
 
     const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
+    const searchSuggestionResult = ref({})
 
     const closeSearch = () => {
       if (!isSearchOpen.value) return
@@ -178,17 +187,13 @@ export default defineComponent({
     }
 
     const handleSearch = debounce(async (paramValue) => {
-      loading.value = true
-      if (!paramValue.target) {
-        term.value = paramValue
-      } else {
-        term.value = paramValue.target.value
-      }
-
-      await search(term.value)
-      loading.value = false
-      isSearchOpen.value = true
-      // @todo use result to show it in search suggestion dialog
+      searchSuggestionResult.value = {}
+      try {
+        isSearchOpen.value = true
+        term.value = paramValue.target ? paramValue.target.value : paramValue
+        await search(term.value)
+        searchSuggestionResult.value = searchSuggestionGetters.getSearchSuggestions(result.value)
+      } catch (err) {}
     }, 1000)
 
     const isMobile = computed(() => mapMobileObserver().isMobile.get())
@@ -199,6 +204,13 @@ export default defineComponent({
       } else {
         term.value = ""
         return searchBarRef.value.$el.children[0].focus()
+      }
+    }
+    const gotoSearchResult = () => {
+      if (term.value) {
+        const searchStr = term.value
+        closeSearch()
+        return app.router.push({ path: "/search", query: { phrase: searchStr } })
       }
     }
 
@@ -275,6 +287,9 @@ export default defineComponent({
       title: "Kibo",
       handleStoreLocatorClick,
       selectedLocation,
+      searchSuggestionResult,
+      loading,
+      gotoSearchResult,
       totalItemsInCart,
     }
   },
@@ -357,7 +372,9 @@ export default defineComponent({
   padding-left: 2%;
 
   &__search-bar {
+    position: relative;
     flex: 1.5;
+    width: 45%;
   }
 
   &__icon {
@@ -396,5 +413,12 @@ export default defineComponent({
 
 .fa-icon {
   font-size: var(--spacer-base);
+}
+
+.search-suggestion-div {
+  flex: 1.5;
+  top: 2.65rem;
+  position: absolute;
+  z-index: 20;
 }
 </style>

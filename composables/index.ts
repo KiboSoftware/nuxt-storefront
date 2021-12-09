@@ -6,7 +6,7 @@ export * from "./useUiState"
 export * from "./useProductSSR"
 
 // User
-export * from "./useUser/index"
+export * from "./useUser"
 
 // Cart
 export * from "./useCart"
