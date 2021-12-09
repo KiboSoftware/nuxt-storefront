@@ -51,13 +51,16 @@ export default defineComponent({
 #SfMegaMenuColumnId .sf-mega-menu__content {
   padding: 0;
 }
+
 #SfMegaMenuColumnId .sf-mega-menu-column {
   padding-right: 70px;
 }
+
 #SfMegaMenuColumnId .sf-mega-menu-column .sf-list {
   display: none;
   position: absolute;
 }
+
 #SfMegaMenuColumnId .sf-mega-menu-column:hover .sf-list {
   display: block;
 }

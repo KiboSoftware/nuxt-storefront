@@ -149,33 +149,40 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 .sf-modal {
   --modal-width: 39.375rem;
   --modal-content-padding: 0;
 }
+
 .title {
   font-weight: 700;
   font-size: var(--h4-font-size);
   padding: var(--spacer-2xs) var(--spacer-lg);
 }
+
 .location-search {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
   padding: var(--spacer-lg) var(--spacer-base) var(--spacer-2xs) var(--spacer-lg);
 }
+
 .sf-button--small {
   margin-left: 2%;
 }
+
 .Search-bar {
   flex: 1;
 }
+
 .current-location {
   text-decoration: underline;
   cursor: pointer;
   font-size: var(--font-size--base);
   padding: var(--spacer-2xs) var(--spacer-lg);
 }
+
 .store-count {
   display: flex;
   justify-content: center;
@@ -183,21 +190,26 @@ export default {
   border-top: 1px solid var(--c-light);
   padding: var(--spacer-2xs) var(--spacer-sm);
 }
+
 .store-container {
   max-height: 40vh;
   overflow-y: auto;
 }
+
 .store-details {
   padding: var(--spacer-base) var(--spacer-lg);
 }
+
 .section-border {
   border-bottom: 1px solid var(--c-light);
 }
+
 .sf-accordion-item {
   &__header {
     text-decoration: underline;
   }
 }
+
 .sf-property__name {
   text-transform: capitalize;
 }
@@ -208,9 +220,11 @@ export default {
     justify-content: flex-start;
   }
 }
+
 .sf-button--pure {
   --button-height: 1.625rem;
 }
+
 .action-buttons {
   display: flex;
   justify-content: flex-end;

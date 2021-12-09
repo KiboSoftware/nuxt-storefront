@@ -2,6 +2,7 @@
   --quantity-selector-height: 2.313rem;
   --quantity-selector-width: 9.75rem;
   --quantity-selector-background: var(--c-white);
+
   &__button {
     --button-height: 1.375rem;
     --button-width: 1.375rem;
@@ -12,6 +13,7 @@
     border-radius: 100%;
     padding-bottom: 0.188rem;
   }
+
   &__input {
     --input-padding: 0;
     --input-margin: 0.625rem;
@@ -21,6 +23,7 @@
     margin-right: 0.438rem;
     margin-left: 0.188rem;
   }
+
   input {
     border-radius: 0;
     height: 2.313rem;

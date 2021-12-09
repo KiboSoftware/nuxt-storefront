@@ -4,10 +4,7 @@
       <div class="checkout__main">
         <SfSteps :active="currentStep" @change="updateStep($event)">
           <SfStep name="Details">
-            <SfPersonalDetails
-              :value="personalDetails"
-              @input="personalDetails = $event"
-            />
+            <SfPersonalDetails :value="personalDetails" @input="personalDetails = $event" />
           </SfStep>
           <SfStep name="Shipping">
             <SfShipping
@@ -32,13 +29,7 @@
               :order="getOrder"
               order-title="Order details"
               :properties-names="['Subtotal', 'Shipping', 'Total price']"
-              :table-headers="[
-                'Size',
-                'Description',
-                'Quantity',
-                'Colour',
-                'Amount',
-              ]"
+              :table-headers="['Size', 'Description', 'Quantity', 'Colour', 'Amount']"
               @click:edit="currentStep = $event"
             />
           </SfStep>
@@ -53,12 +44,7 @@
             :order="getOrder"
             order-title="Order review"
             :order-title-level="3"
-            :properties-names="[
-              'Products',
-              'Subtotal',
-              'Shipping',
-              'Total price',
-            ]"
+            :properties-names="['Products', 'Subtotal', 'Shipping', 'Total price']"
             :characteristics="characteristics"
           />
           <SfOrderReview
@@ -83,11 +69,7 @@
         >{{ steps[currentStep] }}</SfButton
       >
       <SfButton
-        class="
-          sf-button--full-width sf-button--underlined
-          actions__button
-          smartphone-only
-        "
+        class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
         @click="currentStep--"
         >Go back</SfButton
       >
@@ -104,7 +86,7 @@ import {
   SfConfirmOrder,
   SfOrderSummary,
   SfOrderReview,
-} from "@storefront-ui/vue";
+} from "@storefront-ui/vue"
 export default {
   name: "Checkout",
   components: {
@@ -118,18 +100,15 @@ export default {
     SfButton,
   },
   data() {
-      const countries = []; const months = []; const years = []
+    const countries = []
+    const months = []
+    const years = []
     return {
       countries,
       months,
       years,
       currentStep: 0,
-      steps: [
-        "Go to shipping",
-        "Go to payment",
-        "Pay for order",
-        "Confirm and pay",
-      ],
+      steps: ["Go to shipping", "Go to payment", "Pay for order", "Confirm and pay"],
       personalDetails: { firstName: "", lastName: "", email: "" },
       shipping: {
         firstName: "",
@@ -279,8 +258,7 @@ export default {
         },
         {
           title: "Easy shipping",
-          description:
-            "You’ll receive dispatch confirmation and an arrival date",
+          description: "You’ll receive dispatch confirmation and an arrival date",
           icon: "shipping",
         },
         {
@@ -289,7 +267,7 @@ export default {
           icon: "return",
         },
       ],
-    };
+    }
   },
   computed: {
     getOrder() {
@@ -298,18 +276,16 @@ export default {
         ...this.personalDetails,
         shipping: { ...this.shipping },
         payment: { ...this.payment },
-      };
+      }
     },
   },
   watch: {
     shipping(newVal, oldVal) {
       if (newVal.shippingMethod !== oldVal.shippingMethod) {
-        const method = this.shippingMethods.find(
-          (method) => method.value === newVal.shippingMethod
-        );
+        const method = this.shippingMethods.find((method) => method.value === newVal.shippingMethod)
         return method
           ? (newVal.shippingMethod = method)
-          : (newVal.shippingMethod = { price: "$0.00" });
+          : (newVal.shippingMethod = { price: "$0.00" })
       }
     },
   },
@@ -317,14 +293,15 @@ export default {
     updateStep(next) {
       // prevent to move next by SfStep header
       if (next < this.currentStep) {
-        this.currentStep = next;
+        this.currentStep = next
       }
     },
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 #checkout {
   box-sizing: border-box;
   @include for-desktop {
@@ -333,13 +310,15 @@ export default {
     margin: 0 auto;
   }
 }
+
 .checkout {
   --steps-content-padding: 0 var(--spacer-sm);
   @include for-desktop {
     --steps-content-padding: 0;
-    
+
     display: flex;
   }
+
   &__main {
     ::v-deep .sf-steps__step.is-done {
       --steps-step-color: var(--c-primary);
@@ -349,11 +328,13 @@ export default {
       padding: var(--spacer-xl) 0 0 0;
     }
   }
+
   &__aside {
     @include for-desktop {
       flex: 0 0 26.8125rem;
       margin: 0 0 0 var(--spacer-base);
     }
+
     &-order {
       box-sizing: border-box;
       width: 100%;
@@ -365,6 +346,7 @@ export default {
     }
   }
 }
+
 .actions {
   background: var(--c-white);
   padding: var(--spacer-sm);
@@ -372,6 +354,7 @@ export default {
   text-align: center;
   position: sticky;
   bottom: 0;
+
   &__button {
     margin-bottom: var(--spacer-sm);
   }
@@ -380,6 +363,7 @@ export default {
     box-shadow: none;
     padding: 0;
     width: 25rem;
+
     &__button {
       margin: 0;
     }

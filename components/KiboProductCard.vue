@@ -393,10 +393,12 @@ export default defineComponent({
   height: 17.625rem;
   padding: 0;
   margin: 0 0 4.688rem 0;
+
   .sf-image {
     object-fit: contain;
   }
 }
+
 .kpc-sf-color {
   border: none;
   width: 0.875rem;
@@ -407,6 +409,7 @@ export default defineComponent({
     &:hover {
       transform: none;
     }
+
     &--active {
       border: 1.15px solid var(--c-white);
       width: 1.125rem;
@@ -415,14 +418,17 @@ export default defineComponent({
     }
   }
 }
+
 .kpc-sf-color-picker {
   top: 9.875rem;
   margin-bottom: 0.875rem;
 }
+
 .kpc-title-button {
   top: 9.875rem;
   height: 2rem;
 }
+
 .kpc-title {
   margin: 0;
   padding: 0;
@@ -435,9 +441,11 @@ export default defineComponent({
   overflow: hidden;
   width: 201px;
 }
+
 .kpc-price {
   margin-top: 10rem;
 }
+
 .kpc-price > .sf-price__regular {
   font-size: var(--font-size--sm);
   font-family: var(--font-family--primary);

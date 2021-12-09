@@ -35,13 +35,7 @@
 </template>
 
 <script>
-import {
-  SfImage,
-  SfButton,
-  SfList,
-  SfBottomModal,
-  SfCharacteristic,
-} from "@storefront-ui/vue"
+import { SfImage, SfButton, SfList, SfBottomModal, SfCharacteristic } from "@storefront-ui/vue"
 import { ref, computed } from "@vue/composition-api"
 
 export default {
@@ -56,9 +50,7 @@ export default {
   setup(root, context) {
     const { locales, locale } = context.root.$i18n
     const isLangModalOpen = ref(false)
-    const availableLocales = computed(() =>
-      locales.filter((i) => i.code !== locale)
-    )
+    const availableLocales = computed(() => locales.filter((i) => i.code !== locale))
     return {
       root,
       availableLocales,
@@ -76,6 +68,7 @@ export default {
   flex-wrap: nowrap;
   align-items: center;
   position: relative;
+
   .sf-bottom-modal {
     z-index: 2;
     left: 0;
@@ -83,9 +76,11 @@ export default {
       --bottom-modal-height: 100vh;
     }
   }
+
   .sf-list {
     .language {
       padding: var(--spacer-sm);
+
       &__flag {
         margin-right: var(--spacer-sm);
       }
@@ -94,6 +89,7 @@ export default {
       display: flex;
     }
   }
+
   &__lang {
     width: 20px;
 
@@ -105,6 +101,7 @@ export default {
     align-items: center;
     opacity: 0.5;
     border: none;
+
     &:hover,
     &--selected {
       opacity: 1;
