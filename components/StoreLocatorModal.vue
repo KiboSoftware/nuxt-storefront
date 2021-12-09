@@ -78,11 +78,13 @@
 import { SfModal, SfSearchBar } from "@storefront-ui/vue"
 import { computed, ref } from "@nuxtjs/composition-api"
 import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
-import useUiState from "@/composables/useUiState"
-import { useCurrentLocation } from "@/composables/storeFinder/useCurrentLocation"
-import { useStoreLocations } from "@/composables/storeFinder/useStoreLocations"
-import { usePurchaseLocation } from "@/composables/storeFinder/usePurchaseLocation"
-import { storeLocationGetters } from "@/composables/getters"
+import {
+  useCurrentLocation,
+  useStoreLocations,
+  usePurchaseLocation,
+  storeLocationGetters,
+  useUiState,
+} from "@/composables"
 
 export default {
   name: "StoreLocatorModal",

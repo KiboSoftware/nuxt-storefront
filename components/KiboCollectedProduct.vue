@@ -19,7 +19,12 @@
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
         <p>Qty:</p>
-        <SfQuantitySelector :qty="quantity" @input="$emit('input', $event)" />
+        <SfQuantitySelector
+          :qty="quantity"
+          :min="1"
+          :max="10"
+          @input="handleQuantitySelectorInput"
+        />
       </div>
       <div class="kibo-collectedProduct__details-wrapper">
         <SfAccordion v-if="options.length" open="Details" show-chevron>
@@ -42,7 +47,7 @@
       />
     </div>
     <div class="kibo-collectedProduct__remove">
-      <SfButton class="kibo-collectedProduct__remove-button" link="/cart">
+      <SfButton class="kibo-collectedProduct__remove-button" @click="handleRemoveCartItem">
         <font-awesome-icon :icon="['fas', 'trash-alt']" />
       </SfButton>
     </div>
@@ -61,8 +66,8 @@ import {
   SfAccordion,
   SfRadio,
 } from "@storefront-ui/vue"
-import useUiState from "../composables/useUiState"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
+import { useCart, useUiState } from "@/composables"
 
 export default defineComponent({
   name: "KiboCollectedProduct",
@@ -83,59 +88,42 @@ export default defineComponent({
     prop: "qty",
   },
   props: {
-    /**
-     * Product image
-     * It should be an url of the product
-     */
+    // Product image: It should be an url of the product
     image: {
       type: String,
       default: "",
     },
-    /**
-     * Product image width, without unit
-     */
+    // Product image width, without unit
     imageWidth: {
       type: [String, Number],
       default: 140,
     },
-    /**
-     * Product image height, without unit
-     */
+    // Product image height, without unit
     imageHeight: {
       type: [String, Number],
       default: 200,
     },
-    /**
-     * Product title
-     */
+    // Product title
     title: {
       type: String,
       default: "",
     },
-    /**
-     * Product regular price
-     */
+    // Product regular price
     regularPrice: {
       type: [Number, String],
       default: null,
     },
-    /**
-     * Product special price
-     */
+    // Product special price
     specialPrice: {
       type: [Number, String],
       default: null,
     },
-    /**
-     * Selected quantity
-     */
+    // Selected quantity
     qty: {
       type: [Number, String],
       default: 1,
     },
-    /**
-     * Link to product
-     */
+    // Link to product
     link: {
       type: [String, Object],
       default: "",
@@ -154,9 +142,14 @@ export default defineComponent({
       // eslint-disable-next-line vue/require-valid-default-prop
       default: [],
     },
+    cartItemId: {
+      type: String,
+      default: "",
+    },
   },
   setup(props, context) {
     const { toggleStoreLocatorModal } = useUiState()
+    const { updateCartItemQuantity, removeCartItem } = useCart()
 
     const removeHandler = () => {
       context.emit("click:remove")
@@ -173,9 +166,20 @@ export default defineComponent({
       return typeof props.qty === "string" ? Number(props.qty) : props.qty
     })
 
+    const handleQuantitySelectorInput = async ($event) => {
+      context.emit("input", $event)
+      await updateCartItemQuantity(props.cartItemId, Number($event))
+    }
+
+    const handleRemoveCartItem = async () => {
+      await removeCartItem(props.cartItemId)
+    }
+
     return {
       removeHandler,
       handleStoreLocatorClick,
+      handleQuantitySelectorInput,
+      handleRemoveCartItem,
       componentIs,
       quantity,
     }

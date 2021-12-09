@@ -176,8 +176,14 @@ import {
 import { ref, computed } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
-import { useUiHelpers, useFacet, useProductSearch } from "~/composables"
-import { productGetters, facetGetters, productSearchGetters } from "@/composables/getters"
+import {
+  useUiHelpers,
+  useFacet,
+  useProductSearch,
+  productGetters,
+  facetGetters,
+  productSearchGetters,
+} from "@/composables"
 import { useState } from "#app"
 import KiboProductCard from "@/components/KiboProductCard.vue"
 

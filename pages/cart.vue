@@ -46,6 +46,7 @@
                 v-for="cartItem in cartItems"
                 :key="cartItem.id"
                 v-model="cartItem.quantity"
+                :cart-item-id="cartItem.id"
                 :purchase-location="selectedLocation"
                 :image="cartItem.product.imageUrl"
                 :title="cartItem.product.name"
@@ -86,10 +87,15 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import { usePurchaseLocation, useCart } from "@/composables"
-import useUiState from "@/composables/useUiState"
+import {
+  usePurchaseLocation,
+  useCart,
+  useUiState,
+  cartGetters,
+  productGetters,
+  storeLocationGetters,
+} from "@/composables"
 import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
-import { cartGetters, storeLocationGetters } from "@/composables/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -135,7 +141,7 @@ export default defineComponent({
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
     const cartItemFulfillmentTypes = (cartItem) => {
-      return cartGetters.getFullfillmentOptions(cartItem, purchaseLocation.value)
+      return productGetters.getFullfillmentOptions(cartItem.product, purchaseLocation.value)
     }
 
     return {

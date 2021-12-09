@@ -130,16 +130,18 @@ import {
 import debounce from "lodash.debounce"
 
 import { useAsync } from "@nuxtjs/composition-api"
-import useUiState from "@/composables/useUiState"
 import {
+  usePurchaseLocation,
+  useCart,
+  useUiHelpers,
+  useUiState,
+  useUser,
+  useSearchSuggestions,
   userGetters,
   storeLocationGetters,
   searchSuggestionGetters,
   cartGetters,
-} from "@/composables/getters"
-import { usePurchaseLocation, useCart, useUiHelpers } from "@/composables"
-import { useUser } from "@/composables/useUser"
-import { useSearchSuggestions } from "@/composables/useSearchSuggestions"
+} from "@/composables"
 import { useNuxtApp } from "#app"
 import * as logo from "@/assets/kibo_logo.png"
 

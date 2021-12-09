@@ -1,6 +1,8 @@
+import { updateCartQuantityMutation } from "./../gql/mutations/cart/updateCartMutation"
 import { useNuxtApp, useState } from "#app"
-import { getCartQuery } from "~~/gql/queries/cart"
-import { addToCartMutation } from "~~/gql/mutations"
+import { getCartQuery } from "@/gql/queries/cart"
+import { addToCartMutation } from "@/gql/mutations"
+import { deleteCartItemMutation } from "@/gql/mutations/cart/deleteCartItemMutation"
 
 export const useCart = () => {
   const cart = useState(`use-cart-result`, () => {
@@ -23,7 +25,7 @@ export const useCart = () => {
       loading.value = true
       cart.value = await getCart()
     } catch (error) {
-      console.error(error)
+      cart.value = {}
     } finally {
       loading.value = false
     }
@@ -41,17 +43,59 @@ export const useCart = () => {
         query: addToCartMutation,
         variables: { productToAdd },
       })
-      cart.value = await getCart()
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
     } finally {
       loading.value = false
+      cart.value = await getCart()
+    }
+  }
+
+  const updateCartItemQuantity = async (cartItemId: string, quantity: number) => {
+    const variables = {
+      itemId: cartItemId,
+      quantity,
+    }
+
+    try {
+      loading.value = true
+      await fetcher({
+        query: updateCartQuantityMutation,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const removeCartItem = async (cartItemId: string) => {
+    const variables = {
+      itemId: cartItemId,
+    }
+    try {
+      loading.value = true
+      await fetcher({
+        query: deleteCartItemMutation,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+      cart.value = await getCart()
     }
   }
 
   return {
     loading,
     addToCart,
+    updateCartItemQuantity,
+    removeCartItem,
     load,
     cart,
     error,

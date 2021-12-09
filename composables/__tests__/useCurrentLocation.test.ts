@@ -11,7 +11,7 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] useCurrentLocation", () => {
-  const { currentLocation, loadWithNavigator } = useCurrentLocation()
+  const { currentLocation, loadWithNavigator, loading, error } = useCurrentLocation()
 
   jest.spyOn(getCurrentUserPosition, "getCurrentUserPosition").mockReturnValue(
     Promise.resolve({
@@ -29,5 +29,7 @@ describe("[composable] useCurrentLocation", () => {
       latitude: "30.242292",
       longitude: "-97.783232",
     })
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeFalsy()
   })
 })

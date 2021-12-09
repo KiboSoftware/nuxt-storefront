@@ -238,10 +238,7 @@ import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import KiboProductActions from "@/components/KiboProductActions.vue"
-import { useProductSSR } from "@/composables/useProductSSR"
-import useUiState from "@/composables/useUiState"
-import { productGetters } from "@/composables/getters"
-import { usePurchaseLocation } from "@/composables"
+import { useProductSSR, useUiState, usePurchaseLocation, productGetters } from "@/composables"
 
 export default defineComponent({
   name: "Product",

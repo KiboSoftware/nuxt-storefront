@@ -1,3 +1,5 @@
 export * from "./product/configureProductMutation"
 export * from "./user/loginMutation"
 export * from "./cart/addToCartMutation"
+export * from "./cart/deleteCartItemMutation"
+export * from "./cart/updateCartMutation"

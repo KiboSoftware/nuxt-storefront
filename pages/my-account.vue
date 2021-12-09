@@ -47,7 +47,7 @@ import {
   SfOrderHistory,
 } from "@storefront-ui/vue"
 import { defineComponent, reactive } from "@vue/composition-api"
-import { useUser } from "../composables/useUser"
+import { useUser } from "@/composables"
 
 export default defineComponent({
   name: "MyAccount",

@@ -1,4 +1,3 @@
-import { computed } from "@vue/composition-api"
 import { Location, GeoCoords } from "@/composables/types"
 import { getSpLocations } from "@/gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"
@@ -31,7 +30,7 @@ export const useStoreLocations = () => {
   return {
     locations,
     search,
-    loading: computed(() => loading.value),
-    error: computed(() => error),
+    loading,
+    error,
   }
 }

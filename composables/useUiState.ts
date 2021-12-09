@@ -14,7 +14,7 @@ const state = reactive({
   isStoreLocatorOpen: false,
 })
 
-const useUiState = () => {
+export const useUiState = () => {
   const isMobileMenuOpen = computed(() => state.isMobileMenuOpen)
   const toggleMobileMenu = () => {
     state.isMobileMenuOpen = !state.isMobileMenuOpen
@@ -74,5 +74,3 @@ const useUiState = () => {
     isStoreLocatorOpen,
   }
 }
-
-export default useUiState
