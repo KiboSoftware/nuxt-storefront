@@ -17,12 +17,25 @@
     display: none;
   }
 
+  &__password-button {
+    --input-icon-top: 30%;
+    --input-password-icon-background: var(--_c-gray-middle);
+  }
+
   &__label {
     position: relative;
 
     --input-label-color: var(--_c-gray-primary);
-    --input-label-top: -100%;
+    --input-label-top: -110%;
     --input-label-font-size: var(--font-size--xs);
+
+    @include font(
+      --input-label-font,
+      var(--font-weight--normal),
+      var(--font-size--lg),
+      1,
+      var(--font-family--primary)
+    );
   }
 
   &__wrapper {
@@ -38,7 +51,7 @@
 
   input {
     --input-color: var(--_c-dark-primary);
-    @include border(--input-border, 1px, solid, var(--_c-gray-primary));
+    @include border(--input-border, 1px, solid, var(--_c-gray-middle));
 
     border-radius: var(--spacer-2xs);
     height: 2.125rem;
@@ -48,6 +61,14 @@
       font-size: var(--font-size--sm);
       line-height: 1;
     }
+    padding: 0;
+    @include font(
+      --input-font,
+      var(--font-weight--normal),
+      var(--font-size--sm),
+      1,
+      var(--font-family--primary)
+    );
 
     &:focus,
     &:placeholder-shown,
@@ -58,7 +79,7 @@
 
       & ~ * {
         --input-label-color: var(--_c-gray-primary);
-        --input-label-top: -100%;
+        --input-label-top: -110%;
       }
     }
   }

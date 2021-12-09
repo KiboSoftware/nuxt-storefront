@@ -1,12 +1,7 @@
 <template>
   <SfModal id="login" :visible="isLoginModalOpen" @close="closeModal">
     <template #modal-bar>
-      <SfBar
-        class="sf-modal__bar smartphone-only"
-        :close="true"
-        :title="$t(barTitle)"
-        @click:close="closeModal"
-      />
+      <SfBar class="sf-modal__bar bar-heading" :title="$t(barTitle)" @click:close="closeModal" />
     </template>
     <transition name="sf-fade" mode="out-in">
       <div v-if="isLogin" key="log-in" class="modal-content" data-testid="login-modal">
@@ -14,14 +9,14 @@
           <SfInput
             v-model="form.username"
             name="email"
-            label="Your email"
+            label="Email*"
             class="form__element"
             type="email"
           />
           <SfInput
             v-model="form.password"
             name="password"
-            label="Password"
+            label="Password*"
             type="password"
             class="form__element"
             :has-show-password="true"
@@ -30,7 +25,7 @@
             v-model="rememberMe"
             name="remember-me"
             label="Remember me"
-            class="form__element form__checkbox"
+            class="form__element remember-me"
           />
           <span v-if="userError.login" class="login-error-message">
             {{ userError.login.message }}
@@ -38,12 +33,12 @@
 
           <SfButton
             type="submit"
-            class="sf-button--full-width form__submit"
+            class="sf-button form__submit login-button"
             data-testid="log-in-button"
             :disabled="loading"
           >
             <SfLoader :class="{ loader: loading }" :loading="loading">
-              <div>{{ $t("Login") }}</div>
+              <div>Log In</div>
             </SfLoader>
           </SfButton>
         </form>
@@ -52,7 +47,7 @@
           data-testid="forgotten-password-button"
           @click="setIsForgottenValue(true)"
         >
-          Forgotten password?
+          Forgot Password?
         </SfButton>
         <div class="aside">
           <SfHeading title="Don't have an account yet?" :level="3" class="aside__heading" />
@@ -61,7 +56,7 @@
             data-testid="register-now-button"
             @click="setIsLoginValue(false)"
           >
-            Register now
+            Register Now
           </SfButton>
         </div>
       </div>
@@ -173,11 +168,11 @@ export default {
 
     const barTitle = computed(() => {
       if (isLogin.value) {
-        return "Sign in"
+        return "Login"
       } else if (isForgotten.value) {
         return "Reset Password"
       } else {
-        return "Register"
+        return "Register Now"
       }
     })
 
@@ -264,9 +259,13 @@ export default {
     margin: var(--spacer-xl) 0 0 0;
   }
 }
-
+::v-deep .sf-input {
+  &__label {
+    padding: 0 0 0 10px;
+  }
+}
 .action-button {
-  margin: var(--spacer-xl) 0;
+  margin: 1.875rem 0;
 }
 
 .open-button {
@@ -274,10 +273,10 @@ export default {
 }
 
 .aside {
-  margin: 0 0 var(--spacer-xl) 0;
+  margin: 0 0 var(--spacer-sm) 0;
 
   &__heading {
-    --heading-title-color: var(--c-primary);
+    --heading-title-color: var(--_c-green-primary);
 
     margin: 0 0 var(--spacer-sm) 0;
   }
@@ -287,5 +286,33 @@ export default {
   color: red;
   display: flex;
   justify-content: center;
+}
+::v-deep .sf-icon-path {
+  margin: 0;
+}
+.login-button {
+  margin: 0 0 0 6.875rem;
+  border-radius: 0.25rem;
+  width: 11.625rem;
+  height: 2.625rem;
+  font-size: 1.125rem;
+  padding: 0.625rem 0 0 0;
+}
+.sf-heading {
+  &__title {
+    --heading-title-color: var(--_c-green-primary);
+  }
+}
+.bar-heading {
+  color: var(--_c-dark-primary);
+}
+::v-deep .sf-checkbox {
+  &__label {
+    font-size: 15px;
+    color: var(--_c-dark-primary);
+  }
+}
+.remember-me {
+  margin: -1.5rem 0 1.5rem 0;
 }
 </style>

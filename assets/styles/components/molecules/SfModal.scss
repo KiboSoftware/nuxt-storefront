@@ -3,7 +3,19 @@
     background-color: var(--c-white);
     border-bottom: 1px solid var(--_c-white-secondary);
   }
+  &__close {
+    .sf-icon svg,
+    .sf-icon img {
+      width: var(--font-size--base);
+      height: var(--font-size--base);
+      margin-bottom: 1.563rem;
 
+      --icon-color: var(--_c-white-secondary);
+
+      stroke: var(--_c-white-secondary);
+      stroke-width: 0.188rem;
+    }
+  }
   .sf-bar {
     &__title {
       font-size: calc(var(--spacer-2xs) + var(--spacer-sm));
@@ -14,16 +26,13 @@
       }
 
       font-weight: var(--font-weight--bold);
+      font-family: var(--font-family--primary);
     }
   }
-
-  .sf-icon svg,
-  .sf-icon img {
-    width: var(--font-size--base);
-    height: var(--font-size--base);
-  }
-
+  
   .sf-icon svg path {
-    stroke-width: 0.188rem;
+    stroke: var(--_c-white-secondary);
+    
+    --icon-color: var(--_c-gray-middle);
   }
 }
