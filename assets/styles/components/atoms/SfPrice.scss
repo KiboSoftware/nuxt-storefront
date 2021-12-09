@@ -17,18 +17,22 @@
 
   text-decoration: var(--price-#{$type}-text-decoration, $text-decoration);
 }
+
 .sf-price {
   display: flex;
   flex-wrap: var(--price-flex-wrap, wrap);
   flex-direction: var(--price-flex-direction, row);
   align-items: var(--price-align-items, flex-end);
   justify-content: var(--price-justify-content);
+
   &__regular {
     @include _price($type: regular);
   }
+
   &__special {
     @include _price($type: special);
   }
+
   &__old {
     @include _price(
       $type: old,
