@@ -56,10 +56,10 @@ export const useUser = () => {
         const account = response.data.account
         // set cookie
         const cookie = {
-          accessToken: account.accessToken,
-          accessTokenExpiration: account.accessTokenExpiration,
-          refreshToken: account.refreshToken,
-          refreshTokenExpiration: account.refreshTokenExpiration,
+          accessToken: account?.accessToken,
+          accessTokenExpiration: account?.accessTokenExpiration,
+          refreshToken: account?.refreshToken,
+          refreshTokenExpiration: account?.refreshTokenExpiration,
           userId: account?.userId,
         }
         storeClientCookie(authCookieName, cookie)
