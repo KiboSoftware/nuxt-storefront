@@ -468,6 +468,7 @@ export default defineComponent({
 
   &__property {
     margin: var(--spacer-base) 0;
+
     &__button {
       --button-font-size: var(--font-size--base);
     }
@@ -493,6 +494,7 @@ export default defineComponent({
       font-weight: var(--font-weight--normal);
       font-size: var(--font-size--base);
       margin: 0 0 var(--spacer-sm);
+
       &:not(:first-child) {
         margin-top: 3.5rem;
       }
@@ -520,6 +522,7 @@ export default defineComponent({
   width: 21rem;
   border: 1px solid #cdcdcd;
   background-color: #f7f7f7;
+
   button {
     border-bottom: 1px solid #cdcdcd;
     padding: 0 1.31rem;
@@ -544,9 +547,11 @@ export default defineComponent({
   0% {
     transform: translate3d(0, 0, 0);
   }
+
   50% {
     transform: translate3d(0, 30%, 0);
   }
+
   100% {
     transform: translate3d(0, 0, 0);
   }
@@ -559,6 +564,7 @@ export default defineComponent({
 .divider-second {
   margin-top: var(--spacer-sm);
 }
+
 .textBoxOptions {
   margin-top: 2rem;
 }

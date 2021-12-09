@@ -44,10 +44,12 @@ export default defineComponent({
     display: block;
   }
 }
+
 .sf-modal {
   ::v-deep &__bar {
     display: none;
   }
+
   ::v-deep &__content {
     padding: var(--modal-content-padding, var(--spacer-base) 0);
   }

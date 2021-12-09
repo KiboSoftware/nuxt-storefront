@@ -140,6 +140,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 #my-account {
   box-sizing: border-box;
   @include for-desktop {
@@ -148,6 +149,7 @@ export default defineComponent({
     margin: 0 auto;
   }
 }
+
 .my-account {
   @include for-mobile {
     --content-pages-sidebar-category-title-font-weight: var(--font-weight--normal);
@@ -158,6 +160,7 @@ export default defineComponent({
     --content-pages-sidebar-category-title-margin: var(--spacer-xl) 0 0 0;
   }
 }
+
 .breadcrumbs {
   padding: var(--spacer-base) 0 var(--spacer-lg);
 }

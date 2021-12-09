@@ -88,6 +88,7 @@ export default defineComponent({
     display: flex;
     justify-content: flex-start;
   }
+
   &__details {
     color: var(--_c-dark-primary);
     font-size: var(--font-size--xs);

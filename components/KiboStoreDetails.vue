@@ -94,18 +94,22 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 .store-details {
   padding: var(--spacer-base) var(--spacer-base) var(--spacer-base) var(--spacer-lg);
   border-bottom: 1px solid var(--c-light);
 }
+
 .section-border {
   border-bottom: 1px solid var(--c-light);
 }
+
 .sf-accordion-item {
   &__header {
     text-decoration: underline;
   }
 }
+
 .sf-property__name {
   text-transform: capitalize;
 }
@@ -116,6 +120,7 @@ export default defineComponent({
     justify-content: flex-start;
   }
 }
+
 .sf-button--pure {
   --button-height: 1.625rem;
 }

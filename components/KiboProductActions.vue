@@ -101,6 +101,7 @@ export default defineComponent({
 $cart-button-width: 11.6rem; //186px
 .sf-add-to-cart {
   flex-wrap: wrap;
+
   &__button {
     width: $cart-button-width;
   }
@@ -109,6 +110,7 @@ $cart-button-width: 11.6rem; //186px
     right: 6px;
   }
 }
+
 .sf-add-to-wishlist {
   &__button {
     width: $cart-button-width;
@@ -116,10 +118,12 @@ $cart-button-width: 11.6rem; //186px
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-dark-primary);
   }
+
   &__button.sf-button {
     right: 0.375rem;
   }
 }
+
 .quantity-left {
   color: var(--_c-dark-primary);
   font-size: var(--font-size--xs);
@@ -127,19 +131,24 @@ $cart-button-width: 11.6rem; //186px
   line-height: var(--font-size--sm);
   padding-left: 3.375rem;
 }
+
 .column {
   flex: 50%;
 }
+
 .label-quantity {
   float: left;
   padding: 0.438rem 0.563rem 0 0;
 }
+
 .column-bottom {
   margin-bottom: calc(var(--spacer-sm) - var(--spacer-2xs));
 }
+
 .quantity-input {
   bottom: 1px;
 }
+
 .column-right {
   flex: 48%;
   margin-right: 0.188rem;

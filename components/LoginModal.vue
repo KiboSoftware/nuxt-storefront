@@ -237,30 +237,38 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 .modal-content,
 .aside {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .form {
   width: 100%;
+
   &__element {
     margin: var(--spacer-base) 0;
   }
+
   &__checkbox {
     margin: var(--spacer-xl) 0 var(--spacer-2xl) 0;
   }
+
   &__submit {
     margin: var(--spacer-xl) 0 0 0;
   }
 }
+
 .action-button {
   margin: var(--spacer-xl) 0;
 }
+
 .open-button {
   margin: 0 auto;
 }
+
 .aside {
   margin: 0 0 var(--spacer-xl) 0;
 
@@ -270,6 +278,7 @@ export default {
     margin: 0 0 var(--spacer-sm) 0;
   }
 }
+
 .login-error-message {
   color: red;
   display: flex;

@@ -1,9 +1,6 @@
 <template>
   <div id="detailed-cart">
-    <SfBreadcrumbs
-      class="breadcrumbs desktop-only"
-      :breadcrumbs="breadcrumbs"
-    />
+    <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart">
       <div v-if="totalItems" class="detailed-cart__aside">
         <SfOrderSummary
@@ -14,11 +11,7 @@
       </div>
       <div class="detailed-cart__main">
         <transition name="sf-fade" mode="out-in">
-          <div
-            v-if="totalItems"
-            key="detailed-cart"
-            class="collected-product-list"
-          >
+          <div v-if="totalItems" key="detailed-cart" class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
               <SfCollectedProduct
                 v-for="product in products"
@@ -26,12 +19,8 @@
                 v-model="product.qty"
                 :image="product.image"
                 :title="product.title"
-                :regular-price="
-                  product.price.regular && `$${product.price.regular}`
-                "
-                :special-price="
-                  product.price.special && `$${product.price.special}`
-                "
+                :regular-price="product.price.regular && `$${product.price.regular}`"
+                :special-price="product.price.special && `$${product.price.special}`"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
@@ -47,21 +36,15 @@
                 </template>
                 <template #actions>
                   <div class="actions desktop-only">
-                    <SfButton class="sf-button--text actions__button"
-                      >Edit</SfButton
-                    >
-                    <SfButton class="sf-button--text actions__button"
-                      >Save for later</SfButton
-                    >
-                    <SfButton class="sf-button--text actions__button"
-                      >Add to compare</SfButton
-                    >
+                    <SfButton class="sf-button--text actions__button">Edit</SfButton>
+                    <SfButton class="sf-button--text actions__button">Save for later</SfButton>
+                    <SfButton class="sf-button--text actions__button">Add to compare</SfButton>
                     <SfButton class="sf-button--text actions__button"
                       >Add message or gift wrap</SfButton
                     >
                     <span class="actions__description">
-                      Usually arrives in 5-13 business days. A shipping timeline
-                      specific to your destination can be viewed in Checkout.
+                      Usually arrives in 5-13 business days. A shipping timeline specific to your
+                      destination can be viewed in Checkout.
                     </span>
                   </div>
                 </template>
@@ -80,8 +63,7 @@
               description="Looks like you haven’t added any items to the cart yet. Start
                 shopping to fill it in."
             />
-            <SfButton
-              class="sf-button--full-width color-primary empty-cart__button"
+            <SfButton class="sf-button--full-width color-primary empty-cart__button"
               >Start shopping</SfButton
             >
           </div>
@@ -99,7 +81,7 @@ import {
   SfHeading,
   SfBreadcrumbs,
   SfOrderSummary,
-} from "@storefront-ui/vue";
+} from "@storefront-ui/vue"
 export default {
   name: "DetailedCart",
   components: {
@@ -209,26 +191,27 @@ export default {
             "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
         },
       ],
-    };
+    }
   },
   computed: {
     totalItems() {
       return this.products.reduce(
         (totalItems, product) => totalItems + parseInt(product.qty, 10),
         0
-      );
+      )
     },
   },
   methods: {
     removeHandler(product) {
-      const products = [...this.products];
-      this.products = products.filter((element) => element.id !== product.id);
+      const products = [...this.products]
+      this.products = products.filter((element) => element.id !== product.id)
     },
   },
-};
+}
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 #detailed-cart {
   box-sizing: border-box;
   @include for-desktop {
@@ -237,9 +220,11 @@ export default {
     padding: 0 var(--spacer-sm);
   }
 }
+
 .breadcrumbs {
   padding: var(--spacer-base) 0;
 }
+
 .detailed-cart {
   &__main {
     padding: 0 var(--spacer-sm);
@@ -247,6 +232,7 @@ export default {
       padding: 0;
     }
   }
+
   &__aside {
     box-sizing: border-box;
     width: 100%;
@@ -255,9 +241,11 @@ export default {
   }
   @include for-desktop {
     display: flex;
+
     &__main {
       flex: 1;
     }
+
     &__aside {
       flex: 0 0 26.8125rem;
       order: 1;
@@ -266,15 +254,18 @@ export default {
     }
   }
 }
+
 .collected-product {
   --collected-product-padding: var(--spacer-sm) 0;
   --collected-product-actions-display: flex;
 
   border: 1px solid var(--c-light);
   border-width: 1px 0 0 0;
+
   &:first-of-type {
     border-top: none;
   }
+
   &__properties {
     --property-value-font-weight: var(--font-weight--normal);
 
@@ -292,15 +283,18 @@ export default {
     --collected-product-padding: var(--spacer-lg) 0;
   }
 }
+
 .actions {
   &__button {
     display: block;
     margin: 0 0 var(--spacer-xs) 0;
     color: var(--c-text);
+
     &:hover {
       color: var(--c-text-muted);
     }
   }
+
   &__description {
     font-family: var(--font-family--primary);
     font-size: var(--font-size--sm);
@@ -311,6 +305,7 @@ export default {
     padding-bottom: var(--spacer-lg);
   }
 }
+
 .empty-cart {
   --heading-title-color: var(--c-primary);
   --heading-title-margin: 0 0 var(--spacer-base) 0;
@@ -321,15 +316,17 @@ export default {
   flex: 1;
   align-items: center;
   flex-direction: column;
+
   &__image {
     --image-width: 13.1875rem;
-    
+
     margin: var(--spacer-2xl) 0;
   }
   @include for-desktop {
     &__image {
       --image-width: 22rem;
     }
+
     &__button {
       --button-width: 20.9375rem;
     }

@@ -4,6 +4,7 @@
 
   border: 0.3125rem solid #fff;
   margin: 1px;
+
   &.disabled {
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-gray-middle);
@@ -15,6 +16,7 @@
     &:hover {
       transform: none;
     }
+
     &:active,
     &--active {
       outline: 1px solid #000;

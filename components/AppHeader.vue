@@ -174,19 +174,24 @@ export default defineComponent({
   @include for-desktop {
     --header-padding: 0;
   }
+
   &__logo-image {
     height: 100%;
   }
 }
+
 .header-on-top {
   z-index: 2;
 }
+
 .nav-item {
   --header-navigation-item-margin: 0 var(--spacer-base);
+
   .sf-header-navigation-item__item--mobile {
     display: none;
   }
 }
+
 .selected-store {
   display: flex;
   flex-direction: column;

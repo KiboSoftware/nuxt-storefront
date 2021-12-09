@@ -258,27 +258,34 @@ export default defineComponent({
   @include for-desktop {
     --header-padding: 0;
   }
+
   &__logo-image {
     height: 100%;
   }
+
   &__icon {
     size: var(--spacer-lg);
   }
+
   &__icons {
     display: flex;
     flex: 1;
     justify-content: space-evenly;
     justify-items: center;
   }
+
   &__search {
     width: 100% !important;
   }
 }
+
 .header-on-top {
   z-index: 2;
 }
+
 .nav-item {
   --header-navigation-item-margin: 0 var(--spacer-base);
+
   .sf-header-navigation-item__item--mobile {
     display: none;
   }
@@ -296,6 +303,7 @@ export default defineComponent({
   bottom: 12%;
   flex: 1;
 }
+
 .kibo-nav-link {
   display: flex;
   justify-content: flex-end;
@@ -310,6 +318,7 @@ export default defineComponent({
   padding: var(--spacer-2xs);
   cursor: pointer;
 }
+
 .kibo-header {
   position: relative;
   display: flex;
@@ -321,6 +330,7 @@ export default defineComponent({
   &__search-bar {
     flex: 1.5;
   }
+
   &__icon {
     display: flex;
     flex-direction: column;
@@ -328,10 +338,12 @@ export default defineComponent({
     justify-content: center;
     padding-left: var(--spacer-2xs);
   }
+
   &__icon-name {
     font-size: var(--font-size--xs);
   }
 }
+
 .kibo-top-bar {
   background-color: #2b2b2b;
   height: 3.5rem;
@@ -346,11 +358,13 @@ export default defineComponent({
 .line-2 {
   border: 0.06rem solid #cdcdcd;
 }
+
 .kibo-header-container {
   background-color: #fff;
   box-shadow: 0 0.13rem var(--spacer-2xs) 0 rgba(0, 0, 0, 0.5);
   height: 7.9rem;
 }
+
 .fa-icon {
   font-size: var(--spacer-base);
 }

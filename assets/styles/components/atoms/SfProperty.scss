@@ -1,6 +1,7 @@
 .sf-property {
   display: flex;
   color: var(--property-color, var(--c-text));
+
   &__name {
     margin: var(--property-name-margin, 0 var(--spacer-sm) 0 0);
     color: var(--property-name-color, var(--c-secondary-variant));
@@ -12,10 +13,12 @@
       1.2,
       var(--font-family--secondary)
     );
+
     &::after {
       content: var(--property-name-content, "");
     }
   }
+
   &__value {
     color: var(--property-value-color);
     @include font(
@@ -26,16 +29,19 @@
       var(--font-family--secondary)
     );
   }
+
   &--large {
     --property-name-font-size: var(--font-size--lg);
     --property-name-font-weight: var(--font-weight--medium);
     --property-value-font-size: var(--font-size--lg);
     --property-value-font-weight: var(--font-weight--semibold);
   }
+
   &--full-width {
     justify-content: space-between;
     width: 100%;
   }
+
   &--value-in-middle {
     .sf-property__name,
     .sf-property__value {
@@ -43,6 +49,7 @@
       margin: var(--property-name-margin, 0 var(--spacer-sm) var(--spacer-sm) 0);
     }
   }
+
   &--without-suffix {
     --property-name-content: "";
   }

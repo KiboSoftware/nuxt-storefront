@@ -6,15 +6,18 @@
     height: 2rem;
     padding-right: var(--spacer-base);
   }
+
   &__icon {
     --icon-size: var(--spacer-sm);
 
     display: var(--search-bar-icon-display, block);
+
     svg {
       transform: scale(-1, 1);
       fill: var(--_c-gray-primary);
     }
   }
+
   &__input {
     border-radius: var(--spacer-2xs);
     padding-left: var(--spacer-base);
@@ -27,6 +30,7 @@
       var(--font-family--primary)
     );
     @include border(--search-bar-border, 1px, solid, var(--_c-gray-middle));
+
     &:focus {
       --search-bar-border-color: var(--_c-green-primary);
     }

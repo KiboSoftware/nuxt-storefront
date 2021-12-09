@@ -14,6 +14,7 @@
     --badge-font-line-height,
     var(--font-family--secondary)
   );
+
   &--number {
     --badge-min-width: 0.625rem;
     --badge-min-height: 0.625rem;
@@ -26,6 +27,7 @@
     height: 0.625rem;
     font-size: var(--spacer-xs);
   }
+
   &.disabled {
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-gray-middle);

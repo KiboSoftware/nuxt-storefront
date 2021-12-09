@@ -74,6 +74,7 @@ export default {
   @include for-desktop {
     margin-bottom: 0;
   }
+
   &__socials {
     display: flex;
     justify-content: space-between;
@@ -85,16 +86,19 @@ export default {
       margin: 0 auto;
     }
   }
+
   &__social-image {
     margin: 0 var(--spacer-2xs) 0 0;
   }
 }
+
 .sf-footer {
   @include for-desktop {
     border-top: var(--spacer-xs) solid var(--c-primary);
     padding-bottom: 0;
     margin-top: var(--spacer-2xl);
   }
+
   &__container {
     margin: var(--spacer-sm);
     @include for-desktop {

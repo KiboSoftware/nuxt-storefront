@@ -286,11 +286,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
+
 #category {
   box-sizing: border-box;
 }
+
 .main {
   display: flex;
+
   &.section {
     padding: var(--spacer-xs);
     @include for-desktop {
@@ -298,6 +301,7 @@ export default {
     }
   }
 }
+
 .navbar {
   position: relative;
   display: flex;
@@ -306,21 +310,25 @@ export default {
   @include for-desktop {
     border-width: 1px 0 1px 0;
   }
+
   &.section {
     padding: var(--spacer-sm);
     @include for-desktop {
       padding: 0;
     }
   }
+
   &__aside,
   &__main {
     display: flex;
     align-items: center;
     padding: var(--spacer-sm) 0;
   }
+
   &__aside {
     padding: 0;
   }
+
   &__main {
     flex: 1;
     display: flex;
@@ -329,6 +337,7 @@ export default {
       padding: var(--spacer-xs) var(--spacer-xl);
     }
   }
+
   &__plus-icon {
     margin: 0 0.125rem 0.125rem 0;
     order: 1;
@@ -337,6 +346,7 @@ export default {
       order: 0;
     }
   }
+
   &__button {
     display: flex;
     align-items: center;
@@ -347,18 +357,21 @@ export default {
       margin-right: var(--spacer-sm);
       order: 1;
     }
+
     &--plus {
       font-family: var(--font-family--primary);
       font-size: 0.813rem;
       margin: 0 0;
       height: 0.875rem;
     }
+
     &--back {
       font-size: 0.813rem;
       margin: var(--spacer-sm) 0 var(--spacer-sm) 0;
       font-family: var(--font-family--primary);
     }
   }
+
   &__label {
     font-family: var(--font-family--primary);
     font-weight: var(--font-weight--normal);
@@ -367,6 +380,7 @@ export default {
       margin: 0 var(--spacer-2xs) 0 0;
     }
   }
+
   &__select {
     --component-select-width: 13.75rem;
     --component-select-padding: 0;
@@ -374,11 +388,13 @@ export default {
     --component-select-margin: 0;
     --component-select-error-message-height: 0;
   }
+
   &__sort {
     display: flex;
     align-items: center;
     margin: 0 0 0 auto;
   }
+
   &__view {
     display: flex;
     order: -1;
@@ -388,6 +404,7 @@ export default {
       margin: 0 0 0 var(--spacer-2xl);
       order: 0;
     }
+
     &__icon {
       cursor: pointer;
       margin: 0 var(--spacer-base) 0 var(--spacer-sm);
@@ -396,10 +413,12 @@ export default {
       @include for-desktop {
         margin: 0 var(--spacer-base) 0 0;
       }
+
       &:last-child {
         margin: 0;
       }
     }
+
     &-label {
       margin: 0 var(--spacer-sm) 0 0;
       font: var(--font-weight--normal) var(--font-size--base) / 1.6 var(--font-family--primary);
@@ -408,18 +427,21 @@ export default {
     }
   }
 }
+
 .sort-by {
   --component-select-dropdown-z-index: 1;
 
   flex: unset;
   width: 11.875rem;
 }
+
 .sidebar {
   flex: 0 0 15%;
   padding: var(--spacer-sm);
   border: 0.063rem solid var(--c-light);
   border-width: 0 0.063rem 0 0;
 }
+
 .list {
   --menu-item-font-size: 0.813rem;
 
@@ -427,10 +449,12 @@ export default {
 
   --list-item-margin: 0 0 var(--spacer-sm) 0;
 }
+
 .products {
   box-sizing: border-box;
   flex: 1;
   margin: 0;
+
   &__grid {
     justify-content: center;
     @include for-desktop {
@@ -438,13 +462,16 @@ export default {
       padding: 0 24px 0 0;
     }
   }
+
   &__grid,
   &__list {
     display: flex;
     flex-wrap: wrap;
   }
+
   &__product-card-horizontal {
     flex: 0 0 100%;
+
     ::v-deep .sf-image {
       object-fit: contain;
     }
@@ -455,10 +482,12 @@ export default {
       }
     }
   }
+
   &__slide-enter {
     opacity: 0;
     transform: scale(0.5);
   }
+
   &__slide-enter-active {
     transition: all 0.2s ease;
     transition-delay: calc(0.1s * var(--index));
@@ -467,44 +496,53 @@ export default {
     &__grid {
       margin: var(--spacer-sm) 0 0 3.125rem;
     }
+
     &__pagination {
       display: flex;
       justify-content: flex-start;
       margin: var(--spacer-xl) 0 0 0;
     }
+
     &__product-card-horizontal {
       margin: var(--spacer-lg) 0;
     }
+
     &__list {
       margin: 0 0 0 var(--spacer-sm);
     }
   }
+
   &__show-on-page {
     display: flex;
     justify-content: flex-end;
     align-items: baseline;
+
     &__label {
       font-family: var(--font-family--secondary);
       font-size: var(--font-size--sm);
     }
   }
 }
+
 .loading {
   margin: var(--spacer-3xl) auto;
   @include for-desktop {
     margin-top: 6.25rem;
   }
+
   &--categories {
     @include for-desktop {
       margin-top: 3.75rem;
     }
   }
+
   &--products {
     @include for-desktop {
       margin-top: 2.063rem;
     }
   }
 }
+
 .category-title {
   color: #2b2b2b;
   font-size: 18px;
@@ -513,16 +551,19 @@ export default {
   text-align: left;
   margin: 0 0 1rem 0;
 }
+
 .sf-menu-item {
   --menu-item-label-color: #2b2b2b;
 
   font-size: 0.813rem;
   font-family: var(--font-family--primary);
 }
+
 .category-drill-down {
   border: 1px solid var(--c-light);
   border-width: 0 0 1px 0;
 }
+
 .category-name {
   margin: 0 0 0 -1.563rem;
 }

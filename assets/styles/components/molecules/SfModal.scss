@@ -3,6 +3,7 @@
     background-color: var(--c-white);
     border-bottom: 1px solid var(--_c-white-secondary);
   }
+
   .sf-bar {
     &__title {
       font-size: calc(var(--spacer-2xs) + var(--spacer-sm));
@@ -11,6 +12,7 @@
       font-weight: var(--font-weight--bold);
     }
   }
+
   .sf-icon svg,
   .sf-icon img {
     width: var(--font-size--base);
@@ -19,6 +21,7 @@
 
     --icon-color: var(--_c-white-secondary);
   }
+
   .sf-icon svg path {
     stroke: var(--_c-white-secondary);
     stroke-width: 0.188rem;

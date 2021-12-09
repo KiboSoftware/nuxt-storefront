@@ -5,9 +5,7 @@
     </template>
     <template #center>
       <p>{{ $t("Download") }}</p>
-      <SfButton class="topbar__button sf-button--text">{{
-        $t("Find out more")
-      }}</SfButton>
+      <SfButton class="topbar__button sf-button--text">{{ $t("Find out more") }}</SfButton>
     </template>
     <template #right>
       <LocaleSelector />
@@ -31,6 +29,7 @@ export default {
 .topbar {
   position: relative;
   z-index: 2;
+
   &__button {
     margin: 0 0 0 var(--spacer-xs);
   }

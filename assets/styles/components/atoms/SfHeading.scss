@@ -1,24 +1,31 @@
 .sf-heading {
   --heading-padding: 0;
+
   > h1 {
     font-size: var(--h1-font-size);
     font-weight: var(--font-weight--bold);
   }
+
   &__title {
     --heading-title-color: var(--_c-dark-primary);
     --heading-title-font: var(--font-family--primary);
+
     &.h2 {
       --heading-title-font-weight: var(--font-weight--bold);
     }
+
     &.h3 {
       --heading-title-font-weight: var(--font-weight--medium);
     }
+
     &.h4 {
       --heading-title-font-weight: var(--font-weight--normal);
     }
+
     &.h5 {
       --heading-title-font-weight: var(--font-weight--bold);
     }
+
     &.h6 {
       --heading-title-font-weight: var(--font-weight--normal);
     }
