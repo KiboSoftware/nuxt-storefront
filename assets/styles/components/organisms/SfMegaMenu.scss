@@ -1,5 +1,5 @@
 .sf-mega-menu {
-  box-shadow: 0 2px 4px 0 var(--_c-gray-shadow);
+  box-shadow: 0 0.125rem 0.25rem 0 var(--_c-gray-shadow);
 
   &__menu {
     justify-content: flex-start;
@@ -21,8 +21,8 @@
     &__header {
       border-bottom: 0.25rem var(--c-white) solid;
       text-transform: capitalize;
-      font-size: 17px;
-      margin: 9px 0 5px 0;
+      font-size: var(--font-size--lg);
+      margin: 0.75rem 0 0.25rem 0;
     }
     &__content {
       display: none;
@@ -31,13 +31,14 @@
       align-items: center;
       padding: 0 2%;
       background-color: var(--c-white);
-      box-shadow: 0 2px 4px 0 var(--_c-gray-shadow);
+      box-shadow: 0 0.125rem 0.25rem 0 var(--_c-gray-shadow);
       width: 92vw;
       left: 1.25rem;
-      
+      transform: none;
+
       .sf-list {
         &__item {
-          margin: 7px 0;
+          margin: var(--spacer-xs) 0;
         }
       }
 
@@ -63,13 +64,4 @@
       }
     }
   } 
-}
-
-
-@media (min-width: 1024px) {
-  .sf-mega-menu-column {
-     &__content {
-      transform: none;
-    }
-  }
 }
