@@ -86,10 +86,17 @@
               <span class="kibo-header__icon-name"> My Account</span>
             </div>
           </SfButton>
-          <SfButton v-e2e="'app-header-cart'" class="sf-button--pure sf-header__action">
+          <SfButton
+            v-e2e="'app-header-cart'"
+            class="sf-button--pure sf-header__action"
+            link="/cart"
+          >
             <SfIcon class="sf-header__icon">
               <font-awesome-icon icon="shopping-cart" class="fa-icon" />
             </SfIcon>
+            <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
+              totalItemsInCart
+            }}</SfBadge>
             <div class="kibo-header__icon">
               <span class="kibo-header__icon-name"> Cart</span>
             </div>
@@ -105,7 +112,15 @@
 </template>
 
 <script lang="ts">
-import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink } from "@storefront-ui/vue"
+import {
+  SfImage,
+  SfIcon,
+  SfButton,
+  SfSearchBar,
+  SfMenuItem,
+  SfLink,
+  SfBadge,
+} from "@storefront-ui/vue"
 import { computed, ref, onBeforeUnmount, defineComponent, watch } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
@@ -116,13 +131,17 @@ import debounce from "lodash.debounce"
 
 import { useAsync } from "@nuxtjs/composition-api"
 import useUiState from "@/composables/useUiState"
-import * as logo from "@/assets/kibo_logo.png"
-import { usePurchaseLocation } from "@/composables"
+import {
+  userGetters,
+  storeLocationGetters,
+  searchSuggestionGetters,
+  cartGetters,
+} from "@/composables/getters"
+import { usePurchaseLocation, useCart, useUiHelpers } from "@/composables"
 import { useUser } from "@/composables/useUser"
-import { userGetters, storeLocationGetters, searchSuggestionGetters } from "@/composables/getters"
-import { useUiHelpers } from "@/composables"
 import { useSearchSuggestions } from "@/composables/useSearchSuggestions"
 import { useNuxtApp } from "#app"
+import * as logo from "@/assets/kibo_logo.png"
 
 export default defineComponent({
   components: {
@@ -131,6 +150,7 @@ export default defineComponent({
     SfButton,
     SfMenuItem,
     SfLink,
+    SfBadge,
   },
   directives: { clickOutside },
   setup() {
@@ -140,6 +160,7 @@ export default defineComponent({
     const app = nuxt.nuxt2Context.app
     const { user, load: loadUser } = useUser()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
+    const { cart, load: loadCart } = useCart()
 
     const searchValue = ref("")
     const isAuthenticated = computed(() => {
@@ -218,6 +239,7 @@ export default defineComponent({
     useAsync(async () => {
       await loadUser()
       await loadPurchaseLocation()
+      await loadCart()
     }, null)
 
     const handleStoreLocatorClick = () => {
@@ -232,6 +254,11 @@ export default defineComponent({
       return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
         : "Select My Store"
+    })
+
+    const totalItemsInCart = computed(() => {
+      const count = cartGetters.getTotalItems(cart.value)
+      return count ? count.toString() : null
     })
 
     return {
@@ -261,6 +288,7 @@ export default defineComponent({
       searchSuggestionResult,
       loading,
       gotoSearchResult,
+      totalItemsInCart,
     }
   },
 })

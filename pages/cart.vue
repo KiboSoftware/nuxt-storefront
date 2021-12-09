@@ -1,54 +1,64 @@
 <template>
   <div id="detailed-cart">
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
+    <div class="detailed-cart__title-wrapper">
+      <h3 class="sf-heading__title h3">
+        {{ $t("Shopping Cart") }} ({{ cartItems.length }} {{ $t("Items") }})
+      </h3>
+    </div>
     <div class="detailed-cart">
-      <div v-if="totalItems" class="detailed-cart__aside">
-        <SfOrderSummary
-          :products="products"
-          :shipping-methods="shippingMethods"
-          :total-items="totalItems"
-        />
+      <div v-if="cartItems.length" class="detailed-cart__aside">
+        <div class="sf-property--full-width sf-property">
+          <span class="sf-property__name-noBold">{{ $t("Order Subtotal") }}</span>
+          <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
+        </div>
+        <div><hr class="sf-divider" /></div>
+        <div class="promo">
+          <SfInput name="promo" placeholder="Enter Promo Code" class="promo__input" type="text" />
+          <button
+            class="color-primary sf-button sf-button--small"
+            :aria-disabled="false"
+            :link="null"
+          >
+            {{ $t("Apply") }}
+          </button>
+        </div>
+        <div class="sf-property--full-width sf-property">
+          <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
+          <span class="sf-property__value"> ${{ cartOrder.total }}</span>
+        </div>
+
+        <div class="checkout-button">
+          <button
+            class="color-primary sf-button sf-button--full-width"
+            :aria-disabled="false"
+            :link="null"
+          >
+            {{ $t("Checkout") }}
+          </button>
+        </div>
       </div>
       <div class="detailed-cart__main">
         <transition name="sf-fade" mode="out-in">
-          <div v-if="totalItems" key="detailed-cart" class="collected-product-list">
+          <div v-if="cartItems.length" key="detailed-cart" class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
-              <SfCollectedProduct
-                v-for="product in products"
-                :key="product.id"
-                v-model="product.qty"
-                :image="product.image"
-                :title="product.title"
-                :regular-price="product.price.regular && `$${product.price.regular}`"
-                :special-price="product.price.special && `$${product.price.special}`"
+              <KiboCollectedProduct
+                v-for="cartItem in cartItems"
+                :key="cartItem.id"
+                v-model="cartItem.quantity"
+                :purchase-location="selectedLocation"
+                :image="cartItem.product.imageUrl"
+                :title="cartItem.product.name"
+                :regular-price="cartItem.product.price.price && `$${cartItem.product.price.price}`"
+                :special-price="
+                  cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
+                "
+                :options="cartItem.product.options"
+                :supported-fulfillment-types="cartItemFulfillmentTypes(cartItem)"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
-                <template #configuration>
-                  <div class="collected-product__properties">
-                    <SfProperty
-                      v-for="(property, key) in product.configuration"
-                      :key="key"
-                      :name="property.name"
-                      :value="property.value"
-                    />
-                  </div>
-                </template>
-                <template #actions>
-                  <div class="actions desktop-only">
-                    <SfButton class="sf-button--text actions__button">Edit</SfButton>
-                    <SfButton class="sf-button--text actions__button">Save for later</SfButton>
-                    <SfButton class="sf-button--text actions__button">Add to compare</SfButton>
-                    <SfButton class="sf-button--text actions__button"
-                      >Add message or gift wrap</SfButton
-                    >
-                    <span class="actions__description">
-                      Usually arrives in 5-13 business days. A shipping timeline specific to your
-                      destination can be viewed in Checkout.
-                    </span>
-                  </div>
-                </template>
-              </SfCollectedProduct>
+              </KiboCollectedProduct>
             </transition-group>
           </div>
           <div v-else key="empty-cart" class="empty-cart">
@@ -63,9 +73,9 @@
               description="Looks like you haven’t added any items to the cart yet. Start
                 shopping to fill it in."
             />
-            <SfButton class="sf-button--full-width color-primary empty-cart__button"
-              >Start shopping</SfButton
-            >
+            <SfButton class="sf-button--full-width color-primary empty-cart__button">{{
+              $t("Start shopping")
+            }}</SfButton>
           </div>
         </transition>
       </div>
@@ -73,141 +83,71 @@
   </div>
 </template>
 <script>
-import {
-  SfCollectedProduct,
-  SfButton,
-  SfImage,
-  SfProperty,
-  SfHeading,
-  SfBreadcrumbs,
-  SfOrderSummary,
-} from "@storefront-ui/vue"
-export default {
+import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
+import { useAsync } from "@nuxtjs/composition-api"
+import { defineComponent } from "@vue/composition-api"
+import { usePurchaseLocation, useCart } from "@/composables"
+import useUiState from "@/composables/useUiState"
+import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
+import { cartGetters, storeLocationGetters } from "@/composables/getters"
+
+export default defineComponent({
   name: "DetailedCart",
   components: {
-    SfCollectedProduct,
     SfBreadcrumbs,
     SfImage,
     SfButton,
     SfHeading,
-    SfProperty,
-    SfOrderSummary,
+    SfInput,
+    KiboCollectedProduct,
   },
-  data() {
+  setup() {
+    const { toggleStoreLocatorModal } = useUiState()
+    const { purchaseLocation } = usePurchaseLocation()
+    const { cart, load: loadCart } = useCart()
+
+    const breadcrumbs = [
+      {
+        text: "Home",
+        link: "/",
+      },
+      {
+        text: "Cart",
+        link: "/cart",
+      },
+    ]
+
+    useAsync(async () => {
+      await loadCart()
+    }, null)
+
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
+    }
+
+    const selectedLocation = computed(() => {
+      return Object.keys(purchaseLocation.value).length
+        ? storeLocationGetters.getName(purchaseLocation.value)
+        : "Select My Store"
+    })
+
+    const cartItems = computed(() => cartGetters.getItems(cart.value))
+    const cartOrder = computed(() => cartGetters.getTotals(cart.value))
+
+    const cartItemFulfillmentTypes = (cartItem) => {
+      return cartGetters.getFullfillmentOptions(cartItem, purchaseLocation.value)
+    }
+
     return {
-      breadcrumbs: [
-        {
-          text: "Home",
-          route: {
-            link: "#",
-          },
-        },
-        {
-          text: "Cart",
-          route: {
-            link: "#",
-          },
-        },
-      ],
-      products: [
-        {
-          title: "Cream Beach Bag Modern Style",
-          id: "CBB1",
-          image: "assets/storybook/Home/productA.jpg",
-          price: { regular: "50.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: "1",
-        },
-        {
-          title: "Cream Beach Bag Modern Style",
-          id: "CBB2",
-          image: "assets/storybook/Home/productB.jpg",
-          price: { regular: "50.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: "2",
-        },
-        {
-          title: "Cream Beach Bag Modern Style",
-          id: "CBB3",
-          image: "assets/storybook/Home/productC.jpg",
-          price: { regular: "50.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: "1",
-        },
-      ],
-      shippingMethods: [
-        {
-          isOpen: false,
-          price: "Free",
-          delivery: "Delivery from 3 to 7 business days",
-          label: "Pickup in the store",
-          value: "store",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$15.90",
-          delivery: "Delivery from 4 to 6 business days",
-          label: "Delivery to home",
-          value: "home",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$9.90",
-          delivery: "Delivery from 4 to 6 business days",
-          label: "Paczkomaty InPost",
-          value: "inpost",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$11.00",
-          delivery: "Delivery within 48 hours",
-          label: "48 hours coffee",
-          value: "coffee",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$14.00",
-          delivery: "Delivery within 24 hours",
-          label: "Urgent 24h",
-          value: "urgent",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-      ],
+      breadcrumbs,
+      selectedLocation,
+      cartItems,
+      cartOrder,
+      handleStoreLocatorClick,
+      cartItemFulfillmentTypes,
     }
   },
-  computed: {
-    totalItems() {
-      return this.products.reduce(
-        (totalItems, product) => totalItems + parseInt(product.qty, 10),
-        0
-      )
-    },
-  },
-  methods: {
-    removeHandler(product) {
-      const products = [...this.products]
-      this.products = products.filter((element) => element.id !== product.id)
-    },
-  },
-}
+})
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
@@ -222,7 +162,7 @@ export default {
 }
 
 .breadcrumbs {
-  padding: var(--spacer-base) 0;
+  padding: var(--spacer-base) 0 0 0;
 }
 
 .detailed-cart {
@@ -235,8 +175,7 @@ export default {
 
   &__aside {
     box-sizing: border-box;
-    width: 100%;
-    background: var(--c-light);
+    border: 2px solid var(--_c-white-secondary);
     padding: var(--spacer-base) var(--spacer-sm);
   }
   @include for-desktop {
@@ -250,8 +189,13 @@ export default {
       flex: 0 0 26.8125rem;
       order: 1;
       margin: 0 0 0 var(--spacer-xl);
-      padding: var(--spacer-xl);
+      height: 100%;
     }
+  }
+
+  &__title-wrapper {
+    width: 100%;
+    padding: 0 0 var(--spacer-lg) 0;
   }
 }
 
@@ -284,28 +228,6 @@ export default {
   }
 }
 
-.actions {
-  &__button {
-    display: block;
-    margin: 0 0 var(--spacer-xs) 0;
-    color: var(--c-text);
-
-    &:hover {
-      color: var(--c-text-muted);
-    }
-  }
-
-  &__description {
-    font-family: var(--font-family--primary);
-    font-size: var(--font-size--sm);
-    font-weight: var(--font-weight--light);
-    color: var(--c-text-muted);
-    position: absolute;
-    bottom: 0;
-    padding-bottom: var(--spacer-lg);
-  }
-}
-
 .empty-cart {
   --heading-title-color: var(--c-primary);
   --heading-title-margin: 0 0 var(--spacer-base) 0;
@@ -318,7 +240,7 @@ export default {
   flex-direction: column;
 
   &__image {
-    --image-width: 13.1875rem;
+    --image-width: 15.1875rem;
 
     margin: var(--spacer-2xl) 0;
   }
@@ -331,5 +253,67 @@ export default {
       --button-width: 20.9375rem;
     }
   }
+}
+
+.sf-divider {
+  margin: var(--spacer-base) 0 var(--spacer-base) 0;
+}
+
+.sf-property {
+  padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
+
+  &__name {
+    @include font(
+      --property-name-font,
+      var(--font-weight--semibold),
+      var(--font-size--base),
+      1.2,
+      var(--font-family--secondary)
+    );
+  }
+
+  &__name-noBold {
+    @include font(
+      --property-name-font,
+      var(--font-weight--normal),
+      var(--font-size--base),
+      1.2,
+      var(--font-family--secondary)
+    );
+  }
+
+  &__value {
+    @include font(
+      --property-value-font,
+      var(--font-weight--normal),
+      var(--font-size--base),
+      1.2,
+      var(--font-family--secondary)
+    );
+  }
+}
+
+.checkout-button {
+  width: 100%;
+  margin-top: var(--spacer-base);
+}
+
+.promo {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  padding: var(--spacer-sm) 0;
+
+  &__input {
+    flex: 1;
+  }
+}
+
+.sf-button--small {
+  margin-left: 2%;
+}
+
+.sf-input {
+  --input-text-indent: var(--spacer-sm);
 }
 </style>

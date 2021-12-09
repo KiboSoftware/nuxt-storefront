@@ -160,4 +160,8 @@ export default {
   "Select Store": "Select Store",
   Search: "Search",
   "Set Store": "Set Store",
+  "Shopping Cart": "Shopping Cart",
+  "Order Subtotal": "Order Subtotal",
+  "Estimated Order Total": "Estimated Order Total",
+  Checkout: "Checkout",
 }

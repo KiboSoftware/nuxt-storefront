@@ -3,6 +3,7 @@ fragment cartItemDetails on CartItem {
   id
   product {
     productCode
+    fulfillmentTypesSupported
     name
     description
     imageUrl

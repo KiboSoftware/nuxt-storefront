@@ -126,10 +126,12 @@ export default defineComponent({
       width: 40.688rem;
     }
   }
+
   .search-product {
     flex: 2;
     width: 70vw;
   }
+
   .search-category {
     flex: 1;
     width: 30vw;
@@ -139,6 +141,7 @@ export default defineComponent({
       border: none;
     }
   }
+
   .vertical-line {
     width: 0.063rem;
     border-left: 0.033rem solid #cdcdcd;
@@ -146,6 +149,7 @@ export default defineComponent({
     margin-top: 1.375rem;
     margin-bottom: 0.938rem;
   }
+
   div.suggestion-title {
     margin-top: 1.375rem;
     padding-left: 1.25rem;
@@ -155,6 +159,7 @@ export default defineComponent({
     line-height: var(--spacer-base);
     text-align: left;
   }
+
   .category-list {
     color: #2b2b2b;
     font-family: var(--font-family--primary);
@@ -163,12 +168,14 @@ export default defineComponent({
     text-align: left;
     cursor: pointer;
   }
+
   .result-list {
     margin-top: var(--spacer-lg);
     padding-left: 1.313rem;
     padding-right: 0.125rem;
     text-align: left;
   }
+
   .product-card-list {
     display: flex;
     flex-wrap: wrap;
@@ -176,12 +183,15 @@ export default defineComponent({
     overflow-x: hidden;
     max-height: 31.875rem;
   }
+
   .product-card-list::-webkit-scrollbar {
     display: none;
   }
+
   .product_card_details {
     flex: 33.3%;
   }
+
   .no-record {
     color: #b83c3c;
     font-family: var(--font-family--primary);
@@ -189,25 +199,31 @@ export default defineComponent({
     line-height: 1.188rem;
     text-align: center;
   }
+
   ul {
     list-style-type: none;
     padding-left: 0;
   }
+
   .scroll {
     overflow: scroll;
   }
+
   .scroll::-webkit-scrollbar {
     display: none;
   }
+
   .kibo-product-card {
     height: 8.375rem;
     padding: 1.188rem 0 1.188rem 0;
     width: 6.063rem;
   }
+
   .kpc-title-button {
     height: 0.563rem;
     top: 4rem;
   }
+
   .kpc-title {
     font-size: 0.48rem;
     line-height: 0.563rem;
