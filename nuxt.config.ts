@@ -161,6 +161,11 @@ export default defineNuxtConfig({
         path: "/c/:categoryCode",
         component: resolve(__dirname, "pages/category/index.vue"),
       })
+      routes.push({
+        name: "search_details",
+        path: "/search/",
+        component: resolve(__dirname, "pages/search.vue"),
+      })
     },
     middleware: [],
   },
