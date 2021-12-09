@@ -19,11 +19,12 @@
     </slot>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent } from "@vue/composition-api"
 import { SfButton, SfIcon } from "@storefront-ui/vue"
 import { focus } from "@storefront-ui/vue/src/utilities/directives"
 
-export default {
+export default defineComponent({
   name: "SfSearchBar",
   directives: {
     focus,
@@ -58,9 +59,9 @@ export default {
       }
     },
   },
-}
+})
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .sf-search-bar {
   display: flex;
 }
