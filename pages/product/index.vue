@@ -158,7 +158,7 @@
                 >
                   <SfInput
                     :label="option.attributeDetail.name"
-                    :value="option.values[0].value"
+                    :value="option.values[0].shopperEnteredValue"
                     :name="option.attributeFQN"
                     type="text"
                     valid
@@ -183,7 +183,7 @@
               <KiboFulfillmentOptions
                 :fulfillment-options="fulfillmentOptions"
                 :cart-item-purchase-location="purchaseLocation.name"
-                :selected-option="selectedFulfillmentOption"
+                :selected-option="selectedFulfillmentValue"
                 @click="handleStoreLocatorClick"
                 @change="selectFulfillmentOption"
               />
@@ -242,6 +242,7 @@ import { useProductSSR } from "@/composables/useProductSSR"
 import useUiState from "@/composables/useUiState"
 import { productGetters } from "@/composables/getters"
 import { usePurchaseLocation } from "@/composables"
+import { isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({
   name: "Product",
@@ -267,10 +268,10 @@ export default defineComponent({
 
   setup(_, context) {
     const { productCode } = context.root.$route.params
-    const { load, product, configure, loading, error } = useProductSSR(productCode)
+    const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
-    const selectedFulfillmentOption = ref()
+    const selectedFulfillmentValue = ref()
 
     useAsync(async () => {
       await load(productCode)
@@ -288,6 +289,9 @@ export default defineComponent({
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
+    const fulfillmentOptions = computed(() =>
+      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
+    )
 
     // Options section
     let shopperEnteredValues = []
@@ -326,7 +330,19 @@ export default defineComponent({
 
     const addToCart = () => {
       // Todo: Add to cart
-      console.log("Add to Cart qunatity: ", qtySelected.value)
+
+      const addToCartVariables = {
+        productToAdd: {
+          product: {
+            productCode: product.value.productCode,
+          },
+          quantity: qtySelected,
+          fulfillmentMethod: product.value.fulfillment.fulfillmentMethod,
+          purchaseLocation: product.value.fulfillment.purchaseLocationCode,
+        },
+      }
+
+      console.log("Add to Cart qunatity: ", addToCartVariables)
     }
 
     const addToWishList = () => {
@@ -335,13 +351,20 @@ export default defineComponent({
     }
 
     // Get Fullfillment Options
-    const fulfillmentOptions = computed(() =>
-      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
-    )
+    const selectFulfillmentOption = (selectedFulfillmentValue: string) => {
+      const { value, name } = fulfillmentOptions.value.find(
+        (option) => option.value === selectedFulfillmentValue
+      )
 
-    const selectFulfillmentOption = (selectedOption: string) => {
-      // Todo: Selected fullfillment option
-      selectedFulfillmentOption.value = selectedOption
+      const isValid = isFulfillmentOptionValid(
+        { value, name },
+        product.value,
+        purchaseLocation.value
+      )
+
+      if (isValid) {
+        setFulfillment(selectedFulfillmentValue, purchaseLocation.value.code)
+      }
     }
 
     const handleStoreLocatorClick = () => {
@@ -373,7 +396,7 @@ export default defineComponent({
       product,
       isOpenNotification: false,
       fulfillmentOptions,
-      selectedFulfillmentOption,
+      selectedFulfillmentValue,
       handleStoreLocatorClick,
       selectFulfillmentOption,
       updateShopperEnteredValues,

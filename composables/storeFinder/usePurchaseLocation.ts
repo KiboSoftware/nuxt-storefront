@@ -1,16 +1,17 @@
 import { computed } from "@vue/composition-api"
-import { Location } from "@/composables/types"
+// import { Location } from "@/composables/types"
 import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
 import { getSpLocations } from "@/gql/queries/spLocations"
+import * as GraphQL from "@/server/types/GraphQL"
 
 export const usePurchaseLocation = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const app = nuxt.nuxt2Context.app
   const storeLocationCookie = nuxt.nuxt2Context.$config.storeLocationCookie
-  const purchaseLocation = useState(`use-purchaseLocation`, (): Location => {
-    return {} as Location
+  const purchaseLocation = useState(`use-purchaseLocation`, (): GraphQL.Location => {
+    return {} as GraphQL.Location
   })
   const loading = useState(`use-purchaseLocation-loading`, () => false)
   const error = useState(`use-purchaseLocation-error`, () => null)

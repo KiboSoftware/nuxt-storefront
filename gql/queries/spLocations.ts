@@ -3,6 +3,10 @@ query GetISPULocations($filter: String){
     spLocations(filter: $filter){
       items {
       code
+      fulfillmentTypes{
+        code
+        name
+      }
       name
       phone
       address {

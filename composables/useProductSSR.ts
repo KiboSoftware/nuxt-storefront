@@ -52,10 +52,26 @@ export const useProductSSR = (referenceKey: string) => {
     loading.value = false
   }
 
+  const setFulfillment = (fulfillmentMethod: string, purchaseLocationCode?: string) => {
+    try {
+      const fulfillment = {
+        fulfillmentMethod,
+        purchaseLocationCode,
+      }
+      product.value = {
+        ...product.value,
+        ...fulfillment,
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return {
     product,
     configure,
     load,
+    setFulfillment,
     loading,
     error,
   }

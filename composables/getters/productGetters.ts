@@ -1,7 +1,8 @@
 import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
 import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
-import { Location } from "@/composables/types/storeFinder"
+import * as GraphQL from "@/server/types/GraphQL"
+// import { Location } from "@/composables/types/storeFinder"
 
 const ratingAttrFQN = `tenant~rating`
 export const getName = (product: Product) => product?.content?.productName
@@ -68,13 +69,14 @@ export const getOptionSelectedValue = (option: ProductOption) => {
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
-export const getFullfillmentOptions = (product: Product, purchaseLocation: Location) => {
+export const getFullfillmentOptions = (product: Product, purchaseLocation: GraphQL.Location) => {
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
 
   const result = fullfillmentOptions.map((option) => ({
-    name: "fulfillment",
     value: option.value,
+    name: option.name,
+    code: option.code,
     label: option.label,
     details:
       option.value === "DirectShip"
