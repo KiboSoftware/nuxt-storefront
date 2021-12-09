@@ -88,59 +88,42 @@ export default defineComponent({
     prop: "qty",
   },
   props: {
-    /**
-     * Product image
-     * It should be an url of the product
-     */
+    // Product image: It should be an url of the product
     image: {
       type: String,
       default: "",
     },
-    /**
-     * Product image width, without unit
-     */
+    // Product image width, without unit
     imageWidth: {
       type: [String, Number],
       default: 140,
     },
-    /**
-     * Product image height, without unit
-     */
+    // Product image height, without unit
     imageHeight: {
       type: [String, Number],
       default: 200,
     },
-    /**
-     * Product title
-     */
+    // Product title
     title: {
       type: String,
       default: "",
     },
-    /**
-     * Product regular price
-     */
+    // Product regular price
     regularPrice: {
       type: [Number, String],
       default: null,
     },
-    /**
-     * Product special price
-     */
+    // Product special price
     specialPrice: {
       type: [Number, String],
       default: null,
     },
-    /**
-     * Selected quantity
-     */
+    // Selected quantity
     qty: {
       type: [Number, String],
       default: 1,
     },
-    /**
-     * Link to product
-     */
+    // Link to product
     link: {
       type: [String, Object],
       default: "",
