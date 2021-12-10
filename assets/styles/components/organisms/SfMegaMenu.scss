@@ -65,3 +65,14 @@
     }
   } 
 }
+
+@include for-mobile { 
+  .sf-mega-menu {
+    display: none;
+  }
+  .sf-mega-menu-column {
+    &__content {
+      display: none;
+    }
+  }
+}

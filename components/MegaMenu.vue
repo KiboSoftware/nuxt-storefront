@@ -3,19 +3,25 @@
     <SfMegaMenuColumn
       v-for="(category, key) in megaMenuCategories"
       :key="key"
-      :title="category.content.name"
+      :title="categoryGetters.getName(category)"
       :link="localePath(getCatLink(category))"
     >
       <div class="sf-mega-menu-option">
         <div class="flex-grow-3">
           <SfList class="outer-list">
-            <SfListItem v-for="child in category.childrenCategories" :key="child.id">
-              <div class="sf-title">{{ child.content.name }}</div>
+            <SfListItem
+              v-for="child in category.childrenCategories"
+              :key="categoryGetters.getCategoryCode(child)"
+            >
+              <div class="sf-title">{{ categoryGetters.getName(child) }}</div>
               <SfMenuItem :link="localePath(getCatLink(child))" :label="$t('ShopAll')" />
               <SfList>
-                <SfListItem v-for="grandChild in child.childrenCategories" :key="grandChild.id">
+                <SfListItem
+                  v-for="grandChild in child.childrenCategories"
+                  :key="categoryGetters.getCategoryCode(grandChild)"
+                >
                   <SfMenuItem
-                    :label="grandChild.content.name"
+                    :label="categoryGetters.getName(grandChild)"
                     :link="localePath(getCatLink(grandChild))"
                   />
                 </SfListItem>
@@ -62,6 +68,7 @@ export default defineComponent({
       allCategories,
       megaMenuCategories,
       visible,
+      categoryGetters,
     }
   },
 })
