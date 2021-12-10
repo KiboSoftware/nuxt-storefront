@@ -52,10 +52,12 @@
     --button-box-shadow: none;
 
     display: inline;
+
     &:hover {
       --button-background: transparent;
       --button-color: var(--c-primary);
     }
+
     &:active {
       --button-color: var(--c-gray);
     }
@@ -88,6 +90,7 @@
     display: flex;
     align-items: center;
     font-size: var(--font-size--base);
+
     p {
       margin-right: var(--spacer-sm);
     }
@@ -149,6 +152,7 @@
 
 .sf-property {
   padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
+
   &__name {
     @include font(
       --property-name-font,

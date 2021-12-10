@@ -12,7 +12,7 @@ export const getCartItemPrice = (
 ): { regular: Maybe<String> | undefined; special: Maybe<String> | undefined } => {
   return {
     regular: `$${item.productDiscounts?.length ? item.subtotal : item.total}`,
-    ...{ special: `$${item.total}` },
+    ...(item.productDiscounts?.length && { special: `$${item.total}` }),
   }
 }
 
@@ -52,9 +52,9 @@ export const getCartItemSku = (item: CartItem) =>
 
 function getTotals(cart: Cart) {
   return {
-    total: cart?.total,
-    subtotal: cart?.subtotal,
-    special: cart?.orderDiscounts ? cart?.discountedSubtotal : cart?.subtotal,
+    total: `$${cart?.orderDiscounts?.length ? cart?.discountedSubtotal : cart?.total}`,
+    subtotal: `$${cart?.subtotal}`,
+    ...(cart?.orderDiscounts.length && { special: `$${cart?.discountedTotal}` }),
   }
 }
 

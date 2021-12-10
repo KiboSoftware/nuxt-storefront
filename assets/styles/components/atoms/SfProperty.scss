@@ -15,7 +15,7 @@
     );
 
     &::after {
-      content: var(--property-name-content, "");
+      content: var(--property-name-content, ":");
     }
   }
 

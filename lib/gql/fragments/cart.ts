@@ -45,6 +45,10 @@ ${cartItemDetails}
 
 fragment cartDetails on Cart {
   id
+  invalidCoupons{
+    couponCode
+  }
+  couponCodes
   orderDiscounts {
     impact
     discount {
@@ -54,6 +58,7 @@ fragment cartDetails on Cart {
     couponCode
   }
   subtotal
+  discountedTotal
   discountedSubtotal
   shippingTotal
   total

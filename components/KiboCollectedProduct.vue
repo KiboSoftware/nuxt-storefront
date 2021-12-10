@@ -12,11 +12,12 @@
         </component>
       </div>
       <div class="kibo-collectedProduct__price-wrapper">
-        <SfPrice
+        <KiboPrice
           v-if="regularPrice"
           :regular="regularPrice"
           :special="specialPrice"
           class="kibo-collectedProduct__price"
+          :small="true"
         />
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">

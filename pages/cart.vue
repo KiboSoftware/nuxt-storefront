@@ -2,30 +2,57 @@
   <div id="detailed-cart">
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart__title-wrapper">
-      <h3 class="sf-heading__title h3">
-        {{ $t("Shopping Cart") }} ({{ cartItems.length }} {{ $t("Items") }})
+      <h3 class="sf-heading__title h2">
+        {{ $t("Shopping Cart") }} ({{ cartItems.length }}
+        {{ `${cartItems.length === 1 ? $t("Item") : $t("Items")}` }})
       </h3>
     </div>
     <div class="detailed-cart">
       <div v-if="cartItems.length" class="detailed-cart__aside">
         <div class="sf-property--full-width sf-property">
           <span class="sf-property__name-noBold">{{ $t("Order Subtotal") }}</span>
-          <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
+          <KiboPrice
+            v-if="cartOrder.subtotal"
+            :regular="cartOrder.subtotal"
+            class="kibo-collectedProduct__price sf-property__price"
+          />
         </div>
         <div><hr class="sf-divider" /></div>
         <div class="promo">
-          <SfInput name="promo" placeholder="Enter Promo Code" class="promo__input" type="text" />
+          <SfInput
+            v-model="couponApplied"
+            name="promo"
+            placeholder="Enter Promo Code"
+            class="promo__input"
+            type="text"
+            :valid="isValidCoupon"
+            :errorMessage="invalidCouponErrorText"
+          />
           <button
             class="color-primary sf-button sf-button--small"
             :aria-disabled="false"
             :link="null"
+            @click="applyPromocode"
           >
             {{ $t("Apply") }}
           </button>
         </div>
-        <div class="sf-property--full-width sf-property">
+        <div v-if="AreCouponsApplied" class="coupon">
+          <KiboCoupon
+            v-for="(coupon, index) in appliedCoupons"
+            :key="index"
+            :coupon-code="coupon"
+          />
+        </div>
+        <div class="sf-property--full-width sf-property price-container">
           <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
-          <span class="sf-property__value"> ${{ cartOrder.total }}</span>
+          <KiboPrice
+            v-if="cartOrder.total"
+            :regular="cartOrder.total"
+            :special="cartOrder.special"
+            class="kibo-collectedProduct__price sf-property__price"
+            :coupons="appliedCoupons"
+          />
         </div>
 
         <div class="checkout-button">
@@ -51,10 +78,8 @@
                 :purchase-location="selectedLocation"
                 :image="cartItem.product.imageUrl"
                 :title="cartItem.product.name"
-                :regular-price="cartItem.product.price.price && `$${cartItem.product.price.price}`"
-                :special-price="
-                  cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
-                "
+                :regular-price="cartItemPrice(cartItem).regular"
+                :special-price="cartItemPrice(cartItem).special"
                 :options="cartItem.product.options"
                 :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
                 :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
@@ -106,10 +131,11 @@ export default defineComponent({
   setup() {
     const { getProductLink } = useUiHelpers()
     const { purchaseLocation } = usePurchaseLocation()
-    const { cart, load: loadCart } = useCart()
     const router = useRouter()
     const { locations, search: searchStoreLocations } = useStoreLocations("selected-stores")
 
+    const { cart, load: loadCart, applyCoupon } = useCart()
+    const couponApplied = ref("")
     const breadcrumbs = [
       {
         text: "Home",
@@ -141,8 +167,15 @@ export default defineComponent({
     const cartItems = computed(() => cartGetters.getItems(cart.value))
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
-    const cartItemFulfillmentLocation = (cartItem) => {
-      return cartGetters.getFulfillmentLocation(cartItem, locations.value)
+    const cartItemFulfillmentLocation = (cartItem) =>
+      cartGetters.getFulfillmentLocation(cartItem, locations.value)
+
+    const cartItemPrice = (cartItem) => {
+      return cartGetters.getItemPrice(cartItem)
+    }
+
+    const cartItemFulfillmentTypes = (cartItem) => {
+      return cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
     }
 
     const checkout = () => {
@@ -156,16 +189,45 @@ export default defineComponent({
     const getCartItemSelectedFulfillmentOption = (cartItem) =>
       cartGetters.getSelectedFullfillmentOption(cartItem)
 
+    const applyPromocode = async () => {
+      await applyCoupon(couponApplied.value)
+    }
+
+    const isValidCoupon = computed(() => {
+      return !cart.value?.invalidCoupons[0]?.couponCode
+    })
+
+    const invalidCouponErrorText = computed(() => {
+      return `${cart.value?.invalidCoupons[0]?.couponCode} is an invalid code`
+    })
+
+    const appliedCoupons = computed(() => {
+      return cart.value?.couponCodes
+    })
+
+    const AreCouponsApplied = computed(() => {
+      return cart.value?.couponCodes.length
+    })
+
     return {
       breadcrumbs,
       selectedLocation,
       cartItems,
       cartOrder,
       cartItemFulfillmentOptions,
+      couponApplied,
+      isValidCoupon,
+      invalidCouponErrorText,
+      appliedCoupons,
+      AreCouponsApplied,
+      handleStoreLocatorClick,
+      cartItemFulfillmentTypes,
       getProductLink,
       productGetters,
       checkout,
       getCartItemSelectedFulfillmentOption,
+      applyPromocode,
+      cartItemPrice,
     }
   },
 })
@@ -283,7 +345,13 @@ export default defineComponent({
 }
 
 .sf-property {
-  padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
+  display: flex;
+  align-items: center;
+
+  &__price {
+    margin: 0;
+  }
+
   &__name {
     @include font(
       --property-name-font,
@@ -293,6 +361,7 @@ export default defineComponent({
       var(--font-family--secondary)
     );
   }
+
   &__name-noBold {
     @include font(
       --property-name-font,
@@ -302,6 +371,7 @@ export default defineComponent({
       var(--font-family--secondary)
     );
   }
+
   &__value {
     @include font(
       --property-value-font,
@@ -335,5 +405,11 @@ export default defineComponent({
 
 .sf-input {
   --input-text-indent: var(--spacer-sm);
+}
+
+.coupon {
+  display: flex;
+  padding-bottom: var(--spacer-sm);
+  flex-wrap: wrap;
 }
 </style>

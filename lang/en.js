@@ -34,6 +34,7 @@ export default {
   Instruction2: "Just here for the care instructions?",
   Instruction3: "Yeah, we thought so",
   Items: "Items",
+  Item: "Item",
   View: "View",
   "Show on page": "Show on page",
   Done: "Done",
