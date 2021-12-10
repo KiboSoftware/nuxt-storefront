@@ -1,34 +1,40 @@
 import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
 import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
-import { Location } from "@/composables/types/storeFinder"
+import * as GraphQL from "@/server/types/GraphQL"
+import { ProductCustom } from "@/composables/types"
 
 const ratingAttrFQN = `tenant~rating`
-export const getName = (product: Product) => product?.content?.productName
+const getName = (product: ProductCustom) => product?.content?.productName
 
-export const getProductId = (product: Product): string => product?.productCode || ""
+const getProductId = (product: ProductCustom): string => product?.productCode || ""
 
-export const getRating = (product: Product) => {
+const getRating = (product: ProductCustom) => {
   const attr = product?.properties?.find((property) => property?.attributeFQN === ratingAttrFQN)
   return attr?.values?.pop()?.value
 }
-export const getProductTotalReviews = (): number => 0
-export const getPrice = (product: Product): { regular: number; special: number } => {
+
+const getProductTotalReviews = (): number => 0
+
+const getPrice = (product: ProductCustom): { regular: number; special: number } => {
   return {
     regular: product?.price?.price || 0,
     special: product?.price?.salePrice || 0,
   }
 }
-export const getSalePrice = (product: Product): number => product?.price?.salePrice || 0
 
-export const getCoverImage = (product: Product): string =>
+const getSalePrice = (product: ProductCustom): number => product?.price?.salePrice || 0
+
+const getCoverImage = (product: ProductCustom): string =>
   product?.content?.productImages?.[0]?.imageUrl || ""
 
-export const getDescription = (product: Product): string =>
+const getDescription = (product: ProductCustom): string =>
   product?.content?.productFullDescription || ""
-export const getShortDescription = (product: Product): string =>
+
+const getShortDescription = (product: ProductCustom): string =>
   product?.content?.productShortDescription || ""
-export const getSFProductGallery = (product: Product) => {
+
+const getSFProductGallery = (product: ProductCustom) => {
   return product?.content?.productImages?.map((content) => ({
     mobile: { url: content?.imageUrl },
     desktop: { url: content?.imageUrl },
@@ -37,7 +43,7 @@ export const getSFProductGallery = (product: Product) => {
   }))
 }
 
-export const getBreadcrumbs = (product: Product): Breadcrumb[] => {
+const getBreadcrumbs = (product: ProductCustom): Breadcrumb[] => {
   const homeCrumb = [{ text: "Home", link: "/" }]
   if (!product?.categories?.[0]) {
     return homeCrumb
@@ -49,7 +55,8 @@ export const getBreadcrumbs = (product: Product): Breadcrumb[] => {
 
   return [...homeCrumb, ...productCrumbs]
 }
-export const getProperties = (product: Product) => {
+
+const getProperties = (product: ProductCustom) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reducer = (accum: any, property: any) => {
     const values = property?.values?.map(
@@ -61,20 +68,25 @@ export const getProperties = (product: Product) => {
   }
   return product?.properties?.filter((attr) => !attr?.isHidden).reduce(reducer, {})
 }
-export const getOptionSelectedValue = (option: ProductOption) => {
+
+const getOptionSelectedValue = (option: ProductOption) => {
   const selectedValue = option?.values?.find((value) => value?.isSelected)
   const result = selectedValue?.value || selectedValue?.stringValue || selectedValue?.isSelected
   return result
 }
-export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
-export const getOptions = (product: Product) => product?.options
-export const getFullfillmentOptions = (product: Product, purchaseLocation: Location) => {
+
+const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
+
+const getOptions = (product: Product) => product?.options
+
+const getFullfillmentOptions = (product: Product, purchaseLocation: GraphQL.Location) => {
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
 
   const result = fullfillmentOptions.map((option) => ({
-    name: "fulfillment",
     value: option.value,
+    name: option.name,
+    code: option.code,
     label: option.label,
     details:
       option.value === "DirectShip"
@@ -92,7 +104,12 @@ export const getFullfillmentOptions = (product: Product, purchaseLocation: Locat
   return result
 }
 
-export const getSegregatedOptions = (product: Product) => {
+const getSelectedFullfillmentOption = (product: ProductCustom) => {
+  const selectedFullfillmentOption = product?.fulfillmentMethod
+  return selectedFullfillmentOption
+}
+
+const getSegregatedOptions = (product: ProductCustom) => {
   const options = product?.options
   if (!options) return
 
@@ -150,6 +167,7 @@ export const productGetters = {
   getOptions,
   getSegregatedOptions,
   getFullfillmentOptions,
+  getSelectedFullfillmentOption,
   getCoverImage,
   getProductId,
 }

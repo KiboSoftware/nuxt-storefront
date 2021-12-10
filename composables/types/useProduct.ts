@@ -45,3 +45,10 @@ export type useProductResponse = {
   loading: Ref<boolean>
   error: Ref<string | {}>
 }
+
+export type ProductWithFullmentOptions = {
+  fulfillmentMethod: string
+  purchaseLocationCode: string
+}
+
+export type ProductCustom = GraphQL.Product & ProductWithFullmentOptions

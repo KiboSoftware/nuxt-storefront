@@ -118,12 +118,16 @@ export default defineNuxtConfig({
     fullfillmentOptions: [
       {
         value: "DirectShip",
+        code: "DS",
+        name: "Direct Ship",
         label: "Ship to Home",
         details: "Available to Ship",
         isRequired: false,
       },
       {
         value: "InStorePickup",
+        code: "SP",
+        name: "In Store Pickup",
         label: "Pickup in Store",
         details: "Available at",
         isRequired: false,

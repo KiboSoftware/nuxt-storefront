@@ -1,20 +1,17 @@
 import { mergeProducts } from "./helpers/mergeProduct"
 import type { ConfigureOption } from "./types"
 import { useState, useNuxtApp } from "#app"
-import { Product } from "@/server/types/GraphQL"
 import { getProductQuery } from "@/gql/queries"
 import { configureProductMutation } from "@/gql/mutations"
+import { ProductCustom } from "@/composables/types"
 
 export const useProductSSR = (referenceKey: string) => {
   const nuxt = useNuxtApp()
 
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const product = useState(
-    `use-product-${referenceKey}`,
-    (): Product => {
-      return {} as Product
-    }
-  )
+  const product = useState(`use-product-${referenceKey}`, (): ProductCustom => {
+    return {} as ProductCustom
+  })
   const loading = useState(`use-product-loading-${referenceKey}`, () => false)
   const error = useState(`use-product-error-${referenceKey}`, () => null)
 
@@ -55,10 +52,26 @@ export const useProductSSR = (referenceKey: string) => {
     loading.value = false
   }
 
+  const setFulfillment = (fulfillmentMethod: string, purchaseLocationCode?: string) => {
+    try {
+      const fulfillment = {
+        fulfillmentMethod,
+        purchaseLocationCode,
+      }
+      product.value = {
+        ...product.value,
+        ...fulfillment,
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   return {
     product,
     configure,
     load,
+    setFulfillment,
     loading,
     error,
   }
