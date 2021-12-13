@@ -1,5 +1,4 @@
-
-export const configureProductMutation = /* Graphql */`
+export const configureProductMutation = /* Graphql */ `
   mutation configureProduct(
     $productCode: String!
     $selectedOptions: ProductOptionSelectionsInput!
@@ -30,6 +29,7 @@ export const configureProductMutation = /* Graphql */`
           attributeValueId
           isEnabled
           isSelected
+          shopperEnteredValue
         }
         isProductImageGroupSelector
       }

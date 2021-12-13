@@ -158,7 +158,7 @@
                 >
                   <SfInput
                     :label="option.attributeDetail.name"
-                    :value="option.values[0].value"
+                    :value="option.values[0].shopperEnteredValue"
                     :name="option.attributeFQN"
                     type="text"
                     valid
@@ -183,7 +183,7 @@
               <KiboFulfillmentOptions
                 :fulfillment-options="fulfillmentOptions"
                 :cart-item-purchase-location="purchaseLocation.name"
-                :selected-option="selectedFulfillmentOption"
+                :selected-option="selectedFulfillmentValue"
                 @click="handleStoreLocatorClick"
                 @change="selectFulfillmentOption"
               />
@@ -239,6 +239,7 @@ import { useAsync } from "@nuxtjs/composition-api"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import KiboProductActions from "@/components/KiboProductActions.vue"
 import { useProductSSR, useUiState, usePurchaseLocation, productGetters } from "@/composables"
+import { isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({
   name: "Product",
@@ -264,10 +265,9 @@ export default defineComponent({
 
   setup(_, context) {
     const { productCode } = context.root.$route.params
-    const { load, product, configure, loading, error } = useProductSSR(productCode)
+    const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
-    const selectedFulfillmentOption = ref()
 
     useAsync(async () => {
       await load(productCode)
@@ -285,6 +285,12 @@ export default defineComponent({
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
+    const fulfillmentOptions = computed(() =>
+      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
+    )
+    const selectedFulfillmentValue = computed(() =>
+      productGetters.getSelectedFullfillmentOption(product.value)
+    )
 
     // Options section
     let shopperEnteredValues = []
@@ -317,28 +323,46 @@ export default defineComponent({
       await configure(shopperEnteredValues, product.value?.productCode)
     }
 
+    // Get Fullfillment Options
+    const selectFulfillmentOption = (selectedFulfillmentVal: string) => {
+      const { value, name } = fulfillmentOptions.value.find(
+        (option) => option.value === selectedFulfillmentVal
+      )
+
+      const isValid = isFulfillmentOptionValid(
+        { value, name },
+        product.value,
+        purchaseLocation.value
+      )
+
+      if (isValid) {
+        setFulfillment(selectedFulfillmentVal, purchaseLocation.value.code)
+      }
+    }
+
     // Add to Cart
     const quantityLeft = computed(() => 5)
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
     const addToCart = () => {
+      const addToCartVariables = {
+        productToAdd: {
+          product: {
+            productCode: product.value?.productCode,
+          },
+          quantity: qtySelected,
+          fulfillmentMethod: product.value?.fulfillmentMethod,
+          purchaseLocation: product.value?.purchaseLocationCode,
+        },
+      }
+
       // Todo: Add to cart
-      console.log("Add to Cart qunatity: ", qtySelected.value)
+      console.log(`addToCartVariables: ${JSON.stringify(addToCartVariables)}`)
     }
 
     const addToWishList = () => {
       // Todo: Add to wishlist
       console.log("Add to Whislist qunatity: ", qtySelected.value)
-    }
-
-    // Get Fullfillment Options
-    const fulfillmentOptions = computed(() =>
-      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
-    )
-
-    const selectFulfillmentOption = (selectedOption: string) => {
-      // Todo: Selected fullfillment option
-      selectedFulfillmentOption.value = selectedOption
     }
 
     const handleStoreLocatorClick = () => {
@@ -370,7 +394,7 @@ export default defineComponent({
       product,
       isOpenNotification: false,
       fulfillmentOptions,
-      selectedFulfillmentOption,
+      selectedFulfillmentValue,
       handleStoreLocatorClick,
       selectFulfillmentOption,
       updateShopperEnteredValues,

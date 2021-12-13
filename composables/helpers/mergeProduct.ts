@@ -1,4 +1,5 @@
 import * as GraphQL from "@/server/types/GraphQL"
+import { ProductCustom } from "@/composables/types"
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const copyProps = (source: any, target: any): void => {
@@ -13,9 +14,9 @@ const copyProps = (source: any, target: any): void => {
 }
 
 export const mergeProducts = (
-  product: GraphQL.Product,
+  product: ProductCustom,
   configuredProduct: GraphQL.ConfiguredProduct
-): GraphQL.Product => {
+): ProductCustom => {
   // Merge properties from existing options into returned options before merging objects
   // have to do it this way because it's an array of objects, not string keyed
   // for each of the options returned from the configure call
@@ -51,5 +52,5 @@ export const mergeProducts = (
     },
   }
   delete (returnedProduct as GraphQL.ConfiguredProduct).productImages
-  return returnedProduct as GraphQL.Product
+  return returnedProduct as ProductCustom
 }
