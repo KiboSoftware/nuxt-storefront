@@ -17,9 +17,13 @@
   .sf-icon img {
     width: var(--font-size--base);
     height: var(--font-size--base);
+    margin-bottom: 1.563rem;
+
+    --icon-color: var(--_c-white-secondary);
   }
 
   .sf-icon svg path {
+    stroke: var(--_c-white-secondary);
     stroke-width: 0.188rem;
   }
 }

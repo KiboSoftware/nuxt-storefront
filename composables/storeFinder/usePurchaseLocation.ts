@@ -27,7 +27,7 @@ export const usePurchaseLocation = () => {
         })
         purchaseLocation.value = response.data.spLocations.items[0]
       } catch (error) {
-        purchaseLocation.value = {}
+        console.log(error)
         loading.value = false
       }
     }

@@ -24,22 +24,8 @@ jest.mock("#app", () => ({
 describe("[composable] useStoreLocations", () => {
   const { locations, search, loading, error } = useStoreLocations()
 
-  test("search: should search stores by coordinates", async () => {
-    const coords = {
-      latitude: "10.5123",
-      longitude: "30.1234",
-    }
-    await search(coords)
-    expect(locations.value).toStrictEqual([
-      { code: "store_location1" },
-      { code: "store_location2" },
-    ])
-  })
-
-  test("search: should search stores by zipcode", async () => {
-    const zipCode = "12345"
-
-    await search(zipCode)
+  test("search: should search stores", async () => {
+    await search()
     expect(locations.value).toStrictEqual([
       { code: "store_location1" },
       { code: "store_location2" },
