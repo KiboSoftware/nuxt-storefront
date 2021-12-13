@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
-    "@kibocommerce/graphql-client": "^1.0.3-beta.7",
+    "@kibocommerce/graphql-client": "^1.0.3-beta.8",
     "@nuxtjs/axios": "^5.13.6",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/style-resources": "^1.2.1",
