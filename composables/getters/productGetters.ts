@@ -1,7 +1,6 @@
 import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
 import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
-import * as GraphQL from "@/server/types/GraphQL"
 import { ProductCustom } from "@/composables/types"
 
 const ratingAttrFQN = `tenant~rating`
@@ -74,12 +73,9 @@ const getOptionSelectedValue = (option: ProductOption) => {
   const result = selectedValue?.value || selectedValue?.stringValue || selectedValue?.isSelected
   return result
 }
-
-const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
-
-const getOptions = (product: Product) => product?.options
-
-const getFullfillmentOptions = (product: Product, purchaseLocation: GraphQL.Location) => {
+export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
+export const getOptions = (product: Product) => product?.options
+export const getProductFulfillmentOptions = (product: Product, purchaseLocation: Location) => {
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
 
@@ -166,8 +162,8 @@ export const productGetters = {
   getOptionName,
   getOptions,
   getSegregatedOptions,
-  getFullfillmentOptions,
   getSelectedFullfillmentOption,
+  getProductFulfillmentOptions,
   getCoverImage,
   getProductId,
 }
