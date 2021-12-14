@@ -23,6 +23,8 @@
   flex-wrap: var(--price-flex-wrap, wrap);
   flex-direction: var(--price-flex-direction, row);
   align-items: var(--price-align-items, flex-end);
+  width: fit-content;
+  justify-content: flex-end;
 
   &__regular {
     @include _price($type: regular);

@@ -240,10 +240,6 @@ export default defineComponent({
 <style lang="scss">
 #detailed-cart {
   box-sizing: border-box;
-  @include for-desktop {
-    max-width: 1272px;
-    margin: 0 auto;
-  }
 }
 
 .breadcrumbs {
@@ -397,7 +393,7 @@ export default defineComponent({
   display: flex;
   width: 100%;
   align-items: stretch;
-  padding: var(--spacer-sm) 0;
+  padding: var(--spacer-sm) 0 0 0;
 
   &__input {
     flex: 1;
@@ -416,5 +412,10 @@ export default defineComponent({
   display: flex;
   padding-bottom: var(--spacer-sm);
   flex-wrap: wrap;
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
 }
 </style>
