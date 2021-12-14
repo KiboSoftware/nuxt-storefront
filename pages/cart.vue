@@ -94,7 +94,6 @@ import {
   cartGetters,
   storeLocationGetters,
 } from "@/composables"
-import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -104,7 +103,6 @@ export default defineComponent({
     SfButton,
     SfHeading,
     SfInput,
-    KiboCollectedProduct,
   },
   setup() {
     const { toggleStoreLocatorModal } = useUiState()

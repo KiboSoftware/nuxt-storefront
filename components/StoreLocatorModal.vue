@@ -81,7 +81,6 @@
 <script lang="ts">
 import { SfModal, SfSearchBar, SfBar } from "@storefront-ui/vue"
 import { computed, ref } from "@nuxtjs/composition-api"
-import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
 import {
   useCurrentLocation,
   useStoreLocations,
@@ -96,7 +95,6 @@ export default {
     SfModal,
     SfSearchBar,
     SfBar,
-    KiboStoreDetails,
   },
   setup() {
     const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
