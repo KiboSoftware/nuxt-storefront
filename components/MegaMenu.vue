@@ -79,6 +79,7 @@ export default defineComponent({
     .sf-heading {
       padding: 0.6rem 0 1rem 5rem;
       text-align: left;
+
       &__title {
         font-weight: bold;
         font-size: var(--font-size--base);
@@ -112,6 +113,7 @@ export default defineComponent({
       .flex-grow-3 {
         flex-grow: 3;
       }
+
       .hr-divider {
         margin: 1rem 0;
         border-left: 0.06rem solid var(--c-black);

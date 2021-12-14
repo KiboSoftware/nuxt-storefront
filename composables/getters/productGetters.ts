@@ -1,6 +1,6 @@
 import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
-import { Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
+import { Location, Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
 import { ProductCustom } from "@/composables/types"
 
 const ratingAttrFQN = `tenant~rating`
