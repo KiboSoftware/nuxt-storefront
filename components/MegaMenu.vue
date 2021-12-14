@@ -3,19 +3,44 @@
     <SfMegaMenuColumn
       v-for="(category, key) in megaMenuCategories"
       :key="key"
-      :title="category.content.name"
+      :title="categoryGetters.getName(category)"
       :link="localePath(getCatLink(category))"
     >
-      <SfList>
-        <SfListItem v-for="child in category.childrenCategories" :key="child.id">
-          <SfMenuItem :label="$t(child.content.name)" :link="localePath(getCatLink(child))" />
-        </SfListItem>
-      </SfList>
+      <div class="sf-mega-menu-option">
+        <div class="flex-grow-3">
+          <SfList class="outer-list">
+            <SfListItem
+              v-for="child in category.childrenCategories"
+              :key="categoryGetters.getCategoryCode(child)"
+            >
+              <div class="sf-title">{{ categoryGetters.getName(child) }}</div>
+              <SfMenuItem :link="localePath(getCatLink(child))" :label="$t('ShopAll')" />
+              <SfList>
+                <SfListItem
+                  v-for="grandChild in child.childrenCategories"
+                  :key="categoryGetters.getCategoryCode(grandChild)"
+                >
+                  <SfMenuItem
+                    :label="categoryGetters.getName(grandChild)"
+                    :link="localePath(getCatLink(grandChild))"
+                  />
+                </SfListItem>
+              </SfList>
+            </SfListItem>
+          </SfList>
+        </div>
+        <div class="hr-divider">
+          <div class="sf-heading">
+            <h5 class="sf-heading__title h5">{{ $t("Advertisment") }}</h5>
+          </div>
+          <SfImage src="" alt="" width="300" height="350" />
+        </div>
+      </div>
     </SfMegaMenuColumn>
   </SfMegaMenu>
 </template>
 <script lang="tsx">
-import { SfMegaMenu, SfList, SfMenuItem } from "@storefront-ui/vue"
+import { SfMegaMenu, SfList, SfMenuItem, SfImage } from "@storefront-ui/vue"
 import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
 import { useCategoryTree, useUiHelpers, categoryGetters } from "@/composables"
 
@@ -24,6 +49,7 @@ export default defineComponent({
     SfMegaMenu,
     SfList,
     SfMenuItem,
+    SfImage,
   },
   setup() {
     const { categories: allCategories, load: loadCategories } = useCategoryTree()
@@ -42,30 +68,55 @@ export default defineComponent({
       allCategories,
       megaMenuCategories,
       visible,
+      categoryGetters,
     }
   },
 })
 </script>
-<style lang="scss">
-#SfMegaMenuColumnId .sf-mega-menu__content {
-  padding: 0;
-}
-
+<style lang="scss" scoped>
 #SfMegaMenuColumnId .sf-mega-menu-column {
-  padding-right: 70px;
-}
+  @include for-desktop {
+    .sf-heading {
+      padding: 0.6rem 0 1rem 5rem;
+      text-align: left;
+      &__title {
+        font-weight: bold;
+        font-size: var(--font-size--base);
+      }
+    }
 
-#SfMegaMenuColumnId .sf-mega-menu-column .sf-list {
-  display: none;
-  position: absolute;
-}
+    .sf-image--wrapper {
+      padding-right: 3rem;
+      padding-left: 6rem;
+      width: var(--spacer-4xl);
+      height: var(--spacer-4xl);
+    }
 
-#SfMegaMenuColumnId .sf-mega-menu-column:hover .sf-list {
-  display: block;
-}
-@media (min-width: 1024px) {
-  #SfMegaMenuColumnId .sf-mega-menu-column__content {
-    transform: none;
+    .sf-list .sf-title {
+      font-weight: bold;
+      margin: 1rem 0;
+    }
+
+    .sf-mega-menu-option {
+      display: flex;
+      flex-flow: row wrap;
+      align-items: stretch;
+
+      .outer-list {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        margin-right: 8rem;
+      }
+
+      .flex-grow-3 {
+        flex-grow: 3;
+      }
+      .hr-divider {
+        margin: 1rem 0;
+        border-left: 0.06rem solid var(--c-black);
+      }
+    }
   }
 }
 </style>

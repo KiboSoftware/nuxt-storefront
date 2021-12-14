@@ -164,4 +164,6 @@ export default {
   "Order Subtotal": "Order Subtotal",
   "Estimated Order Total": "Estimated Order Total",
   Checkout: "Checkout",
+  ShopAll: "Shop All",
+  Advertisment: "Advertisment",
 }

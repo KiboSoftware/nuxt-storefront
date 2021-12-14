@@ -75,14 +75,12 @@ export default {
   "Info after order":
     "Sie können sich mit E-Mail und definiertem Passwort in Ihrem Konto anmelden vorhin. Überprüfen Sie in Ihrem Konto Ihre Profildaten Transaktionsverlauf, Abonnement für Newsletter bearbeiten.",
   "Allow order notifications": "Bestellbenachrichtigungen zulassen",
-  Feedback:
-    "Ihr Feedback ist uns wichtig. Lassen Sie uns wissen, was wir verbessern können.",
+  Feedback: "Ihr Feedback ist uns wichtig. Lassen Sie uns wissen, was wir verbessern können.",
   "Send my feedback": "Senden Sie mein Feedback",
   "Go back to shop": "Zurück zum Einkaufen",
   "Read all reviews": "Alle Bewertungen lesen",
   Color: "Farbe",
-  "Contact details updated":
-    "Halten Sie Ihre Adressen und Kontaktdaten auf dem neuesten Stand.",
+  "Contact details updated": "Halten Sie Ihre Adressen und Kontaktdaten auf dem neuesten Stand.",
   "Manage billing addresses":
     "Alle gewünschten Rechnungsadressen verwalten (Arbeitsplatz, Privatadresse ...) Auf diese Weise müssen Sie die Rechnungsadresse nicht bei jeder Bestellung manuell eingeben.",
   Change: "Änderungsänderung",
@@ -128,8 +126,7 @@ export default {
   "Your bag is empty": "Ihre Tasche ist leer",
   Cancel: "Abbrechen",
   "See all results": "Alle Ergebnisse anzeigen",
-  "You haven’t searched for items yet":
-    "Sie haben noch nicht nach Artikeln gesucht.",
+  "You haven’t searched for items yet": "Sie haben noch nicht nach Artikeln gesucht.",
   "Let’s start now – we’ll help you": "Fangen wir jetzt an - wir helfen Ihnen.",
   "Search results": "Suchergebnisse",
   "Product suggestions": "Produktvorschläge",
@@ -149,8 +146,7 @@ export default {
   "Reset Password": "Passwort Zurücksetzen",
   "Save Password": "Passwort Speichern",
   "Back to home": "Zurück Zur Startseite",
-  "Forgot Password":
-    "Wenn Sie Ihr Passwort vergessen haben, können Sie es zurücksetzen.",
+  "Forgot Password": "Wenn Sie Ihr Passwort vergessen haben, können Sie es zurücksetzen.",
   "Thank You Inbox":
     "Wenn die Nachricht nicht in Ihrem Posteingang ankommt, versuchen Sie es mit einer anderen E-Mail-Adresse, mit der Sie sich möglicherweise registriert haben.",
   "Sign in": "Einloggen",
@@ -162,4 +158,6 @@ export default {
   "Forgot Password Modal Email": "E-Mail, mit der Sie sich anmelden:",
   forgotPasswordConfirmation:
     "Vielen Dank! Wenn ein Konto mit der E-Mail-Adresse {0} registriert ist, finden Sie in Ihrem Posteingang eine Nachricht mit einem Link zum Zurücksetzen des Passworts.",
+  ShopAll: "Alles shoppen",
+  Advertisment: "Werbung",
 }
