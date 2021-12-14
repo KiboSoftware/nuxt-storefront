@@ -18,6 +18,7 @@
           :special="specialPrice"
           class="kibo-collectedProduct__price"
           :small="true"
+          :coupons="couponsApplied"
         />
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
@@ -159,6 +160,9 @@ export default defineComponent({
     selectedOption: {
       type: String,
       default: "",
+    couponsApplied: {
+      type: Array,
+      default: null,
     },
   },
   setup(props, context) {
@@ -254,7 +258,7 @@ export default defineComponent({
       quantity,
       fulfillmentOptions,
     }
-  },
+  }
 })
 </script>
 <style lang="scss">

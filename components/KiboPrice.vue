@@ -49,7 +49,11 @@
         </ins>
       </slot>
     </div>
-    <ins v-if="props.special" class="kibo-promo-success"> promo code applied </ins>
+    <slot name="promo-success" v-bind="{ props }">
+      <ins v-if="props.special" class="kibo-promo-success">
+        {{ `${props.coupons ? "'" + props.coupons.join(" , ") + "'" : ""}` }} promo code applied
+      </ins>
+    </slot>
   </div>
 </template>
 <script>

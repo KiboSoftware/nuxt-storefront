@@ -26,7 +26,7 @@
             class="promo__input"
             type="text"
             :valid="isValidCoupon"
-            :errorMessage="invalidCouponErrorText"
+            :error-message="invalidCouponErrorText"
           />
           <button
             class="color-primary sf-button sf-button--small"
@@ -51,7 +51,6 @@
             :regular="cartOrder.total"
             :special="cartOrder.special"
             class="kibo-collectedProduct__price sf-property__price"
-            :coupons="appliedCoupons"
           />
         </div>
 
@@ -84,6 +83,7 @@
                 :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
                 :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
                 :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
+                :coupons-applied="productAppliedCoupons(cartItem)"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
@@ -209,6 +209,10 @@ export default defineComponent({
       return cart.value?.couponCodes.length
     })
 
+    const productAppliedCoupons = (cartItem) => {
+      return cartGetters.productAppliedCoupons(cartItem)
+    }
+
     return {
       breadcrumbs,
       selectedLocation,
@@ -228,6 +232,7 @@ export default defineComponent({
       getCartItemSelectedFulfillmentOption,
       applyPromocode,
       cartItemPrice,
+      productAppliedCoupons,
     }
   },
 })

@@ -6,6 +6,7 @@ fragment cartItemDetails on CartItem {
   fulfillmentLocationCode
   productDiscounts{
     discountQuantity
+    couponCode
   }
   subtotal
   total
