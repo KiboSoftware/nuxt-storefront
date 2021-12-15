@@ -36,6 +36,7 @@ fragment productContent on Product {
       imageUrl
       imageLabel
       mediaType
+      productImageGroupId
     }
   }
 }
@@ -56,6 +57,17 @@ fragment productOptions on Product {
       isSelected
       deltaPrice
       stringValue
+    }
+  }
+}
+`
+export const productImageGroup = `
+fragment productImageGroup on Product {
+  productImageGroups {
+    productImageGroupId 
+    productImageGroupTags{
+      attributeFqn,
+      value
     }
   }
 }
@@ -92,9 +104,11 @@ fragment productInfo on Product {
         ...productAttributes
         ...productContent
         ...productOptions
+        ...productImageGroup
 }
 ${productPrices}
 ${productAttributes}
 ${productContent}
 ${productOptions}
+${productImageGroup}
 `

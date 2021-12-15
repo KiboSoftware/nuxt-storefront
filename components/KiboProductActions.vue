@@ -15,7 +15,11 @@
     <slot name="add-to-cart-btn ">
       <!--@slot Custom content that will replace default Add to cart button design.-->
       <div class="column column-bottom column-right">
-        <SfButton class="sf-add-to-cart__button" :disabled="disabled" @click="addToCart">
+        <SfButton
+          class="sf-add-to-cart__button"
+          :disabled="!isValidForAddToCart"
+          @click="addToCart"
+        >
           {{ labelAddToCart }}
         </SfButton>
       </div>
@@ -68,6 +72,10 @@ export default defineComponent({
       type: [Number, String],
       default: 0,
     },
+    isValidForAddToCart: {
+      type: Boolean,
+      default: false,
+    },
     labelAddToCart: {
       type: String,
       default: "Add to cart",
@@ -87,6 +95,7 @@ export default defineComponent({
     }
 
     const addToCart = () => {
+      console.log("props", props.qty)
       context.emit("addItemToCart", props.qty)
     }
 

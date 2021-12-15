@@ -91,6 +91,7 @@ export const getProductFulfillmentOptions = (product: Product, purchaseLocation:
         ? `${option.details}: ${purchaseLocation.name}`
         : "",
     required: option.isRequired,
+    shortName: option.shortName,
     disabled:
       product?.fulfillmentTypesSupported?.filter(
         (type) => type.toLowerCase() === option.value.toLowerCase()

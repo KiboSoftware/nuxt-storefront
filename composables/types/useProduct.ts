@@ -48,6 +48,7 @@ export type useProductResponse = {
 
 export type ProductWithFullmentOptions = {
   fulfillmentMethod: string
+  fulfillmentMethodShortName: string
   purchaseLocationCode: string
 }
 

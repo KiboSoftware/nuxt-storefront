@@ -194,6 +194,7 @@
                 <KiboProductActions
                   v-model="qtySelected"
                   :quantity-left="quantityLeft"
+                  :isValidForAddToCart="isValidForAddToCart"
                   label-add-to-cart="Add to Cart"
                   label-add-to-wishlist="Add to Wishlist"
                   @addItemToCart="addToCart"
@@ -235,14 +236,22 @@ import { defineComponent, computed } from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
 
-import { useAsync } from "@nuxtjs/composition-api"
+import { ref, useAsync } from "@nuxtjs/composition-api"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import KiboProductActions from "@/components/KiboProductActions.vue"
-import { useProductSSR, useUiState, usePurchaseLocation, productGetters } from "@/composables"
+import {
+  useProductSSR,
+  useUiState,
+  usePurchaseLocation,
+  productGetters,
+  useCart,
+} from "@/composables"
 import { isFulfillmentOptionValid } from "@/composables/helpers"
+import { isProductVariationsSelected } from "~~/composables/helpers/validateProductVariations"
+import { AddItemsToCartParams } from "~~/composables/types/useCart"
 
 export default defineComponent({
-  name: "Product",
+  name: "ProductDetails",
   components: {
     SfGallery,
     SfPrice,
@@ -266,6 +275,7 @@ export default defineComponent({
   setup(_, context) {
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
+    const { addItemsToCart } = useCart()
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
 
@@ -292,10 +302,15 @@ export default defineComponent({
       productGetters.getSelectedFullfillmentOption(product.value)
     )
 
+    const isValidForAddToCart = ref(false)
     // Options section
     let shopperEnteredValues = []
 
-    const updateShopperEnteredValues = (attributeFQN, value, shopperEnteredValue) => {
+    const updateShopperEnteredValues = (
+      attributeFQN: string,
+      value: string,
+      shopperEnteredValue: undefined
+    ) => {
       const itemToBeUpdated = shopperEnteredValues.find(
         (item) => item.attributeFQN === attributeFQN
       )
@@ -318,15 +333,20 @@ export default defineComponent({
       ]
     }
 
-    const selectOption = async (attributeFQN, value, shopperEnteredValue = undefined) => {
+    const selectOption = async (
+      attributeFQN: string,
+      value: string,
+      shopperEnteredValue = undefined
+    ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
+      checkEligibilityForAddToCart()
     }
 
     // Get Fullfillment Options
     const selectFulfillmentOption = (selectedFulfillmentVal: string) => {
-      const { value, name } = fulfillmentOptions.value.find(
-        (option) => option.value === selectedFulfillmentVal
+      const { value, name, shortName } = fulfillmentOptions.value.find(
+        (option: { value: string }) => option.value === selectedFulfillmentVal
       )
 
       const isValid = isFulfillmentOptionValid(
@@ -336,8 +356,14 @@ export default defineComponent({
       )
 
       if (isValid) {
-        setFulfillment(selectedFulfillmentVal, purchaseLocation.value.code)
+        setFulfillment(selectedFulfillmentVal, shortName, purchaseLocation?.value?.code)
+        checkEligibilityForAddToCart()
       }
+    }
+
+    const checkEligibilityForAddToCart = () => {
+      isValidForAddToCart.value =
+        isProductVariationsSelected(product.value) && product.value.fulfillmentMethod !== undefined
     }
 
     // Add to Cart
@@ -345,19 +371,24 @@ export default defineComponent({
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
     const addToCart = () => {
-      const addToCartVariables = {
+      const addToCartVariables: AddItemsToCartParams = {
         productToAdd: {
           product: {
-            productCode: product.value?.productCode,
+            productCode: product?.value?.productCode ? product?.value?.productCode : "",
+            variationProductCode: product?.value?.variationProductCode
+              ? product?.value?.variationProductCode
+              : "",
+            options: shopperEnteredValues,
           },
-          quantity: qtySelected,
-          fulfillmentMethod: product.value?.fulfillmentMethod,
+          quantity: qtySelected.value,
+          fulfillmentMethod: product.value?.fulfillmentMethodShortName,
           purchaseLocation: product.value?.purchaseLocationCode,
         },
       }
 
-      // Todo: Add to cart
-      console.log(`addToCartVariables: ${JSON.stringify(addToCartVariables)}`)
+      if (isValidForAddToCart.value) {
+        addItemsToCart(addToCartVariables)
+      }
     }
 
     const addToWishList = () => {
@@ -398,6 +429,7 @@ export default defineComponent({
       handleStoreLocatorClick,
       selectFulfillmentOption,
       updateShopperEnteredValues,
+      isValidForAddToCart,
     }
   },
 })
