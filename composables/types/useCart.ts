@@ -1,12 +1,12 @@
 import { ConfigureOption } from "./useProduct"
-interface Product {
+interface ProductParams {
   productCode?: string | undefined
   variationProductCode?: string
   options?: ConfigureOption[]
 }
 
 interface ProductToAdd {
-  product?: Product
+  product?: ProductParams
   quantity: number
   fulfillmentMethod: string
   purchaseLocation: string

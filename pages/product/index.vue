@@ -251,7 +251,8 @@ import { isProductVariationsSelected } from "~~/composables/helpers/validateProd
 import { AddItemsToCartParams } from "~~/composables/types/useCart"
 
 export default defineComponent({
-  name: "ProductDetails",
+  // eslint-disable-next-line vue/multi-word-component-names
+  name: "Product",
   components: {
     SfGallery,
     SfPrice,
