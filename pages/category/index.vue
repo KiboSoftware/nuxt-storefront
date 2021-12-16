@@ -701,4 +701,8 @@ export default {
     padding: 6px 0 0 2px;
   }
 }
+.sf-select {
+  --select-width: 11.875rem;
+  --select-dropdown-text-indent: 10px;
+}
 </style>
