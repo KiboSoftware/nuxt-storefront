@@ -87,4 +87,11 @@ export default {
     }
   }
 }
+
+.sf-select {
+  &__dropdown {
+    min-width: 11.875rem;
+    text-indent: 100px;
+  }
+}
 </style>

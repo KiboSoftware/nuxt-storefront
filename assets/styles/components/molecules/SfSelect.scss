@@ -16,8 +16,9 @@
   &__dropdown {
     @include border(--select-dropdown-border, 1px, solid, var(--_c-gray-middle));
 
-    text-indent: var(--select-dropdown-text-indent, 1px);
     border-radius: var(--spacer-2xs);
     height: calc(var(--spacer-lg) + 0.125rem);
+    text-indent: 10px;
+    width: 100%;
   }
 }

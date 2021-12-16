@@ -120,57 +120,7 @@
                           />
                         </SfButton>
                       </template>
-                      <<<<<<< HEAD <<<<<<< HEAD
                       <KiboFacet :facet="facet" @selectFilter="selectFilter" />
-                      =======
-                      <SfSearchBar
-                        :placeholder="`Search ${facet.label}s`"
-                        aria-label="Search"
-                        @input="findFilter($event, facet.id)"
-                        @keydown.enter="findFilter($event, facet.id)"
-                      >
-                        <template #icon>
-                          <SfButton class="sf-search-bar__button sf-button--pure">
-                            <span class="sf-search-bar__icon">
-                              <SfIcon icon="search" />
-                            </span>
-                          </SfButton>
-                        </template>
-                      </SfSearchBar>
-                      <SfFilter
-                        v-for="option in facetGetters.getFacetValues(facet)"
-                        :key="`${facetValueGetters.getFilter(option)}`"
-                        :label="facetValueGetters.getName(option)"
-                        :count="`(${facetValueGetters.getCount(option)})`"
-                        :selected="facetValueGetters.getIsApplied(option)"
-                        @change="selectFilter(facetValueGetters.getFilter(option))"
-                      />
-                      <<<<<<< HEAD
-                      <div
-                        v-if="
-                          !(facet.allOptions.length === facet.options.length) &&
-                          facet.options.length > 5
-                        "
-                      >
-                        <SfButton
-                          font-size="13px"
-                          class="sf-button--text navbar__button navbar__button--plus list__item"
-                          aria-label="View More"
-                          @click="handleViewMoreClick(facet.id)"
-                        >
-                          <SfIcon
-                            size="0.938rem"
-                            color="#2B2B2B"
-                            icon="plus"
-                            class="navbar__plus-icon"
-                          />
-                          View More
-                        </SfButton>
-                      </div>
-                      >>>>>>> eaa5348 (Category Page Filters) ======= >>>>>>> 2f1648d (feat: plp
-                      facets and getters) =======
-                      <KiboFacet :facet="facet" @selectFilter="selectFilter" />
-                      >>>>>>> 202b04d (create KiboFacet Component for facet options)
                     </SfAccordionItem>
                   </div>
                 </SfAccordion>
@@ -278,6 +228,8 @@ import {
   SfLink,
   SfLoader,
   SfProductCardHorizontal,
+  SfAccordion,
+  SfChevron,
 } from "@storefront-ui/vue"
 import { ref, computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
@@ -308,6 +260,8 @@ export default {
     SfLink,
     SfLoader,
     SfProductCardHorizontal,
+    SfAccordion,
+    SfChevron,
   },
   setup(_, context) {
     const { getFacetsFromURL, getCatLink, getProductLink, changeSorting, changeFilters } =
@@ -352,12 +306,14 @@ export default {
       }
       changeFilters(filters.join(","))
     }
+
     watch(
       () => context.root.$route,
       async () => {
-        await productSearch(getFacetsFromURL())
+        facetsFromUrl.value = getFacetsFromURL()
         await search(getFacetsFromURL())
         visibleCategories(childrenCategories.value)
+        await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
       }
     )
 
@@ -374,15 +330,6 @@ export default {
     const pagination = computed(() => facetGetters.getPagination(productSearchResult.value))
 
     const showPerPage = ref(pagination.value.itemsPerPage)
-
-    watch(
-      () => context.root.$route,
-      async () => {
-        facetsFromUrl.value = getFacetsFromURL()
-        await search(getFacetsFromURL())
-        await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
-      }
-    )
 
     const changeShowItemsPerPage = async (value: number) => {
       showPerPage.value = value
