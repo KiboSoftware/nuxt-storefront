@@ -8,15 +8,23 @@
         </div>
         <div class="navbar__sort desktop-only">
           <span class="navbar__label">Sort by:</span>
-          <SfComponentSelect v-model="sortBy" class="navbar__select">
-            <SfComponentSelectOption
-              v-for="option in sortByOptions"
-              :key="option.value"
-              :value="option.value"
+          <SfSelect
+            :required="false"
+            valid
+            placeholder="Select sorting"
+            :disabled="false"
+            :value="facetsFromUrl.sort"
+            @input="changeSorting"
+          >
+            <SfSelectOption
+              v-for="option in sortBy.options"
+              :key="option.id"
+              :value="option.id"
               class="sort-by__option"
-              >{{ option.label }}</SfComponentSelectOption
             >
-          </SfComponentSelect>
+              {{ option.value }}
+            </SfSelectOption>
+          </SfSelect>
         </div>
         <div class="navbar__view">
           <span class="navbar__view-label desktop-only">View</span>
@@ -198,6 +206,11 @@
               </template>
             </SfProductCardHorizontal>
           </transition-group>
+          <KiboPagination
+            :loading="loading"
+            :pagination="pagination"
+            @changeShowItemsPerPage="changeShowItemsPerPage"
+          />
         </div>
       </SfLoader>
     </div>
@@ -210,7 +223,7 @@ import {
   SfList,
   SfIcon,
   SfMenuItem,
-  SfComponentSelect,
+  SfSelect,
   SfBreadcrumbs,
   SfLink,
   SfLoader,
@@ -218,7 +231,7 @@ import {
   SfAccordion,
   SfChevron,
 } from "@storefront-ui/vue"
-import { computed, watch } from "@vue/composition-api"
+import { ref, computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync, useRoute } from "@nuxtjs/composition-api"
 import {
@@ -232,7 +245,6 @@ import {
   categoryGetters,
 } from "@/composables"
 import { useState } from "#app"
-import KiboProductCard from "@/components/KiboProductCard.vue"
 
 export default {
   name: "Category",
@@ -242,19 +254,21 @@ export default {
     SfIcon,
     SfList,
     SfMenuItem,
-    SfComponentSelect,
+    SfSelect,
     SfBreadcrumbs,
     LazyHydrate,
     SfLink,
     SfLoader,
     SfProductCardHorizontal,
-    KiboProductCard,
     SfAccordion,
     SfChevron,
   },
   setup(_, context) {
-    const { getFacetsFromURL, getCatLink, getProductLink, changeFilters } = useUiHelpers()
+    const { getFacetsFromURL, getCatLink, getProductLink, changeSorting, changeFilters } =
+      useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
+    const facetsFromUrl = ref({ sort: "" })
+
     const {
       result: productSearchResult,
       search: productSearch,
@@ -290,6 +304,7 @@ export default {
       }
       changeFilters(filters.join(","))
     }
+
     watch(
       () => context.root.$route,
       async () => {
@@ -298,6 +313,31 @@ export default {
         visibleCategories(childrenCategories.value)
       }
     )
+
+    const sortBy = computed(() =>
+      facetGetters.getSortOptions({
+        ...productSearchResult.value,
+        input: { sort: facetsFromUrl.value?.sort },
+      })
+    )
+
+    const pagination = computed(() => facetGetters.getPagination(productSearchResult.value))
+
+    const showPerPage = ref(pagination.value.itemsPerPage)
+
+    watch(
+      () => context.root.$route,
+      async () => {
+        facetsFromUrl.value = getFacetsFromURL()
+        await search(getFacetsFromURL())
+        await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
+      }
+    )
+
+    const changeShowItemsPerPage = async (value: number) => {
+      showPerPage.value = value
+      await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
+    }
 
     useAsync(async () => {
       await search(getFacetsFromURL())
@@ -327,26 +367,17 @@ export default {
       currentPage: 1,
       childrenCategories,
       categoryTitle,
-      sortBy: "Latest",
+      sortBy,
       isFilterSidebarOpen: false,
       isGridView: true,
       displayOnPage: "40",
-      sortByOptions: [
-        {
-          value: "Latest",
-          label: "Latest",
-        },
-        {
-          value: "Price-up",
-          label: "Price from low to high",
-        },
-        {
-          value: "Price-down",
-          label: "Price from high to low",
-        },
-      ],
+      pagination,
+      changeSorting,
+      changeShowItemsPerPage,
+      facetsFromUrl,
     }
   },
+  watchQuery: ["sort"],
 }
 </script>
 <style lang="scss" scoped>
@@ -459,6 +490,7 @@ export default {
     display: flex;
     align-items: center;
     margin: 0 0 0 auto;
+    min-width: 11.875rem;
   }
 
   &__view {

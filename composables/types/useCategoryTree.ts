@@ -19,6 +19,7 @@ export interface uiHelpersReturnType {
   setTermForUrl: (query: string) => void
   getProductLink: (productCode: string) => string
   changeFilters: (filters) => void
+  changeSorting: (sort: string) => void
 }
 
 // categories

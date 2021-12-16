@@ -1,0 +1,58 @@
+.sf-pagination {
+  display: flex;
+  align-items: center;
+
+  &__item {
+    --link-text-decoration: none;
+    --pagination-item-width: 1.5rem;
+    --pagination-item-height: 1.375rem;
+
+    color: var(--pagination-item-color, var(--c-gray-variant));
+    width: var(--pagination-item-width);
+    height: var(--pagination-item-height);
+    margin: var(--pagination-item-margin, 0 var(--spacer-2xs));
+    border-radius: 4px;
+    text-align: center;
+
+    @include font(
+      --pagination-font,
+      var(--font-weight--bold),
+      var(--font-size--base),
+      1.4,
+      var(--font-family--secondary)
+    );
+
+    &.prev,
+    &--next {
+      --pagination-item-width: 1.125rem;
+      --pagination-item-height: 1.125rem;
+    }
+
+    &.prev {
+      --pagination-item-margin: 0 var(--spacer-base) 0 0;
+    }
+
+    &.next {
+      --pagination-item-margin: 0 0 0 var(--spacer-base);
+    }
+
+    &.current {
+      --pagination-item-color: var(--_c-white-primary);
+
+      background: var(--_c-green-primary);
+      cursor: default;
+
+      &:hover {
+        --pagination-item-color: var(--_c-white-primary);
+      }
+    }
+
+    &:hover {
+      --pagination-item-color: var(--c-primary);
+    }
+  }
+
+  @include for-desktop {
+    --pagination-item-margin: 0 var(--spacer-xs);
+  }
+}

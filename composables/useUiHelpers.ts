@@ -27,7 +27,7 @@ export const useUiHelpers = (): uiHelpersReturnType => {
       (prev, curr) => params[curr] || prev,
       params.slug_1
     )
-    const filters = query.filters?.split(',') || []
+    const filters = query.filters?.split(",") || []
 
     return {
       categoryCode,
@@ -40,7 +40,6 @@ export const useUiHelpers = (): uiHelpersReturnType => {
   }
 
   const changeFilters = (filters) => {
-    
     instance.router.push({
       query: {
         ...getFiltersDataFromUrl(instance, false),
@@ -71,11 +70,17 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     return `/product/${productCode}`
   }
 
+  const changeSorting = (sort: string) => {
+    const { query } = instance.router.history.current
+    instance.router.push({ query: { ...query, sort } })
+  }
+
   return {
     getCatLink,
     setTermForUrl,
     getFacetsFromURL,
     getProductLink,
     changeFilters,
+    changeSorting,
   }
 }
