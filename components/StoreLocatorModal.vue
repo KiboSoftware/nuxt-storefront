@@ -11,7 +11,7 @@
       <SfBar
         class="sf-modal__bar smartphone-only"
         :close="true"
-        :title="$t(barTitle)"
+        :title="$t('Select Store')"
         @click:close="closeModal"
       />
     </template>
@@ -21,16 +21,18 @@
         <div class="section-border"></div>
         <div class="location-search">
           <SfSearchBar
-            placeholder="Zip Code"
+            v-model="zipCodeInput"
+            placeholder="Enter Zip Code"
             class="Search-bar"
-            :value="null"
-            :icon="{ size: '1.25rem', color: '#43464E' }"
             aria-label="Search"
           />
           <button
-            class="color-primary sf-button sf-button--small"
+            :class="`color-primary sf-button sf-button--small ${
+              !zipCodeInput ? 'is-disabled--button' : ''
+            }`"
             :aria-disabled="false"
             :link="null"
+            @click="searchByZipCode"
           >
             Search
           </button>
@@ -41,7 +43,9 @@
           }}</span>
         </p>
         <div class="store-count section-border">
-          <p>{{ storeDetails.length }} stores within 100 miles</p>
+          <p :class="getStoreCountText.color">
+            {{ getStoreCountText.text }}
+          </p>
         </div>
         <div class="store-container">
           <div v-for="location in storeDetails" :key="location.code">
@@ -52,7 +56,7 @@
             />
           </div>
         </div>
-        <div class="action-buttons">
+        <div v-if="storeDetails.length" class="action-buttons">
           <button
             class="color-light sf-button sf-button--small"
             :aria-disabled="false"
@@ -75,9 +79,8 @@
   </SfModal>
 </template>
 <script lang="ts">
-import { SfModal, SfSearchBar } from "@storefront-ui/vue"
+import { SfModal, SfSearchBar, SfBar } from "@storefront-ui/vue"
 import { computed, ref } from "@nuxtjs/composition-api"
-import KiboStoreDetails from "@/components/KiboStoreDetails.vue"
 import {
   useCurrentLocation,
   useStoreLocations,
@@ -91,7 +94,7 @@ export default {
   components: {
     SfModal,
     SfSearchBar,
-    KiboStoreDetails,
+    SfBar,
   },
   setup() {
     const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
@@ -99,18 +102,25 @@ export default {
     const { locations, search: searchStoreLocations } = useStoreLocations()
     const { set, load: loadPurchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
+    const zipCodeInput = ref("")
+    const initialState = ref(true)
 
     const handleCurrentLocation = async () => {
+      zipCodeInput.value = ""
       await loadWithNavigator()
       await searchStoreLocations({
         latitude: currentLocation.value.latitude,
         longitude: currentLocation.value.longitude,
       })
+      initialState.value = false
     }
 
     const closeModal = () => {
       toggleStoreLocatorModal()
       selectedStore.value = ""
+      locations.value = []
+      zipCodeInput.value = ""
+      initialState.value = true
     }
 
     const storeDetails = computed(() => {
@@ -133,25 +143,49 @@ export default {
       }`
     })
 
+    const searchByZipCode = async () => {
+      await searchStoreLocations(zipCodeInput.value)
+      initialState.value = false
+    }
+
+    const getStoreCountText = computed(() => {
+      if (storeDetails.value.length) {
+        return {
+          color: "black",
+          text: `${storeDetails.value.length} store within 100 miles`,
+        }
+      } else if (initialState.value) {
+        return {
+          color: "black",
+          text: "Find stores within 100 miles",
+        }
+      }
+      return {
+        color: "red",
+        text: `No Results - 0 stores within 100 miles`,
+      }
+    })
+
     return {
       currentLocation,
       isStoreLocatorOpen,
       locations,
       storeDetails,
       selectedStore,
+      zipCodeInput,
       handleStoreChange,
       handleCurrentLocation,
       toggleStoreLocatorModal,
+      searchByZipCode,
       handleSetStoreButtonStatus,
       setStore,
       closeModal,
+      getStoreCountText,
     }
   },
 }
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 .sf-modal {
   --modal-width: 39.375rem;
   --modal-content-padding: 0;
@@ -181,7 +215,7 @@ export default {
 .current-location {
   text-decoration: underline;
   cursor: pointer;
-  font-size: var(--font-size--base);
+  font-size: var(--font-size--sm);
   padding: var(--spacer-2xs) var(--spacer-lg);
 }
 
@@ -191,6 +225,7 @@ export default {
   align-items: center;
   border-top: 1px solid var(--c-light);
   padding: var(--spacer-2xs) var(--spacer-sm);
+  font-size: var(--font-size--sm);
 }
 
 .store-container {
@@ -231,5 +266,10 @@ export default {
   display: flex;
   justify-content: flex-end;
   padding: var(--spacer-sm) var(--spacer-lg);
+}
+
+.red {
+  color: red;
+  font-style: italic;
 }
 </style>

@@ -22,6 +22,7 @@ body {
 }
 
 .content {
-  max-width: 100vw;
+  max-width: 88rem;
+  margin: 0 auto;
 }
 </style>

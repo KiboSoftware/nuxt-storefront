@@ -84,7 +84,7 @@ export const getDiscounts = (cart: Cart) => {
   }))
 }
 
-export const getFullfillmentOptions = (item: CartItem, purchaseLocation: Location) =>
+export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Location) =>
   item?.product.fulfillmentTypesSupported.map((option) => ({
     name: "fulfillment",
     value: option,
@@ -112,5 +112,5 @@ export const cartGetters = {
   getTotalItems: getCartTotalItems,
   getCoupons,
   getDiscounts,
-  getFullfillmentOptions,
+  getCartFulfillmentOptions,
 }

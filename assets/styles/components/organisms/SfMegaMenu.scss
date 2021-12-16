@@ -24,6 +24,7 @@
       font-size: var(--font-size--lg);
       margin: 0.75rem 0 0.25rem 0;
     }
+
     &__content {
       display: none;
       position: absolute;
@@ -70,6 +71,7 @@
   .sf-mega-menu {
     display: none;
   }
+
   .sf-mega-menu-column {
     &__content {
       display: none;

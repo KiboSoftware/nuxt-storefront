@@ -92,10 +92,8 @@ import {
   useCart,
   useUiState,
   cartGetters,
-  productGetters,
   storeLocationGetters,
 } from "@/composables"
-import KiboCollectedProduct from "@/components/KiboCollectedProduct.vue"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -105,7 +103,6 @@ export default defineComponent({
     SfButton,
     SfHeading,
     SfInput,
-    KiboCollectedProduct,
   },
   setup() {
     const { toggleStoreLocatorModal } = useUiState()
@@ -141,7 +138,7 @@ export default defineComponent({
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
     const cartItemFulfillmentTypes = (cartItem) => {
-      return productGetters.getFullfillmentOptions(cartItem.product, purchaseLocation.value)
+      return cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
     }
 
     return {
