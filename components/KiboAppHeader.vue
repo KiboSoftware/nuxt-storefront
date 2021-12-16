@@ -171,7 +171,7 @@
   </div>
 </template>
 
-<script lang="ts" scoped>
+<script lang="ts">
 import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink, SfBadge } from "@storefront-ui/vue"
 import { computed, ref, onBeforeUnmount, defineComponent, watch } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"

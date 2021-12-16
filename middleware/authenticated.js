@@ -6,7 +6,7 @@ const tryParse = (str) => {
   }
 }
 
-export default async ({ app }) => {
+export default ({ app }) => {
   let userId = null
   const encodedCookie = app.$cookies.get("kibo_at")
   if (encodedCookie) {
