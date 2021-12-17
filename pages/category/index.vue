@@ -7,7 +7,7 @@
           <SfHeading :level="1" :title="categoryName" class="category-name" />
         </div>
         <div class="navbar__sort desktop-only">
-          <span class="navbar__label">Sort by:</span>
+          <span class="navbar__label">{{ $t("Sort by") }}</span>
           <SfSelect
             :required="false"
             valid
@@ -27,7 +27,7 @@
           </SfSelect>
         </div>
         <div class="navbar__view">
-          <span class="navbar__view-label desktop-only">View</span>
+          <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
           <SfIcon
             class="navbar__view__icon"
             :color="'#2B2B2B'"

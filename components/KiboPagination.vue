@@ -1,7 +1,7 @@
 <template>
   <div class="pagination">
     <div class="pagination__select">
-      <p class="pagination__select--label">Show Per Page</p>
+      <p class="pagination__select--label">{{ $t("Show Per Page") }}</p>
       <SfSelect
         :required="false"
         valid
@@ -9,10 +9,9 @@
         :value="perPage"
         @input="changeItemsPerPage"
       >
-        <SfSelectOption value="5">5</SfSelectOption>
-        <SfSelectOption value="20">20</SfSelectOption>
-        <SfSelectOption value="40">40</SfSelectOption>
-        <SfSelectOption value="60">60</SfSelectOption>
+        <SfSelectOption value="20">{{ $t("20") }}</SfSelectOption>
+        <SfSelectOption value="40">{{ $t("40") }}</SfSelectOption>
+        <SfSelectOption value="60">{{ $t("60") }}</SfSelectOption>
       </SfSelect>
     </div>
     <div class="pagination__container">
