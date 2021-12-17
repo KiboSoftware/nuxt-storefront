@@ -38,7 +38,7 @@
             :disabled="loading"
           >
             <SfLoader :class="{ loader: loading }" :loading="loading">
-              <div>Log In</div>
+              <div>{{ $t("Log In") }}</div>
             </SfLoader>
           </SfButton>
         </form>
@@ -47,7 +47,7 @@
           data-testid="forgotten-password-button"
           @click="setIsForgottenValue(true)"
         >
-          Forgot Password?
+          {{ $t("Forgot Password?") }}
         </SfButton>
         <div class="aside">
           <SfHeading title="Don't have an account yet?" :level="3" class="aside__heading" />
@@ -56,7 +56,7 @@
             data-testid="register-now-button"
             @click="setIsLoginValue(false)"
           >
-            Register Now
+            {{ $t("Register Now") }}
           </SfButton>
         </div>
       </div>
