@@ -1,4 +1,4 @@
-import { QueryProductSearchArgs } from "~~/server/types/GraphQL"
+import { QueryProductSearchArgs } from "@/server/types/GraphQL"
 
 function getFacetValueFilter(categoryCode, filters = []) {
   let facetValueFilter = ""
@@ -11,37 +11,42 @@ function getFacetValueFilter(categoryCode, filters = []) {
 export const buildProductSearchVars = ({
   categoryCode = "",
   pageSize = 20,
-  filters = "",
+  filters = {},
   startIndex = 0,
   sort = "",
   search = "",
 }: {
   categoryCode: string
   pageSize?: number
-  filters?: string
+  filters?: {}
   startIndex?: number
   sort?: string
   search?: string
 }): QueryProductSearchArgs => {
   let facetTemplate = ""
-  let filter = ""
+  let facetHierValue = ""
   if (categoryCode) {
     facetTemplate = `categoryCode:${categoryCode}`
-    filter = `categoryCode req ${categoryCode}`
+    facetHierValue = `categoryCode:${categoryCode}`
   }
   const facetFilterList = Object.keys(filters)
     .filter((k) => filters[k].length)
     .reduce((accum, k) => {
-      return [...accum, ...filters[k].map((facetValue) => `Tenant~${k}:${facetValue}`)]
+      return [
+        ...accum,
+        ...filters[k].map((facetValue) => {
+          if (k === "Price" || k === "price") return facetValue
+          return `Tenant~${k}:${facetValue}`
+        }),
+      ]
     }, [])
-
   const facetValueFilter = getFacetValueFilter(categoryCode, facetFilterList)
   return {
     query: search,
     startIndex,
     pageSize,
     sortBy: sort,
-    filter,
+    facetHierValue,
     facetTemplate,
     facetValueFilter,
   }

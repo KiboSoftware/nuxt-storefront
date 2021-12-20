@@ -30,7 +30,6 @@ export const useCategoryTree = (): types.UseCategoryTreeResponse => {
     }
   }
 
-  // return
   return {
     load,
     categories,

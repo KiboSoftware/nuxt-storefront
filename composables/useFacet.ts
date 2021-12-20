@@ -7,7 +7,7 @@ export const useFacet = (referenceKey: string) => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const result = useState(`use-facet-result-${referenceKey}`, () => {
-    return {}
+    return null
   })
   const loading = useState(`use-facet-loading-${referenceKey}`, () => false)
   const error = useState(`use-facet-error-${referenceKey}`, () => null)

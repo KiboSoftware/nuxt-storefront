@@ -10,7 +10,7 @@ export interface getFacetsFromURLResponse {
   page: number
   itemsPerPage: number
   phrase: string
-  filters: []
+  filters: {}
   sort: string
 }
 export interface uiHelpersReturnType {
@@ -18,6 +18,7 @@ export interface uiHelpersReturnType {
   getFacetsFromURL: () => getFacetsFromURLResponse
   setTermForUrl: (query: string) => void
   getProductLink: (productCode: string) => string
+  changeFilters: (filters) => void
 }
 
 // categories

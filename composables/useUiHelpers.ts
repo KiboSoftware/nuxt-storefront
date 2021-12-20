@@ -39,6 +39,15 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     } as getFacetsFromURLResponse
   }
 
+  const changeFilters = (filters) => {
+    instance.router.push({
+      query: {
+        ...getFiltersDataFromUrl(instance, false),
+        ...filters,
+      },
+    })
+  }
+
   const setTermForUrl = (term: string) => {
     instance.router.push({
       query: {
@@ -66,5 +75,6 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     setTermForUrl,
     getFacetsFromURL,
     getProductLink,
+    changeFilters,
   }
 }
