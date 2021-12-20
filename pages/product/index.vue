@@ -286,7 +286,7 @@ export default defineComponent({
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
     const fulfillmentOptions = computed(() =>
-      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
+      productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
     )
     const selectedFulfillmentValue = computed(() =>
       productGetters.getSelectedFullfillmentOption(product.value)

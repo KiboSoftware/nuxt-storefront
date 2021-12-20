@@ -266,6 +266,7 @@ import {
 import { ref, computed, onMounted, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
+import Vue from "vue"
 import {
   useUiHelpers,
   useFacet,
@@ -274,7 +275,6 @@ import {
   facetGetters,
   productSearchGetters,
 } from "@/composables"
-import Vue from "vue"
 import { useState } from "#app"
 import KiboProductCard from "@/components/KiboProductCard.vue"
 
@@ -356,12 +356,11 @@ export default {
       return categories && categories[0]?.childrenCategories
     })
 
-    allFacets.value = facets.value
-
     const handleViewMoreClick = (facetId: string) => {
       const index = facets.value.findIndex((facet) => facet.id === facetId)
       facets.value[index].options = facets.value[index].allOptions
       allFacets.value = facets.value
+      setFilterValues()
     }
 
     const isFilterSelected = (facet, option) =>
@@ -409,7 +408,6 @@ export default {
         allFacets.value[index].options = allFacets.value[index].allOptions
       }
     }
-
     onMounted(() => {
       setFilterValues()
     })
@@ -420,14 +418,17 @@ export default {
         await productSearch(getFacetsFromURL())
         await search(getFacetsFromURL())
         visibleCategories(childrenCategories.value)
+        setFilterValues()
+        allFacets.value = facets.value
       }
     )
 
     useAsync(async () => {
       await search(getFacetsFromURL())
       await productSearch(getFacetsFromURL())
-      setFilterValues()
       visibleCategories(childrenCategories.value)
+      setFilterValues()
+      allFacets.value = facets.value
     }, null)
 
     return {
