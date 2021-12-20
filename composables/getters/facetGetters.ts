@@ -3,6 +3,29 @@ import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
 import { Breadcrumb } from "@/pages/types"
 import { Facet, Maybe, PrCategory } from "@/server/types/GraphQL"
 
+const normalizeFacet = (facet) => {
+  return {
+    type: "attribute",
+    id: facet.value,
+    value: facet.filterValue,
+    attrName: facet.label,
+    selected: facet.isApplied,
+    count: facet.count,
+  }
+}
+
+const normalizeFacetGroup = (facets = []) => {
+  return facets.map((facetGroup) => {
+    return {
+      id: facetGroup.label,
+      label: facetGroup.label,
+      options: facetGroup.values.map(normalizeFacet),
+      count: null,
+      showAll: false,
+    }
+  })
+}
+
 const getCategoryTree = (searchData: { categories: Maybe<Array<Maybe<PrCategory>>> }) => {
   if (!searchData) return []
   return searchData?.categories

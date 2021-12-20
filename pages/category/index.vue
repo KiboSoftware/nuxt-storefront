@@ -59,7 +59,7 @@
             :loading="productSearchLoading"
           >
             <transition-group>
-              <div class="category-drill-down" key="category-drill-down">
+              <div key="category-drill-down" class="category-drill-down">
                 <div class="category-title">{{ categoryTitle }}</div>
                 <SfList class="list">
                   <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
@@ -120,7 +120,54 @@
                           />
                         </SfButton>
                       </template>
+                      <<<<<<< HEAD
                       <KiboFacet :facet="facet" @selectFilter="selectFilter" />
+                      =======
+                      <SfSearchBar
+                        :placeholder="`Search ${facet.label}s`"
+                        aria-label="Search"
+                        :value="term[facet.id]"
+                        @input="findFilter($event, facet.id)"
+                        @keydown.enter="findFilter($event, facet.id)"
+                      >
+                        <template #icon>
+                          <SfButton class="sf-search-bar__button sf-button--pure">
+                            <span class="sf-search-bar__icon">
+                              <SfIcon icon="search" />
+                            </span>
+                          </SfButton>
+                        </template>
+                      </SfSearchBar>
+                      <SfFilter
+                        v-for="option in facet.options"
+                        :key="`${facet.id}-${option.id}`"
+                        :label="option.attrName"
+                        :count="`(${option.count})`"
+                        :selected="isFilterSelected(facet, option)"
+                        @change="() => selectFilter(facet, option)"
+                      />
+                      <div
+                        v-if="
+                          !(facet.allOptions.length === facet.options.length) &&
+                          facet.options.length > 5
+                        "
+                      >
+                        <SfButton
+                          font-size="13px"
+                          class="sf-button--text navbar__button navbar__button--plus list__item"
+                          aria-label="View More"
+                          @click="handleViewMoreClick(facet.id)"
+                        >
+                          <SfIcon
+                            size="0.938rem"
+                            color="#2B2B2B"
+                            icon="plus"
+                            class="navbar__plus-icon"
+                          />
+                          View More
+                        </SfButton>
+                      </div>
+                      >>>>>>> eaa5348 (Category Page Filters)
                     </SfAccordionItem>
                   </div>
                 </SfAccordion>
@@ -133,7 +180,7 @@
         :class="{ 'loading--products': productSearchLoading }"
         :loading="productSearchLoading"
       >
-        <div class="products" v-if="!productSearchLoading">
+        <div v-if="!productSearchLoading" class="products">
           <transition-group
             v-if="isGridView"
             appear
@@ -147,19 +194,19 @@
               :style="{ '--index': i }"
               :title="productGetters.getName(product)"
               :image="productGetters.getCoverImage(product)"
-              :scoreRating="3"
-              :maxRating="5"
-              wishlistIcon=""
-              isInWishlistIcon=""
-              :isInWishlist="false"
+              :score-rating="3"
+              :max-rating="5"
+              wishlist-icon=""
+              is-in-wishlist-icon=""
+              :is-in-wishlist="false"
               :show-add-to-cart-button="true"
-              :regularPrice="`$${productGetters.getPrice(product).regular}`"
+              :regular-price="`$${productGetters.getPrice(product).regular}`"
               :special-price="
                 productGetters.getPrice(product).special && productGetters.getPrice(product).special
               "
               :link="localePath(getProductLink(productGetters.getProductId(product)))"
-              imageWidth="12.563rem"
-              imageHeight="12.563rem"
+              image-width="12.563rem"
+              image-height="12.563rem"
               class="products__product-card"
             />
           </transition-group>
@@ -171,7 +218,7 @@
               :title="productGetters.getName(product)"
               :description="productGetters.getDescription(product)"
               :image="productGetters.getCoverImage(product)"
-              :regularPrice="`$${productGetters.getPrice(product).regular}`"
+              :regular-price="`$${productGetters.getPrice(product).regular}`"
               :special-price="
                 productGetters.getPrice(product).special && productGetters.getPrice(product).special
               "
@@ -232,6 +279,7 @@ import {
 import { ref, computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync, useRoute } from "@nuxtjs/composition-api"
+import Vue from "vue"
 import {
   useUiHelpers,
   useFacet,
@@ -358,6 +406,7 @@ export default {
       productSearchLoading,
       productSearchResult,
       visibleCategories,
+      handleViewMoreClick,
       products,
       facets,
       selectFilter,
