@@ -246,9 +246,8 @@ import {
   productGetters,
   useCart,
 } from "@/composables"
-import { isFulfillmentOptionValid } from "@/composables/helpers"
-import { isProductVariationsSelected } from "~~/composables/helpers/validateProductVariations"
-import { AddItemsToCartParams } from "~~/composables/types/useCart"
+import { isFulfillmentOptionValid, isProductVariationsSelected } from "@/composables/helpers"
+import { AddItemsToCartParams } from "@/composables/types"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -297,7 +296,7 @@ export default defineComponent({
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
     const fulfillmentOptions = computed(() =>
-      productGetters.getFullfillmentOptions(product.value, purchaseLocation.value)
+      productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
     )
     const selectedFulfillmentValue = computed(() =>
       productGetters.getSelectedFullfillmentOption(product.value)
@@ -310,7 +309,7 @@ export default defineComponent({
     const updateShopperEnteredValues = (
       attributeFQN: string,
       value: string,
-      shopperEnteredValue: undefined
+      shopperEnteredValue: string
     ) => {
       const itemToBeUpdated = shopperEnteredValues.find(
         (item) => item.attributeFQN === attributeFQN
