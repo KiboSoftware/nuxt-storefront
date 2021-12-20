@@ -391,6 +391,8 @@ export default {
       await search(getFacetsFromURL())
       await productSearch(getFacetsFromURL())
       visibleCategories(childrenCategories.value)
+      setFilterValues()
+      allFacets.value = facets.value
     }, null)
 
     return {
