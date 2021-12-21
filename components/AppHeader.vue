@@ -61,10 +61,9 @@ import {
 
 import debounce from "lodash.debounce"
 import { useAsync } from "@nuxtjs/composition-api"
-import useUiState from "../composables/useUiState"
-import { usePurchaseLocation } from "../composables"
 import HeaderNavigation from "./HeaderNavigation"
 import LocaleSelector from "./LocaleSelector"
+import { useUiState, usePurchaseLocation } from "@/composables"
 import { useUser } from "@/composables/useUser"
 import { storeLocationGetters, userGetters, cartGetters } from "@/composables/getters"
 import { useCart } from "@/composables/useCart"

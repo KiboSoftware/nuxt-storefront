@@ -4,6 +4,7 @@ import { apiAuthClient } from "../lib/auth-clients"
 
 export default async (req: KiboIncomingMessage, res: Response) => {
   try {
+    // TODO : Nuxt Fix should be here
     const body = req.headers.origin ? req.body : JSON.parse(req.body)
     const apiHost = `${process.env.KIBO_API_HOST}/graphql`
     const authToken = await apiAuthClient.getAccessToken()
