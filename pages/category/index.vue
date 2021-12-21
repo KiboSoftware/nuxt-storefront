@@ -126,7 +126,6 @@
                       <SfSearchBar
                         :placeholder="`Search ${facet.label}s`"
                         aria-label="Search"
-                        :value="term[facet.id]"
                         @input="findFilter($event, facet.id)"
                         @keydown.enter="findFilter($event, facet.id)"
                       >
@@ -139,13 +138,14 @@
                         </template>
                       </SfSearchBar>
                       <SfFilter
-                        v-for="option in facet.options"
-                        :key="`${facet.id}-${option.id}`"
-                        :label="option.attrName"
-                        :count="`(${option.count})`"
-                        :selected="isFilterSelected(facet, option)"
-                        @change="() => selectFilter(facet, option)"
+                        v-for="option in facetGetters.getFacetValues(facet)"
+                        :key="`${facetValueGetters.getFilter(option)}`"
+                        :label="facetValueGetters.getName(option)"
+                        :count="`(${facetValueGetters.getCount(option)})`"
+                        :selected="facetValueGetters.getIsApplied(option)"
+                        @change="selectFilter(facetValueGetters.getFilter(option))"
                       />
+                      <<<<<<< HEAD
                       <div
                         v-if="
                           !(facet.allOptions.length === facet.options.length) &&
@@ -167,7 +167,8 @@
                           View More
                         </SfButton>
                       </div>
-                      >>>>>>> eaa5348 (Category Page Filters)
+                      >>>>>>> eaa5348 (Category Page Filters) ======= >>>>>>> 2f1648d (feat: plp
+                      facets and getters)
                     </SfAccordionItem>
                   </div>
                 </SfAccordion>
@@ -391,8 +392,6 @@ export default {
       await search(getFacetsFromURL())
       await productSearch(getFacetsFromURL())
       visibleCategories(childrenCategories.value)
-      setFilterValues()
-      allFacets.value = facets.value
     }, null)
 
     return {
