@@ -24,7 +24,7 @@
 
       <div class="line-2"></div>
 
-      <div class="account-header">
+      <div v-show="!active" class="account-header">
         <slot name="content-top" />
       </div>
 
@@ -184,6 +184,7 @@ export default {
   font-size: 1.25rem;
   padding-left: 8.2%;
   border-bottom: 0.06rem solid var(--_c-white-secondary);
+  border-top: 0.06rem solid var(--_c-white-secondary);
 }
 
 .sf-mega-menu {
