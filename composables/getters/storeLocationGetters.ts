@@ -1,9 +1,4 @@
-import { Location, RegularHours } from "@/composables/types"
-
-interface TimeDetails {
-  openTime: string
-  closeTime: string
-}
+import { Location, RegularHours, Hours } from "@/server/types/GraphQL"
 
 const getCode = (location: Location): string => {
   return location.code as string
@@ -38,14 +33,12 @@ const getZip = (location: Location): string => {
 }
 
 const getHours = (location: Location) => {
-  return Object.entries(location.regularHours as RegularHours).map(
-    (value: (string | TimeDetails)[]) => {
-      return {
-        day: value[0],
-        ...(value[1] as TimeDetails),
-      }
+  return Object.entries(location.regularHours as RegularHours).map((value: (string | Hours)[]) => {
+    return {
+      day: value[0],
+      ...(value[1] as Hours),
     }
-  )
+  })
 }
 
 const getLocations = (locations: Location[]) => {

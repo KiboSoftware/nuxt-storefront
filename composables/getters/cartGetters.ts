@@ -1,5 +1,4 @@
-import { Location } from "../types"
-import { Cart, CartItem, Maybe, CrProductOption } from "~~/server/types/GraphQL"
+import { Cart, CartItem, Maybe, CrProductOption, Location } from "@/server/types/GraphQL"
 
 export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
 

@@ -149,7 +149,7 @@ export default defineComponent({
     SfBadge,
   },
   directives: { clickOutside },
-  setup() {
+  setup(_, context) {
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
     const { result, search, loading } = useSearchSuggestions()
     const nuxt = useNuxtApp()
@@ -172,6 +172,8 @@ export default defineComponent({
 
     const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
     const searchSuggestionResult = ref({})
+
+    const { search: productSearch } = useProductSearch(`product-search`)
 
     const closeSearch = () => {
       if (!isSearchOpen.value) return
@@ -200,11 +202,13 @@ export default defineComponent({
         return searchBarRef.value.$el.children[0].focus()
       }
     }
-    const gotoSearchResult = () => {
+
+    const gotoSearchResult = async () => {
       if (term.value) {
         const searchStr = term.value
-        closeSearch()
-        return app.router.push({ path: "/search", query: { phrase: searchStr } })
+        isSearchOpen.value = false
+        app.router.push({ path: "/search", query: { phrase: searchStr } })
+        await productSearch({ ...getFacetsFromURL(), phrase: searchStr })
       }
     }
 
@@ -213,11 +217,21 @@ export default defineComponent({
       (newVal, oldVal) => {
         const shouldSearchBeOpened =
           !isMobile.value &&
-          term.value.length > 0 &&
-          ((!oldVal && newVal) || (newVal.length !== oldVal.length && isSearchOpen.value === false))
+          term.value?.length > 0 &&
+          ((!oldVal && newVal) ||
+            (newVal?.length !== oldVal?.length && isSearchOpen.value === false))
         if (shouldSearchBeOpened) {
           isSearchOpen.value = true
         }
+      }
+    )
+
+    watch(
+      () => context.root.$route,
+      async () => {
+        const facetsFromUrl = getFacetsFromURL()
+        term.value = facetsFromUrl.phrase
+        await productSearch({ ...facetsFromUrl, phrase: term.value })
       }
     )
 
