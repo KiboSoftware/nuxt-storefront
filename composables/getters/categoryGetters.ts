@@ -3,6 +3,7 @@ import type { PrCategory } from "../../server/types/GraphQL"
 
 export const getMegaMenuCategory = (categories: PrCategory[]) => {
   return categories
+    .slice()
     ?.filter((category: PrCategory) => category.childrenCategories?.length && category.isDisplayed)
     .filter((category, indx) => indx < 4)
 }
