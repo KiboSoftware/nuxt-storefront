@@ -1,12 +1,12 @@
 <template>
   <div id="category">
-    <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
+    <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
     <div class="navbar section">
       <div class="navbar__main">
-        <div class="navbar__aside desktop-only">
-          <SfHeading :level="1" :title="categoryName" class="category-name" />
+        <div class="navbar__aside">
+          <SfHeading :level="1" :title="pageHeader" class="category-name sf-heading__title" />
         </div>
-        <div class="navbar__sort desktop-only">
+        <div class="navbar__sort">
           <span class="navbar__label">{{ $t("Sort by") }}</span>
           <SfSelect
             :required="false"
@@ -26,7 +26,7 @@
             </SfSelectOption>
           </SfSelect>
         </div>
-        <div class="navbar__view">
+        <div class="navbar__view desktop-only">
           <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
           <SfIcon
             class="navbar__view__icon"
@@ -231,9 +231,8 @@ import {
   SfAccordion,
   SfChevron,
 } from "@storefront-ui/vue"
-import { ref, computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
-import { useAsync, useRoute } from "@nuxtjs/composition-api"
+import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
 import {
   useUiHelpers,
   useFacet,
@@ -267,9 +266,21 @@ export default {
     const { getFacetsFromURL, getCatLink, getProductLink, changeSorting, changeFilters } =
       useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
-    const facetsFromUrl = ref({ sort: "" })
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
+    const facetsFromUrl = ref({
+      categoryCode: "",
+      page: null,
+      itemsPerPage: 20,
+      phrase: "",
+      filters: [],
+      sort: "",
+    })
+    const isSearchPage = ref(false)
+    const route = useRoute()
+    if (!route.value.params?.categoryCode) {
+      isSearchPage.value = true
+    }
 
     const {
       result: productSearchResult,
@@ -277,7 +288,6 @@ export default {
       loading: productSearchLoading,
     } = useProductSearch(`product-search`)
 
-    const route = useRoute()
     const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
@@ -292,7 +302,7 @@ export default {
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
       showMoreButton.value = !showMoreButton.value
-      navCategories.value = categories.slice(0, categoriesVisible)
+      navCategories.value = categories?.slice(0, categoriesVisible)
     }
 
     const selectFilter = (filterValue) => {
@@ -336,7 +346,16 @@ export default {
       await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
     }
 
+    const pageHeader = computed(() => {
+      return isSearchPage.value && facetsFromUrl.value?.phrase
+        ? `${productSearchResult.value?.items?.length || 0} Results for "${
+            facetsFromUrl.value?.phrase
+          }"`
+        : categoryName.value
+    })
+
     useAsync(async () => {
+      facetsFromUrl.value = getFacetsFromURL()
       await search(getFacetsFromURL())
       await productSearch(getFacetsFromURL())
       visibleCategories(childrenCategories.value)
@@ -372,6 +391,7 @@ export default {
       changeSorting,
       changeShowItemsPerPage,
       facetsFromUrl,
+      pageHeader,
     }
   },
   watchQuery: ["sort"],
@@ -400,6 +420,8 @@ export default {
   display: flex;
   border: 1px solid var(--c-light);
   border-width: 0 0 1px 0;
+  height: 4.813rem;
+  flex-wrap: wrap;
   @include for-desktop {
     border-width: 1px 0 1px 0;
   }
@@ -420,14 +442,22 @@ export default {
 
   &__aside {
     padding: 0;
+    flex: 1;
+    @include for-desktop {
+      flex: none;
+    }
   }
 
   &__main {
     flex: 1;
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     padding: 0;
     @include for-desktop {
       padding: var(--spacer-xs) var(--spacer-xl);
+      flex-direction: row;
+      align-items: center;
     }
   }
 
@@ -486,8 +516,13 @@ export default {
   &__sort {
     display: flex;
     align-items: center;
-    margin: 0 0 0 auto;
-    min-width: calc(var(--spacer-3xl) * 1.1875);
+    margin: 0;
+    min-width: 11.875rem;
+    flex: 1;
+    @include for-desktop {
+      flex: none;
+      margin: 0 0 0 auto;
+    }
   }
 
   &__view {
@@ -674,6 +709,17 @@ export default {
 
 .category-name {
   margin: 0 0 0 calc(var(--spacer-base) * -1.0833);
+  // margin: 0;
+  @include for-desktop {
+    margin: 0 0 0 -1.563rem;
+  }
+}
+
+.breadcrumbs {
+  margin: var(--spacer-base) 0 var(--spacer-base) 1.563rem;
+  @include for-desktop {
+    margin: var(--spacer-base) auto var(--spacer-base);
+  }
 }
 
 .sf-accordion-item {
