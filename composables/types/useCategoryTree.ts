@@ -10,7 +10,7 @@ export interface getFacetsFromURLResponse {
   page: number
   itemsPerPage: number
   phrase: string
-  filters: {}
+  filters: Array<string>
   sort: string
 }
 export interface uiHelpersReturnType {

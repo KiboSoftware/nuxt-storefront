@@ -53,7 +53,7 @@ jest.mock("#app", () => ({
 describe("[composable] useProductSearch", () => {
   const { result, search, loading, error } = useProductSearch(`product-search`)
   test("search: should search products and save as result", async () => {
-    await search({ categoryCode: "32", filters: { Color: ["black", "blue"] } })
+    await search({ categoryCode: "32", filters: ["Tenant~brand:carari"] })
     expect(result.value).toStrictEqual(productSearchResponse.data.products)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()

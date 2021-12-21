@@ -112,28 +112,7 @@
                           />
                         </SfButton>
                       </template>
-                      <SfSearchBar
-                        :placeholder="`Search ${facet.label}s`"
-                        aria-label="Search"
-                        @input="findFilter($event, facet.id)"
-                        @keydown.enter="findFilter($event, facet.id)"
-                      >
-                        <template #icon>
-                          <SfButton class="sf-search-bar__button sf-button--pure">
-                            <span class="sf-search-bar__icon">
-                              <SfIcon icon="search" />
-                            </span>
-                          </SfButton>
-                        </template>
-                      </SfSearchBar>
-                      <SfFilter
-                        v-for="option in facetGetters.getFacetValues(facet)"
-                        :key="`${facetValueGetters.getFilter(option)}`"
-                        :label="facetValueGetters.getName(option)"
-                        :count="`(${facetValueGetters.getCount(option)})`"
-                        :selected="facetValueGetters.getIsApplied(option)"
-                        @change="selectFilter(facetValueGetters.getFilter(option))"
-                      />
+                      <KiboFacet :facet="facet" @selectFilter="selectFilter" />
                     </SfAccordionItem>
                   </div>
                 </SfAccordion>
@@ -236,15 +215,12 @@ import {
   SfLink,
   SfLoader,
   SfProductCardHorizontal,
-  SfFilter,
   SfAccordion,
   SfChevron,
-  SfSearchBar,
 } from "@storefront-ui/vue"
-import { ref, computed, onMounted, watch } from "@vue/composition-api"
+import { computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync, useRoute } from "@nuxtjs/composition-api"
-import Vue from "vue"
 import {
   useUiHelpers,
   useFacet,
@@ -273,10 +249,8 @@ export default {
     SfLoader,
     SfProductCardHorizontal,
     KiboProductCard,
-    SfFilter,
     SfAccordion,
     SfChevron,
-    SfSearchBar,
   },
   setup(_, context) {
     const { getFacetsFromURL, getCatLink, getProductLink, changeFilters } = useUiHelpers()
@@ -305,16 +279,9 @@ export default {
       navCategories.value = categories.slice(0, categoriesVisible)
     }
 
-    const handleViewMoreClick = (facetId: string) => {
-      // const index = facets.value.findIndex((facet) => facet.id === facetId)
-      // facets.value[index].options = facets.value[index].allOptions
-      // allFacets.value = facets.value
-      // setFilterValues()
-    }
-
     const selectFilter = (filterValue) => {
-      const qs = route.value?.query as any
-      const filters = (qs.filters?.split(",") as any) || []
+      const qs = route.value?.query as { filters: string }
+      const filters = qs.filters?.split(",") || []
       const currentIndex = filters.indexOf(filterValue)
       if (currentIndex > -1) {
         filters.splice(currentIndex, 1)
@@ -322,22 +289,6 @@ export default {
         filters.push(filterValue)
       }
       changeFilters(filters.join(","))
-    }
-
-    const findFilter = (paramValue, facetId) => {
-      // if (!paramValue.target) {
-      //   term.value[facetId] = paramValue
-      // } else {
-      //   term.value[facetId] = paramValue.target.value
-      // }
-      // const index = allFacets.value.findIndex((facet) => facet.id === facetId)
-      // if (term.value[facetId]) {
-      //   allFacets.value[index].options = allFacets.value[index].allOptions.filter((option) =>
-      //     option.attrName.toLowerCase().includes(term?.value[facetId].toLowerCase())
-      //   )
-      // } else {
-      //   allFacets.value[index].options = allFacets.value[index].allOptions
-      // }
     }
     watch(
       () => context.root.$route,
@@ -367,10 +318,8 @@ export default {
       productSearchLoading,
       productSearchResult,
       visibleCategories,
-      handleViewMoreClick,
       products,
       facets,
-      findFilter,
       selectFilter,
       navCategories,
       showMoreButton,
