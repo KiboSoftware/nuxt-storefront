@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line import/default
 import winston from "winston"
 const { format, transports, createLogger } = winston
 const { printf, combine, timestamp, colorize, errors } = format
