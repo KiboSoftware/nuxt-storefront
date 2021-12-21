@@ -120,7 +120,7 @@
                           />
                         </SfButton>
                       </template>
-                      <<<<<<< HEAD
+                      <<<<<<< HEAD <<<<<<< HEAD
                       <KiboFacet :facet="facet" @selectFilter="selectFilter" />
                       =======
                       <SfSearchBar
@@ -168,7 +168,9 @@
                         </SfButton>
                       </div>
                       >>>>>>> eaa5348 (Category Page Filters) ======= >>>>>>> 2f1648d (feat: plp
-                      facets and getters)
+                      facets and getters) =======
+                      <KiboFacet :facet="facet" @selectFilter="selectFilter" />
+                      >>>>>>> 202b04d (create KiboFacet Component for facet options)
                     </SfAccordionItem>
                   </div>
                 </SfAccordion>
@@ -280,7 +282,6 @@ import {
 import { ref, computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 import { useAsync, useRoute } from "@nuxtjs/composition-api"
-import Vue from "vue"
 import {
   useUiHelpers,
   useFacet,
@@ -407,7 +408,6 @@ export default {
       productSearchLoading,
       productSearchResult,
       visibleCategories,
-      handleViewMoreClick,
       products,
       facets,
       selectFilter,
