@@ -1,4 +1,4 @@
-import { Product, PrCategory, Facet, Maybe, Scalars } from "./../../server/types/GraphQL"
+import { Product, PrCategory, Facet, Maybe, Scalars } from "@/server/types/GraphQL"
 
 export type FacetResultsData = {
   items?: Maybe<Array<Maybe<Product>>>
