@@ -11,14 +11,14 @@ function getFacetValueFilter(categoryCode, filters = []) {
 export const buildProductSearchVars = ({
   categoryCode = "",
   pageSize = 20,
-  filters = {},
+  filters = [],
   startIndex = 0,
   sort = "",
   search = "",
 }: {
   categoryCode: string
   pageSize?: number
-  filters?: {}
+  filters?: Array<string>
   startIndex?: number
   sort?: string
   search?: string
@@ -29,18 +29,8 @@ export const buildProductSearchVars = ({
     facetTemplate = `categoryCode:${categoryCode}`
     facetHierValue = `categoryCode:${categoryCode}`
   }
-  const facetFilterList = Object.keys(filters)
-    .filter((k) => filters[k].length)
-    .reduce((accum, k) => {
-      return [
-        ...accum,
-        ...filters[k].map((facetValue) => {
-          if (k === "Price" || k === "price") return facetValue
-          return `Tenant~${k}:${facetValue}`
-        }),
-      ]
-    }, [])
-  const facetValueFilter = getFacetValueFilter(categoryCode, facetFilterList)
+
+  const facetValueFilter = getFacetValueFilter(categoryCode, filters)
   return {
     query: search,
     startIndex,

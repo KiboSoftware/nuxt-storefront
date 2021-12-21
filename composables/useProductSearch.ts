@@ -14,7 +14,7 @@ export const useProductSearch = (referenceKey: string) => {
   const error = useState(`use-productSearch-error-${referenceKey}`, () => null)
   const search = async (params: {
     categoryCode?: string
-    filters?: {}
+    filters?: Array<string>
     page?: number
     itemsPerPage?: number
     phrase?: string

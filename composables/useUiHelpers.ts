@@ -27,7 +27,7 @@ export const useUiHelpers = (): uiHelpersReturnType => {
       (prev, curr) => params[curr] || prev,
       params.slug_1
     )
-    const filters = getFiltersDataFromUrl(instance, true)
+    const filters = query.filters?.split(',') || []
 
     return {
       categoryCode,
@@ -40,10 +40,11 @@ export const useUiHelpers = (): uiHelpersReturnType => {
   }
 
   const changeFilters = (filters) => {
+    
     instance.router.push({
       query: {
         ...getFiltersDataFromUrl(instance, false),
-        ...filters,
+        filters,
       },
     })
   }

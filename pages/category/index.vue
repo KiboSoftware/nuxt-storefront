@@ -89,10 +89,10 @@
               </div>
               <div key="filters">
                 <SfAccordion :show-chevron="true" open="all" :multiple="false">
-                  <div v-for="(facet, i) in allFacets" :key="i">
+                  <div v-for="(facet, i) in facets" :key="i">
                     <SfAccordionItem
-                      :key="`filter-title-${facet.id}`"
-                      :header="facet.label"
+                      :key="`filter-title-${facetGetters.getFacetField(facet)}`"
+                      :header="facetGetters.getFacetName(facet)"
                       class="filters"
                     >
                       <template #header="{ header, isOpen, accordionClick }">
@@ -115,7 +115,6 @@
                       <SfSearchBar
                         :placeholder="`Search ${facet.label}s`"
                         aria-label="Search"
-                        :value="term[facet.id]"
                         @input="findFilter($event, facet.id)"
                         @keydown.enter="findFilter($event, facet.id)"
                       >
@@ -128,34 +127,13 @@
                         </template>
                       </SfSearchBar>
                       <SfFilter
-                        v-for="option in facet.options"
-                        :key="`${facet.id}-${option.id}`"
-                        :label="option.attrName"
-                        :count="`(${option.count})`"
-                        :selected="isFilterSelected(facet, option)"
-                        @change="() => selectFilter(facet, option)"
+                        v-for="option in facetGetters.getFacetValues(facet)"
+                        :key="`${facetValueGetters.getFilter(option)}`"
+                        :label="facetValueGetters.getName(option)"
+                        :count="`(${facetValueGetters.getCount(option)})`"
+                        :selected="facetValueGetters.getIsApplied(option)"
+                        @change="selectFilter(facetValueGetters.getFilter(option))"
                       />
-                      <div
-                        v-if="
-                          !(facet.allOptions.length === facet.options.length) &&
-                          facet.options.length > 5
-                        "
-                      >
-                        <SfButton
-                          font-size="13px"
-                          class="sf-button--text navbar__button navbar__button--plus list__item"
-                          aria-label="View More"
-                          @click="handleViewMoreClick(facet.id)"
-                        >
-                          <SfIcon
-                            size="0.938rem"
-                            color="#2B2B2B"
-                            icon="plus"
-                            class="navbar__plus-icon"
-                          />
-                          View More
-                        </SfButton>
-                      </div>
                     </SfAccordionItem>
                   </div>
                 </SfAccordion>
@@ -265,7 +243,7 @@ import {
 } from "@storefront-ui/vue"
 import { ref, computed, onMounted, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
-import { useAsync } from "@nuxtjs/composition-api"
+import { useAsync, useRoute } from "@nuxtjs/composition-api"
 import Vue from "vue"
 import {
   useUiHelpers,
@@ -273,7 +251,9 @@ import {
   useProductSearch,
   productGetters,
   facetGetters,
+  facetValueGetters,
   productSearchGetters,
+  categoryGetters,
 } from "@/composables"
 import { useState } from "#app"
 import KiboProductCard from "@/components/KiboProductCard.vue"
@@ -306,120 +286,65 @@ export default {
       search: productSearch,
       loading: productSearchLoading,
     } = useProductSearch(`product-search`)
-    const term = ref({})
-    const selectedFilters = useState("selected-filters", () => null)
+
+    const route = useRoute()
+    const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
+    const facets = computed(() =>
+      productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
+    )
+    const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
+    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
+    const categoryName = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
+    const categoryTitle = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
+    const childrenCategories = computed(() => categoryTree.value?.[0]?.childrenCategories)
+    const navCategories = useState("nav-categories", () => [])
+    const showMoreButton = useState("show-more-button", () => false)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
       showMoreButton.value = !showMoreButton.value
       navCategories.value = categories.slice(0, categoriesVisible)
     }
 
-    const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
-
-    const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
-    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
-    const navCategories = useState("nav-categories", () => {
-      return []
-    })
-    const allFacets = ref([])
-
-    const showMoreButton = useState("show-more-button", () => false)
-    const categoryName = computed(() => {
-      const categories = categoryTree.value
-      return categories && categories[0]?.content?.name
-    })
-    const facets = computed(() => {
-      if (!productSearchLoading.value) {
-        return facetGetters
-          .getGrouped(productSearchResult.value, [
-            "tenant~brand",
-            "tenant~size",
-            "price",
-            "tenant~color",
-          ])
-          .map((facet) => {
-            return { ...facet, allOptions: facet.options, options: facet.options.slice(0, 6) }
-          })
-      } else {
-        return []
-      }
-    })
-
-    const categoryTitle = computed(() => {
-      const categories = categoryTree.value
-      const title = categories?.[0]?.content?.name
-      return title
-    })
-
-    const childrenCategories = computed(() => {
-      const categories = categoryTree.value
-      return categories && categories[0]?.childrenCategories
-    })
-
     const handleViewMoreClick = (facetId: string) => {
-      const index = facets.value.findIndex((facet) => facet.id === facetId)
-      facets.value[index].options = facets.value[index].allOptions
-      allFacets.value = facets.value
-      setFilterValues()
+      // const index = facets.value.findIndex((facet) => facet.id === facetId)
+      // facets.value[index].options = facets.value[index].allOptions
+      // allFacets.value = facets.value
+      // setFilterValues()
     }
 
-    const isFilterSelected = (facet, option) =>
-      (selectedFilters.value[facet.id] || []).includes(option.id)
-
-    const selectFilter = (facet, option) => {
-      if (!selectedFilters.value[facet.id]) {
-        Vue.set(selectedFilters.value, facet.id, [])
+    const selectFilter = (filterValue) => {
+      const qs = route.value?.query as any
+      const filters = (qs.filters?.split(",") as any) || []
+      const currentIndex = filters.indexOf(filterValue)
+      if (currentIndex > -1) {
+        filters.splice(currentIndex, 1)
+      } else {
+        filters.push(filterValue)
       }
-
-      if (selectedFilters.value[facet.id].find((f) => f === option.id)) {
-        selectedFilters.value[facet.id] = selectedFilters.value[facet.id].filter(
-          (f) => f !== option.id
-        )
-        return
-      }
-
-      selectedFilters.value[facet.id].push(option.id)
-      changeFilters(selectedFilters.value)
-    }
-
-    const setFilterValues = () => {
-      if (!facets.value?.length) return
-      selectedFilters.value = facets.value?.reduce(
-        (prev, curr) => ({
-          ...prev,
-          [curr.id]: curr.options.filter((o) => o.selected).map((o) => o.id),
-        }),
-        {}
-      )
+      changeFilters(filters.join(","))
     }
 
     const findFilter = (paramValue, facetId) => {
-      if (!paramValue.target) {
-        term.value[facetId] = paramValue
-      } else {
-        term.value[facetId] = paramValue.target.value
-      }
-      const index = allFacets.value.findIndex((facet) => facet.id === facetId)
-      if (term.value[facetId]) {
-        allFacets.value[index].options = allFacets.value[index].allOptions.filter((option) =>
-          option.attrName.toLowerCase().includes(term?.value[facetId].toLowerCase())
-        )
-      } else {
-        allFacets.value[index].options = allFacets.value[index].allOptions
-      }
+      // if (!paramValue.target) {
+      //   term.value[facetId] = paramValue
+      // } else {
+      //   term.value[facetId] = paramValue.target.value
+      // }
+      // const index = allFacets.value.findIndex((facet) => facet.id === facetId)
+      // if (term.value[facetId]) {
+      //   allFacets.value[index].options = allFacets.value[index].allOptions.filter((option) =>
+      //     option.attrName.toLowerCase().includes(term?.value[facetId].toLowerCase())
+      //   )
+      // } else {
+      //   allFacets.value[index].options = allFacets.value[index].allOptions
+      // }
     }
-    onMounted(() => {
-      setFilterValues()
-    })
-
     watch(
       () => context.root.$route,
       async () => {
         await productSearch(getFacetsFromURL())
         await search(getFacetsFromURL())
         visibleCategories(childrenCategories.value)
-        setFilterValues()
-        allFacets.value = facets.value
       }
     )
 
@@ -427,8 +352,6 @@ export default {
       await search(getFacetsFromURL())
       await productSearch(getFacetsFromURL())
       visibleCategories(childrenCategories.value)
-      setFilterValues()
-      allFacets.value = facets.value
     }, null)
 
     return {
@@ -439,17 +362,15 @@ export default {
       getCatLink,
       getProductLink,
       productGetters,
+      facetGetters,
+      facetValueGetters,
       productSearchLoading,
       productSearchResult,
       visibleCategories,
       handleViewMoreClick,
       products,
       facets,
-      term,
       findFilter,
-      isFilterSelected,
-      allFacets,
-      selectedFilters,
       selectFilter,
       navCategories,
       showMoreButton,
@@ -779,9 +700,11 @@ export default {
 
 .sf-accordion-item {
   --accordion-item-header-padding: 1.875rem 0;
+
   &__chevron {
     margin-left: auto;
   }
+
   &__header {
     font-size: 0.875rem;
     font-weight: bold;
