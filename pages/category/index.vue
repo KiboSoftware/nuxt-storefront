@@ -286,7 +286,6 @@ export default {
       loading: productSearchLoading,
     } = useProductSearch(`product-search`)
 
-    const route = useRoute()
     const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
@@ -738,18 +737,6 @@ export default {
   }
 }
 
-.sf-search-bar {
-  --search-bar-height: 1.625rem;
-  --icon-size: 0.875rem;
-  --font-size--base: 0.75rem;
-  --search-bar-placeholder-color: var(--_c-gray-middle);
-
-  bottom: 10px;
-
-  &__icon {
-    padding: 6px 0 0 2px;
-  }
-}
 .sf-select {
   --select-width: 11.875rem;
   --select-dropdown-text-indent: 10px;
