@@ -15,11 +15,12 @@ export interface getFacetsFromURLResponse {
 }
 export interface uiHelpersReturnType {
   getCatLink?: (category: GraphQL.PrCategory) => string
-  getFacetsFromURL: () => getFacetsFromURLResponse
+  getFacetsFromURL: (isSearchPage: boolean) => getFacetsFromURLResponse
   setTermForUrl: (query: string) => void
   getProductLink: (productCode: string) => string
   changeFilters: (filters) => void
   changeSorting: (sort: string) => void
+  setCategoryLink: (isSearchPage: boolean, category: GraphQL.PrCategory) => void
 }
 
 // categories

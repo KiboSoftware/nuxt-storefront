@@ -59,15 +59,15 @@
             :loading="productSearchLoading"
           >
             <transition-group>
-              <div class="category-drill-down" key="category-drill-down">
+              <div key="category-drill-down" class="category-drill-down">
                 <div class="category-title">{{ categoryTitle }}</div>
                 <SfList class="list">
                   <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
                     <SfMenuItem
                       :label="item.content.name"
                       :count="`(${item.count})`"
-                      :link="localePath(getCatLink(item))"
                       class="sf-menu-item__label"
+                      @click="handleCategoryClick(item)"
                     />
                   </SfListItem>
                   <div v-if="showMoreButton && childrenCategories && childrenCategories.length > 5">
@@ -133,7 +133,7 @@
         :class="{ 'loading--products': productSearchLoading }"
         :loading="productSearchLoading"
       >
-        <div class="products" v-if="!productSearchLoading">
+        <div v-if="!productSearchLoading" class="products">
           <transition-group
             v-if="isGridView"
             appear
@@ -145,21 +145,21 @@
               v-for="(product, i) in products"
               :key="productGetters.getProductId(product)"
               :style="{ '--index': i }"
+              :score-rating="3"
+              :max-rating="5"
+              wishlist-icon=""
+              is-in-wishlist-icon=""
+              :is-in-wishlist="false"
               :title="productGetters.getName(product)"
               :image="productGetters.getCoverImage(product)"
-              :scoreRating="3"
-              :maxRating="5"
-              wishlistIcon=""
-              isInWishlistIcon=""
-              :isInWishlist="false"
               :show-add-to-cart-button="true"
-              :regularPrice="`$${productGetters.getPrice(product).regular}`"
+              :regular-price="`$${productGetters.getPrice(product).regular}`"
               :special-price="
                 productGetters.getPrice(product).special && productGetters.getPrice(product).special
               "
               :link="localePath(getProductLink(productGetters.getProductId(product)))"
-              imageWidth="12.563rem"
-              imageHeight="12.563rem"
+              image-width="12.563rem"
+              image-height="12.563rem"
               class="products__product-card"
             />
           </transition-group>
@@ -171,7 +171,7 @@
               :title="productGetters.getName(product)"
               :description="productGetters.getDescription(product)"
               :image="productGetters.getCoverImage(product)"
-              :regularPrice="`$${productGetters.getPrice(product).regular}`"
+              :regular-price="`$${productGetters.getPrice(product).regular}`"
               :special-price="
                 productGetters.getPrice(product).special && productGetters.getPrice(product).special
               "
@@ -263,8 +263,14 @@ export default {
     SfChevron,
   },
   setup(_, context) {
-    const { getFacetsFromURL, getCatLink, getProductLink, changeSorting, changeFilters } =
-      useUiHelpers()
+    const {
+      getFacetsFromURL,
+      getCatLink,
+      getProductLink,
+      changeSorting,
+      changeFilters,
+      setCategoryLink,
+    } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const facetsFromUrl = ref({
       categoryCode: "",
@@ -315,15 +321,6 @@ export default {
       changeFilters(filters.join(","))
     }
 
-    watch(
-      () => context.root.$route,
-      async () => {
-        await productSearch(getFacetsFromURL())
-        await search(getFacetsFromURL())
-        visibleCategories(childrenCategories.value)
-      }
-    )
-
     const sortBy = computed(() =>
       facetGetters.getSortOptions({
         ...productSearchResult.value,
@@ -338,15 +335,22 @@ export default {
     watch(
       () => context.root.$route,
       async () => {
-        facetsFromUrl.value = getFacetsFromURL()
-        await search(getFacetsFromURL())
-        await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
+        facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
+        await search(facetsFromUrl.value)
+        await productSearch({
+          ...facetsFromUrl.value,
+          itemsPerPage: showPerPage.value,
+        })
+        visibleCategories(childrenCategories.value)
       }
     )
 
     const changeShowItemsPerPage = async (value: number) => {
       showPerPage.value = value
-      await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
+      await productSearch({
+        ...facetsFromUrl.value,
+        itemsPerPage: showPerPage.value,
+      })
     }
 
     const pageHeader = computed(() => {
@@ -357,10 +361,14 @@ export default {
         : categoryName.value
     })
 
+    const handleCategoryClick = (item) => {
+      setCategoryLink(isSearchPage.value, item)
+    }
+
     useAsync(async () => {
-      facetsFromUrl.value = getFacetsFromURL()
-      await search(getFacetsFromURL())
-      await productSearch(getFacetsFromURL())
+      facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
+      await search(facetsFromUrl.value)
+      await productSearch(facetsFromUrl.value)
       visibleCategories(childrenCategories.value)
     }, null)
 
@@ -395,6 +403,7 @@ export default {
       changeShowItemsPerPage,
       facetsFromUrl,
       pageHeader,
+      handleCategoryClick,
     }
   },
   watchQuery: ["sort"],
@@ -581,6 +590,14 @@ export default {
   padding-left: 0.375rem;
 
   --list-item-margin: 0 0 var(--spacer-sm) 0;
+
+  &__item {
+    margin: 0;
+
+    button {
+      height: 2rem;
+    }
+  }
 }
 
 .products {
