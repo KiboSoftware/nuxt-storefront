@@ -60,7 +60,7 @@
           >
             <transition-group>
               <div key="category-drill-down" class="category-drill-down">
-                <div class="category-title">{{ categoryTitle }}</div>
+                <div class="category-title">{{ categoriesFromSearch.header }}</div>
                 <SfList class="list">
                   <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
                     <SfMenuItem
@@ -71,13 +71,22 @@
                     />
                   </SfListItem>
                   <div
-                    v-if="showMoreButton && categoriesFromSearch && categoriesFromSearch.length > 5"
+                    v-if="
+                      showMoreButton &&
+                      categoriesFromSearch.children &&
+                      categoriesFromSearch.children.length > 5
+                    "
                   >
                     <SfButton
                       font-size="13px"
                       class="sf-button--text navbar__button navbar__button--plus list__item"
                       aria-label="View More"
-                      @click="visibleCategories(categoriesFromSearch, categoriesFromSearch.length)"
+                      @click="
+                        visibleCategories(
+                          categoriesFromSearch.children,
+                          categoriesFromSearch.children.length
+                        )
+                      "
                     >
                       <SfIcon
                         size="0.938rem"
@@ -300,15 +309,27 @@ export default {
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
     )
-    const categoriesFromSearch = computed(() =>
-      productSearchGetters.getFacetCategoryCode(productSearchResult?.value)
-    )
+
+    const categoriesFromSearch = computed(() => {
+      let header, children
+      const { categoryCode } = facetsFromUrl.value
+      if (!categoryCode && isSearchPage) {
+        children = productSearchGetters.getFacetCategoryCode(productSearchResult?.value)
+      } else {
+        const parent = productSearchGetters
+          .getFacetCategoryCode(productSearchResult?.value)
+          ?.find((facet) => categoryCode === facet.value)
+        header = parent?.label
+        children = parent?.childrenFacetValues
+      }
+
+      return { header, children }
+    })
+
     const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const categoryName = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
-    const categoryTitle = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
-    // const childrenCategories = computed(() => categoryTree.value?.[0]?.childrenCategories)
-    const navCategories = useState("nav-categories", () => categoriesFromSearch.value)
+    const navCategories = useState("nav-categories", () => categoriesFromSearch.value.children)
     const showMoreButton = useState("show-more-button", () => false)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
@@ -348,7 +369,7 @@ export default {
           ...facetsFromUrl.value,
           itemsPerPage: showPerPage.value,
         })
-        visibleCategories(categoriesFromSearch.value)
+        visibleCategories(categoriesFromSearch.value.children)
       }
     )
 
@@ -376,7 +397,7 @@ export default {
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
       await productSearch(facetsFromUrl.value)
-      visibleCategories(categoriesFromSearch.value)
+      visibleCategories(categoriesFromSearch.value.children)
     }, null)
 
     return {
@@ -400,7 +421,6 @@ export default {
       categoryName,
       currentPage: 1,
       categoriesFromSearch,
-      categoryTitle,
       sortBy,
       isFilterSidebarOpen: false,
       isGridView: true,
