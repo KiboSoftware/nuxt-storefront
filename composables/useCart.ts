@@ -1,5 +1,4 @@
 import { updateCartQuantityMutation } from "./../gql/mutations/cart/updateCartMutation"
-import { AddItemsToCartParams } from "@/composables/types"
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/gql/queries/cart"
 import { addToCartMutation } from "@/gql/mutations"
@@ -35,9 +34,10 @@ export const useCart = () => {
   const addItemsToCart = async (productToAdd) => {
     try {
       loading.value = true
+
       await fetcher({
         query: addToCartMutation,
-        variables: addToCartVariables,
+        variables: { productToAdd },
       })
     } catch (err) {
       // eslint-disable-next-line no-console

@@ -95,7 +95,6 @@ export default defineComponent({
     }
 
     const addToCart = () => {
-      console.log("props", props.qty)
       context.emit("addItemToCart", props.qty)
     }
 
