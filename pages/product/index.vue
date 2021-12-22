@@ -289,7 +289,7 @@ export default defineComponent({
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
     const { addItemsToCart } = useCart()
-    const { toggleStoreLocatorModal } = useUiState()
+    const { toggleStoreLocatorModal, toggleAddToCartConfirmationModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
 
     useAsync(async () => {
@@ -395,6 +395,7 @@ export default defineComponent({
       )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
+        toggleAddToCartConfirmationModal()
       }
     }
 

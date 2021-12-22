@@ -12,6 +12,7 @@ const state = reactive({
   isFilterSidebarOpen: false,
   isMobileMenuOpen: false,
   isStoreLocatorOpen: false,
+  isAddToCartConfirmationOpen: false,
 })
 
 export const useUiState = () => {
@@ -36,6 +37,12 @@ export const useUiState = () => {
   const toggleStoreLocatorModal = () => {
     if (state.isMobileMenuOpen) toggleMobileMenu()
     state.isStoreLocatorOpen = !state.isStoreLocatorOpen
+  }
+
+  const isAddToCartConfirmationOpen = computed(() => state.isAddToCartConfirmationOpen)
+  const toggleAddToCartConfirmationModal = () => {
+    if (state.isMobileMenuOpen) toggleMobileMenu()
+    state.isAddToCartConfirmationOpen = !state.isAddToCartConfirmationOpen
   }
 
   const isNewsletterModalOpen = computed(() => state.isNewsletterModalOpen)
@@ -72,5 +79,7 @@ export const useUiState = () => {
     toggleMobileMenu,
     toggleStoreLocatorModal,
     isStoreLocatorOpen,
+    isAddToCartConfirmationOpen,
+    toggleAddToCartConfirmationModal,
   }
 }

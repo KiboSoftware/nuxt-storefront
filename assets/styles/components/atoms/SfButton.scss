@@ -17,4 +17,10 @@
   &--text {
     height: 1.15rem;
     }
+
+  &--secondary {
+    background-color: var(--_c-white-primary);
+    border: 1px solid var(--_c-gray-middle);
+    color: var(--_c-dark-primary);
+  }
 }

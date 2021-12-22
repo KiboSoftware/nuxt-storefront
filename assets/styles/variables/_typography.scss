@@ -2,6 +2,7 @@
   // font-family
   --font-family--primary: "Roboto", sans-serif;
   --font-family--secondary: "Raleway", sans-serif;
+  --font-size--xxs: 0.625rem; //10px
 
   @include for-desktop {
     --h1-font-size: 1.75rem; //28px

@@ -31,7 +31,11 @@
     </slot>
     <slot name="add-to-wishlist">
       <div class="column column-right">
-        <SfButton class="sf-add-to-wishlist__button" :disabled="disabled" @click="addToWishList">
+        <SfButton
+          class="sf-button--secondary sf-add-to-wishlist__button"
+          :disabled="disabled"
+          @click="addToWishList"
+        >
           {{ labelAddToWishlist }}
         </SfButton>
       </div>
@@ -122,9 +126,6 @@ $cart-button-width: 11.6rem; //186px
 .sf-add-to-wishlist {
   &__button {
     width: $cart-button-width;
-    background-color: var(--_c-white-primary);
-    border: 1px solid var(--_c-gray-middle);
-    color: var(--_c-dark-primary);
   }
 
   &__button.sf-button {
