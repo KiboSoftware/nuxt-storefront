@@ -20,7 +20,8 @@ export interface uiHelpersReturnType {
   getProductLink: (productCode: string) => string
   changeFilters: (filters) => void
   changeSorting: (sort: string) => void
-  setCategoryLink: (isSearchPage: boolean, category: GraphQL.PrCategory) => void
+  setCategoryLink: (isSearchPage: boolean, facetValue: GraphQL.FacetValue) => void
+  goBackToPreviousRoute: () => void
 }
 
 // categories

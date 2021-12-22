@@ -64,18 +64,20 @@
                 <SfList class="list">
                   <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
                     <SfMenuItem
-                      :label="item.content.name"
+                      :label="item.label"
                       :count="`(${item.count})`"
                       class="sf-menu-item__label"
                       @click="handleCategoryClick(item)"
                     />
                   </SfListItem>
-                  <div v-if="showMoreButton && childrenCategories && childrenCategories.length > 5">
+                  <div
+                    v-if="showMoreButton && categoriesFromSearch && categoriesFromSearch.length > 5"
+                  >
                     <SfButton
                       font-size="13px"
                       class="sf-button--text navbar__button navbar__button--plus list__item"
                       aria-label="View More"
-                      @click="visibleCategories(childrenCategories, childrenCategories.length)"
+                      @click="visibleCategories(categoriesFromSearch, categoriesFromSearch.length)"
                     >
                       <SfIcon
                         size="0.938rem"
@@ -89,7 +91,8 @@
                   <SfLink
                     v-if="breadcrumbs.length > 1"
                     class="navbar__button navbar__button--back"
-                    :link="breadcrumbs[breadcrumbs.length - 2].link"
+                    :link="!isSearchPage ? breadcrumbs[breadcrumbs.length - 2].link : undefined"
+                    @click="isSearchPage && goBackToPreviousRoute"
                   >
                     <SfIcon size="0.813rem" color="#2B2B2B" icon="chevron_left" />Back
                   </SfLink>
@@ -270,6 +273,7 @@ export default {
       changeSorting,
       changeFilters,
       setCategoryLink,
+      goBackToPreviousRoute,
     } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const nuxt = useNuxtApp()
@@ -298,12 +302,15 @@ export default {
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
     )
+    const categoriesFromSearch = computed(() =>
+      productSearchGetters.getFacetCategoryCode(productSearchResult?.value)
+    )
     const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const categoryName = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
     const categoryTitle = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
-    const childrenCategories = computed(() => categoryTree.value?.[0]?.childrenCategories)
-    const navCategories = useState("nav-categories", () => [])
+    // const childrenCategories = computed(() => categoryTree.value?.[0]?.childrenCategories)
+    const navCategories = useState("nav-categories", () => categoriesFromSearch.value)
     const showMoreButton = useState("show-more-button", () => false)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
@@ -374,7 +381,7 @@ export default {
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
       await productSearch(facetsFromUrl.value)
-      visibleCategories(childrenCategories.value)
+      visibleCategories(categoriesFromSearch.value)
     }, null)
 
     return {
@@ -397,7 +404,7 @@ export default {
       showMoreButton,
       categoryName,
       currentPage: 1,
-      childrenCategories,
+      categoriesFromSearch,
       categoryTitle,
       sortBy,
       isFilterSidebarOpen: false,
@@ -409,6 +416,8 @@ export default {
       facetsFromUrl,
       pageHeader,
       handleCategoryClick,
+      goBackToPreviousRoute,
+      isSearchPage,
     }
   },
   watchQuery: ["sort"],
