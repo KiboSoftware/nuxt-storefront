@@ -1,4 +1,4 @@
-import type { PrCategory } from "../server/types/GraphQL"
+import { FacetValue, PrCategory } from "./../server/types/GraphQL"
 import type { uiHelpersReturnType, getFacetsFromURLResponse } from "./types"
 import { useNuxtApp } from "#app"
 
@@ -74,13 +74,17 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     instance.router.push({ query: { ...query, sort } })
   }
 
-  const setCategoryLink = (isSearchPage: boolean, category: PrCategory) => {
+  const setCategoryLink = (isSearchPage: boolean, facetValue: FacetValue) => {
+    const { query } = instance.router.history.current
     if (isSearchPage) {
-      const { query } = instance.router.history.current
-      instance.router.push({ query: { ...query, categoryCode: category.categoryCode } })
+      instance.router.push({ query: { ...query, categoryCode: facetValue.value } })
     } else {
-      instance.router.push(`/c/${category.categoryCode}`)
+      instance.router.push({ path: `/c/${facetValue.value}`, query })
     }
+  }
+
+  const goBackToPreviousRoute = () => {
+    instance.router.back()
   }
 
   return {
@@ -91,5 +95,6 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     changeFilters,
     changeSorting,
     setCategoryLink,
+    goBackToPreviousRoute,
   }
 }

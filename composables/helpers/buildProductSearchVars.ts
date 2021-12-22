@@ -25,8 +25,8 @@ export const buildProductSearchVars = ({
 }): QueryProductSearchArgs => {
   let facetTemplate = ""
   let facetHierValue = ""
+  facetTemplate = `categoryCode:${categoryCode || "_root"}`
   if (categoryCode) {
-    facetTemplate = `categoryCode:${categoryCode}`
     facetHierValue = `categoryCode:${categoryCode}`
   }
 
