@@ -1,4 +1,6 @@
 .sf-search-bar {
+  --search-bar-width: 100%;
+
   &__button {
     position: absolute;
     bottom: 0;
@@ -30,6 +32,10 @@
       var(--font-family--primary)
     );
     @include border(--search-bar-border, 1px, solid, var(--_c-gray-middle));
+
+    &::-webkit-input-placeholder {
+      padding-left: var(--spacer-2xs);
+    }
 
     &:focus {
       --search-bar-border-color: var(--_c-green-primary);
