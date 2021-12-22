@@ -735,19 +735,6 @@ export default {
   }
 }
 
-.sf-search-bar {
-  --search-bar-height: calc(var(--spacer-base) * 1.0833);
-  --icon-size: var(--font-size--sm);
-  --font-size--base: calc(var(--spacer-xs) * 1.5);
-  --search-bar-placeholder-color: var(--_c-gray-middle);
-
-  bottom: calc(var(--spacer-xs) * 1.25);
-
-  &__icon {
-    padding: calc(var(--spacer-2xs) * 1.5) 0 0 calc(var(--spacer-2xs) * 0.5);
-  }
-}
-
 .sf-select {
   --select-width: calc(var(--spacer-3xl) * 1.1875);
   --select-dropdown-text-indent: calc(var(--spacer-xs) * 1.25);
