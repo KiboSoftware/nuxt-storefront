@@ -237,8 +237,6 @@ import { defineComponent, computed } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 
 import { ref, useAsync } from "@nuxtjs/composition-api"
-import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import KiboProductActions from "@/components/KiboProductActions.vue"
 import {
   useProductSSR,
   useUiState,
@@ -247,7 +245,7 @@ import {
   useCart,
 } from "@/composables"
 import { isFulfillmentOptionValid, isProductVariationsSelected } from "@/composables/helpers"
-import { AddItemsToCartParams } from "@/composables/types"
+import { CartItem } from "@/server/types/GraphQL"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -268,8 +266,6 @@ export default defineComponent({
     SfCheckbox,
     SfInput,
     SfAccordion,
-    KiboFulfillmentOptions,
-    KiboProductActions,
   },
 
   setup(_, context) {
@@ -336,7 +332,7 @@ export default defineComponent({
     const selectOption = async (
       attributeFQN: string,
       value: string,
-      shopperEnteredValue = undefined
+      shopperEnteredValue: string
     ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
@@ -363,31 +359,27 @@ export default defineComponent({
 
     const checkEligibilityForAddToCart = () => {
       isValidForAddToCart.value =
-        isProductVariationsSelected(product.value) && product.value.fulfillmentMethod !== undefined
+        isProductVariationsSelected(product.value) && Boolean(product.value.fulfillmentMethod)
     }
 
     // Add to Cart
     const quantityLeft = computed(() => 5)
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
-    const addToCart = () => {
-      const addToCartVariables: AddItemsToCartParams = {
-        productToAdd: {
-          product: {
-            productCode: product?.value?.productCode ? product?.value?.productCode : "",
-            variationProductCode: product?.value?.variationProductCode
-              ? product?.value?.variationProductCode
-              : "",
-            options: shopperEnteredValues,
-          },
-          quantity: qtySelected.value,
-          fulfillmentMethod: product.value?.fulfillmentMethodShortName,
-          purchaseLocation: product.value?.purchaseLocationCode,
+    const addToCart = async () => {
+      const productToAdd: CartItem = {
+        product: {
+          productCode: product?.value?.productCode || "",
+          variationProductCode: product?.value?.variationProductCode || "",
+          options: shopperEnteredValues,
         },
+        quantity: qtySelected.value,
+        fulfillmentMethod: product.value?.fulfillmentMethodShortName,
+        purchaseLocation: product.value?.purchaseLocationCode,
       }
 
       if (isValidForAddToCart.value) {
-        addItemsToCart(addToCartVariables)
+        await addItemsToCart(productToAdd)
       }
     }
 
