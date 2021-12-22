@@ -20,13 +20,12 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     }
   }
 
-  const getFacetsFromURL = () => {
+  const getFacetsFromURL = (isSearchPage?: boolean) => {
     // eslint-disable-next-line
     const { query, params } = instance.router.history.current
-    const categoryCode = Object.keys(params).reduce(
-      (prev, curr) => params[curr] || prev,
-      params.slug_1
-    )
+    const categoryCode = !isSearchPage
+      ? Object.keys(params).reduce((prev, curr) => params[curr] || prev, params.slug_1)
+      : query.categoryCode
     const filters = query.filters?.split(",") || []
 
     return {
@@ -75,6 +74,15 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     instance.router.push({ query: { ...query, sort } })
   }
 
+  const setCategoryLink = (isSearchPage: boolean, category: PrCategory) => {
+    if (isSearchPage) {
+      const { query } = instance.router.history.current
+      instance.router.push({ query: { ...query, categoryCode: category.categoryCode } })
+    } else {
+      instance.router.push(`/c/${category.categoryCode}`)
+    }
+  }
+
   return {
     getCatLink,
     setTermForUrl,
@@ -82,5 +90,6 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     getProductLink,
     changeFilters,
     changeSorting,
+    setCategoryLink,
   }
 }

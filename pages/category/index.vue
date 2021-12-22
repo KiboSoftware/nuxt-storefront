@@ -66,8 +66,8 @@
                     <SfMenuItem
                       :label="item.content.name"
                       :count="`(${item.count})`"
-                      :link="localePath(getCatLink(item))"
                       class="sf-menu-item__label"
+                      @click="handleCategoryClick(item)"
                     />
                   </SfListItem>
                   <div v-if="showMoreButton && childrenCategories && childrenCategories.length > 5">
@@ -145,13 +145,13 @@
               v-for="(product, i) in products"
               :key="productGetters.getProductId(product)"
               :style="{ '--index': i }"
-              :title="productGetters.getName(product)"
-              :image="productGetters.getCoverImage(product)"
               :score-rating="3"
               :max-rating="5"
               wishlist-icon=""
               is-in-wishlist-icon=""
               :is-in-wishlist="false"
+              :title="productGetters.getName(product)"
+              :image="productGetters.getCoverImage(product)"
               :show-add-to-cart-button="true"
               :regular-price="`$${productGetters.getPrice(product).regular}`"
               :special-price="
@@ -263,8 +263,14 @@ export default {
     SfChevron,
   },
   setup(_, context) {
-    const { getFacetsFromURL, getCatLink, getProductLink, changeSorting, changeFilters } =
-      useUiHelpers()
+    const {
+      getFacetsFromURL,
+      getCatLink,
+      getProductLink,
+      changeSorting,
+      changeFilters,
+      setCategoryLink,
+    } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
@@ -320,10 +326,13 @@ export default {
     watch(
       () => context.root.$route,
       async () => {
-        facetsFromUrl.value = getFacetsFromURL()
-        await search(getFacetsFromURL())
+        facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
+        await search(getFacetsFromURL(isSearchPage.value))
         visibleCategories(childrenCategories.value)
-        await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
+        await productSearch({
+          ...getFacetsFromURL(isSearchPage.value),
+          itemsPerPage: showPerPage.value,
+        })
       }
     )
 
@@ -343,7 +352,10 @@ export default {
 
     const changeShowItemsPerPage = async (value: number) => {
       showPerPage.value = value
-      await productSearch({ ...getFacetsFromURL(), itemsPerPage: showPerPage.value })
+      await productSearch({
+        ...facetsFromUrl.value,
+        itemsPerPage: showPerPage.value,
+      })
     }
 
     const pageHeader = computed(() => {
@@ -354,10 +366,14 @@ export default {
         : categoryName.value
     })
 
+    const handleCategoryClick = (item) => {
+      setCategoryLink(isSearchPage.value, item)
+    }
+
     useAsync(async () => {
-      facetsFromUrl.value = getFacetsFromURL()
-      await search(getFacetsFromURL())
-      await productSearch(getFacetsFromURL())
+      facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
+      await search(facetsFromUrl.value)
+      await productSearch(facetsFromUrl.value)
       visibleCategories(childrenCategories.value)
     }, null)
 
@@ -392,6 +408,7 @@ export default {
       changeShowItemsPerPage,
       facetsFromUrl,
       pageHeader,
+      handleCategoryClick,
     }
   },
   watchQuery: ["sort"],
@@ -578,6 +595,14 @@ export default {
   padding-left: calc(var(--spacer-2xs) * 1.5);
 
   --list-item-margin: 0 0 var(--spacer-sm) 0;
+
+  &__item {
+    margin: 0;
+
+    button {
+      height: 2rem;
+    }
+  }
 }
 
 .products {
