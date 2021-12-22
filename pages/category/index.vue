@@ -244,7 +244,7 @@ import {
   productSearchGetters,
   categoryGetters,
 } from "@/composables"
-import { useState } from "#app"
+import { useState, useNuxtApp } from "#app"
 
 export default {
   name: "Category",
@@ -266,6 +266,8 @@ export default {
       useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const facetsFromUrl = ref({ sort: "" })
+    const nuxt = useNuxtApp()
+    const { sortOptions } = nuxt.nuxt2Context.$config.productListing
 
     const {
       result: productSearchResult,
@@ -312,10 +314,13 @@ export default {
     )
 
     const sortBy = computed(() =>
-      facetGetters.getSortOptions({
-        ...productSearchResult.value,
-        input: { sort: facetsFromUrl.value?.sort },
-      })
+      facetGetters.getSortOptions(
+        {
+          ...productSearchResult.value,
+          input: { sort: facetsFromUrl.value?.sort },
+        },
+        sortOptions
+      )
     )
 
     const pagination = computed(() => facetGetters.getPagination(productSearchResult.value))

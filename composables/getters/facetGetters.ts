@@ -23,22 +23,8 @@ const getBreadcrumbs = (searchData: {
   return [...homeCrumb, ...categoryCrumbs]
 }
 
-const getFacetName = (facet: Facet) => facet?.label
-const getFacetField = (facet: Facet) => facet?.field
-const getFacetValues = (facet: Facet) => facet?.values
-const getSortOptions = (searchData: FacetResultsData) => {
-  const options = [
-    { type: "sort", value: "Default", id: "", count: null },
-    { type: "sort", value: "Price: Low to High", id: "price asc", count: null },
-    {
-      type: "sort",
-      value: "Price: High to Low",
-      id: "price desc",
-      count: null,
-    },
-    { type: "sort", value: "Latest", id: "createDate desc", count: null },
-    { type: "sort", value: "Oldest", id: "createDate asc", count: null },
-  ].map((option) => ({
+const getSortOptions = (searchData: FacetResultsData, sortOptions) => {
+  const options = sortOptions.map((option) => ({
     ...option,
     selected: option.id === searchData.input?.sort,
   }))

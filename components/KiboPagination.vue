@@ -9,9 +9,13 @@
         :value="perPage"
         @input="changeItemsPerPage"
       >
-        <SfSelectOption value="20">{{ $t("20") }}</SfSelectOption>
-        <SfSelectOption value="40">{{ $t("40") }}</SfSelectOption>
-        <SfSelectOption value="60">{{ $t("60") }}</SfSelectOption>
+        <SfSelectOption
+          v-for="(itemNumber, index) in itemsPerPage"
+          :key="index"
+          :value="itemNumber"
+        >
+          {{ itemNumber }}
+        </SfSelectOption>
       </SfSelect>
     </div>
     <div class="pagination__container">
@@ -27,6 +31,8 @@
 </template>
 <script>
 import { SfSelect, SfPagination } from "@storefront-ui/vue"
+import { useNuxtApp } from "#app"
+
 export default {
   name: "KiboPagination",
   components: {
@@ -45,6 +51,8 @@ export default {
   },
   setup(props, context) {
     const perPage = ref(String(props?.pagination?.itemsPerPage))
+    const nuxt = useNuxtApp()
+    const { itemsPerPage } = nuxt.nuxt2Context.$config.productListing
 
     const changeItemsPerPage = (value) => {
       perPage.value = value
@@ -54,6 +62,7 @@ export default {
     return {
       perPage,
       changeItemsPerPage,
+      itemsPerPage,
     }
   },
 }
