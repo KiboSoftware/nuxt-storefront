@@ -7,7 +7,7 @@
           <div>
             <div class="product__gallery">
               <LazyHydrate when-idle>
-                <SfGallery
+                <KiboGallery
                   :images="productGallery"
                   :thumb-width="115"
                   :thumb-height="115"
@@ -215,7 +215,6 @@
 
 <script lang="ts">
 import {
-  SfGallery,
   SfPrice,
   SfRating,
   SfIcon,
@@ -238,13 +237,13 @@ import LazyHydrate from "vue-lazy-hydration"
 import { useAsync } from "@nuxtjs/composition-api"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import KiboProductActions from "@/components/KiboProductActions.vue"
+import KiboGallery from "@/components/KiboGallery.vue"
 import { useProductSSR, useUiState, usePurchaseLocation, productGetters } from "@/composables"
 import { isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({
   name: "Product",
   components: {
-    SfGallery,
     SfPrice,
     SfRating,
     SfIcon,
@@ -261,6 +260,7 @@ export default defineComponent({
     SfAccordion,
     KiboFulfillmentOptions,
     KiboProductActions,
+    KiboGallery,
   },
 
   setup(_, context) {

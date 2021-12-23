@@ -162,6 +162,11 @@ export default defineNuxtConfig({
         component: resolve(__dirname, "pages/product/index.vue"),
       })
       routes.push({
+        name: "product_zoom",
+        path: "/product-zoom/:productCode/",
+        component: resolve(__dirname, "pages/product-zoom.vue"),
+      })
+      routes.push({
         name: "categories",
         path: "/c/:categoryCode",
         component: resolve(__dirname, "pages/category/index.vue"),

@@ -166,4 +166,5 @@ export default {
   Checkout: "Checkout",
   ShopAll: "Shop All",
   Advertisment: "Advertisment",
+  "Pinch image to zoom": "Pinch image to zoom",
 }
