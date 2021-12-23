@@ -166,4 +166,6 @@ export default {
   Checkout: "Checkout",
   ShopAll: "Shop All",
   Advertisment: "Advertisment",
+  "Add to Cart": "Add to Cart",
+  "Add to Wishlist": "Add to Wishlist",
 }

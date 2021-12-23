@@ -1,4 +1,4 @@
-import { buildBreadcrumbs } from "@/composables/helpers/buildBreadcrumbs"
+import { buildBreadcrumbs, isProductVariationsSelected } from "@/composables/helpers"
 import { Breadcrumb } from "@/pages/types"
 import { Location, Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
 import { ProductCustom } from "@/composables/types"
@@ -148,6 +148,9 @@ const getSegregatedOptions = (product: ProductCustom) => {
   return productOptions
 }
 
+const validateAddToCart = (product: ProductCustom): boolean =>
+  isProductVariationsSelected(product) && Boolean(product.fulfillmentMethod)
+
 export const productGetters = {
   getName,
   getRating,
@@ -167,4 +170,5 @@ export const productGetters = {
   getProductFulfillmentOptions,
   getCoverImage,
   getProductId,
+  validateAddToCart,
 }

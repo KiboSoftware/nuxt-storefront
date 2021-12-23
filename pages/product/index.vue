@@ -194,9 +194,9 @@
                 <KiboProductActions
                   v-model="qtySelected"
                   :quantity-left="quantityLeft"
-                  :isValidForAddToCart="isValidForAddToCart"
-                  label-add-to-cart="Add to Cart"
-                  label-add-to-wishlist="Add to Wishlist"
+                  :is-valid-for-add-to-cart="isValidForAddToCart"
+                  :label-add-to-cart="$t('Add to Cart')"
+                  :label-add-to-wishlist="$t('Add to Wishlist')"
                   @addItemToCart="addToCart"
                   @addItemWishlist="addToWishList"
                 />
@@ -236,7 +236,7 @@ import { defineComponent, computed } from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
 
-import { ref, useAsync } from "@nuxtjs/composition-api"
+import { useAsync } from "@nuxtjs/composition-api"
 import {
   useProductSSR,
   useUiState,
@@ -244,8 +244,7 @@ import {
   productGetters,
   useCart,
 } from "@/composables"
-import { isFulfillmentOptionValid, isProductVariationsSelected } from "@/composables/helpers"
-import { CartItem } from "@/server/types/GraphQL"
+import { buildAddToCartInput, isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -297,8 +296,8 @@ export default defineComponent({
     const selectedFulfillmentValue = computed(() =>
       productGetters.getSelectedFullfillmentOption(product.value)
     )
+    const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
 
-    const isValidForAddToCart = ref(false)
     // Options section
     let shopperEnteredValues = []
 
@@ -336,7 +335,6 @@ export default defineComponent({
     ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
-      checkEligibilityForAddToCart()
     }
 
     // Get Fullfillment Options
@@ -353,13 +351,7 @@ export default defineComponent({
 
       if (isValid) {
         setFulfillment(selectedFulfillmentVal, shortName, purchaseLocation?.value?.code)
-        checkEligibilityForAddToCart()
       }
-    }
-
-    const checkEligibilityForAddToCart = () => {
-      isValidForAddToCart.value =
-        isProductVariationsSelected(product.value) && Boolean(product.value.fulfillmentMethod)
     }
 
     // Add to Cart
@@ -367,17 +359,22 @@ export default defineComponent({
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
     const addToCart = async () => {
-      const productToAdd: CartItem = {
-        product: {
-          productCode: product?.value?.productCode || "",
-          variationProductCode: product?.value?.variationProductCode || "",
-          options: shopperEnteredValues,
-        },
-        quantity: qtySelected.value,
-        fulfillmentMethod: product.value?.fulfillmentMethodShortName,
-        purchaseLocation: product.value?.purchaseLocationCode,
-      }
+      // const productToAdd: CartItem = {
+      //   product: {
+      //     productCode: product?.value?.productCode || "",
+      //     variationProductCode: product?.value?.variationProductCode || "",
+      //     options: shopperEnteredValues,
+      //   },
+      //   quantity: qtySelected.value,
+      //   fulfillmentMethod: product.value?.fulfillmentMethodShortName,
+      //   purchaseLocation: product.value?.purchaseLocationCode,
+      // }
 
+      const productToAdd = buildAddToCartInput(
+        product.value,
+        qtySelected.value,
+        shopperEnteredValues
+      )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
       }
