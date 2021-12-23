@@ -117,7 +117,6 @@ export default defineComponent({
       staticClass: null,
       className: null,
       active: "",
-      title: "Back",
       subtitle: "All Department",
     }
   },

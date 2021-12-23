@@ -19,7 +19,7 @@
             <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
           </SfIcon>
           <div class="icon-name-sidebar">
-            <span> My Account</span>
+            <span>{{ $t("My Account") }} </span>
           </div>
         </SfButton>
       </template>
@@ -178,6 +178,7 @@
             <SfIcon v-if="isOpenSearchBar" size="1.25rem">
               <font-awesome-icon icon="sort-up" class="fa-icon" color="var(--_c-white-secondary)" />
             </SfIcon>
+<<<<<<< HEAD
           </div>
         </div>
         <div class="kibo-mobile__header-column">
@@ -200,6 +201,34 @@
           <SfIcon size="1.25rem">
             <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
             <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
+=======
+            <div class="kibo-header__icon">
+              <span class="kibo-header__icon-name"> {{ selectedLocation }}</span>
+            </div>
+          </SfButton>
+          <SfButton
+            v-e2e="'app-header-account'"
+            class="sf-button--pure sf-header__action"
+            @click="handleAccountClick"
+          >
+            <SfIcon class="sf-header__icon">
+              <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
+              <i class="far fa-user-circle"></i>
+            </SfIcon>
+            <div class="kibo-header__icon">
+              <span class="kibo-header__icon-name"> {{ $t("My Account") }}</span>
+            </div>
+          </SfButton>
+          <SfButton
+            v-e2e="'app-header-cart'"
+            class="sf-button--pure sf-header__action"
+            link="/cart"
+          >
+            <SfIcon class="sf-header__icon">
+              <font-awesome-icon icon="shopping-cart" class="fa-icon" />
+            </SfIcon>
+            <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
+>>>>>>> 22baf81 (resolve review comments)
               totalItemsInCart
             }}</SfBadge>
           </SfIcon>

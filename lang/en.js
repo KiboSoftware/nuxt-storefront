@@ -175,4 +175,5 @@ export default {
   Cart: "Cart",
   "Show Per Page": "Show Per Page",
   Back: "Back",
+  "My Account": "My Account",
 }
