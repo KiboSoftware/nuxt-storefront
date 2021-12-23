@@ -23,6 +23,9 @@ const getBreadcrumbs = (searchData: {
   return [...homeCrumb, ...categoryCrumbs]
 }
 
+const getFacetName = (facet: Facet) => facet?.label
+const getFacetField = (facet: Facet) => facet?.field
+const getFacetValues = (facet: Facet) => facet?.values
 const getSortOptions = (searchData: FacetResultsData, sortOptions) => {
   const options = sortOptions.map((option) => ({
     ...option,

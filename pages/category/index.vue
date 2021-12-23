@@ -228,8 +228,6 @@ import {
   SfLink,
   SfLoader,
   SfProductCardHorizontal,
-  SfAccordion,
-  SfChevron,
 } from "@storefront-ui/vue"
 import { ref, computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
@@ -706,6 +704,7 @@ export default {
     padding: 6px 0 0 2px;
   }
 }
+
 .sf-select {
   --select-width: 11.875rem;
   --select-dropdown-text-indent: 10px;

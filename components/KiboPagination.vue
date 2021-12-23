@@ -29,9 +29,11 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { SfSelect, SfPagination } from "@storefront-ui/vue"
+import { ref } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
+import { FacetResultsData } from "~~/composables/types/facetGetterType"
 
 export default {
   name: "KiboPagination",
@@ -50,7 +52,8 @@ export default {
     },
   },
   setup(props, context) {
-    const perPage = ref(String(props?.pagination?.itemsPerPage))
+    const pagination = props.pagination as FacetResultsData
+    const perPage = ref(String(pagination.itemsPerPage))
     const nuxt = useNuxtApp()
     const { itemsPerPage } = nuxt.nuxt2Context.$config.productListing
 
