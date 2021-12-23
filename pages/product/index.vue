@@ -316,7 +316,6 @@ export default defineComponent({
     )
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
 
-    const isValidForAddToCart = ref(false)
     // Options section
     let shopperEnteredValues = []
 
@@ -354,7 +353,6 @@ export default defineComponent({
     ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
-      checkEligibilityForAddToCart()
     }
 
     // Get Fullfillment Options
