@@ -170,4 +170,6 @@ export default {
   "Add to Cart": "Add to Cart",
   "Add to Wishlist": "Add to Wishlist",
   Cart: "Cart",
+  "Show Per Page": "Show Per Page",
+  Back: "Back",
 }

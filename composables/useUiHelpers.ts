@@ -31,7 +31,7 @@ export const useUiHelpers = (): uiHelpersReturnType => {
 
     return {
       categoryCode,
-      page: parseInt(query.page, 10) || 1,
+      page: parseInt(query.page, 10) - 1 || 0,
       itemsPerPage: parseInt(query.itemsPerPage, 10) || 20,
       phrase: query.phrase,
       filters,
