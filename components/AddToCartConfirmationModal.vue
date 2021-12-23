@@ -76,6 +76,7 @@
                     <div>
                       <span class="sf-property__name">{{ $t("Price") }}:</span>
                     </div>
+                    <!-- TODO: To be applied KiboPrice custom component instead SfPrice -->
                     <SfPrice
                       v-if="cartItem.product.price.price"
                       :regular="cartItem.product.price.price && `$${cartItem.product.price.price}`"
@@ -93,6 +94,7 @@
             <div class="sf-property--full-width sf-property">
               <span class="sf-property__name-noBold">{{ $t("Subtotal") }}</span>
               <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
+              <!-- TODO: Needs to be changed the disaply value based on getCartItemPrice cartGetter -->
             </div>
             <div class="border-space"><hr class="sf-divider" /></div>
             <div class="sf-property--full-width sf-property">
@@ -165,7 +167,7 @@ export default {
 
     const goToCart = () => {
       closeModal()
-      return app.router.push({ path: "/cart" })
+      app.router.push({ path: "/cart" })
     }
 
     return {
@@ -221,6 +223,10 @@ $cart-button-width: 11.6rem;
   --modal-width: 34.188rem;
   --modal-content-padding: 0;
 
+  .sf-icon.color-gray-secondary {
+    --icon-color: var(--_c-white-secondary);
+  }
+
   @include for-desktop {
     &__container {
       top: 3.5rem;
@@ -242,7 +248,7 @@ $cart-button-width: 11.6rem;
   }
 
   &--heading {
-    font-weight: 700;
+    font-weight: var(--font-weight--bold);
     font-size: var(--h2-font-size);
     padding-left: var(--spacer-sm);
   }
