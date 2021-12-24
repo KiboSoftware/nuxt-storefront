@@ -13,7 +13,6 @@
               @mouseout="removeZoom(index)"
             >
               <SfImage
-                id="bigImage"
                 ref="sfGalleryBigImage"
                 class="sf-gallery__big-image"
                 :class="{ 'sf-gallery__big-image--has-zoom': enableZoom }"
@@ -162,7 +161,7 @@ export default {
     },
   },
   mounted() {
-    const el = document.querySelector("#bigImage")
+    const el = document.querySelector(".sf-gallery__big-image")
     const pz = new PinchZoom(el)
     pz.enable()
 
