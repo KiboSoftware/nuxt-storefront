@@ -13,6 +13,7 @@
               @mouseout="removeZoom(index)"
             >
               <SfImage
+                id="bigImage"
                 ref="sfGalleryBigImage"
                 class="sf-gallery__big-image"
                 :class="{ 'sf-gallery__big-image--has-zoom': enableZoom }"
@@ -25,10 +26,6 @@
             </li>
           </ul>
         </div>
-        <!-- <div class="glide__arrows" data-glide-el="controls">
-            <button class="glide__arrow glide__arrow--left" data-glide-dir="<">prev</button>
-            <button class="glide__arrow glide__arrow--right" data-glide-dir=">">next</button>
-        </div> -->
       </div>
       <transition name="sf-fade">
         <div
@@ -83,8 +80,9 @@
 </template>
 <script>
 import Glide from "@glidejs/glide"
-
 import { SfButton, SfImage } from "@storefront-ui/vue"
+import PinchZoom from "pinch-zoom-js"
+
 export default {
   name: "KiboGallery",
   components: {
@@ -164,16 +162,16 @@ export default {
     },
   },
   mounted() {
+    const el = document.querySelector("#bigImage")
+    const pz = new PinchZoom(el)
+    pz.enable()
+
     this.$nextTick(() => {
       // handle slider with swipe and transitions with Glide.js
       // https://glidejs.com/docs/
       if (this.images.length < 1) return
       const glide = new Glide(this.$refs.glide, this.updatedSliderOptions)
-      //   const glide = new Glide('.glide', {
-      //         type: 'carousel',
-      //         startAt: 0,
-      //         perView: 3
-      //   })
+
       glide.on("run", () => {
         this.go(glide.index)
       })
@@ -200,10 +198,7 @@ export default {
     go(index) {
       if (!this.glide) return
       this.activeIndex = index
-      /**
-       * Event for current image change (`v-model`)
-       * @type {Event}
-       */
+      // Event for current image change (`v-model`)  @type {Event}
       this.$emit("click", index + 1)
       if (this.glide) {
         this.glide.go(`=${index}`)
@@ -319,8 +314,4 @@ export default {
     height: 166px;
   }
 }
-
-// .sf-gallery > div {
-//   border: solid;
-// }
 </style>
