@@ -161,9 +161,12 @@ export default {
     },
   },
   mounted() {
-    const el = document.querySelector(".sf-gallery__big-image")
-    const pz = new PinchZoom(el)
-    pz.enable()
+    const elementList = document.getElementsByClassName("sf-gallery__big-image")
+    for (let i = 0; i < elementList.length; i++) {
+      const element = elementList[i]
+      const pz = new PinchZoom(element)
+      pz.enable()
+    }
 
     this.$nextTick(() => {
       // handle slider with swipe and transitions with Glide.js
