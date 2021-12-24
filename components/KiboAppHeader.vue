@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div v-if="!isMobile" class="desktop">
+    <div v-if="!isMobile">
       <div class="kibo-top-bar kibo-nav-link">
-        <div><SfMenuItem label="Nav Link 1" icon="chevron_right" /></div>
-        <div><SfMenuItem label="Nav Link 2" icon="chevron_right" /></div>
-        <div><SfMenuItem label="Nav Link 3" icon="chevron_right" /></div>
-        <div><SfMenuItem label="Nav Link 4" icon="chevron_right" /></div>
+        <div><SfMenuItem label="Nav Link 1" /></div>
+        <div><SfMenuItem label="Nav Link 2" /></div>
+        <div><SfMenuItem label="Nav Link 3" /></div>
+        <div><SfMenuItem label="Nav Link 4" /></div>
       </div>
       <div class="kibo-header-container">
         <div class="kibo-header">
@@ -16,11 +16,11 @@
             </SfLink>
           </div>
 
-          <div style="flex: 0.35"></div>
+          <div class="kibo-header__spacer"></div>
           <div v-click-outside="closeSearch" class="kibo-header__search-bar">
             <KiboSearchBar
               ref="searchBarRef"
-              :placeholder="$t('Search for items')"
+              :placeholder="$t('Search')"
               aria-label="Search"
               class="sf-header__search"
               :value="term"
@@ -99,7 +99,7 @@
                 totalItemsInCart
               }}</SfBadge>
               <div class="kibo-header__icon">
-                <span class="kibo-header__icon-name"> Cart</span>
+                <span class="kibo-header__icon-name">{{ $t("Cart") }}</span>
               </div>
             </SfButton>
           </div>
@@ -148,21 +148,23 @@
         <div class="kibo-mobile__header-column">
           <SfIcon size="1.25rem">
             <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
-            <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">1</SfBadge>
+            <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
+              totalItemsInCart
+            }}</SfBadge>
           </SfIcon>
         </div>
       </div>
 
       <div v-if="isOpenSearchBar" class="kibo-mobile__header-search">
         <div class="kibo-mobile__header-search__input">
-          <input name="search" type="search" placeholder="Search" />
+          <input name="search" type="search" :placeholder="$t('Search')" />
         </div>
 
         <button
           class="sf-button sf-button--small kibo-mobile__header-search__cancel"
           @click="isOpenSearchBar = false"
         >
-          Cancel
+          {{ $t("Cancel") }}
         </button>
       </div>
     </div>
@@ -444,6 +446,10 @@ export default defineComponent({
   &__icon-name {
     font-size: var(--font-size--xs);
   }
+
+  &__spacer {
+    flex: 0.35;
+  }
 }
 
 .kibo-top-bar {
@@ -452,7 +458,11 @@ export default defineComponent({
 }
 
 .sf-menu-item {
-  --menu-item-label-color: #fff;
+  --menu-item-label-color: var(--_c-dark-primary);
+
+  @include for-desktop {
+    --menu-item-label-color: var(--_c-light-secondary);
+  }
 
   font-size: var(--font-size--sm);
 }

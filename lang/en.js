@@ -166,4 +166,5 @@ export default {
   Checkout: "Checkout",
   ShopAll: "Shop All",
   Advertisment: "Advertisment",
+  Cart: "Cart",
 }

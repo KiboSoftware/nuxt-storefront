@@ -160,4 +160,5 @@ export default {
     "Vielen Dank! Wenn ein Konto mit der E-Mail-Adresse {0} registriert ist, finden Sie in Ihrem Posteingang eine Nachricht mit einem Link zum Zurücksetzen des Passworts.",
   ShopAll: "Alles shoppen",
   Advertisment: "Werbung",
+  Cart: "Cart",
 }
