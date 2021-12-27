@@ -21,6 +21,5 @@ body {
 .content {
   max-width: 88rem;
   margin: 0 auto 20 auto;
-  border: solid 2px yellow;
 }
 </style>
