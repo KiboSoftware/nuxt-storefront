@@ -31,14 +31,10 @@ export const useCart = () => {
     }
   }
 
-  const addToCart = async (params: { product: Object; quantity: number }) => {
+  const addItemsToCart = async (productToAdd) => {
     try {
       loading.value = true
-      const { product, quantity } = params
-      const productToAdd = {
-        product,
-        quantity,
-      }
+
       await fetcher({
         query: addToCartMutation,
         variables: { productToAdd },
@@ -93,7 +89,7 @@ export const useCart = () => {
 
   return {
     loading,
-    addToCart,
+    addItemsToCart,
     updateCartItemQuantity,
     removeCartItem,
     load,

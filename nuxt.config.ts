@@ -123,6 +123,7 @@ export default defineNuxtConfig({
         label: "Ship to Home",
         details: "Available to Ship",
         isRequired: false,
+        shortName: "Ship",
       },
       {
         value: "InStorePickup",
@@ -131,6 +132,7 @@ export default defineNuxtConfig({
         label: "Pickup in Store",
         details: "Available at",
         isRequired: false,
+        shortName: "Pickup",
       },
     ],
     storeLocationCookie: LOCATION_COOKIE,
