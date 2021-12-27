@@ -32,7 +32,7 @@
     <slot name="add-to-wishlist">
       <div class="column column-right">
         <SfButton
-          class="sf-button--secondary sf-add-to-wishlist__button"
+          class="color-light sf-add-to-wishlist__button"
           :disabled="disabled"
           @click="addToWishList"
         >

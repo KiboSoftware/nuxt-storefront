@@ -206,12 +206,13 @@ export default defineComponent({
   --collected-product-padding: var(--spacer-sm) 0;
   --collected-product-actions-display: flex;
 
-  border: 1px solid var(--c-light);
-  border-width: 1px 0 0 0;
+  // Need to discuss with Chandradeepta if below styles are required
+  // border: 1px solid var(--c-light);
+  // border-width: 1px 0 0 0;
 
-  &:first-of-type {
-    border-top: none;
-  }
+  // &:first-of-type {
+  //   border-top: none;
+  // }
 
   &__properties {
     --property-value-font-weight: var(--font-weight--normal);

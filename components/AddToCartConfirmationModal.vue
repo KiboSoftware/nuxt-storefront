@@ -20,6 +20,7 @@
           <SfBar
             class="sf-modal__bar"
             :close="true"
+            :back="false"
             :title="$t('Added to Cart')"
             @click:close="closeModal"
           />
@@ -29,7 +30,7 @@
     <transition name="sf-fade" mode="out-in">
       <div class="modal-content">
         <div class="title desktop-only">
-          <SfIcon size="2rem" display="inline-flex">
+          <SfIcon size="2rem" display="inline-flex" class="check-circle-icon">
             <font-awesome-icon
               icon="check-circle"
               class="fa-icon"
@@ -109,12 +110,7 @@
         </div>
         <div class="action-buttons">
           <div class="column column-right">
-            <SfButton
-              class="sf-button--secondary"
-              :aria-disabled="false"
-              :link="null"
-              @click="closeModal()"
-            >
+            <SfButton class="color-light" :aria-disabled="false" :link="null" @click="closeModal()">
               {{ $t("Continue Shopping") }}
             </SfButton>
           </div>
@@ -183,16 +179,16 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
-$cart-button-width: 11.6rem;
+$cart-button-width: calc(var(--spacer-3xl) + var(--spacer-base));
 
 .collected-product-list {
   @include for-desktop {
-    padding: 5% 5% 2% 5%;
+    padding: var(--spacer-base) var(--spacer-base) var(--spacer-sm) var(--spacer-base);
   }
 }
 
 .kibo-collectedProduct {
-  border-width: 1px !important;
+  border-width: 1px;
 
   &__title-wrapper {
     padding: var(--spacer-xs) 0;
@@ -220,21 +216,28 @@ $cart-button-width: 11.6rem;
 }
 
 .sf-modal {
-  --modal-width: 34.188rem;
+  --modal-width: calc(var(--spacer-4xl) + var(--spacer-3xl) + var(--spacer-2xl));
   --modal-content-padding: 0;
 
-  .sf-icon.color-gray-secondary {
-    --icon-color: var(--_c-white-secondary);
+  &__close {
+    margin-right: var(--spacer-xs);
   }
 
-  @include for-desktop {
-    &__container {
-      top: 3.5rem;
+  @include for-mobile {
+    --modal-width: 100%;
+    --modal-height: fit-content;
+
+    ::v-deep &__container {
+      top: calc(var(--spacer-base) + var(--spacer-lg));
     }
 
-    .sf-bar {
-      &__title {
-        min-width: 25rem;
+    ::v-deep .sf-bar {
+      justify-content: flex-start;
+      border-bottom: none;
+      flex: 100%;
+
+      div:nth-child(2) {
+        flex: 50%;
       }
     }
   }
@@ -244,7 +247,7 @@ $cart-button-width: 11.6rem;
   display: flex;
 
   @include for-desktop {
-    padding: var(--spacer-sm) var(--spacer-lg);
+    padding: var(--spacer-sm);
   }
 
   &--heading {
@@ -256,34 +259,47 @@ $cart-button-width: 11.6rem;
   .sf-icon {
     display: inline-flex;
 
+    @include for-mobile {
+      padding: var(--spacer-base) var(--spacer-sm) var(--spacer-base) var(--spacer-lg);
+    }
+
     svg {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: var(--spacer-base);
+      height: var(--spacer-base);
     }
   }
 }
 
-.detailed-cart {
-  padding: 1%;
-}
-
 .border-space {
-  margin-bottom: 1.3rem;
-  margin-top: 0.4rem;
+  margin-bottom: var(--spacer-sm);
+  margin-top: var(--spacer-xs);
 }
 
 .section-border {
   border-bottom: 1px solid var(--c-light);
 }
 
-.sf-button--pure {
-  --button-height: 1.625rem;
+::v-deep .sf-button--pure {
+  --button-height: var(--spacer-lg);
+
+  @include for-desktop {
+    margin-right: var(--spacer-xs);
+  }
 }
 
 .action-buttons {
   display: flex;
   justify-content: space-evenly;
   padding: var(--spacer-sm) var(--spacer-lg);
+
+  @include for-mobile {
+    flex-direction: column-reverse;
+
+    .column .sf-button {
+      width: 100%;
+      margin-bottom: var(--spacer-sm);
+    }
+  }
 
   .sf-primary {
     flex-wrap: wrap;
@@ -298,6 +314,16 @@ $cart-button-width: 11.6rem;
   &__image {
     object-fit: contain;
     background: var(--c-white);
+  }
+}
+
+@include for-mobile {
+  .smartphone-only .check-circle-icon {
+    padding: var(--spacer-base) var(--spacer-lg) 0 var(--spacer-lg);
+  }
+
+  .detailed-cart {
+    padding: var(--spacer-2xs) var(--spacer-lg);
   }
 }
 </style>

@@ -6,7 +6,7 @@
   box-sizing: border-box;
   padding: 1%;
   position: relative;
-  border: 2px solid var(--_c-white-secondary) !important;
+  border: 2px solid var(--_c-white-secondary);
   margin: var(--collected-product-margin, 0 0 var(--spacer-base) 0);
 
   &__verticalDivider {
