@@ -161,9 +161,8 @@ export default {
     },
   },
   mounted() {
-    const elementList = document.getElementsByClassName("sf-gallery__big-image")
-    for (let i = 0; i < elementList.length; i++) {
-      const element = elementList[i]
+    for (let i = 0; i < this.$refs.sfGalleryBigImage.length; i++) {
+      const element = this.$refs.sfGalleryBigImage[i].$el
       const pz = new PinchZoom(element)
       pz.enable()
     }
