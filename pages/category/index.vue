@@ -46,43 +46,86 @@
     <div class="main section">
       <div class="sidebar desktop-only">
         <LazyHydrate when-idle>
-          <SfLoader :class="{ 'loading--categories': loadingCategory }" :loading="loadingCategory">
-            <div class="category-drill-down">
-              <div class="category-title">{{ categoryTitle }}</div>
-              <SfList class="list">
-                <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
-                  <SfMenuItem
-                    :label="item.content.name"
-                    :count="`(${item.count})`"
-                    :link="localePath(getCatLink(item))"
-                    class="sf-menu-item__label"
-                  />
-                </SfListItem>
-                <div v-if="showMoreButton && childrenCategories && childrenCategories.length > 5">
-                  <SfButton
-                    font-size="13px"
-                    class="sf-button--text navbar__button navbar__button--plus list__item"
-                    aria-label="View More"
-                    @click="visibleCategories(childrenCategories, childrenCategories.length)"
+          <SfLoader
+            :class="{ 'loading--categories': productSearchLoading }"
+            :loading="productSearchLoading"
+          >
+            <transition-group>
+              <div class="category-drill-down" key="category-drill-down">
+                <div class="category-title">{{ categoryTitle }}</div>
+                <SfList class="list">
+                  <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
+                    <SfMenuItem
+                      :label="item.content.name"
+                      :count="`(${item.count})`"
+                      :link="localePath(getCatLink(item))"
+                      class="sf-menu-item__label"
+                    />
+                  </SfListItem>
+                  <div v-if="showMoreButton && childrenCategories && childrenCategories.length > 5">
+                    <SfButton
+                      font-size="13px"
+                      class="sf-button--text navbar__button navbar__button--plus list__item"
+                      aria-label="View More"
+                      @click="visibleCategories(childrenCategories, childrenCategories.length)"
+                    >
+                      <SfIcon
+                        size="0.938rem"
+                        color="#2B2B2B"
+                        icon="plus"
+                        class="navbar__plus-icon"
+                      />
+                      View More
+                    </SfButton>
+                  </div>
+                  <SfLink
+                    v-if="breadcrumbs.length > 1"
+                    class="navbar__button navbar__button--back"
+                    :link="breadcrumbs[breadcrumbs.length - 2].link"
                   >
-                    <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="navbar__plus-icon" />
-                    View More
-                  </SfButton>
-                </div>
-                <SfLink
-                  v-if="breadcrumbs.length > 1"
-                  class="navbar__button navbar__button--back"
-                  :link="breadcrumbs[breadcrumbs.length - 2].link"
-                >
-                  <SfIcon size="0.813rem" color="#2B2B2B" icon="chevron_left" />Back
-                </SfLink>
-              </SfList>
-            </div>
+                    <SfIcon size="0.813rem" color="#2B2B2B" icon="chevron_left" />Back
+                  </SfLink>
+                </SfList>
+              </div>
+              <div key="filters">
+                <SfAccordion :show-chevron="true" open="all" :multiple="false">
+                  <div v-for="(facet, i) in facets" :key="i">
+                    <SfAccordionItem
+                      :key="`filter-title-${facetGetters.getFacetField(facet)}`"
+                      :header="facetGetters.getFacetName(facet)"
+                      class="filters"
+                    >
+                      <template #header="{ header, isOpen, accordionClick }">
+                        <SfButton
+                          :aria-pressed="isOpen.toString()"
+                          :aria-expanded="isOpen.toString()"
+                          :class="{ 'is-open': false }"
+                          class="sf-button--pure sf-accordion-item__header"
+                          @click="accordionClick"
+                        >
+                          {{ header }}
+                          <slot name="additional-info" />
+                          <SfChevron
+                            tabindex="0"
+                            class="sf-accordion-item__chevron"
+                            :class="{ 'sf-chevron--top': isOpen }"
+                          />
+                        </SfButton>
+                      </template>
+                      <KiboFacet :facet="facet" @selectFilter="selectFilter" />
+                    </SfAccordionItem>
+                  </div>
+                </SfAccordion>
+              </div>
+            </transition-group>
           </SfLoader>
         </LazyHydrate>
       </div>
-      <SfLoader :class="{ 'loading--products': loadingCategory }" :loading="loadingCategory">
-        <div class="products" v-if="!loadingCategory">
+      <SfLoader
+        :class="{ 'loading--products': productSearchLoading }"
+        :loading="productSearchLoading"
+      >
+        <div class="products" v-if="!productSearchLoading">
           <transition-group
             v-if="isGridView"
             appear
@@ -172,17 +215,21 @@ import {
   SfLink,
   SfLoader,
   SfProductCardHorizontal,
+  SfAccordion,
+  SfChevron,
 } from "@storefront-ui/vue"
-import { ref, computed } from "@vue/composition-api"
+import { computed, watch } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
-import { useAsync } from "@nuxtjs/composition-api"
+import { useAsync, useRoute } from "@nuxtjs/composition-api"
 import {
   useUiHelpers,
   useFacet,
   useProductSearch,
   productGetters,
   facetGetters,
+  facetValueGetters,
   productSearchGetters,
+  categoryGetters,
 } from "@/composables"
 import { useState } from "#app"
 import KiboProductCard from "@/components/KiboProductCard.vue"
@@ -202,9 +249,11 @@ export default {
     SfLoader,
     SfProductCardHorizontal,
     KiboProductCard,
+    SfAccordion,
+    SfChevron,
   },
-  setup() {
-    const { getFacetsFromURL, getCatLink, getProductLink } = useUiHelpers()
+  setup(_, context) {
+    const { getFacetsFromURL, getCatLink, getProductLink, changeFilters } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const {
       result: productSearchResult,
@@ -212,43 +261,50 @@ export default {
       loading: productSearchLoading,
     } = useProductSearch(`product-search`)
 
-    const loadingCategory = useState("category-loading", () => false)
+    const route = useRoute()
+    const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
+    const facets = computed(() =>
+      productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
+    )
+    const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
+    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
+    const categoryName = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
+    const categoryTitle = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
+    const childrenCategories = computed(() => categoryTree.value?.[0]?.childrenCategories)
+    const navCategories = useState("nav-categories", () => [])
+    const showMoreButton = useState("show-more-button", () => false)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
       showMoreButton.value = !showMoreButton.value
       navCategories.value = categories.slice(0, categoriesVisible)
     }
 
-    const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
-
-    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
-    const navCategories = useState("nav-categories", () => {
-      return []
-    })
-    const showMoreButton = ref(false)
-    const categoryName = computed(() => {
-      const categories = categoryTree.value
-      return categories && categories[0]?.content?.name
-    })
-    const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
-    const childrenCategories = computed(() => {
-      const categories = categoryTree.value
-      return categories && categories[0]?.childrenCategories
-    })
-
-    const categoryTitle = computed(() => {
-      const categories = categoryTree.value
-      const title = categories?.[0]?.content?.name
-      return title
-    })
+    const selectFilter = (filterValue) => {
+      const qs = route.value?.query as { filters: string }
+      const filters = qs.filters?.split(",") || []
+      const currentIndex = filters.indexOf(filterValue)
+      if (currentIndex > -1) {
+        filters.splice(currentIndex, 1)
+      } else {
+        filters.push(filterValue)
+      }
+      changeFilters(filters.join(","))
+    }
+    watch(
+      () => context.root.$route,
+      async () => {
+        await productSearch(getFacetsFromURL())
+        await search(getFacetsFromURL())
+        visibleCategories(childrenCategories.value)
+      }
+    )
 
     useAsync(async () => {
-      loadingCategory.value = true
       await search(getFacetsFromURL())
       await productSearch(getFacetsFromURL())
-      await visibleCategories(childrenCategories.value)
-      loadingCategory.value = false
+      visibleCategories(childrenCategories.value)
     }, null)
+
     return {
       breadcrumbs,
       categoryTree,
@@ -257,17 +313,20 @@ export default {
       getCatLink,
       getProductLink,
       productGetters,
+      facetGetters,
+      facetValueGetters,
       productSearchLoading,
       productSearchResult,
       visibleCategories,
       products,
+      facets,
+      selectFilter,
       navCategories,
       showMoreButton,
       categoryName,
       currentPage: 1,
       childrenCategories,
       categoryTitle,
-      loadingCategory,
       sortBy: "Latest",
       isFilterSidebarOpen: false,
       isGridView: true,
@@ -369,6 +428,7 @@ export default {
       font-size: 0.813rem;
       margin: 0 0;
       height: 0.875rem;
+      padding: 1rem 0.375rem;
     }
 
     &--back {
@@ -464,7 +524,7 @@ export default {
   &__grid {
     justify-content: center;
     @include for-desktop {
-      justify-content: space-between;
+      justify-content: flex-start;
       padding: 0 24px 0 0;
     }
   }
@@ -560,17 +620,56 @@ export default {
 
 .sf-menu-item {
   --menu-item-label-color: #2b2b2b;
+  --menu-item-count-color: #2b2b2b;
+  --menu-item-count-margin: 0 0.125rem 0 auto;
 
   font-size: 0.813rem;
   font-family: var(--font-family--primary);
 }
 
-.category-drill-down {
+.sf-filter {
+  --filter-label-color: #2b2b2b;
+  --filter-count-color: #2b2b2b;
+  --filter-label-font-size: 0.813rem;
+  --filter-count-font-size: 0.813rem;
+  --filter-count-margin: 0 0.5rem 0 auto;
+
+  padding: 0.375rem;
+}
+
+.category-drill-down,
+.filters {
   border: 1px solid var(--c-light);
   border-width: 0 0 1px 0;
 }
 
 .category-name {
   margin: 0 0 0 -1.563rem;
+}
+
+.sf-accordion-item {
+  --accordion-item-header-padding: 1.875rem 0;
+
+  &__chevron {
+    margin-left: auto;
+  }
+
+  &__header {
+    font-size: 0.875rem;
+    font-weight: bold;
+  }
+}
+
+.sf-search-bar {
+  --search-bar-height: 1.625rem;
+  --icon-size: 0.875rem;
+  --font-size--base: 0.75rem;
+  --search-bar-placeholder-color: var(--_c-gray-middle);
+
+  bottom: 10px;
+
+  &__icon {
+    padding: 6px 0 0 2px;
+  }
 }
 </style>

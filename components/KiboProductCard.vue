@@ -394,8 +394,9 @@ export default defineComponent({
 <style lang="scss">
 .kibo-product-card {
   height: 17.625rem;
-  padding: 0;
+  padding-left: 1%;
   margin: 0 0 4.688rem 0;
+  width: 24%;
 
   .sf-image {
     object-fit: contain;

@@ -1,128 +1,178 @@
 <template>
   <div>
-    <div class="kibo-top-bar kibo-nav-link">
-      <div><SfMenuItem label="Nav Link 1" icon="chevron_right" /></div>
-      <div><SfMenuItem label="Nav Link 2" icon="chevron_right" /></div>
-      <div><SfMenuItem label="Nav Link 3" icon="chevron_right" /></div>
-      <div><SfMenuItem label="Nav Link 4" icon="chevron_right" /></div>
-    </div>
-    <div class="kibo-header-container">
-      <div class="kibo-header">
-        <div class="kibo-img">
-          <SfLink link="/">
-            <SfImage v-if="logo" :src="logo" :alt="title" />
-            <h1 v-else class="sf-header__title">{{ title }}</h1>
-          </SfLink>
-        </div>
+    <div v-if="!isMobile">
+      <div class="kibo-top-bar kibo-nav-link">
+        <div><SfMenuItem label="Nav Link 1" /></div>
+        <div><SfMenuItem label="Nav Link 2" /></div>
+        <div><SfMenuItem label="Nav Link 3" /></div>
+        <div><SfMenuItem label="Nav Link 4" /></div>
+      </div>
+      <div class="kibo-header-container">
+        <div class="kibo-header">
+          <div class="kibo-img">
+            <SfLink link="/">
+              <SfImage v-if="logo" :src="logo" :alt="title" />
+              <h1 v-else class="sf-header__title">{{ title }}</h1>
+            </SfLink>
+          </div>
 
-        <div style="flex: 0.35"></div>
-        <div v-click-outside="closeSearch" class="kibo-header__search-bar">
-          <KiboSearchBar
-            ref="searchBarRef"
-            :placeholder="$t('Search for items')"
-            aria-label="Search"
-            class="sf-header__search"
-            :value="term"
-            :loading="loading"
-            @input="handleSearch"
-            @keydown.enter="gotoSearchResult()"
-            @keydown.esc="closeSearch"
-          >
-            <template #icon>
-              <SfButton
-                v-if="!!term"
-                class="sf-search-bar__button sf-button--pure"
-                @click="closeOrFocusSearchBar"
-              >
-                <span class="sf-search-bar__icon">
-                  <SfIcon color="var(--c-text)" size="18px" icon="cross" />
-                </span>
-              </SfButton>
-              <SfButton
-                v-else
-                class="sf-search-bar__button sf-button--pure"
-                @click="isSearchOpen ? (isSearchOpen = false) : (isSearchOpen = true)"
-              >
-                <span class="sf-search-bar__icon">
-                  <SfIcon color="var(--c-text)" size="20px" icon="search" />
-                </span>
-              </SfButton>
-            </template>
-          </KiboSearchBar>
-          <div class="search-suggestion-div">
-            <KiboSearchSuggestion
-              :visible="isSearchOpen"
-              :result="searchSuggestionResult"
+          <div class="kibo-header__spacer"></div>
+          <div v-click-outside="closeSearch" class="kibo-header__search-bar">
+            <KiboSearchBar
+              ref="searchBarRef"
+              :placeholder="$t('Search')"
+              aria-label="Search"
+              class="sf-header__search"
+              :value="term"
               :loading="loading"
-              @closeDialog="closeSearch()"
+              @input="handleSearch"
+              @keydown.enter="gotoSearchResult()"
+              @keydown.esc="closeSearch"
             >
-            </KiboSearchSuggestion>
+              <template #icon>
+                <SfButton
+                  v-if="!!term"
+                  class="sf-search-bar__button sf-button--pure"
+                  @click="closeOrFocusSearchBar"
+                >
+                  <span class="sf-search-bar__icon">
+                    <SfIcon color="var(--c-text)" size="18px" icon="cross" />
+                  </span>
+                </SfButton>
+                <SfButton
+                  v-else
+                  class="sf-search-bar__button sf-button--pure"
+                  @click="isSearchOpen ? (isSearchOpen = false) : (isSearchOpen = true)"
+                >
+                  <span class="sf-search-bar__icon">
+                    <SfIcon color="var(--c-text)" size="20px" icon="search" />
+                  </span>
+                </SfButton>
+              </template>
+            </KiboSearchBar>
+            <div class="search-suggestion-div">
+              <KiboSearchSuggestion
+                :visible="isSearchOpen"
+                :result="searchSuggestionResult"
+                :loading="loading"
+                @closeDialog="closeSearch()"
+              >
+              </KiboSearchSuggestion>
+            </div>
+          </div>
+
+          <div v-if="!isMobile" class="sf-header__icons">
+            <SfButton
+              v-e2e="'app-header-location'"
+              class="sf-button--pure sf-header__action"
+              @click="handleStoreLocatorClick"
+            >
+              <SfIcon class="sf-header__icon">
+                <font-awesome-icon icon="map-marker-alt" class="fa-icon" />
+              </SfIcon>
+              <div class="kibo-header__icon">
+                <span class="kibo-header__icon-name"> {{ selectedLocation }}</span>
+              </div>
+            </SfButton>
+            <SfButton
+              v-e2e="'app-header-account'"
+              class="sf-button--pure sf-header__action"
+              @click="handleAccountClick"
+            >
+              <SfIcon class="sf-header__icon">
+                <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
+                <i class="far fa-user-circle"></i>
+              </SfIcon>
+              <div class="kibo-header__icon">
+                <span class="kibo-header__icon-name"> My Account</span>
+              </div>
+            </SfButton>
+            <SfButton
+              v-e2e="'app-header-cart'"
+              class="sf-button--pure sf-header__action"
+              link="/cart"
+            >
+              <SfIcon class="sf-header__icon">
+                <font-awesome-icon icon="shopping-cart" class="fa-icon" />
+              </SfIcon>
+              <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
+                totalItemsInCart
+              }}</SfBadge>
+              <div class="kibo-header__icon">
+                <span class="kibo-header__icon-name">{{ $t("Cart") }}</span>
+              </div>
+            </SfButton>
           </div>
         </div>
 
-        <div v-if="!isMobile" class="sf-header__icons">
-          <SfButton
-            v-e2e="'app-header-location'"
-            class="sf-button--pure sf-header__action"
-            @click="handleStoreLocatorClick"
-          >
-            <SfIcon class="sf-header__icon">
-              <font-awesome-icon icon="map-marker-alt" class="fa-icon" />
+        <div class="line-2"></div>
+
+        <div class="kibo-mega-menu">
+          <MegaMenu />
+        </div>
+      </div>
+    </div>
+    <div v-else class="kibo-mobile">
+      <div class="kibo-mobile__header-container">
+        <div class="kibo-mobile__header-column">
+          <SfIcon size="1.25rem">
+            <font-awesome-icon icon="bars" class="fa-icon" color="var(--c-white)" />
+          </SfIcon>
+        </div>
+        <div class="kibo-mobile__header-column">
+          <div class="kibo-mobile__search-icon" @click="toggleMobileSearchBar">
+            <SfIcon color="var(--c-white)" size="1.25rem" icon="search" />
+          </div>
+          <div class="kibo-mobile__search-pointer-icon">
+            <SfIcon v-if="isOpenSearchBar" size="1.25rem">
+              <font-awesome-icon icon="sort-up" class="fa-icon" color="var(--_c-white-secondary)" />
             </SfIcon>
-            <div class="kibo-header__icon">
-              <span class="kibo-header__icon-name"> {{ selectedLocation }}</span>
-            </div>
-          </SfButton>
-          <SfButton
-            v-e2e="'app-header-account'"
-            class="sf-button--pure sf-header__action"
-            @click="handleAccountClick"
-          >
-            <SfIcon class="sf-header__icon">
-              <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
-              <i class="far fa-user-circle"></i>
-            </SfIcon>
-            <div class="kibo-header__icon">
-              <span class="kibo-header__icon-name"> My Account</span>
-            </div>
-          </SfButton>
-          <SfButton
-            v-e2e="'app-header-cart'"
-            class="sf-button--pure sf-header__action"
-            link="/cart"
-          >
-            <SfIcon class="sf-header__icon">
-              <font-awesome-icon icon="shopping-cart" class="fa-icon" />
-            </SfIcon>
-            <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
+          </div>
+        </div>
+        <div class="kibo-mobile__header-column">
+          <SfLink link="/">
+            <SfImage
+              :src="logo"
+              :alt="title"
+              width="2.063rem"
+              height="2.063rem"
+              class="kibo-mobile__logo"
+            />
+          </SfLink>
+        </div>
+        <div class="kibo-mobile__header-column">
+          <SfIcon size="1.25rem">
+            <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
+          </SfIcon>
+        </div>
+        <div class="kibo-mobile__header-column">
+          <SfIcon size="1.25rem">
+            <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
+            <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
               totalItemsInCart
             }}</SfBadge>
-            <div class="kibo-header__icon">
-              <span class="kibo-header__icon-name"> Cart</span>
-            </div>
-          </SfButton>
+          </SfIcon>
         </div>
       </div>
 
-      <div class="line-2"></div>
+      <div v-if="isOpenSearchBar" class="kibo-mobile__header-search">
+        <div class="kibo-mobile__header-search__input">
+          <input name="search" type="search" :placeholder="$t('Search')" />
+        </div>
 
-      <div class="kibo-mega-menu">
-        <MegaMenu />
+        <button
+          class="sf-button sf-button--small kibo-mobile__header-search__cancel"
+          @click="isOpenSearchBar = false"
+        >
+          {{ $t("Cancel") }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import {
-  SfImage,
-  SfIcon,
-  SfButton,
-  SfSearchBar,
-  SfMenuItem,
-  SfLink,
-  SfBadge,
-} from "@storefront-ui/vue"
+<script lang="ts" scoped>
+import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink, SfBadge } from "@storefront-ui/vue"
 import { computed, ref, onBeforeUnmount, defineComponent, watch } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
@@ -180,7 +230,11 @@ export default defineComponent({
 
     const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
     const searchSuggestionResult = ref({})
+    const isOpenSearchBar = ref(false)
 
+    const toggleMobileSearchBar = () => {
+      isOpenSearchBar.value = !isOpenSearchBar.value
+    }
     const closeSearch = () => {
       if (!isSearchOpen.value) return
 
@@ -293,12 +347,14 @@ export default defineComponent({
       loading,
       gotoSearchResult,
       totalItemsInCart,
+      isOpenSearchBar,
+      toggleMobileSearchBar,
     }
   },
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .sf-header {
   --header-padding: var(--spacer-sm);
   @include for-desktop {
@@ -390,6 +446,10 @@ export default defineComponent({
   &__icon-name {
     font-size: var(--font-size--xs);
   }
+
+  &__spacer {
+    flex: 0.35;
+  }
 }
 
 .kibo-top-bar {
@@ -398,7 +458,11 @@ export default defineComponent({
 }
 
 .sf-menu-item {
-  --menu-item-label-color: #fff;
+  --menu-item-label-color: var(--_c-dark-primary);
+
+  @include for-desktop {
+    --menu-item-label-color: var(--_c-light-secondary);
+  }
 
   font-size: var(--font-size--sm);
 }
@@ -422,5 +486,78 @@ export default defineComponent({
   top: 2.65rem;
   position: absolute;
   z-index: 20;
+}
+
+.kibo-mobile {
+  &__header-container {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--_c-dark-primary);
+    height: 3.438rem;
+    justify-content: space-evenly;
+  }
+
+  &__header-column {
+    align-self: center;
+  }
+
+  &__item-count {
+    padding-left: 0.25rem;
+    margin-bottom: 1.438rem;
+    margin-left: -0.5rem;
+  }
+
+  &__logo > .sf-image {
+    object-fit: none;
+    padding-top: 0.438rem;
+  }
+
+  &__header-search {
+    height: 3.563rem;
+    background-color: var(--_c-white-secondary);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    &__input {
+      padding-left: 1.813rem;
+      flex: 90%;
+
+      > input {
+        height: 2.125rem;
+        width: 100%;
+        border: 1px solid var(--_c-gray-middle);
+        border-radius: 0.125rem;
+      }
+
+      ::-webkit-input-placeholder {
+        color: var(--_c-gray-primary); /* Edge */
+      }
+
+      :-ms-input-placeholder {
+        color: var(--_c-gray-primary); /* Internet Explorer 10-11 */
+      }
+
+      ::placeholder {
+        color: var(--_c-gray-primary);
+      }
+    }
+
+    &__cancel {
+      flex: 10%;
+      padding-right: 1.813rem;
+      background-color: var(--_c-white-secondary);
+      color: var(--_c-gray-primary);
+    }
+  }
+
+  &__search-icon {
+    height: 1.875rem;
+    margin-top: 1.875rem;
+  }
+
+  &__search-pointer-icon {
+    height: 1.25rem;
+  }
 }
 </style>

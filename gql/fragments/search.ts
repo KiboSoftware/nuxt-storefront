@@ -3,14 +3,23 @@ import { productInfo } from "./product"
 export const searchFacets = `
 fragment searchFacets on Facet {
     label
+    facetType
     field
     values {
         label
         value
-        isApplied
         filterValue
         isDisplayed
         count
+        isApplied
+        childrenFacetValues {
+            label
+            count
+            value
+            filterValue
+            isDisplayed
+            count
+        }
     }
 }`
 

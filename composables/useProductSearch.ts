@@ -7,22 +7,28 @@ export const useProductSearch = (referenceKey: string) => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const result = useState(`use-productSearch-result-${referenceKey}`, () => {
-    return {}
+    return null
   })
 
   const loading = useState(`use-productSearch-loading-${referenceKey}`, () => false)
   const error = useState(`use-productSearch-error-${referenceKey}`, () => null)
-  const search = async (params: { categoryCode: string }) => {
+  const search = async (params: {
+    categoryCode?: string
+    filters?: Array<string>
+    page?: number
+    itemsPerPage?: number
+    phrase?: string
+    sort?: string
+  }) => {
     try {
       loading.value = true
-      const { categoryCode } = params
-      const variables = buildProductSearchVars({ categoryCode })
+      const { categoryCode, filters } = params
+      const variables = buildProductSearchVars({ categoryCode, filters })
       const productSearchResponse = await fetcher({
         query: searchProductsQuery,
         variables,
       })
-      const { facets, items, totalCount } = productSearchResponse?.data?.products
-      result.value = { facets, items, totalCount }
+      result.value = productSearchResponse?.data?.products
     } catch (error) {
       console.error(error)
     } finally {
