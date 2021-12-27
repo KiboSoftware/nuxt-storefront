@@ -28,6 +28,22 @@
     font-size: var(--spacer-xs);
   }
 
+  &--number-mobile {
+    --badge-min-width: 0.875rem;
+    --badge-min-height: 0.875rem;
+    --badge-padding: 0;
+    --badge-border-radius: 100%;
+    --badge-background: var(--_c-green-primary);
+    --badge-border: 0.031rem solid var(--_c-green-primary);
+
+    display: flex;
+    align-items: center;
+    width: 0.875rem;
+    height: 0.875rem;
+    font-size: var(--spacer-xs);
+    color: var(--c-white);
+  }
+
   &.disabled {
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-gray-middle);
