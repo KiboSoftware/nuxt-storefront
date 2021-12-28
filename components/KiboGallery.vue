@@ -1,7 +1,7 @@
 <template>
   <div class="sf-gallery">
     <div class="sf-gallery__stage">
-      <div ref="glide" class="glide">
+      <div ref="glideElement" class="glide">
         <div class="glide__track" data-glide-el="track">
           <ul class="glide__slides">
             <li
@@ -81,6 +81,7 @@
 import Glide from "@glidejs/glide"
 import { SfButton, SfImage } from "@storefront-ui/vue"
 import PinchZoom from "pinch-zoom-js"
+import { nextTick } from "vue"
 
 export default {
   name: "KiboGallery",
@@ -133,109 +134,136 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      positionStatic: {},
-      eventHover: {},
-      pictureSelected: { alt: "" },
-      glide: null,
-      activeIndex: this.current - 1,
-      style: "",
-    }
-  },
-  computed: {
-    mapPictures() {
-      // map images to handle picture tags with SfImage
-      return this.images.map(({ desktop, big }) => ({
+  setup(props, context) {
+    const positionStatic = ref({})
+    const eventHover = ref({})
+    const pictureSelected = ref({ alt: "" })
+    const glideElement = ref(null)
+    let glideLib = {}
+    const activeIndex = ref(props.current - 1)
+    const style = ref("")
+
+    onMounted(() => {
+      const elementList = document.getElementsByClassName("sf-gallery__big-image")
+      for (let i = 0; i < elementList.length; i++) {
+        const element = elementList[i]
+        const pz = new PinchZoom(element)
+        pz.enable()
+      }
+
+      nextTick(() => {
+        // handle slider with swipe and transitions with Glide.js
+        // https://glidejs.com/docs/
+        if (props.images.length < 1) return
+        const glide = new Glide(context.refs.glideElement, updatedSliderOptions)
+
+        glide.on("run", () => {
+          go(glide.index)
+        })
+        glide.mount()
+        glideLib = glide
+      })
+    })
+
+    onBeforeUnmount(() => {
+      if (glideLib) {
+        glideLib.destroy()
+      }
+    })
+
+    const mapPictures = computed(() => {
+      return props.images.map(({ desktop, big }) => ({
         mobile: desktop,
         desktop: big,
       }))
-    },
-    updatedSliderOptions() {
-      return { ...this.sliderOptions, startAt: this.activeIndex }
-    },
-    pictureSelectedUrl() {
-      const { zoom, big, desktop } = this.pictureSelected
+    })
+
+    const updatedSliderOptions = computed(() => {
+      return { ...props.sliderOptions, startAt: activeIndex.value }
+    })
+
+    const pictureSelectedUrl = computed(() => {
+      const { zoom, big, desktop } = pictureSelected.value
       const definedPicture = zoom || big || desktop
       return definedPicture ? definedPicture.url : ""
-    },
-  },
-  mounted() {
-    for (let i = 0; i < this.$refs.sfGalleryBigImage.length; i++) {
-      const element = this.$refs.sfGalleryBigImage[i].$el
-      const pz = new PinchZoom(element)
-      pz.enable()
-    }
-
-    this.$nextTick(() => {
-      // handle slider with swipe and transitions with Glide.js
-      // https://glidejs.com/docs/
-      if (this.images.length < 1) return
-      const glide = new Glide(this.$refs.glide, this.updatedSliderOptions)
-
-      glide.on("run", () => {
-        this.go(glide.index)
-      })
-      glide.mount()
-      this.glide = glide
     })
-  },
-  beforeDestroy() {
-    if (this.glide) {
-      this.glide.destroy()
-    }
-  },
-  methods: {
-    positionObject(index) {
-      if (this.$refs.sfGalleryBigImage) {
-        if (this.outsideZoom) {
-          return this.$refs.glide.getBoundingClientRect()
+
+    // Methods
+    const positionObject = (index) => {
+      if (context.refs.sfGalleryBigImage) {
+        if (props.outsideZoom) {
+          return context.refs.glideElement.getBoundingClientRect()
         } else {
-          return this.$refs.sfGalleryBigImage[index].$el.getBoundingClientRect()
+          return context.refs.sfGalleryBigImage[index].$el.getBoundingClientRect()
         }
       }
       return ""
-    },
-    go(index) {
-      if (!this.glide) return
-      this.activeIndex = index
-      // Event for current image change (`v-model`)  @type {Event}
-      this.$emit("click", index + 1)
-      if (this.glide) {
-        this.glide.go(`=${index}`)
+    }
+
+    const go = (index) => {
+      if (!glideLib) return
+
+      activeIndex.value = index
+      glideLib.go(`=${index}`)
+      context.emit("click", index + 1)
+
+      if (glideLib) {
+        glideLib.go(`=${index}`)
       }
-    },
-    startZoom(picture) {
-      if (this.enableZoom) {
-        this.pictureSelected = picture
+    }
+
+    const startZoom = (picture) => {
+      if (props.enableZoom) {
+        pictureSelected.value = picture
       }
-    },
-    moveZoom($event, index) {
-      if (this.enableZoom) {
-        this.eventHover = $event
-        if (this.outsideZoom) {
-          this.positionStatic = this.positionObject(index)
-          this.$refs.imgZoom.$el.children[0].style.cssText = "top: 0; transform: scale(2);"
-          this.$refs.imgZoom.$el.children[0].style.transformOrigin = `${
-            $event.clientX - this.positionStatic.x
-          }px ${$event.clientY - this.positionStatic.y}px`
+    }
+
+    const moveZoom = ($event, index) => {
+      if (props.enableZoom) {
+        eventHover.value = $event
+        if (props.outsideZoom) {
+          positionStatic.value = positionObject(index)
+          context.refs.imgZoom.$el.children[0].style.cssText = "top: 0; transform: scale(2);"
+          context.refs.imgZoom.$el.children[0].style.transformOrigin = `${
+            $event.clientX - positionStatic.value.x
+          }px ${$event.clientY - positionStatic.value.y}px`
         } else {
-          this.positionStatic = this.positionObject(index)
-          this.$refs.sfGalleryBigImage[index].$el.children[0].style.cssText =
+          positionStatic.value = positionObject(index)
+          context.refs.sfGalleryBigImage[index].$el.children[0].style.cssText =
             "top: 0; transform: scale(2);"
-          this.$refs.sfGalleryBigImage[index].$el.children[0].style.transformOrigin = `${
-            $event.clientX - this.positionStatic.x
-          }px ${$event.clientY - this.positionStatic.y}px`
+          context.refs.sfGalleryBigImage[index].$el.children[0].style.transformOrigin = `${
+            $event.clientX - positionStatic.value.x
+          }px ${$event.clientY - positionStatic.value.y}px`
         }
       }
-    },
-    removeZoom(index) {
-      if (this.enableZoom) {
-        this.pictureSelected = ""
-        if (this.outsideZoom) return
-        this.$refs.sfGalleryBigImage[index].$el.children[0].style.transform = "scale(1)"
+    }
+
+    const removeZoom = (index) => {
+      if (props.enableZoom) {
+        pictureSelected.value = ""
+        if (props.outsideZoom) return
+        context.refs.sfGalleryBigImage[index].$el.children[0].style.transform = "scale(1)"
       }
-    },
+    }
+
+    return {
+      positionStatic,
+      eventHover,
+      pictureSelected,
+      glideElement,
+      activeIndex,
+      style,
+
+      mapPictures,
+      updatedSliderOptions,
+      pictureSelectedUrl,
+
+      positionObject,
+      go,
+      startZoom,
+      moveZoom,
+      removeZoom,
+    }
   },
 }
 </script>

@@ -3,7 +3,7 @@
     <div class="zoom__title">
       <SfBar class="sf-modal__bar" :close="true" :title="productName" @click:close="closeModal" />
     </div>
-    <div class="zoom__gallery">
+    <div>
       <KiboGallery
         :images="productGallery"
         :thumb-width="115"
@@ -44,7 +44,6 @@ export default defineComponent({
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
 
     const closeModal = () => {
-      console.log("closing model..")
       return app.router.push(`/product/{productCode}`)
     }
 
@@ -91,8 +90,4 @@ export default defineComponent({
     }
   }
 }
-
-// .zoom > div {
-//   border: solid;
-// }
 </style>
