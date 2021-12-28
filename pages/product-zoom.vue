@@ -44,7 +44,7 @@ export default defineComponent({
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
 
     const closeModal = () => {
-      return app.router.push(`/product/{productCode}`)
+      return app.router.push(`/product/${productCode}`)
     }
 
     return {

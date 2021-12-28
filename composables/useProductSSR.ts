@@ -52,10 +52,15 @@ export const useProductSSR = (referenceKey: string) => {
     loading.value = false
   }
 
-  const setFulfillment = (fulfillmentMethod: string, purchaseLocationCode?: string) => {
+  const setFulfillment = (
+    fulfillmentMethod: string,
+    fulfillmentMethodShortName: string,
+    purchaseLocationCode?: string
+  ) => {
     try {
       const fulfillment = {
         fulfillmentMethod,
+        fulfillmentMethodShortName,
         purchaseLocationCode,
       }
       product.value = {

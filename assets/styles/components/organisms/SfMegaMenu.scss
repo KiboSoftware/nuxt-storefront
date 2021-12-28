@@ -61,13 +61,13 @@
     }
     @include for-desktop {
       &__content {
-        display: block;  
+        display: block;
       }
     }
-  } 
+  }
 }
 
-@include for-mobile { 
+@include for-mobile {
   .sf-mega-menu {
     display: none;
   }

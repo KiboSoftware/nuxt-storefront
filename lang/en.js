@@ -167,4 +167,7 @@ export default {
   ShopAll: "Shop All",
   Advertisment: "Advertisment",
   "Pinch image to zoom": "Pinch image to zoom",
+  "Add to Cart": "Add to Cart",
+  "Add to Wishlist": "Add to Wishlist",
+  Cart: "Cart",
 }

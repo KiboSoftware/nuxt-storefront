@@ -64,9 +64,22 @@ describe("[composable] useCart", () => {
     expect(error.value).toBeNull()
   })
 
-  test("addToCart: should add item to cart", async () => {
-    const { cart, addToCart, error, loading } = useCart()
-    await addToCart({ product: "mocked-product", quantity: 1 })
+  test("addItemsToCart: should add item to cart", async () => {
+    const { cart, addItemsToCart, error, loading } = useCart()
+    const addToCartVariables = {
+      productToAdd: {
+        product: {
+          productCode: "mocked-current-cart",
+          variationProductCode: "",
+          options: undefined,
+        },
+        quantity: 1,
+        fulfillmentMethod: "Ship",
+        purchaseLocation: "Austin",
+      },
+    }
+
+    await addItemsToCart(addToCartVariables)
     expect(cart.value).toBe("mocked-current-cart")
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()

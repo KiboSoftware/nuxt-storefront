@@ -194,8 +194,9 @@
                 <KiboProductActions
                   v-model="qtySelected"
                   :quantity-left="quantityLeft"
-                  label-add-to-cart="Add to Cart"
-                  label-add-to-wishlist="Add to Wishlist"
+                  :is-valid-for-add-to-cart="isValidForAddToCart"
+                  :label-add-to-cart="$t('Add to Cart')"
+                  :label-add-to-wishlist="$t('Add to Wishlist')"
                   @addItemToCart="addToCart"
                   @addItemWishlist="addToWishList"
                 />
@@ -235,13 +236,17 @@ import { defineComponent, computed } from "@vue/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
 
 import { useAsync } from "@nuxtjs/composition-api"
-import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import KiboProductActions from "@/components/KiboProductActions.vue"
-import KiboGallery from "@/components/KiboGallery.vue"
-import { useProductSSR, useUiState, usePurchaseLocation, productGetters } from "@/composables"
-import { isFulfillmentOptionValid } from "@/composables/helpers"
+import {
+  useProductSSR,
+  useUiState,
+  usePurchaseLocation,
+  productGetters,
+  useCart,
+} from "@/composables"
+import { buildAddToCartInput, isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names
   name: "Product",
   components: {
     SfPrice,
@@ -258,14 +263,12 @@ export default defineComponent({
     SfCheckbox,
     SfInput,
     SfAccordion,
-    KiboFulfillmentOptions,
-    KiboProductActions,
-    KiboGallery,
   },
 
   setup(_, context) {
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
+    const { addItemsToCart } = useCart()
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
 
@@ -291,11 +294,16 @@ export default defineComponent({
     const selectedFulfillmentValue = computed(() =>
       productGetters.getSelectedFullfillmentOption(product.value)
     )
+    const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
 
     // Options section
     let shopperEnteredValues = []
 
-    const updateShopperEnteredValues = (attributeFQN, value, shopperEnteredValue) => {
+    const updateShopperEnteredValues = (
+      attributeFQN: string,
+      value: string,
+      shopperEnteredValue: string
+    ) => {
       const itemToBeUpdated = shopperEnteredValues.find(
         (item) => item.attributeFQN === attributeFQN
       )
@@ -318,15 +326,19 @@ export default defineComponent({
       ]
     }
 
-    const selectOption = async (attributeFQN, value, shopperEnteredValue = undefined) => {
+    const selectOption = async (
+      attributeFQN: string,
+      value: string,
+      shopperEnteredValue: string
+    ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
     }
 
     // Get Fullfillment Options
     const selectFulfillmentOption = (selectedFulfillmentVal: string) => {
-      const { value, name } = fulfillmentOptions.value.find(
-        (option) => option.value === selectedFulfillmentVal
+      const { value, name, shortName } = fulfillmentOptions.value.find(
+        (option: { value: string }) => option.value === selectedFulfillmentVal
       )
 
       const isValid = isFulfillmentOptionValid(
@@ -336,7 +348,7 @@ export default defineComponent({
       )
 
       if (isValid) {
-        setFulfillment(selectedFulfillmentVal, purchaseLocation.value.code)
+        setFulfillment(selectedFulfillmentVal, shortName, purchaseLocation?.value?.code)
       }
     }
 
@@ -344,20 +356,26 @@ export default defineComponent({
     const quantityLeft = computed(() => 5)
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
-    const addToCart = () => {
-      const addToCartVariables = {
-        productToAdd: {
-          product: {
-            productCode: product.value?.productCode,
-          },
-          quantity: qtySelected,
-          fulfillmentMethod: product.value?.fulfillmentMethod,
-          purchaseLocation: product.value?.purchaseLocationCode,
-        },
-      }
+    const addToCart = async () => {
+      // const productToAdd: CartItem = {
+      //   product: {
+      //     productCode: product?.value?.productCode || "",
+      //     variationProductCode: product?.value?.variationProductCode || "",
+      //     options: shopperEnteredValues,
+      //   },
+      //   quantity: qtySelected.value,
+      //   fulfillmentMethod: product.value?.fulfillmentMethodShortName,
+      //   purchaseLocation: product.value?.purchaseLocationCode,
+      // }
 
-      // Todo: Add to cart
-      console.log(`addToCartVariables: ${JSON.stringify(addToCartVariables)}`)
+      const productToAdd = buildAddToCartInput(
+        product.value,
+        qtySelected.value,
+        shopperEnteredValues
+      )
+      if (isValidForAddToCart.value) {
+        await addItemsToCart(productToAdd)
+      }
     }
 
     const addToWishList = () => {
@@ -398,6 +416,7 @@ export default defineComponent({
       handleStoreLocatorClick,
       selectFulfillmentOption,
       updateShopperEnteredValues,
+      isValidForAddToCart,
     }
   },
 })

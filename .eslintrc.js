@@ -11,7 +11,7 @@ module.exports = {
     "no-console": "warn",
     "@typescript-eslint/no-explicit-any": "error",
     "import/named": "off",
-    "vue/multi-word-component-names": "off",
+    "vue/multi-word-component-names": 0,
   },
   ignorePatterns: ["server/types/GraphQL.ts"],
 }

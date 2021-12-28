@@ -28,7 +28,7 @@
     "*.{css,vue}": [
       "yarn stylelint"
     ],
-    "*.{js}": [
+    "*.{ts,js}": [
       "yarn test"
     ]
   },
