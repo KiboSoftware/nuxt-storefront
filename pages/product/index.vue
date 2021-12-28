@@ -7,7 +7,7 @@
           <div>
             <div class="product__gallery">
               <LazyHydrate when-idle>
-                <SfGallery
+                <KiboGallery
                   :images="productGallery"
                   :thumb-width="115"
                   :thumb-height="115"
@@ -216,7 +216,6 @@
 
 <script lang="ts">
 import {
-  SfGallery,
   SfPrice,
   SfRating,
   SfIcon,
@@ -250,7 +249,6 @@ export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Product",
   components: {
-    SfGallery,
     SfPrice,
     SfRating,
     SfIcon,
