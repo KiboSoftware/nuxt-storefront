@@ -50,7 +50,6 @@
       </template>
     </KiboHamburgerMenu>
 
-
     <div v-if="!isMobile">
       <div class="kibo-top-bar kibo-nav-link">
         <div><SfMenuItem label="Nav Link 1" /></div>
@@ -166,8 +165,12 @@
     <div v-else class="kibo-mobile">
       <div class="kibo-mobile__header-container">
         <div class="kibo-mobile__header-column">
-            <SfIcon size="1.25rem" class="sf-header__icon" @click.prevent="showHamburgerMenu = true">
-            <font-awesome-icon :icon="['fas', showHamburgerMenu ? 'times' : 'bars']" class="fa-icon" color="var(--c-white)"/>
+          <SfIcon size="1.25rem" class="sf-header__icon" @click.prevent="showHamburgerMenu = true">
+            <font-awesome-icon
+              :icon="['fas', showHamburgerMenu ? 'times' : 'bars']"
+              class="fa-icon"
+              color="var(--c-white)"
+            />
           </SfIcon>
         </div>
         <div class="kibo-mobile__header-column">
@@ -178,7 +181,6 @@
             <SfIcon v-if="isOpenSearchBar" size="1.25rem">
               <font-awesome-icon icon="sort-up" class="fa-icon" color="var(--_c-white-secondary)" />
             </SfIcon>
-<<<<<<< HEAD
           </div>
         </div>
         <div class="kibo-mobile__header-column">
@@ -201,34 +203,6 @@
           <SfIcon size="1.25rem">
             <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
             <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
-=======
-            <div class="kibo-header__icon">
-              <span class="kibo-header__icon-name"> {{ selectedLocation }}</span>
-            </div>
-          </SfButton>
-          <SfButton
-            v-e2e="'app-header-account'"
-            class="sf-button--pure sf-header__action"
-            @click="handleAccountClick"
-          >
-            <SfIcon class="sf-header__icon">
-              <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
-              <i class="far fa-user-circle"></i>
-            </SfIcon>
-            <div class="kibo-header__icon">
-              <span class="kibo-header__icon-name"> {{ $t("My Account") }}</span>
-            </div>
-          </SfButton>
-          <SfButton
-            v-e2e="'app-header-cart'"
-            class="sf-button--pure sf-header__action"
-            link="/cart"
-          >
-            <SfIcon class="sf-header__icon">
-              <font-awesome-icon icon="shopping-cart" class="fa-icon" />
-            </SfIcon>
-            <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
->>>>>>> 22baf81 (resolve review comments)
               totalItemsInCart
             }}</SfBadge>
           </SfIcon>
@@ -475,9 +449,10 @@ export default defineComponent({
 
   &__icons {
     display: flex;
-    flex: 1;
+    flex: 1.2;
     justify-content: space-evenly;
     justify-items: center;
+    margin-left: 3%;
   }
 
   &__search {
@@ -521,7 +496,6 @@ export default defineComponent({
 .kibo-nav-link {
   display: flex;
   @include for-desktop {
-    color: var(--_c-light-secondary);
     justify-content: flex-end;
     justify-items: center;
     padding-right: 5%;
@@ -535,6 +509,11 @@ export default defineComponent({
 }
 
 .kibo-nav-link div {
+  @include for-desktop {
+    color: var(--_c-light-secondary);
+    margin-left: 2%;
+  }
+
   margin: var(--spacer-2xs) var(--spacer-xs) 0 0;
   padding: var(--spacer-2xs);
   cursor: pointer;
@@ -545,7 +524,7 @@ export default defineComponent({
   display: flex;
   height: 4.2rem;
   align-items: center;
-  padding-right: 5%;
+  padding-right: 2%;
   padding-left: 2%;
 
   &__search-bar {
@@ -712,4 +691,3 @@ export default defineComponent({
   }
 }
 </style>
-
