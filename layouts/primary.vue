@@ -1,7 +1,8 @@
 <template>
   <div>
     <KiboAppHeader />
-
+    <LoginModal />
+    <StoreLocatorModal />
     <div class="content">
       <Nuxt />
     </div>

@@ -1,7 +1,12 @@
 <template>
   <div class="zoom">
     <div class="zoom__title">
-      <SfBar class="sf-modal__bar" :close="true" :title="productName" @click:close="closeModal" />
+      <SfBar
+        class="sf-modal__bar"
+        :close="true"
+        :title="productName"
+        @click:close="closeZoomedProduct"
+      />
     </div>
     <div>
       <KiboGallery
@@ -10,6 +15,7 @@
         :thumb-height="115"
         :image-width="506"
         :image-height="506"
+        :enable-pinch-zoom="true"
       />
     </div>
     <div class="zoom__pinch">
@@ -22,17 +28,12 @@ import { defineComponent, computed } from "@vue/composition-api"
 import { useAsync } from "@nuxtjs/composition-api"
 import { SfLoader, SfBar } from "@storefront-ui/vue"
 import { useProductSSR, productGetters } from "@/composables"
-import { useNuxtApp } from "#app"
 
 export default defineComponent({
-  name: "ProductZoom",
   components: {
     SfBar,
   },
-  layout: "zoom",
   setup(_, context) {
-    const nuxt = useNuxtApp()
-    const app = nuxt.nuxt2Context.app
     const { productCode } = context.root.$route.params
     const { load, product, loading, error } = useProductSSR(productCode)
 
@@ -43,8 +44,8 @@ export default defineComponent({
     const productName = computed(() => productGetters.getName(product.value))
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
 
-    const closeModal = () => {
-      return app.router.push(`/product/${productCode}`)
+    const closeZoomedProduct = () => {
+      context.emit("closeZoomedProduct", true)
     }
 
     return {
@@ -54,7 +55,7 @@ export default defineComponent({
       productGallery,
       SfLoader,
       SfBar,
-      closeModal,
+      closeZoomedProduct,
     }
   },
 })

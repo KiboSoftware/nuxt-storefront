@@ -133,22 +133,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    enablePinchZoom: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const positionStatic = ref({})
     const eventHover = ref({})
     const pictureSelected = ref({ alt: "" })
     const glideElement = ref(null)
-    let glideLib = {}
+    let glideLib = null
     const activeIndex = ref(props.current - 1)
     const style = ref("")
 
     onMounted(() => {
-      const elementList = document.getElementsByClassName("sf-gallery__big-image")
-      for (let i = 0; i < elementList.length; i++) {
-        const element = elementList[i]
-        const pz = new PinchZoom(element)
-        pz.enable()
+      if (props.enablePinchZoom) {
+        const elementList = document.getElementsByClassName("sf-gallery__big-image")
+        for (let i = 0; i < elementList.length; i++) {
+          const element = elementList[i]
+          const pz = new PinchZoom(element)
+          pz.enable()
+        }
       }
 
       nextTick(() => {
