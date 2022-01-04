@@ -9,6 +9,7 @@ export const useCart = () => {
     return {}
   })
   const loading = useState(`use-cart-loading`, () => false)
+  const cartItemId = useState(`use-cart-item`, () => null)
   const error = useState(`use-cart-error`, () => null)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
@@ -35,10 +36,11 @@ export const useCart = () => {
     try {
       loading.value = true
 
-      await fetcher({
+      const response = await fetcher({
         query: addToCartMutation,
         variables: { productToAdd },
       })
+      cartItemId.value = response?.data?.addItemToCurrentCart?.id
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
@@ -95,5 +97,6 @@ export const useCart = () => {
     load,
     cart,
     error,
+    cartItemId,
   }
 }

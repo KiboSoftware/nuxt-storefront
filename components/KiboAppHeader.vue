@@ -95,7 +95,7 @@
               <SfIcon class="sf-header__icon">
                 <font-awesome-icon icon="shopping-cart" class="fa-icon" />
               </SfIcon>
-              <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge">{{
+              <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge cart-badge">{{
                 totalItemsInCart
               }}</SfBadge>
               <div class="kibo-header__icon">
@@ -395,8 +395,7 @@ export default defineComponent({
 
 .cart-badge {
   position: absolute;
-  bottom: 40%;
-  left: 40%;
+  top: 0.125rem;
 }
 
 .kibo-img {

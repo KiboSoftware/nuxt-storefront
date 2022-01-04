@@ -40,17 +40,12 @@
           <span class="title--heading">{{ $t("Added to Cart") }}</span>
         </div>
         <div class="section-border desktop-only"></div>
-        <div v-if="cartItems.length" key="detailed-cart" class="collected-product-list">
+        <div v-if="cartItem" key="detailed-cart" class="collected-product-list">
           <transition-group name="sf-fade" tag="div">
-            <div
-              v-for="cartItem in cartItems"
-              :key="cartItem.id"
-              :cart-item-id="cartItem.id"
-              class="kibo-collectedProduct"
-            >
+            <div :key="cartItem.id" :cart-item-id="cartItem.id" class="kibo-collectedProduct">
               <div class="kibo-collectedProduct__image">
                 <SfImage
-                  :src="cartItem.product.imageUrl"
+                  :src="cartItemImage"
                   :alt="$t('Added to Cart')"
                   width="100%"
                   height="100%"
@@ -58,10 +53,10 @@
               </div>
               <div class="kibo-collectedProduct__info">
                 <div class="kibo-collectedProduct__title-wrapper">
-                  {{ cartItem.product.name }}
+                  {{ cartItemName }}
                 </div>
                 <div class="kibo-collectedProduct__details-wrapper">
-                  <div v-for="(option, index) in cartItem.product.options" :key="index">
+                  <div v-for="(option, index) in cartItemOptions" :key="index">
                     <div class="sf-property">
                       <div>
                         <span class="sf-property__name">{{ option.name }}:</span>
@@ -94,7 +89,7 @@
           <div class="detailed-cart">
             <div class="sf-property--full-width sf-property">
               <span class="sf-property__name-noBold">{{ $t("Subtotal") }}</span>
-              <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
+              <span class="sf-property__value">{{ cartItemPrice.regular }}</span>
               <!-- TODO: Needs to be changed the disaply value based on getCartItemPrice cartGetter -->
             </div>
             <div class="border-space"><hr class="sf-divider" /></div>
@@ -103,7 +98,7 @@
                 ><b>{{ $t("Total") }}</b></span
               >
               <span class="sf-property__value"
-                ><b>${{ cartOrder.total }}</b></span
+                ><b>{{ cartItemPrice.special }}</b></span
               >
             </div>
           </div>
@@ -131,7 +126,7 @@
 </template>
 <script lang="ts">
 import { SfModal, SfBar, SfImage, SfPrice, SfButton, SfIcon } from "@storefront-ui/vue"
-import { computed, useAsync } from "@nuxtjs/composition-api"
+import { computed } from "@nuxtjs/composition-api"
 import { useUiState, cartGetters } from "@/composables"
 
 export default {
@@ -146,16 +141,15 @@ export default {
   },
   setup() {
     const { isAddToCartConfirmationOpen, toggleAddToCartConfirmationModal } = useUiState()
-    const { cart, load: loadCart } = useCart()
+    const { cart, cartItemId } = useCart()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
 
-    useAsync(async () => {
-      await loadCart()
-    }, null)
-
-    const cartItems = computed(() => cartGetters.getItems(cart.value))
-    const cartOrder = computed(() => cartGetters.getTotals(cart.value))
+    const cartItem = computed(() => cartGetters.getCurrentCartItem(cart.value, cartItemId.value))
+    const cartItemName = computed(() => cartGetters.getItemName(cartItem.value))
+    const cartItemImage = computed(() => cartGetters.getItemImage(cartItem.value))
+    const cartItemOptions = computed(() => cartGetters.getItemOptions(cartItem.value))
+    const cartItemPrice = computed(() => cartGetters.getItemPrice(cartItem.value))
 
     const closeModal = () => {
       toggleAddToCartConfirmationModal()
@@ -169,10 +163,13 @@ export default {
     return {
       isAddToCartConfirmationOpen,
       toggleAddToCartConfirmationModal,
-      cartItems,
-      cartOrder,
+      cartItem,
       goToCart,
       closeModal,
+      cartItemName,
+      cartItemImage,
+      cartItemOptions,
+      cartItemPrice,
     }
   },
 }
