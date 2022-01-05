@@ -2,8 +2,8 @@
   <div>
     <LazyHydrate v-if="!isProductZoomed" when-idle>
       <SfLoader :loading="loading">
-        <div>
-          <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
+        <div class="product_container">
+          <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
           <div class="product">
             <div>
               <div class="product__gallery">
@@ -18,7 +18,7 @@
                 </LazyHydrate>
               </div>
 
-              <div class="product__specs">
+              <div class="product__specs desktop-only">
                 <SfAccordion
                   open=""
                   :first-open="false"
@@ -190,6 +190,7 @@
                 <SfDivider class="divider-first" />
 
                 <KiboFulfillmentOptions
+                  class="product__fullfillment"
                   :fulfillment-options="fulfillmentOptions"
                   :cart-item-purchase-location="purchaseLocation.name"
                   :selected-option="selectedFulfillmentValue"
@@ -213,7 +214,26 @@
 
                 <div>
                   <h4 class="sf-heading__title h4">Product Information</h4>
-                  <div class="product__description desktop-only" v-html="description"></div>
+                  <div class="product__description" v-html="description"></div>
+                </div>
+
+                <div class="smartphone-only">
+                  <SfAccordion
+                    open=""
+                    :first-open="false"
+                    :multiple="false"
+                    transition=""
+                    show-chevron
+                    class="prod-spec-mobile"
+                  >
+                    <SfAccordionItem header="Product Specs">
+                      <SfList class="accordion-list">
+                        <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
+                          {{ i }}: {{ p.join(", ") }}
+                        </SfListItem>
+                      </SfList>
+                    </SfAccordionItem>
+                  </SfAccordion>
                 </div>
               </div>
             </div>
@@ -468,6 +488,7 @@ export default defineComponent({
 
   &__info {
     margin: var(--spacer-sm) auto;
+
     @include for-desktop {
       max-width: 36.35rem;
       margin: 0 0 0 5.5rem;
@@ -591,8 +612,16 @@ export default defineComponent({
   }
 
   &__specs {
-    width: 21rem;
     margin-top: 2.81rem;
+    width: 21rem;
+  }
+
+  &__fullfillment {
+    margin-left: 0;
+  }
+
+  ::v-deep .sf-radio__container {
+    padding-left: 0;
   }
 }
 
@@ -648,10 +677,23 @@ export default defineComponent({
 }
 
 .add-to-cart-wrapper {
-  margin: var(--spacer-sm) 0 var(--spacer-xs) 0;
+  margin: var(--spacer-sm) 0 calc(var(--spacer-base) * 1.25) 0;
+  @include for-desktop {
+    margin: var(--spacer-sm) 0 var(--spacer-xs) 0;
+  }
 }
 
 .h4 {
   font-weight: bold;
+}
+
+.product_container {
+  @include for-mobile {
+    padding: 0 29px;
+  }
+}
+
+.prod-spec-mobile > .sf-accordion-item {
+  width: 100%;
 }
 </style>

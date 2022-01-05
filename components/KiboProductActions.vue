@@ -1,7 +1,7 @@
 <template>
   <div class="sf-add-to-cart">
-    <slot name="quantity-select-input" v-bind="{ qty }">
-      <div class="column column-bottom">
+    <div class="kibo-quantity-container">
+      <slot name="quantity-select-input" v-bind="{ qty }">
         <label class="label-quantity">{{ labelQuantity }}</label>
         <SfQuantitySelector
           :qty="qty"
@@ -10,11 +10,13 @@
           class="sf-add-to-cart__select-quantity quantity-input"
           @input="$emit('input', $event)"
         />
-      </div>
-    </slot>
-    <slot name="add-to-cart-btn ">
-      <!--@slot Custom content that will replace default Add to cart button design.-->
-      <div class="column column-bottom column-right">
+        <div class="quantity-left">{{ quantityLeft }} item(s) left</div>
+      </slot>
+    </div>
+
+    <div class="kibo-action-container">
+      <slot name="add-to-cart-btn">
+        <!--@slot Custom content that will replace default Add to cart button design.-->
         <SfButton
           class="sf-add-to-cart__button"
           :disabled="!isValidForAddToCart"
@@ -22,20 +24,20 @@
         >
           {{ labelAddToCart }}
         </SfButton>
-      </div>
-    </slot>
-    <slot name="item-left-span">
-      <div class="column">
-        <span class="quantity-left">{{ quantityLeft }} item(s) left</span>
-      </div>
-    </slot>
-    <slot name="add-to-wishlist">
-      <div class="column column-right">
-        <SfButton class="sf-add-to-wishlist__button" :disabled="disabled" @click="addToWishList">
-          {{ labelAddToWishlist }}
-        </SfButton>
-      </div>
-    </slot>
+        <div class="kibo-add-to-wishlist-one-click-container">
+          <SfButton class="sf-add-to-wishlist__button" :disabled="disabled" @click="addToWishList">
+            {{ labelAddToWishlist }}
+          </SfButton>
+          <SfButton
+            class="color-secondary kibo-one-click-checkout__button"
+            :disabled="disabled"
+            @click="oneClickCheckout"
+          >
+            {{ labelOneClickCheckout }}
+          </SfButton>
+        </div>
+      </slot>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -88,6 +90,10 @@ export default defineComponent({
       type: String,
       default: "Qty:",
     },
+    labelOneClickCheckout: {
+      type: String,
+      default: "1-Click Checkout",
+    },
   },
   setup(props, context) {
     const addToWishList = () => {
@@ -98,37 +104,50 @@ export default defineComponent({
       context.emit("addItemToCart", props.qty)
     }
 
+    const oneClickCheckout = () => {
+      context.emit("oneClickCheckout", "OCC")
+    }
+
     return {
       addToWishList,
       addToCart,
+      oneClickCheckout,
     }
   },
 })
 </script>
 <style lang="scss" scoped>
-$cart-button-width: 11.6rem; //186px
+$cart-button-width: 10.75rem; //172px
 .sf-add-to-cart {
+  display: flex;
   flex-wrap: wrap;
 
-  &__button {
-    width: $cart-button-width;
-  }
+  --button-width: 81%;
 
-  &__button.sf-button {
-    right: 6px;
+  @include for-desktop {
+    &__button {
+      width: $cart-button-width;
+    }
   }
 }
 
 .sf-add-to-wishlist {
   &__button {
-    width: $cart-button-width;
     background-color: var(--_c-white-primary);
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-dark-primary);
+    margin-top: 12px;
+    width: 46%;
   }
 
   &__button.sf-button {
-    right: 0.375rem;
+    margin-right: 24px;
+  }
+
+  @include for-desktop {
+    &__button {
+      width: $cart-button-width;
+    }
   }
 }
 
@@ -138,10 +157,7 @@ $cart-button-width: 11.6rem; //186px
   font-style: italic;
   line-height: var(--font-size--sm);
   padding-left: 3.375rem;
-}
-
-.column {
-  flex: 50%;
+  margin-top: 12px;
 }
 
 .label-quantity {
@@ -149,16 +165,40 @@ $cart-button-width: 11.6rem; //186px
   padding: 0.438rem 0.563rem 0 0;
 }
 
-.column-bottom {
-  margin-bottom: calc(var(--spacer-sm) - var(--spacer-2xs));
-}
-
 .quantity-input {
   bottom: 1px;
 }
 
-.column-right {
-  flex: 48%;
-  margin-right: 0.188rem;
+.kibo-one-click-checkout {
+  &__button {
+    margin-top: 12px;
+    width: 46%;
+  }
+
+  @include for-desktop {
+    &__button {
+      width: $cart-button-width;
+    }
+  }
+}
+
+.kibo-add-to-wishlist-one-click-container {
+  display: flex;
+}
+
+.kibo-action-container {
+  width: 98%;
+
+  @include for-desktop {
+    flex: 1;
+  }
+}
+
+.kibo-quantity-container {
+  margin-bottom: 14px;
+
+  @include for-desktop {
+    flex: 1;
+  }
 }
 </style>
