@@ -314,16 +314,15 @@ export default {
       let header, children
       const { categoryCode } = facetsFromUrl.value
       if (!categoryCode && isSearchPage) {
-        children = productSearchGetters.getFacetCategoryCode(productSearchResult?.value)
+        children = productSearchGetters.getFacetByName(productSearchResult?.value)
       } else {
-        const parent = productSearchGetters
-          .getFacetCategoryCode(productSearchResult?.value)
-          ?.find((facet) => categoryCode === facet.value)
+        const facet = productSearchGetters.getFacetByName(productSearchResult?.value)
+        const parent = facet.values?.find((facet) => categoryCode === facet.value)
         header = parent?.label
         children = parent?.childrenFacetValues
       }
 
-      return { header, children }
+      return { header, children: children.values }
     })
 
     const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))

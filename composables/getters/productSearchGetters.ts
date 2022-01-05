@@ -7,12 +7,12 @@ const getProducts = (searchData: ProductSearchResult) => {
 const getFacets = (searchData: ProductSearchResult, facetTypes?: Array<string>) =>
   searchData?.facets?.filter((facet) => !facetTypes || facetTypes.includes(facet.facetType))
 
-const getFacetCategoryCode = (searchData: ProductSearchResult) => {
-  return searchData?.facets?.find((facet: Facet) => facet.field === "CategoryCode")?.values
+const getFacetByName = (searchData: ProductSearchResult) => {
+  return searchData?.facets?.find((facet: Facet) => facet.field === "CategoryCode")
 }
 
 export const productSearchGetters = {
   getProducts,
   getFacets,
-  getFacetCategoryCode,
+  getFacetByName,
 }
