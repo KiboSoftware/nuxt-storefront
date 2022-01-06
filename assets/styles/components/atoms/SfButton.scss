@@ -5,7 +5,7 @@
   @include font(
     --button-font,
     var(--font-weight--normal),
-    var(--font-size--base),
+    var(--font-size--lg),
     1.2,
     var(--font-family--secondary)
   );
@@ -16,7 +16,13 @@
 
   &--text {
     height: 1.15rem;
-    }
+  }
+
+  .color-secondary {
+    background-color: var(--_c-dark-primary);
+    border: 1px solid var(--_c-dark-primary);
+    color: var(--c-white);
+  }
 }
 
 .color-light {
