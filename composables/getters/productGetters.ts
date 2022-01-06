@@ -2,6 +2,7 @@ import { buildBreadcrumbs, isProductVariationsSelected } from "@/composables/hel
 import { Breadcrumb } from "@/pages/types"
 import { Location, Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
 import { ProductCustom } from "@/composables/types"
+import { useNuxtApp } from "#app"
 
 const ratingAttrFQN = `tenant~rating`
 const getName = (product: ProductCustom) => product?.content?.productName

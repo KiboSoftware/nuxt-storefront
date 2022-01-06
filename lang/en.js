@@ -3,7 +3,7 @@
 export default {
   Categories: "Categories",
   Filters: "Filter",
-  "Sort by": "Sort by",
+  "Sort by": "Sort by:",
   "Products found": "Products found",
   "About us": "About us",
   "Who we are": "Who we are",
@@ -173,4 +173,6 @@ export default {
   "Add to Cart": "Add to Cart",
   "Add to Wishlist": "Add to Wishlist",
   Cart: "Cart",
+  "Show Per Page": "Show Per Page",
+  Back: "Back",
 }

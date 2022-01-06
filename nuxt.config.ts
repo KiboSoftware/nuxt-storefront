@@ -136,6 +136,16 @@ export default defineNuxtConfig({
       },
     ],
     storeLocationCookie: LOCATION_COOKIE,
+    productListing: {
+      itemsPerPage: [20, 40, 60],
+      sortOptions: [
+        { value: "Default", id: "" },
+        { value: "Price: Low to High", id: "price asc" },
+        { value: "Price: High to Low", id: "price desc" },
+        { value: "Latest", id: "createDate desc" },
+        { value: "Oldest", id: "createDate asc" },
+      ],
+    },
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

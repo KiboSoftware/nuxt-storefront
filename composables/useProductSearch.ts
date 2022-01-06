@@ -22,8 +22,15 @@ export const useProductSearch = (referenceKey: string) => {
   }) => {
     try {
       loading.value = true
-      const { categoryCode, filters } = params
-      const variables = buildProductSearchVars({ categoryCode, filters })
+      const { categoryCode, filters, page, itemsPerPage, phrase, sort } = params
+      const variables = buildProductSearchVars({
+        categoryCode,
+        filters,
+        startIndex: page,
+        pageSize: itemsPerPage,
+        search: phrase,
+        sort,
+      })
       const productSearchResponse = await fetcher({
         query: searchProductsQuery,
         variables,
