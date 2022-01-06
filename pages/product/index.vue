@@ -490,8 +490,8 @@ export default defineComponent({
     margin: var(--spacer-sm) auto;
 
     @include for-desktop {
-      max-width: 36.35rem;
-      margin: 0 0 0 5.5rem;
+      max-width: calc(var(--spacer-4xl) * 1.833);
+      margin: 0 0 0 calc(var(--spacer-2xl) * 1.1);
     }
   }
 
@@ -503,13 +503,13 @@ export default defineComponent({
     align-items: flex-start;
 
     @include for-desktop {
-      margin: 1rem 0;
+      margin: var(--spacer-sm) 0;
     }
   }
 
   &__rating {
     display: flex;
-    margin: 0.5rem 0 0 0;
+    margin: var(--spacer-xs) 0 0 0;
     gap: var(--spacer-xs);
   }
 
@@ -524,8 +524,8 @@ export default defineComponent({
 
   &__size {
     display: flex;
-    margin: 21px 0;
-    gap: 10px;
+    margin: calc(var(--spacer-sm) * 1.3125) 0;
+    gap: calc(var(--spacer-xs) * 1.25);
     cursor: pointer;
   }
 
@@ -543,8 +543,8 @@ export default defineComponent({
   }
 
   &__color-label {
-    margin: 0 0 0 0;
-    font-size: 12px;
+    margin: 0;
+    font-size: var(--font-size--xs);
   }
 
   &__add-to-cart {
@@ -574,7 +574,7 @@ export default defineComponent({
   }
 
   &__review {
-    padding-bottom: 24px;
+    padding-bottom: var(--spacer-base);
     border-bottom: var(--c-light) solid 1px;
     margin-bottom: var(--spacer-base);
   }
@@ -607,13 +607,13 @@ export default defineComponent({
   &__heading {
     margin: var(--spacer-sm) auto;
     @include for-desktop {
-      margin: 2.5rem 0 0 0;
+      margin: var(--spacer-xl) 0 0 0;
     }
   }
 
   &__specs {
-    margin-top: 2.81rem;
-    width: 21rem;
+    margin-top: calc(var(--spacer-xl) * 1.124);
+    width: calc(var(--spacer-4xl) * 1.05);
   }
 
   &__fullfillment {
@@ -626,23 +626,23 @@ export default defineComponent({
 }
 
 ::v-deep .sf-accordion-item {
-  width: 21rem;
+  width: calc(var(--spacer-4xl) * 1.05);
   border: 1px solid #cdcdcd;
   background-color: #f7f7f7;
 
   button {
     border-bottom: 1px solid #cdcdcd;
-    padding: 0 1.31rem;
+    padding: 0 calc(var(--spacer-sm) * 1.31);
     font-weight: bold;
   }
 
   &__content {
-    padding: 0.675rem 1.31rem;
+    padding: calc(var(--spacer-xs) * 1.5) calc(var(--spacer-sm) * 1.31);
   }
 
   li {
-    font-size: 14px;
-    margin: 0.5rem 0;
+    font-size: var(--font-size--sm);
+    margin: var(--spacer-xs) 0;
   }
 
   .is-open {
@@ -673,7 +673,7 @@ export default defineComponent({
 }
 
 .textBoxOptions {
-  margin-top: 2rem;
+  margin-top: var(--spacer-lg);
 }
 
 .add-to-cart-wrapper {
@@ -689,7 +689,7 @@ export default defineComponent({
 
 .product_container {
   @include for-mobile {
-    padding: 0 29px;
+    padding: 0 calc(var(--spacer-base) * 1.25);
   }
 }
 
