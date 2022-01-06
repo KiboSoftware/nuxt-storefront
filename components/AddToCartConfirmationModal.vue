@@ -141,11 +141,11 @@ export default {
   },
   setup() {
     const { isAddToCartConfirmationOpen, toggleAddToCartConfirmationModal } = useUiState()
-    const { cart, cartItemId } = useCart()
+    const { cart, newestCartItemId } = useCart()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
 
-    const cartItem = computed(() => cartGetters.getCurrentCartItem(cart.value, cartItemId.value))
+    const cartItem = computed(() => cartGetters.getCartItem(cart.value, newestCartItemId.value))
     const cartItemName = computed(() => cartGetters.getItemName(cartItem.value))
     const cartItemImage = computed(() => cartGetters.getItemImage(cartItem.value))
     const cartItemOptions = computed(() => cartGetters.getItemOptions(cartItem.value))

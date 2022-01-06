@@ -98,7 +98,7 @@ export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Loca
     required: "false",
   }))
 
-export const getCurrentCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
+export const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
   cart?.items?.find((item) => item.id === cartItemId)
 
 export const getCartItemOptions = (item: CartItem) => item?.product?.options
@@ -119,5 +119,5 @@ export const cartGetters = {
   getCoupons,
   getDiscounts,
   getCartFulfillmentOptions,
-  getCurrentCartItem,
+  getCartItem,
 }
