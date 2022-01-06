@@ -153,27 +153,18 @@
             tag="div"
             class="products__grid"
           >
-            <KiboProductCard
-              v-for="(product, i) in products"
-              :key="productGetters.getProductId(product)"
-              :style="{ '--index': i }"
-              :score-rating="3"
-              :max-rating="5"
-              wishlist-icon=""
-              is-in-wishlist-icon=""
-              :is-in-wishlist="false"
-              :title="productGetters.getName(product)"
-              :image="productGetters.getCoverImage(product)"
-              :show-add-to-cart-button="true"
-              :regular-price="`$${productGetters.getPrice(product).regular}`"
-              :special-price="
-                productGetters.getPrice(product).special && productGetters.getPrice(product).special
-              "
-              :link="localePath(getProductLink(productGetters.getProductId(product)))"
-              image-width="12.563rem"
-              image-height="12.563rem"
-              class="products__product-card"
-            />
+            <KiboProductCard v-for="(product, i) in products"
+            :key="productGetters.getProductId(product)" :style="{ '--index': i }" <<<<<<< HEAD
+            ======= :title="productGetters.getName(product)"
+            :image="productGetters.getCoverImage(product)" >>>>>>> 136522f (feat: Initial category
+            index changes) :score-rating="3" :max-rating="5" wishlist-icon="" is-in-wishlist-icon=""
+            :is-in-wishlist="false" <<<<<<< HEAD :title="productGetters.getName(product)"
+            :image="productGetters.getCoverImage(product)" ======= >>>>>>> 136522f (feat: Initial
+            category index changes) :show-add-to-cart-button="true"
+            :regular-price="`$${productGetters.getPrice(product).regular}`" :special-price="
+            productGetters.getPrice(product).special && productGetters.getPrice(product).special "
+            :link="localePath(getProductLink(productGetters.getProductId(product)))"
+            image-width="12.563rem" image-height="12.563rem" class="products__product-card" />
           </transition-group>
           <transition-group v-else appear name="products__slide" tag="div" class="products__list">
             <SfProductCardHorizontal
@@ -319,23 +310,29 @@ export default {
         children = productSearchGetters.getFacetByName(productSearchResult?.value)
       } else {
         const facet = productSearchGetters.getFacetByName(productSearchResult?.value)
-        const parent = facet.values?.find((facet) => categoryCode === facet.value)
+        const parent = facet?.values?.find((facet) => categoryCode === facet.value)
         header = parent?.label
         children = parent?.childrenFacetValues
       }
 
-      return { header, children: children.values }
+      return { header, children }
     })
 
     const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const categoryName = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
-    const navCategories = useState("nav-categories", () => categoriesFromSearch.value.children)
+    const navCategories = useState(
+      "nav-categories",
+      () => categoriesFromSearch.value.children || []
+    )
+
     const showMoreButton = useState("show-more-button", () => false)
 
     const visibleCategories = (categories, categoriesVisible = 5) => {
+      categories = categories || []
+
       showMoreButton.value = !showMoreButton.value
-      navCategories.value = categories?.slice(0, categoriesVisible)
+      navCategories.value = categories && categories?.slice(0, categoriesVisible)
     }
 
     const selectFilter = (filterValue) => {
@@ -401,6 +398,7 @@ export default {
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
       await productSearch(facetsFromUrl.value)
+
       visibleCategories(categoriesFromSearch.value.children)
     }, null)
 
