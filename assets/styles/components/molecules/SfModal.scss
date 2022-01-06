@@ -8,7 +8,11 @@
     &__title {
       font-size: calc(var(--spacer-2xs) + var(--spacer-sm));
       line-height: var(--spacer-base);
-      min-width: 25rem;
+      
+      @include for-desktop {
+        min-width: 25rem;
+      }
+
       font-weight: var(--font-weight--bold);
     }
   }

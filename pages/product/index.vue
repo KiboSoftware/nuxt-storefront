@@ -309,7 +309,7 @@ export default defineComponent({
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
     const { addItemsToCart } = useCart()
-    const { toggleStoreLocatorModal } = useUiState()
+    const { toggleStoreLocatorModal, toggleAddToCartConfirmationModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
 
     useAsync(async () => {
@@ -397,17 +397,6 @@ export default defineComponent({
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
     const addToCart = async () => {
-      // const productToAdd: CartItem = {
-      //   product: {
-      //     productCode: product?.value?.productCode || "",
-      //     variationProductCode: product?.value?.variationProductCode || "",
-      //     options: shopperEnteredValues,
-      //   },
-      //   quantity: qtySelected.value,
-      //   fulfillmentMethod: product.value?.fulfillmentMethodShortName,
-      //   purchaseLocation: product.value?.purchaseLocationCode,
-      // }
-
       const productToAdd = buildAddToCartInput(
         product.value,
         qtySelected.value,
@@ -415,6 +404,7 @@ export default defineComponent({
       )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
+        toggleAddToCartConfirmationModal()
       }
     }
 
