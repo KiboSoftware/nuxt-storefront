@@ -435,7 +435,7 @@ export default {
   }
 
   &__plus-icon {
-    margin: 0 0.125rem 0.125rem 0;
+    margin: 0 calc(var(--spacer-2xs) * 0.5) calc(var(--spacer-2xs) * 0.5) 0;
     order: 1;
     @include for-desktop {
       margin: 0 var(--spacer-xs) 0 0;
@@ -456,14 +456,14 @@ export default {
 
     &--plus {
       font-family: var(--font-family--primary);
-      font-size: 0.813rem;
+      font-size: var(--font-size--sm);
       margin: 0 0;
-      height: 0.875rem;
-      padding: 1rem 0.375rem;
+      height: calc(var(--spacer-xs) * 1.75);
+      padding: var(--spacer-sm) calc(var(--spacer-2xs) * 1.5);
     }
 
     &--back {
-      font-size: 0.813rem;
+      font-size: var(--font-size--sm);
       margin: var(--spacer-sm) 0 var(--spacer-sm) 0;
       font-family: var(--font-family--primary);
     }
@@ -479,7 +479,7 @@ export default {
   }
 
   &__select {
-    --component-select-width: 13.75rem;
+    --component-select-width: calc(var(--spacer-3xl) * 1.375);
     --component-select-padding: 0;
     --component-select-selected-padding: 0 var(--spacer-lg) 0 var(--spacer-2xs);
     --component-select-margin: 0;
@@ -490,7 +490,7 @@ export default {
     display: flex;
     align-items: center;
     margin: 0 0 0 auto;
-    min-width: 11.875rem;
+    min-width: calc(var(--spacer-3xl) * 1.1875);
   }
 
   &__view {
@@ -506,8 +506,8 @@ export default {
     &__icon {
       cursor: pointer;
       margin: 0 var(--spacer-base) 0 var(--spacer-sm);
-      height: 1.438rem;
-      width: 1.438rem;
+      height: var(--spacer-base);
+      width: var(--spacer-base);
       @include for-desktop {
         margin: 0 var(--spacer-base) 0 0;
       }
@@ -530,20 +530,20 @@ export default {
   --component-select-dropdown-z-index: 1;
 
   flex: unset;
-  width: 11.875rem;
+  width: calc(var(--spacer-3xl) * 1.1875);
 }
 
 .sidebar {
   flex: 0 0 15%;
   padding: var(--spacer-sm);
-  border: 0.063rem solid var(--c-light);
-  border-width: 0 0.063rem 0 0;
+  border: 1px solid var(--c-light);
+  border-width: 0 1px 0 0;
 }
 
 .list {
-  --menu-item-font-size: 0.813rem;
+  --menu-item-font-size: var(--font-size--sm);
 
-  padding-left: 0.375rem;
+  padding-left: calc(var(--spacer-2xs) * 1.5);
 
   --list-item-margin: 0 0 var(--spacer-sm) 0;
 }
@@ -557,7 +557,7 @@ export default {
     justify-content: center;
     @include for-desktop {
       justify-content: flex-start;
-      padding: 0 24px 0 0;
+      padding: 0 var(--spacer-base) 0 0;
     }
   }
 
@@ -592,7 +592,7 @@ export default {
   }
   @include for-desktop {
     &__grid {
-      margin: var(--spacer-sm) 0 0 3.125rem;
+      margin: var(--spacer-sm) 0 0 calc(var(--spacer-xl) * 1.25);
     }
 
     &__pagination {
@@ -625,48 +625,48 @@ export default {
 .loading {
   margin: var(--spacer-3xl) auto;
   @include for-desktop {
-    margin-top: 6.25rem;
+    margin-top: calc(var(--spacer-2xl) * 1.125);
   }
 
   &--categories {
     @include for-desktop {
-      margin-top: 3.75rem;
+      margin-top: calc(var(--spacer-xl) * 1.5);
     }
   }
 
   &--products {
     @include for-desktop {
-      margin-top: 2.063rem;
+      margin-top: calc(var(--spacer-lg) * 1.0625);
     }
   }
 }
 
 .category-title {
   color: #2b2b2b;
-  font-size: 18px;
+  font-size: var(--font-size--lg);
   font-family: var(--font-family--primary);
-  line-height: 22px;
+  line-height: calc(var(--spacer-sm) * 1.375);
   text-align: left;
-  margin: 0 0 1rem 0;
+  margin: 0 0 var(--spacer-sm) 0;
 }
 
 .sf-menu-item {
   --menu-item-label-color: #2b2b2b;
   --menu-item-count-color: #2b2b2b;
-  --menu-item-count-margin: 0 0.125rem 0 auto;
+  --menu-item-count-margin: 0 calc(var(--spacer-2xs) * 0.5) 0 auto;
 
-  font-size: 0.813rem;
+  font-size: var(--font-size--sm);
   font-family: var(--font-family--primary);
 }
 
 .sf-filter {
   --filter-label-color: #2b2b2b;
   --filter-count-color: #2b2b2b;
-  --filter-label-font-size: 0.813rem;
-  --filter-count-font-size: 0.813rem;
-  --filter-count-margin: 0 0.5rem 0 auto;
+  --filter-label-font-size: var(--font-size--sm);
+  --filter-count-font-size: var(--font-size--sm);
+  --filter-count-margin: 0 var(--spacer-xs) 0 auto;
 
-  padding: 0.375rem;
+  padding: calc(var(--spacer-2xs) * 1.5);
 }
 
 .category-drill-down,
@@ -676,37 +676,37 @@ export default {
 }
 
 .category-name {
-  margin: 0 0 0 -1.563rem;
+  margin: 0 0 0 calc(var(--spacer-base) * -1.0833);
 }
 
 .sf-accordion-item {
-  --accordion-item-header-padding: 1.875rem 0;
+  --accordion-item-header-padding: calc(var(--spacer-base) * 1.25) 0;
 
   &__chevron {
     margin-left: auto;
   }
 
   &__header {
-    font-size: 0.875rem;
+    font-size: var(--font-size--sm);
     font-weight: bold;
   }
 }
 
 .sf-search-bar {
-  --search-bar-height: 1.625rem;
-  --icon-size: 0.875rem;
-  --font-size--base: 0.75rem;
+  --search-bar-height: calc(var(--spacer-base) * 1.0833);
+  --icon-size: var(--font-size--sm);
+  --font-size--base: calc(var(--spacer-xs) * 1.5);
   --search-bar-placeholder-color: var(--_c-gray-middle);
 
-  bottom: 10px;
+  bottom: calc(var(--spacer-xs) * 1.25);
 
   &__icon {
-    padding: 6px 0 0 2px;
+    padding: calc(var(--spacer-2xs) * 1.5) 0 0 calc(var(--spacer-2xs) * 0.5);
   }
 }
 
 .sf-select {
-  --select-width: 11.875rem;
-  --select-dropdown-text-indent: 10px;
+  --select-width: calc(var(--spacer-3xl) * 1.1875);
+  --select-dropdown-text-indent: calc(var(--spacer-xs) * 1.25);
 }
 </style>
