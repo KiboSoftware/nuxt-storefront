@@ -17,6 +17,12 @@
 
   &--text {
     height: 1.15rem;
+    }
+
+  &--text-lg {
+    font-size: var(--font-size--lg);
+
+  }
   }
 
   .color-secondary {

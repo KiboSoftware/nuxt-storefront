@@ -34,7 +34,7 @@
 
             <SfButton
               type="submit"
-              class="form__submit login-button"
+              class="form__submit login-button sf-button--text-lg"
               data-testid="log-in-button"
               :disabled="loading"
             >
@@ -309,8 +309,6 @@ export default {
 
 .login-button {
   border-radius: var(--spacer-2xs);
-  font-size: var(--font-size--lg);
-  width: fit-content;
   padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) 0 calc(var(--spacer-base) * 2.8);
   align-self: center;
 }
