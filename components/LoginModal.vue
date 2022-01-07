@@ -6,41 +6,43 @@
     <transition name="sf-fade" mode="out-in">
       <div v-if="isLogin" key="log-in" class="modal-content" data-testid="login-modal">
         <form class="form" @submit.prevent="handleLogin()">
-          <SfInput
-            v-model="form.username"
-            name="email"
-            label="Email*"
-            class="form__element"
-            type="email"
-          />
-          <SfInput
-            v-model="form.password"
-            name="password"
-            label="Password*"
-            type="password"
-            class="form__element"
-            :has-show-password="true"
-          />
-          <SfCheckbox
-            v-model="rememberMe"
-            name="remember-me"
-            label="Remember me"
-            class="form__element remember-me"
-          />
-          <span v-if="userError.login" class="login-error-message">
-            {{ userError.login.message }}
-          </span>
+          <div class="form__content">
+            <SfInput
+              v-model="form.username"
+              name="email"
+              label="Email*"
+              class="form__element"
+              type="email"
+            />
+            <SfInput
+              v-model="form.password"
+              name="password"
+              label="Password*"
+              type="password"
+              class="form__element"
+              :has-show-password="true"
+            />
+            <SfCheckbox
+              v-model="rememberMe"
+              name="remember-me"
+              label="Remember me"
+              class="form__element remember-me"
+            />
+            <span v-if="userError.login" class="login-error-message">
+              {{ userError.login.message }}
+            </span>
 
-          <SfButton
-            type="submit"
-            class="sf-button form__submit login-button"
-            data-testid="log-in-button"
-            :disabled="loading"
-          >
-            <SfLoader :class="{ loader: loading }" :loading="loading">
-              <div>{{ $t("Log In") }}</div>
-            </SfLoader>
-          </SfButton>
+            <SfButton
+              type="submit"
+              class="form__submit login-button"
+              data-testid="log-in-button"
+              :disabled="loading"
+            >
+              <SfLoader :class="{ loader: loading }" :loading="loading">
+                <div>{{ $t("Log In") }}</div>
+              </SfLoader>
+            </SfButton>
+          </div>
         </form>
         <SfButton
           class="sf-button--text action-button"
@@ -247,8 +249,13 @@ export default {
 .form {
   width: 100%;
 
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__element {
-    margin: var(--spacer-base) 0;
+    margin: var(--spacer-base) 0 var(--spacer-xs) 0;
   }
 
   &__checkbox {
@@ -256,16 +263,18 @@ export default {
   }
 
   &__submit {
-    margin: var(--spacer-xl) 0 0 0;
+    margin: var(--spacer-base) 0 0 0;
   }
 }
+
 ::v-deep .sf-input {
   &__label {
-    padding: 0 0 0 10px;
+    padding: 0 0 0 var(--spacer-sm);
   }
 }
+
 .action-button {
-  margin: 1.875rem 0;
+  margin: calc(var(--spacer-base) * 1.25) 0;
 }
 
 .open-button {
@@ -282,37 +291,48 @@ export default {
   }
 }
 
+.sf-button {
+  &--text {
+    font-size: var(--font-size--sm);
+  }
+}
+
 .login-error-message {
   color: red;
   display: flex;
   justify-content: center;
 }
+
 ::v-deep .sf-icon-path {
   margin: 0;
 }
+
 .login-button {
-  margin: 0 0 0 6.875rem;
-  border-radius: 0.25rem;
-  width: 11.625rem;
-  height: 2.625rem;
-  font-size: 1.125rem;
-  padding: 0.625rem 0 0 0;
+  border-radius: var(--spacer-2xs);
+  font-size: var(--font-size--lg);
+  width: fit-content;
+  padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) 0 calc(var(--spacer-base) * 2.8);
+  align-self: center;
 }
+
 .sf-heading {
   &__title {
     --heading-title-color: var(--_c-green-primary);
   }
 }
+
 .bar-heading {
   color: var(--_c-dark-primary);
 }
+
 ::v-deep .sf-checkbox {
   &__label {
-    font-size: 15px;
+    font-size: var(--font-size--base);
     color: var(--_c-dark-primary);
   }
 }
+
 .remember-me {
-  margin: -1.5rem 0 1.5rem 0;
+  margin: 0 0 var(--spacer-xs) 0;
 }
 </style>

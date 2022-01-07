@@ -2,12 +2,13 @@
   --button-height: 2.625rem;
   --button-border-radius: 0.188rem;
   --button-text-transform: "capitalize";
+  --button-font: var(--font-family--primary);
   @include font(
     --button-font,
     var(--font-weight--normal),
     var(--font-size--lg),
     1.2,
-    var(--font-family--primary)
+    var(--font-family--secondary)
   );
 
   &--small {

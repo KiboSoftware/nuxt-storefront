@@ -3,19 +3,21 @@
     background-color: var(--c-white);
     border-bottom: 1px solid var(--_c-white-secondary);
   }
+
   &__close {
     .sf-icon svg,
     .sf-icon img {
       width: var(--font-size--base);
       height: var(--font-size--base);
-      margin-bottom: 1.563rem;
+      margin-bottom: var(--spacer-base);
 
       --icon-color: var(--_c-white-secondary);
 
       stroke: var(--_c-white-secondary);
-      stroke-width: 0.188rem;
+      stroke-width: calc(var(--spacer-2xs) * 0.75);
     }
   }
+
   .sf-bar {
     &__title {
       font-size: calc(var(--spacer-2xs) + var(--spacer-sm));

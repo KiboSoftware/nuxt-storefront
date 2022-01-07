@@ -2,8 +2,8 @@
   &__checkmark {
     @include border(--checkbox-border, 1px, solid, var(--_c-gray-middle));
 
-    --checkbox-border-radius: 2px !important;
-    --checkbox-size: 14px !important;
+    --checkbox-border-radius: 2px;
+    --checkbox-size: var(--font-size--sm);
   }
 
   &.is-active {        
