@@ -64,10 +64,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .zoom {
   &__title {
-    height: 156px;
+    height: calc(var(--spacer-base) * 6.5);
 
-    .sf-bar {
-      margin-top: 25px;
+    ::v-deep .sf-bar {
+      margin-top: calc(var(--spacer-base) * 1.04);
       border-bottom: none;
     }
   }
@@ -80,14 +80,39 @@ export default defineComponent({
 
     .pinch-image-to-zoom {
       background-color: rgba(43, 43, 43, 0.8);
-      width: 274px;
-      height: 60px;
+      width: calc(var(--spacer-base) * 11.41);
+      height: calc(var(--spacer-base) * 2.5);
       color: #fff;
-      font-size: 16px;
-      line-height: 19px;
+      font-size: var(--font-size--base);
+      line-height: calc(var(--spacer-base) * 0.8);
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+  }
+
+  ::v-deep .sf-gallery {
+    &__icons {
+      height: calc(var(--spacer-base) * 3.58);
+    }
+
+    &__stage {
+      width: 84vw;
+      height: calc(var(--spacer-base) * 6.91);
+    }
+
+    .glide {
+      &__slides {
+        height: calc(var(--spacer-base) * 6.91);
+      }
+    }
+
+    .sf-image,
+    .sf-image-loaded {
+      @include for-mobile {
+        width: 84vw;
+        height: calc(var(--spacer-base) * 6.91);
+      }
     }
   }
 }

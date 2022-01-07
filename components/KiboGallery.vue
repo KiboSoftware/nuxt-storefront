@@ -296,7 +296,7 @@ export default {
   }
 
   &__icons {
-    height: 86px;
+    height: calc(var(--spacer-base) * 2.166);
     display: flex; // Show icons for mobile
     justify-content: center;
     align-items: flex-end;
@@ -320,8 +320,8 @@ export default {
   }
 
   &__stage {
-    width: 349px;
-    height: 166px;
+    width: calc(var(--spacer-base) * 9.625);
+    height: calc(var(--spacer-base) * 4.58);
     margin: 0 auto;
     @include for-desktop {
       max-width: 31.625rem;
@@ -333,20 +333,21 @@ export default {
 
   .glide {
     &__slides {
-      height: 166px;
+      height: calc(var(--spacer-base) * 4.58);
 
       @include for-desktop {
         height: 31.625rem;
       }
     }
   }
-}
 
-.sf-gallery .sf-image {
-  object-fit: contain;
-  @include for-mobile {
-    width: 349px;
-    height: 166px;
+  .sf-image,
+  .sf-image-loaded {
+    object-fit: contain;
+    @include for-mobile {
+      width: calc(var(--spacer-base) * 9.625);
+      height: calc(var(--spacer-base) * 4.58);
+    }
   }
 }
 </style>

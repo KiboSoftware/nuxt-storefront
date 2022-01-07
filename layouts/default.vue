@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<style>
+<style lang="scss">
 html,
 body {
   font-family: "Roboto", sans-serif;
@@ -23,7 +23,11 @@ body {
 }
 
 .content {
-  max-width: 88rem;
+  width: 86.5%;
   margin: 0 auto;
+
+  @include for-desktop {
+    max-width: 88rem;
+  }
 }
 </style>

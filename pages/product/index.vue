@@ -2,7 +2,7 @@
   <div>
     <LazyHydrate v-if="!isProductZoomed" when-idle>
       <SfLoader :loading="loading">
-        <div class="product_container">
+        <div>
           <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
           <div class="product">
             <div>
@@ -303,7 +303,6 @@ export default defineComponent({
     SfInput,
     SfAccordion,
   },
-  layout: "primary",
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
@@ -675,12 +674,6 @@ export default defineComponent({
 
 .h4 {
   font-weight: bold;
-}
-
-.product_container {
-  @include for-mobile {
-    padding: 0 calc(var(--spacer-base) * 1.25);
-  }
 }
 
 .prod-spec-mobile > .sf-accordion-item {
