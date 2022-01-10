@@ -112,8 +112,8 @@ const getSegregatedOptions = (product: ProductCustom) => {
   if (!options) return
 
   const nuxt = useNuxtApp()
-  const colorAttributeFQN = nuxt.nuxt2Context.$config.colorAttributeFQN
-  const sizeAttributeFQN = nuxt.nuxt2Context.$config.sizeAttributeFQN
+  const colorAttributeFQN = nuxt.nuxt2Context.$config.colorAttributeFQN.toLowerCase()
+  const sizeAttributeFQN = nuxt.nuxt2Context.$config.sizeAttributeFQN.toLowerCase()
   const colorAndSizeOptions = [colorAttributeFQN, sizeAttributeFQN]
 
   const colourOptions = options?.find(
