@@ -2,12 +2,18 @@
   <div class="coupon__codes">
     <span class="coupon__codes--text">{{ couponCode }}</span>
     <span class="coupon__codes--cancel">
-      <SfIcon icon="cross" size="0.875rem" color="gray-secondary" />
+      <SfIcon
+        icon="cross"
+        size="0.875rem"
+        color="gray-secondary"
+        @click="removeCoupon(couponCode)"
+      />
     </span>
   </div>
 </template>
 <script>
 import { SfIcon } from "@storefront-ui/vue"
+import { useCart } from "@/composables"
 export default defineComponent({
   name: "KiboCoupon",
   components: {
@@ -18,6 +24,12 @@ export default defineComponent({
       type: String,
       default: "",
     },
+  },
+  setup() {
+    const { removeCoupon } = useCart()
+    return {
+      removeCoupon,
+    }
   },
 })
 </script>

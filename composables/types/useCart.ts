@@ -1,4 +1,5 @@
-import { CrProduct } from "./useProduct"
+import { CrProduct } from "@/server/types/GraphQL"
+
 export type CrDiscount = {
   id: String
   name?: String

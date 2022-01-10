@@ -117,6 +117,9 @@ export const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
   cart?.items?.find((item) => item.id === cartItemId)
 
 export const getCartItemOptions = (item: CartItem) => item?.product?.options
+const productAppliedCoupons = (cartItem) => {
+  return cartItem?.productDiscounts?.map((each) => each.couponCode)
+}
 
 const getSelectedFullfillmentOption = (item: CartItem) => {
   return item?.fulfillmentMethod
@@ -146,4 +149,5 @@ export const cartGetters = {
   getCartTotalQuantity,
   getSelectedFullfillmentOption,
   getFulfillmentLocation,
+  productAppliedCoupons,
 }
