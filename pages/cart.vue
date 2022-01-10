@@ -56,6 +56,7 @@
                 "
                 :options="cartItem.product.options"
                 :supported-fulfillment-types="cartItemFulfillmentTypes(cartItem)"
+                :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
@@ -93,6 +94,8 @@ import {
   useUiState,
   cartGetters,
   storeLocationGetters,
+  useUiHelpers,
+  productGetters,
 } from "@/composables"
 
 export default defineComponent({
@@ -105,6 +108,7 @@ export default defineComponent({
     SfInput,
   },
   setup() {
+    const { getProductLink } = useUiHelpers()
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
@@ -148,6 +152,8 @@ export default defineComponent({
       cartOrder,
       handleStoreLocatorClick,
       cartItemFulfillmentTypes,
+      getProductLink,
+      productGetters,
     }
   },
 })

@@ -33,8 +33,14 @@ jest.mock("#app", () => ({
         if (query === mockedAddToCartMutation) {
           expect(variables).toStrictEqual({
             productToAdd: {
-              product: "mocked-product",
+              product: {
+                productCode: "mocked-current-cart",
+                variationProductCode: "",
+                options: undefined,
+              },
               quantity: 1,
+              fulfillmentMethod: "Ship",
+              purchaseLocation: "Austin",
             },
           })
         }
@@ -67,16 +73,14 @@ describe("[composable] useCart", () => {
   test("addItemsToCart: should add item to cart", async () => {
     const { cart, addItemsToCart, error, loading } = useCart()
     const addToCartVariables = {
-      productToAdd: {
-        product: {
-          productCode: "mocked-current-cart",
-          variationProductCode: "",
-          options: undefined,
-        },
-        quantity: 1,
-        fulfillmentMethod: "Ship",
-        purchaseLocation: "Austin",
+      product: {
+        productCode: "mocked-current-cart",
+        variationProductCode: "",
+        options: undefined,
       },
+      quantity: 1,
+      fulfillmentMethod: "Ship",
+      purchaseLocation: "Austin",
     }
 
     await addItemsToCart(addToCartVariables)

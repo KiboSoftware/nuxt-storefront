@@ -1,7 +1,9 @@
 <template>
   <div class="kibo-collectedProduct">
     <div class="kibo-collectedProduct__image">
-      <SfImage :src="image" :alt="title" width="100%" height="100%" />
+      <nuxt-link :to="link" class="kibo-collectedProduct__link">
+        <SfImage :src="image" :alt="title" width="100%" height="100%" />
+      </nuxt-link>
     </div>
     <div class="kibo-collectedProduct__info">
       <div class="kibo-collectedProduct__title-wrapper">
