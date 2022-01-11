@@ -59,54 +59,12 @@
             :loading="productSearchLoading"
           >
             <transition-group>
-              <div key="category-drill-down" class="category-drill-down">
-                <div class="category-title">{{ categoriesFromSearch.header }}</div>
-                <SfList class="list">
-                  <SfListItem v-for="(item, j) in navCategories" :key="j" class="list__item">
-                    <SfMenuItem
-                      :label="item.label"
-                      :count="`(${item.count})`"
-                      class="sf-menu-item__label"
-                      @click="handleCategoryClick(item)"
-                    />
-                  </SfListItem>
-                  <div
-                    v-if="
-                      showMoreButton &&
-                      categoriesFromSearch.children &&
-                      categoriesFromSearch.children.length > 5
-                    "
-                  >
-                    <SfButton
-                      font-size="13px"
-                      class="sf-button--text navbar__button navbar__button--plus list__item"
-                      aria-label="View More"
-                      @click="
-                        visibleCategories(
-                          categoriesFromSearch.children,
-                          categoriesFromSearch.children.length
-                        )
-                      "
-                    >
-                      <SfIcon
-                        size="0.938rem"
-                        color="#2B2B2B"
-                        icon="plus"
-                        class="navbar__plus-icon"
-                      />
-                      View More
-                    </SfButton>
-                  </div>
-                  <SfLink
-                    v-if="breadcrumbs.length > 1"
-                    class="navbar__button navbar__button--back"
-                    :link="!isSearchPage ? breadcrumbs[breadcrumbs.length - 2].link : undefined"
-                    @click="isSearchPage && goBackToPreviousRoute"
-                  >
-                    <SfIcon size="0.813rem" color="#2B2B2B" icon="chevron_left" />Back
-                  </SfLink>
-                </SfList>
-              </div>
+              <CategoryFacet
+                key="category-facet"
+                :is-search-page="isSearchPage"
+                :categories-from-search="categoriesFromSearch"
+                :breadcrumbs="breadcrumbs"
+              />
               <div key="filters">
                 <SfAccordion :show-chevron="true" open="all" :multiple="false">
                   <div v-for="(facet, i) in facets" :key="i">
@@ -153,18 +111,27 @@
             tag="div"
             class="products__grid"
           >
-            <KiboProductCard v-for="(product, i) in products"
-            :key="productGetters.getProductId(product)" :style="{ '--index': i }" <<<<<<< HEAD
-            ======= :title="productGetters.getName(product)"
-            :image="productGetters.getCoverImage(product)" >>>>>>> 136522f (feat: Initial category
-            index changes) :score-rating="3" :max-rating="5" wishlist-icon="" is-in-wishlist-icon=""
-            :is-in-wishlist="false" <<<<<<< HEAD :title="productGetters.getName(product)"
-            :image="productGetters.getCoverImage(product)" ======= >>>>>>> 136522f (feat: Initial
-            category index changes) :show-add-to-cart-button="true"
-            :regular-price="`$${productGetters.getPrice(product).regular}`" :special-price="
-            productGetters.getPrice(product).special && productGetters.getPrice(product).special "
-            :link="localePath(getProductLink(productGetters.getProductId(product)))"
-            image-width="12.563rem" image-height="12.563rem" class="products__product-card" />
+            <KiboProductCard
+              v-for="(product, i) in products"
+              :key="productGetters.getProductId(product)"
+              :style="{ '--index': i }"
+              :title="productGetters.getName(product)"
+              :image="productGetters.getCoverImage(product)"
+              :show-add-to-cart-button="true"
+              :regular-price="`$${productGetters.getPrice(product).regular}`"
+              :score-rating="3"
+              :max-rating="5"
+              wishlist-icon=""
+              is-in-wishlist-icon=""
+              :is-in-wishlist="false"
+              :special-price="
+                productGetters.getPrice(product).special && productGetters.getPrice(product).special
+              "
+              :link="localePath(getProductLink(productGetters.getProductId(product)))"
+              image-width="12.563rem"
+              image-height="12.563rem"
+              class="products__product-card"
+            />
           </transition-group>
           <transition-group v-else appear name="products__slide" tag="div" class="products__list">
             <SfProductCardHorizontal
@@ -223,12 +190,9 @@
 import {
   SfHeading,
   SfButton,
-  SfList,
   SfIcon,
-  SfMenuItem,
   SfSelect,
   SfBreadcrumbs,
-  SfLink,
   SfLoader,
   SfProductCardHorizontal,
   SfAccordion,
@@ -242,11 +206,10 @@ import {
   useProductSearch,
   productGetters,
   facetGetters,
-  facetValueGetters,
   productSearchGetters,
-  categoryGetters,
 } from "@/composables"
-import { useState, useNuxtApp } from "#app"
+import { useNuxtApp } from "#app"
+import { FacetValue } from "~~/server/types/GraphQL"
 
 export default {
   name: "Category",
@@ -254,27 +217,17 @@ export default {
     SfHeading,
     SfButton,
     SfIcon,
-    SfList,
-    SfMenuItem,
     SfSelect,
     SfBreadcrumbs,
     LazyHydrate,
-    SfLink,
     SfLoader,
     SfProductCardHorizontal,
     SfAccordion,
     SfChevron,
   },
   setup(_, context) {
-    const {
-      getFacetsFromURL,
-      getCatLink,
-      getProductLink,
-      changeSorting,
-      changeFilters,
-      setCategoryLink,
-      goBackToPreviousRoute,
-    } = useUiHelpers()
+    const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink } =
+      useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
@@ -288,6 +241,8 @@ export default {
     })
     const isSearchPage = ref(false)
     const route = useRoute()
+
+    // Determining if search page using categoryCode present in URL or not
     if (!route.value.params?.categoryCode) {
       isSearchPage.value = true
     }
@@ -298,42 +253,55 @@ export default {
       loading: productSearchLoading,
     } = useProductSearch(`product-search`)
 
+    useAsync(async () => {
+      facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
+      await search(facetsFromUrl.value)
+      await productSearch(facetsFromUrl.value)
+    }, null)
+
+    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
     )
-
     const categoriesFromSearch = computed(() => {
-      let header, children
+      let header: string, children: FacetValue[]
       const { categoryCode } = facetsFromUrl.value
+      const facetName = "CategoryCode"
+
+      // Searching categories by facetName i.e. : CategoryCode
       if (!categoryCode && isSearchPage) {
-        children = productSearchGetters.getFacetByName(productSearchResult?.value)
+        children = productSearchGetters.getFacetByName(
+          productSearchResult?.value,
+          facetName
+        )?.values
       } else {
-        const facet = productSearchGetters.getFacetByName(productSearchResult?.value)
+        const facet = productSearchGetters.getFacetByName(productSearchResult?.value, facetName)
         const parent = facet?.values?.find((facet) => categoryCode === facet.value)
         header = parent?.label
         children = parent?.childrenFacetValues
       }
-
       return { header, children }
     })
 
-    const categoryTree = computed(() => facetGetters.getCategoryTree(result?.value))
-    const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
-    const categoryName = computed(() => categoryGetters.getName(categoryTree.value?.[0]))
-    const navCategories = useState(
-      "nav-categories",
-      () => categoriesFromSearch.value.children || []
+    const sortBy = computed(() =>
+      facetGetters.getSortOptions(
+        {
+          ...productSearchResult.value,
+          input: { sort: facetsFromUrl.value?.sort },
+        },
+        sortOptions
+      )
     )
-
-    const showMoreButton = useState("show-more-button", () => false)
-
-    const visibleCategories = (categories, categoriesVisible = 5) => {
-      categories = categories || []
-
-      showMoreButton.value = !showMoreButton.value
-      navCategories.value = categories && categories?.slice(0, categoriesVisible)
-    }
+    const pagination = computed(() => facetGetters.getPagination(productSearchResult.value))
+    const showPerPage = ref(pagination.value.itemsPerPage)
+    const pageHeader = computed(() => {
+      return isSearchPage.value && facetsFromUrl.value?.phrase
+        ? `${productSearchResult.value?.items?.length || 0} Results for "${
+            facetsFromUrl.value?.phrase
+          }"`
+        : categoriesFromSearch.value.header
+    })
 
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
@@ -352,27 +320,12 @@ export default {
       async () => {
         facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
         await search(getFacetsFromURL(isSearchPage.value))
-        visibleCategories(childrenCategories.value)
         await productSearch({
           ...getFacetsFromURL(isSearchPage.value),
           itemsPerPage: showPerPage.value,
         })
       }
     )
-
-    const sortBy = computed(() =>
-      facetGetters.getSortOptions(
-        {
-          ...productSearchResult.value,
-          input: { sort: facetsFromUrl.value?.sort },
-        },
-        sortOptions
-      )
-    )
-
-    const pagination = computed(() => facetGetters.getPagination(productSearchResult.value))
-
-    const showPerPage = ref(pagination.value.itemsPerPage)
 
     const changeShowItemsPerPage = async (value: number) => {
       showPerPage.value = value
@@ -382,62 +335,33 @@ export default {
       })
     }
 
-    const pageHeader = computed(() => {
-      return isSearchPage.value && facetsFromUrl.value?.phrase
-        ? `${productSearchResult.value?.items?.length || 0} Results for "${
-            facetsFromUrl.value?.phrase
-          }"`
-        : categoryName.value
-    })
-
     const handleCategoryClick = (item) => {
       setCategoryLink(isSearchPage.value, item)
     }
 
-    useAsync(async () => {
-      facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
-      await search(facetsFromUrl.value)
-      await productSearch(facetsFromUrl.value)
-
-      visibleCategories(categoriesFromSearch.value.children)
-    }, null)
-
     return {
       breadcrumbs,
-      categoryTree,
       loading,
       getFacetsFromURL,
-      getCatLink,
       getProductLink,
       productGetters,
       facetGetters,
-      facetValueGetters,
       productSearchLoading,
-      productSearchResult,
-      visibleCategories,
       products,
       facets,
       selectFilter,
-      navCategories,
-      showMoreButton,
-      categoryName,
-      currentPage: 1,
       categoriesFromSearch,
       sortBy,
-      isFilterSidebarOpen: false,
       isGridView: true,
-      displayOnPage: "40",
       pagination,
       changeSorting,
       changeShowItemsPerPage,
       facetsFromUrl,
       pageHeader,
       handleCategoryClick,
-      goBackToPreviousRoute,
       isSearchPage,
     }
   },
-  watchQuery: ["sort"],
 }
 </script>
 <style lang="scss" scoped>
