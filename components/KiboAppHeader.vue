@@ -1,5 +1,53 @@
 <template>
   <div>
+    <KiboHamburgerMenu
+      v-show="isHamburgerOpen"
+      class="sf-sidebar--left"
+      :heading-level="3"
+      button
+      overlay
+      @closeHamburgerMenu="toggleHamburger"
+    >
+      <template #content-top>
+        <SfButton
+          class="sf-button--pure sf-header__action sf-header__bottom-link sf-header__account"
+          @click="handleAccountClick"
+        >
+          <SfIcon class="sf-header__icon">
+            <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
+          </SfIcon>
+          <div class="icon-name-sidebar">
+            <span>{{ $t("My Account") }} </span>
+          </div>
+        </SfButton>
+      </template>
+
+      <template #content-bottom>
+        <div class="side-bar-nav">
+          <div class="side-bar-nav__link">
+            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
+              <span class="burger-bottom-link"> Nav Link 1</span>
+            </SfButton>
+          </div>
+          <div class="side-bar-nav__link">
+            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
+              <span class="burger-bottom-link"> Nav Link 2</span>
+            </SfButton>
+          </div>
+          <div class="side-bar-nav__link">
+            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
+              <span class="burger-bottom-link"> Nav Link 3</span>
+            </SfButton>
+          </div>
+          <div class="side-bar-nav__link">
+            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
+              <span class="burger-bottom-link"> Nav Link 4</span>
+            </SfButton>
+          </div>
+        </div>
+      </template>
+    </KiboHamburgerMenu>
+
     <div v-if="!isMobile">
       <div class="kibo-top-bar kibo-nav-link">
         <div><SfMenuItem label="Nav Link 1" /></div>
@@ -115,8 +163,16 @@
     <div v-else class="kibo-mobile">
       <div class="kibo-mobile__header-container">
         <div class="kibo-mobile__header-column">
-          <SfIcon size="1.25rem">
-            <font-awesome-icon icon="bars" class="fa-icon" color="var(--c-white)" />
+          <SfIcon
+            size="1.25rem"
+            class="sf-header__icon kibo-mobile__header-icon"
+            @click="toggleHamburger"
+          >
+            <font-awesome-icon
+              :icon="['fas', isHamburgerOpen ? 'times' : 'bars']"
+              class="fa-icon"
+              color="var(--c-white)"
+            />
           </SfIcon>
         </div>
         <div class="kibo-mobile__header-column">
@@ -193,6 +249,8 @@ import {
   storeLocationGetters,
   searchSuggestionGetters,
   cartGetters,
+  useCategoryTree,
+  categoryGetters,
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import * as logo from "@/assets/kibo_logo.png"
@@ -208,6 +266,8 @@ export default defineComponent({
   },
   directives: { clickOutside },
   setup() {
+    const { categories: allCategories, load: loadSideBarMenu } = useCategoryTree()
+
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
     const { result, search, loading } = useSearchSuggestions()
     const nuxt = useNuxtApp()
@@ -228,7 +288,8 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
+    const { toggleLoginModal, toggleStoreLocatorModal, isHamburgerOpen, toggleHamburger } =
+      useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
 
@@ -269,6 +330,9 @@ export default defineComponent({
         return app.router.push({ path: "/search", query: { phrase: searchStr } })
       }
     }
+    const megaMenuCategories = computed(() => {
+      return categoryGetters.getMegaMenuCategory(allCategories.value)
+    })
 
     watch(
       () => term.value,
@@ -298,6 +362,7 @@ export default defineComponent({
       await loadUser()
       await loadPurchaseLocation()
       await loadCart()
+      await loadSideBarMenu()
     }, null)
 
     const handleStoreLocatorClick = () => {
@@ -349,6 +414,9 @@ export default defineComponent({
       totalItemsInCart,
       isOpenSearchBar,
       toggleMobileSearchBar,
+      megaMenuCategories,
+      isHamburgerOpen,
+      toggleHamburger,
     }
   },
 })
@@ -371,13 +439,23 @@ export default defineComponent({
 
   &__icons {
     display: flex;
-    flex: 1;
+    flex: 1.2;
     justify-content: space-evenly;
     justify-items: center;
+    margin-left: 3%;
   }
 
   &__search {
     width: 100% !important;
+  }
+
+  &__bottom-link {
+    padding: 0;
+    margin: 0;
+  }
+
+  &__account {
+    top: 0.313rem;
   }
 }
 
@@ -407,14 +485,25 @@ export default defineComponent({
 
 .kibo-nav-link {
   display: flex;
-  justify-content: flex-end;
-  justify-items: center;
-  color: white;
-  padding-right: 5%;
-  padding-left: 5%;
+  @include for-desktop {
+    justify-content: flex-end;
+    justify-items: center;
+    padding-right: 5%;
+    padding-left: 5%;
+  }
+
+  &__mobile {
+    flex-direction: column;
+    color: var(--_c-dark-primary);
+  }
 }
 
 .kibo-nav-link div {
+  @include for-desktop {
+    color: var(--_c-light-secondary);
+    margin-left: 2%;
+  }
+
   margin: var(--spacer-2xs) var(--spacer-xs) 0 0;
   padding: var(--spacer-2xs);
   cursor: pointer;
@@ -425,7 +514,7 @@ export default defineComponent({
   display: flex;
   height: 4.2rem;
   align-items: center;
-  padding-right: 5%;
+  padding-right: 2%;
   padding-left: 2%;
 
   &__search-bar {
@@ -452,13 +541,17 @@ export default defineComponent({
 }
 
 .kibo-top-bar {
-  background-color: #2b2b2b;
+  background-color: var(--_c-dark-primary);
+  height: 3.5rem;
+}
+
+.kibo-sticky-bottom {
+  background-color: var(--_c-light-secondary);
   height: 3.5rem;
 }
 
 .sf-menu-item {
   --menu-item-label-color: var(--_c-dark-primary);
-
   @include for-desktop {
     --menu-item-label-color: var(--_c-light-secondary);
   }
@@ -467,11 +560,11 @@ export default defineComponent({
 }
 
 .line-2 {
-  border: 0.06rem solid #cdcdcd;
+  border: 0.06rem solid var(--_c-gray-middle);
 }
 
 .kibo-header-container {
-  background-color: #fff;
+  background-color: var(--_c-light-secondary);
   box-shadow: 0 0.13rem var(--spacer-2xs) 0 rgba(0, 0, 0, 0.5);
   height: 7.9rem;
 }
@@ -487,6 +580,34 @@ export default defineComponent({
   z-index: 20;
 }
 
+.icon-name-sidebar {
+  padding-left: var(--font-size--xs);
+  color: var(--_c-dark-primary);
+  font-family: var(--font-family--primary);
+  font-size: var(--font-size--sm);
+  line-height: 1.063rem;
+  text-align: left;
+}
+
+.side-bar-nav {
+  max-height: 12.5rem;
+  overflow-y: auto;
+
+  &__link {
+    padding-left: 7.01%;
+    border-bottom: 0.06rem solid var(--_c-gray-middle);
+    height: 3.438rem;
+    display: flex;
+    align-items: center;
+  }
+}
+
+@include for-mobile {
+  .kibo-mega-menu {
+    display: none;
+  }
+}
+
 .kibo-mobile {
   &__header-container {
     display: flex;
@@ -498,6 +619,10 @@ export default defineComponent({
 
   &__header-column {
     align-self: center;
+  }
+
+  &__header-icon {
+    z-index: 2;
   }
 
   &__item-count {
