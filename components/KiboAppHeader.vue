@@ -163,7 +163,11 @@
     <div v-else class="kibo-mobile">
       <div class="kibo-mobile__header-container">
         <div class="kibo-mobile__header-column">
-          <SfIcon size="1.25rem" class="sf-header__icon" @click="toggleHamburger">
+          <SfIcon
+            size="1.25rem"
+            class="sf-header__icon kibo-mobile__header-icon"
+            @click="toggleHamburger"
+          >
             <font-awesome-icon
               :icon="['fas', isHamburgerOpen ? 'times' : 'bars']"
               class="fa-icon"
@@ -615,6 +619,9 @@ export default defineComponent({
 
   &__header-column {
     align-self: center;
+  }
+
+  &__header-icon {
     z-index: 2;
   }
 

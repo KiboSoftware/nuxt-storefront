@@ -157,6 +157,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .sf-sidebar {
   &__aside {
+    position: absolute;
     height: 91.5%;
     width: 90%;
     top: 8.5%;
