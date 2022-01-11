@@ -559,9 +559,9 @@ export default defineComponent({
   height: 3.5rem;
 
   .sf-menu-item {
-    --menu-item-label-color: var(--_c-light-secondary);
-
-    font-size: var(--font-size--sm);
+     &__label {
+      color: var(--menu-item-label-color, var(--_c-light-secondary));
+    }
   }
 }
 
@@ -570,16 +570,6 @@ export default defineComponent({
   height: 3.5rem;
 }
 
-.kibo-top-bar {
-  background-color: #2b2b2b;
-  height: 3.5rem;
-
-  .sf-menu-item {
-    --menu-item-label-color: var(--_c-light-secondary);
-
-    font-size: var(--font-size--sm);
-  }
-}
 
 .line-2 {
   border: 0.06rem solid var(--_c-gray-middle);

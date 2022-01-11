@@ -611,7 +611,7 @@ export default {
     align-items: baseline;
 
     &__label {
-      font-family: var(--font-family--secondary);
+      font-family: var(--font-family--primary);
       font-size: var(--font-size--sm);
     }
   }
@@ -645,13 +645,12 @@ export default {
   margin: 0 0 var(--spacer-sm) 0;
 }
 
-.sf-menu-item {
-  --menu-item-label-color: #2b2b2b;
-  --menu-item-count-color: #2b2b2b;
-  --menu-item-count-margin: 0 calc(var(--spacer-2xs) * 0.5) 0 auto;
+.category-drill-down {
+  .sf-menu-item {
+    --menu-item-count-margin: 0 calc(var(--spacer-2xs) * 0.5) 0 auto;
 
-  font-size: var(--font-size--sm);
-  font-family: var(--font-family--primary);
+    font-family: var(--font-family--primary);
+  }
 }
 
 .sf-filter {

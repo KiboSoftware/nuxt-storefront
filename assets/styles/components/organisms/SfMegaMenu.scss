@@ -18,12 +18,17 @@
     flex: none;
     padding-right: 5rem;
 
+    .sf-mega-menu-column__header.sf-menu-item {
+      .sf-menu-item__label {
+        font-size: var(--font-size--lg);
+      }
+    }
+
     &__header {
       --button-height: 3.625rem;
 
       border-bottom: 0.25rem var(--c-white) solid;
       text-transform: capitalize;
-      font-size: var(--font-size--lg);
       margin: 0.75rem 0 0.25rem 0;
     }
 
