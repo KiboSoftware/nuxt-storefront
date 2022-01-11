@@ -2,11 +2,21 @@
 import { defineNuxtPlugin } from "#app"
 
 export default defineNuxtPlugin((nuxtApp: any) => {
-  const gqlFetch = async ({ query, variables }: { query: string; variables: string }) =>
-    await $fetch(`/api/graphql`, {
+  const gqlFetch = async ({
+    query,
+    variables,
+    headers,
+  }: {
+    query: string
+    variables: string
+    headers: any
+  }) => {
+    const defaultHeaders = { "Content-Type": "application/json" }
+    return await $fetch(`/api/graphql`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: headers ? { ...headers, ...defaultHeaders } : defaultHeaders,
       body: { query, variables },
     })
+  }
   nuxtApp.provide("gqlFetch", gqlFetch)
 })
