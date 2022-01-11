@@ -1,14 +1,12 @@
 <template>
   <div>
     <KiboHamburgerMenu
-      v-show="showHamburgerMenu"
+      v-show="isHamburgerOpen"
       class="sf-sidebar--left"
-      :title="sideBarTitle"
-      :subtitle="sideBarSubTitle"
       :heading-level="3"
       button
       overlay
-      @closeHamburgerMenu="showHamburgerMenu = false"
+      @closeHamburgerMenu="toggleHamburger"
     >
       <template #content-top>
         <SfButton
@@ -165,9 +163,9 @@
     <div v-else class="kibo-mobile">
       <div class="kibo-mobile__header-container">
         <div class="kibo-mobile__header-column">
-          <SfIcon size="1.25rem" class="sf-header__icon" @click.prevent="showHamburgerMenu = true">
+          <SfIcon size="1.25rem" class="sf-header__icon" @click="toggleHamburger">
             <font-awesome-icon
-              :icon="['fas', showHamburgerMenu ? 'times' : 'bars']"
+              :icon="['fas', isHamburgerOpen ? 'times' : 'bars']"
               class="fa-icon"
               color="var(--c-white)"
             />
@@ -275,9 +273,6 @@ export default defineComponent({
     const { cart, load: loadCart } = useCart()
 
     const searchValue = ref("")
-    const sideBarTitle = ref("Back")
-    const sideBarSubTitle = ref("All Department")
-    const showHamburgerMenu = ref(false)
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
@@ -289,7 +284,8 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal, toggleStoreLocatorModal } = useUiState()
+    const { toggleLoginModal, toggleStoreLocatorModal, isHamburgerOpen, toggleHamburger } =
+      useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
 
@@ -329,9 +325,6 @@ export default defineComponent({
         closeSearch()
         return app.router.push({ path: "/search", query: { phrase: searchStr } })
       }
-    }
-    const closeHamburgerMenu = () => {
-      if (showHamburgerMenu.value) showHamburgerMenu.value = false
     }
     const megaMenuCategories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)
@@ -381,10 +374,6 @@ export default defineComponent({
         ? storeLocationGetters.getName(purchaseLocation.value)
         : "Select My Store"
     })
-    const changeTitle = (newTitle) => {
-      sideBarTitle.value = sideBarSubTitle.value
-      sideBarSubTitle.value = newTitle
-    }
 
     const totalItemsInCart = computed(() => {
       const count = cartGetters.getTotalItems(cart.value)
@@ -421,12 +410,9 @@ export default defineComponent({
       totalItemsInCart,
       isOpenSearchBar,
       toggleMobileSearchBar,
-      showHamburgerMenu,
-      sideBarTitle,
-      sideBarSubTitle,
-      changeTitle,
-      closeHamburgerMenu,
       megaMenuCategories,
+      isHamburgerOpen,
+      toggleHamburger,
     }
   },
 })
@@ -629,6 +615,7 @@ export default defineComponent({
 
   &__header-column {
     align-self: center;
+    z-index: 2;
   }
 
   &__item-count {

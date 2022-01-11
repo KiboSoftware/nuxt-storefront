@@ -13,6 +13,7 @@ const state = reactive({
   isMobileMenuOpen: false,
   isStoreLocatorOpen: false,
   isAddToCartConfirmationOpen: false,
+  isHamburgerOpen: false,
 })
 
 export const useUiState = () => {
@@ -63,6 +64,11 @@ export const useUiState = () => {
     state.isFilterSidebarOpen = !state.isFilterSidebarOpen
   }
 
+  const isHamburgerOpen = computed(() => state.isHamburgerOpen)
+  const toggleHamburger = () => {
+    state.isHamburgerOpen = !state.isHamburgerOpen
+  }
+
   return {
     isWishlistSidebarOpen,
     isLoginModalOpen,
@@ -70,6 +76,7 @@ export const useUiState = () => {
     isCategoryGridView,
     isFilterSidebarOpen,
     isMobileMenuOpen,
+    isHamburgerOpen,
     toggleWishlistSidebar,
     toggleLoginModal,
     toggleNewsletterModal,
@@ -78,6 +85,7 @@ export const useUiState = () => {
     toggleFilterSidebar,
     toggleMobileMenu,
     toggleStoreLocatorModal,
+    toggleHamburger,
     isStoreLocatorOpen,
     isAddToCartConfirmationOpen,
     toggleAddToCartConfirmationModal,

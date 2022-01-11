@@ -1,38 +1,47 @@
 <template>
   <div class="sidebar-menu-mobile">
-    <div class="sf-sidebar" :class="[staticClass, className]">
+    <div class="sf-sidebar">
       <SfOverlay :visible="visible" />
-      <transition :name="transitionName">
-        <aside
-          ref="asideContentCustom"
-          v-focus-trap
-          v-click-outside="close"
-          class="sf-sidebar__aside"
-        >
+      <transition name="sf-fade">
+        <aside ref="asideContentCustom" class="sf-sidebar__aside">
           <div class="sf-sidebar__content">
             <!--@slot Use this slot to add SfSidebar content.-->
-            <KiboMobileMegaMenu :visible="visible" @close="close">
-              <template #content-top>
-                <slot name="content-top" />
-              </template>
-              <SfMegaMenuColumn
-                v-for="(category, key) in megaMenuCategories"
-                :key="key"
-                :title="category.content.name"
-                :link="localePath(getCatLink(category))"
-                class="side-bar-mega-menu-column"
-              >
-                <SfList>
-                  <SfListItem v-for="child in category.childrenCategories" :key="child.id">
-                    <SfMenuItem
-                      :label="$t(child.content.name)"
-                      class="side-bar-menu-item"
-                      @click="gotoProduct(child)"
-                    />
-                  </SfListItem>
-                </SfList>
-              </SfMegaMenuColumn>
-            </KiboMobileMegaMenu>
+
+            <div class="side-bar-top">
+              <div class="side-bar-top__header-column side-bar-top__header-column-left">
+                <SfBar :title="title" :back="true" class="title-bar" @click:back="back()" />
+              </div>
+
+              <div class="side-bar-top__header-column side-bar-top__header-column-right">
+                <SfIcon color="var(--c-text)" size="12px" icon="cross" @click="toggleHamburger" />
+              </div>
+            </div>
+
+            <div class="line-2"></div>
+
+            <div v-show="title == 'Back'" class="account-header">
+              <slot name="content-top" />
+            </div>
+
+            <div v-show="title == 'Back'" class="line-2"></div>
+
+            <div>
+              <!--@slot Use this slot to replace SfHeading component.-->
+              <slot name="title">
+                <div class="sub-header">
+                  <b> {{ subTitle || defaultSubTitle }} </b>
+                </div>
+              </slot>
+              <!--@slot Use this slot to add sticky top content.-->
+            </div>
+
+            <div class="category-content">
+              <SfList>
+                <SfListItem v-for="(category, key) in megaMenuCategories" :key="key">
+                  <SfMenuItem :label="$t(category.content.name)" @click="goNext(category)" />
+                </SfListItem>
+              </SfList>
+            </div>
           </div>
 
           <div class="line-3"></div>
@@ -47,12 +56,10 @@
   </div>
 </template>
 <script lang="ts">
-import { onMounted, defineComponent, computed } from "@vue/composition-api"
-import { SfOverlay, SfList, SfMenuItem } from "@storefront-ui/vue"
-import { disableBodyScroll, clearAllBodyScrollLocks } from "body-scroll-lock"
+import { onMounted, defineComponent, computed, ref } from "@vue/composition-api"
+import { SfOverlay, SfList, SfMenuItem, SfBar, SfIcon } from "@storefront-ui/vue"
 import { focusTrap, clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
-import { isClient } from "@storefront-ui/vue/src/utilities/helpers"
-import { useCategoryTree, useUiHelpers, categoryGetters } from "@/composables"
+import { useCategoryTree, useUiHelpers, categoryGetters, useUiState } from "@/composables"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -60,17 +67,11 @@ export default defineComponent({
     SfList,
     SfMenuItem,
     SfOverlay,
+    SfBar,
+    SfIcon,
   },
   directives: { focusTrap, clickOutside },
   props: {
-    headingLevel: {
-      type: Number,
-      default: 3,
-    },
-    button: {
-      type: Boolean,
-      default: true,
-    },
     visible: {
       type: Boolean,
       default: true,
@@ -89,15 +90,49 @@ export default defineComponent({
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { categories: allCategories, load: loadCategories } = useCategoryTree()
-    const megaMenuCategories = computed(() => {
+    const { toggleHamburger } = useUiState()
+
+    const categories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)
     })
+    const title = ref("Back")
+    const subTitle = ref("All Departments")
+    const oldTitle = ref("")
+    const parentCategoryCodes = ref([])
+    const megaMenuCategories = ref(categories.value || [])
     const { getCatLink } = useUiHelpers()
 
-    const gotoProduct = (child) => {
-      context.emit("closeHamburgerMenu")
-      const linkPath = getCatLink(child)
-      return app.router.push({ path: linkPath })
+    const goNext = (item) => {
+      if (item.childrenCategories.length) {
+        megaMenuCategories.value = item.childrenCategories
+        const category = Object.assign({ name: title.value, categoryCode: item.categoryCode })
+        parentCategoryCodes.value.push(category)
+        if (item.content.name) {
+          title.value = subTitle.value
+          subTitle.value = item.content.name
+        }
+      } else {
+        toggleHamburger()
+        const linkPath = getCatLink(item)
+        return app.router.push({ path: linkPath })
+      }
+    }
+
+    const back = async () => {
+      let lastCategoryCode = null
+      if (parentCategoryCodes.value.length) {
+        lastCategoryCode = parentCategoryCodes.value.pop()
+        const data = await categoryGetters.getParentCategory(
+          categories.value,
+          lastCategoryCode.categoryCode
+        )
+        megaMenuCategories.value = data
+        subTitle.value = title.value
+        title.value = lastCategoryCode.name
+      } else if (title.value === "Back") {
+        toggleHamburger()
+        return false
+      }
     }
 
     onMounted(async () => {
@@ -108,77 +143,14 @@ export default defineComponent({
       getCatLink,
       allCategories,
       megaMenuCategories,
-      gotoProduct,
+      parentCategoryCodes,
+      goNext,
+      title,
+      subTitle,
+      oldTitle,
+      back,
+      toggleHamburger,
     }
-  },
-  data() {
-    return {
-      position: "left",
-      staticClass: null,
-      className: null,
-      active: "",
-      subtitle: "All Department",
-    }
-  },
-  computed: {
-    visibleOverlay() {
-      return this.visible && this.overlay
-    },
-    transitionName() {
-      return "sf-slide-" + this.position
-    },
-  },
-  watch: {
-    visible: {
-      handler(value) {
-        if (!isClient) return
-        if (value) {
-          this.$nextTick(() => {
-            const sidebarContent = document.getElementsByClassName("sf-sidebar__content")[0]
-            disableBodyScroll(sidebarContent)
-          })
-          document.addEventListener("keydown", this.keydownHandler)
-        } else {
-          clearAllBodyScrollLocks()
-          document.removeEventListener("keydown", this.keydownHandler)
-        }
-      },
-      immediate: true,
-    },
-  },
-  mounted() {
-    this.classHandler()
-  },
-  updated() {
-    this.classHandler()
-  },
-  beforeDestroy() {
-    clearAllBodyScrollLocks()
-  },
-  methods: {
-    close() {
-      this.$emit("closeHamburgerMenu")
-    },
-    keydownHandler(e) {
-      if (e.key === "Escape" || e.key === "Esc" || e.keyCode === 27) {
-        this.close()
-      }
-    },
-    classHandler() {
-      let update = false
-      if (this.staticClass !== this.$vnode.data.staticClass) {
-        this.staticClass = this.$vnode.data.staticClass
-        update = true
-      }
-      if (this.className !== this.$vnode.data.class) {
-        this.className = this.$vnode.data.class
-        update = true
-      }
-      if (update) {
-        this.position =
-          [this.staticClass, this.className].toString().search("--right") > -1 ? "right" : "left"
-      }
-    },
   },
 })
 </script>
@@ -204,20 +176,6 @@ export default defineComponent({
   }
 }
 
-.sf-bar {
-  justify-content: flex-start;
-  background-color: var(--_c-light-secondary);
-
-  &__title {
-    padding-left: 0;
-    color: var(--_c-dark-primary);
-    font-family: var(--font-family--primary);
-    font-size: var(--font-size--sm);
-    line-height: 1.063rem;
-    text-align: left;
-  }
-}
-
 .line-2 {
   border: 0.06rem solid var(--_c-gray-middle);
 }
@@ -229,32 +187,83 @@ export default defineComponent({
 }
 
 .sidebar-menu-mobile {
-  ::v-deep.side-bar-mega-menu-column {
-    flex: none;
-  }
-
-  ::v-deep.side-bar-mega-menu-column > .sf-menu-item {
-    height: 3.438rem;
-    margin: 0 8% 0 0;
-    padding: 0 8% 0 8%;
-  }
-
-  .side-bar-menu-item {
-    height: 3.438rem;
-  }
-
-  .sf-mega-menu-column {
-    border-bottom: 0.063rem solid;
-    border-bottom-color: var(--_c-white-secondary);
-
-    .sf-list {
-      &__item {
-        margin: 0;
-        padding: 0 8% 0 8%;
-        border-bottom: 0.063rem solid;
-        border-bottom-color: var(--_c-white-secondary);
-      }
+  .sf-list {
+    &__item {
+      height: 3.375rem;
+      margin: 0;
+      padding: 0 8% 0 8%;
+      border-bottom: 0.063rem solid;
+      border-bottom-color: var(--_c-white-secondary);
+      justify-content: center;
     }
   }
+}
+
+.sub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--_c-dark-primary);
+  font-family: var(--font-family--primary);
+  line-height: var(--spacer-base);
+  text-align: left;
+  height: 3.438rem;
+  background-color: var(--_c-light-secondary);
+  font-size: 1.25rem;
+  padding-left: 8.2%;
+  border-bottom: 0.06rem solid var(--_c-white-secondary);
+  border-top: 0.06rem solid var(--_c-white-secondary);
+}
+
+.side-bar-top {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  background-color: var(--_c-light-secondary);
+  height: 3.875rem;
+
+  &__header-column-left {
+    background-color: var(--_c-light-secondary);
+    align-self: center;
+    flex: 80%;
+  }
+
+  &__header-column-right {
+    display: flex;
+    align-self: center;
+    justify-content: flex-end;
+    flex: 15%;
+    padding-right: 6.56%;
+  }
+}
+
+.title-bar {
+  justify-content: flex-start;
+  background-color: var(--_c-light-secondary);
+}
+
+.sf-bar {
+  ::v-deep &__title {
+    color: var(--_c-dark-primary);
+    font-family: var(--font-family--primary);
+    font-size: var(--font-size--sm);
+    line-height: 1.063rem;
+    text-align: left;
+    padding-left: var(--spacer-base);
+  }
+}
+
+.account-header {
+  padding-left: 8.2%;
+  background-color: var(--_c-gray-accent);
+  width: 91.8%;
+  height: 3.438rem;
+}
+
+.category-content {
+  max-height: 300px;
+  overflow-y: auto;
+  transform: var(--mega-menu-content-transform);
+  transition: transform 150ms ease-in-out;
 }
 </style>

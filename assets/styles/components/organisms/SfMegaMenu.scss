@@ -1,5 +1,4 @@
-@include for-desktop {
-  .sf-mega-menu {
+.sf-mega-menu {
     box-shadow: 0 0.125rem 0.25rem 0 var(--_c-gray-shadow);
 
     &__menu {
@@ -64,4 +63,3 @@
       }
     }
   }
-}
