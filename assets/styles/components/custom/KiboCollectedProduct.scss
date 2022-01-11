@@ -9,6 +9,10 @@
   border: 2px solid var(--_c-white-secondary);
   margin: var(--collected-product-margin, 0 0 var(--spacer-base) 0);
 
+  &__link {
+    display: contents; 
+  }
+
   &__verticalDivider {
     height: auto;
     width: 1px;

@@ -67,6 +67,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
+      cart.value = await getCart()
     }
   }
 
