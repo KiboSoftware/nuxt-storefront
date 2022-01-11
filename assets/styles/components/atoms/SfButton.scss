@@ -2,6 +2,7 @@
   --button-height: 2.625rem;
   --button-border-radius: 0.188rem;
   --button-text-transform: "capitalize";
+  --button-font: var(--font-family--primary);
   @include font(
     --button-font,
     var(--font-weight--normal),
@@ -16,13 +17,17 @@
 
   &--text {
     height: 1.15rem;
-  }
+    }
 
-  .color-secondary {
-    background-color: var(--_c-dark-primary);
-    border: 1px solid var(--_c-dark-primary);
-    color: var(--c-white);
+  &--text-lg {
+    font-size: var(--font-size--lg);
   }
+}
+
+.color-secondary {
+  background-color: var(--_c-dark-primary);
+  border: 1px solid var(--_c-dark-primary);
+  color: var(--c-white);
 }
 
 .color-light {

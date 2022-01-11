@@ -1,58 +1,55 @@
 <template>
   <SfModal id="login" :visible="isLoginModalOpen" @close="closeModal">
     <template #modal-bar>
-      <SfBar
-        class="sf-modal__bar smartphone-only"
-        :close="true"
-        :title="$t(barTitle)"
-        @click:close="closeModal"
-      />
+      <SfBar class="sf-modal__bar bar-heading" :title="$t(barTitle)" @click:close="closeModal" />
     </template>
     <transition name="sf-fade" mode="out-in">
       <div v-if="isLogin" key="log-in" class="modal-content" data-testid="login-modal">
         <form class="form" @submit.prevent="handleLogin()">
-          <SfInput
-            v-model="form.username"
-            name="email"
-            label="Your email"
-            class="form__element"
-            type="email"
-          />
-          <SfInput
-            v-model="form.password"
-            name="password"
-            label="Password"
-            type="password"
-            class="form__element"
-            :has-show-password="true"
-          />
-          <SfCheckbox
-            v-model="rememberMe"
-            name="remember-me"
-            label="Remember me"
-            class="form__element form__checkbox"
-          />
-          <span v-if="userError.login" class="login-error-message">
-            {{ userError.login.message }}
-          </span>
+          <div class="form__content">
+            <SfInput
+              v-model="form.username"
+              name="email"
+              label="Email*"
+              class="form__element"
+              type="email"
+            />
+            <SfInput
+              v-model="form.password"
+              name="password"
+              label="Password*"
+              type="password"
+              class="form__element"
+              :has-show-password="true"
+            />
+            <SfCheckbox
+              v-model="rememberMe"
+              name="remember-me"
+              label="Remember me"
+              class="form__element remember-me"
+            />
+            <span v-if="userError.login" class="login-error-message">
+              {{ userError.login.message }}
+            </span>
 
-          <SfButton
-            type="submit"
-            class="sf-button--full-width form__submit"
-            data-testid="log-in-button"
-            :disabled="loading"
-          >
-            <SfLoader :class="{ loader: loading }" :loading="loading">
-              <div>{{ $t("Login") }}</div>
-            </SfLoader>
-          </SfButton>
+            <SfButton
+              type="submit"
+              class="form__submit login-button sf-button--text-lg"
+              data-testid="log-in-button"
+              :disabled="loading"
+            >
+              <SfLoader :class="{ loader: loading }" :loading="loading">
+                <div>{{ $t("Log In") }}</div>
+              </SfLoader>
+            </SfButton>
+          </div>
         </form>
         <SfButton
           class="sf-button--text action-button"
           data-testid="forgotten-password-button"
           @click="setIsForgottenValue(true)"
         >
-          Forgotten password?
+          {{ $t("Forgot Password?") }}
         </SfButton>
         <div class="aside">
           <SfHeading title="Don't have an account yet?" :level="3" class="aside__heading" />
@@ -61,7 +58,7 @@
             data-testid="register-now-button"
             @click="setIsLoginValue(false)"
           >
-            Register now
+            {{ $t("Register Now") }}
           </SfButton>
         </div>
       </div>
@@ -173,11 +170,11 @@ export default {
 
     const barTitle = computed(() => {
       if (isLogin.value) {
-        return "Sign in"
+        return "Login"
       } else if (isForgotten.value) {
         return "Reset Password"
       } else {
-        return "Register"
+        return "Register Now"
       }
     })
 
@@ -252,8 +249,13 @@ export default {
 .form {
   width: 100%;
 
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
   &__element {
-    margin: var(--spacer-base) 0;
+    margin: var(--spacer-base) 0 var(--spacer-xs) 0;
   }
 
   &__checkbox {
@@ -261,12 +263,18 @@ export default {
   }
 
   &__submit {
-    margin: var(--spacer-xl) 0 0 0;
+    margin: var(--spacer-base) 0 0 0;
+  }
+}
+
+::v-deep .sf-input {
+  &__label {
+    padding: 0 0 0 var(--spacer-sm);
   }
 }
 
 .action-button {
-  margin: var(--spacer-xl) 0;
+  margin: calc(var(--spacer-base) * 1.25) 0;
 }
 
 .open-button {
@@ -274,12 +282,18 @@ export default {
 }
 
 .aside {
-  margin: 0 0 var(--spacer-xl) 0;
+  margin: 0 0 var(--spacer-sm) 0;
 
   &__heading {
-    --heading-title-color: var(--c-primary);
+    --heading-title-color: var(--_c-green-primary);
 
     margin: 0 0 var(--spacer-sm) 0;
+  }
+}
+
+.sf-button {
+  &--text {
+    font-size: var(--font-size--sm);
   }
 }
 
@@ -287,5 +301,36 @@ export default {
   color: red;
   display: flex;
   justify-content: center;
+}
+
+::v-deep .sf-icon-path {
+  margin: 0;
+}
+
+.login-button {
+  border-radius: var(--spacer-2xs);
+  padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) 0 calc(var(--spacer-base) * 2.8);
+  align-self: center;
+}
+
+.sf-heading {
+  &__title {
+    --heading-title-color: var(--_c-green-primary);
+  }
+}
+
+.bar-heading {
+  color: var(--_c-dark-primary);
+}
+
+::v-deep .sf-checkbox {
+  &__label {
+    font-size: var(--font-size--base);
+    color: var(--_c-dark-primary);
+  }
+}
+
+.remember-me {
+  margin: 0 0 var(--spacer-xs) 0;
 }
 </style>
