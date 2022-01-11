@@ -194,8 +194,11 @@ export default defineComponent({
       padding: 0 8% 0 8%;
       border-bottom: 0.063rem solid;
       border-bottom-color: var(--_c-white-secondary);
-      justify-content: center;
     }
+  }
+
+  .sf-menu-item {
+    top: 5px;
   }
 }
 
