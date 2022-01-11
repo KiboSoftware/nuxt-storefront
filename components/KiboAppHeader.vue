@@ -557,6 +557,12 @@ export default defineComponent({
 .kibo-top-bar {
   background-color: var(--_c-dark-primary);
   height: 3.5rem;
+
+  .sf-menu-item {
+    --menu-item-label-color: var(--_c-light-secondary);
+
+    font-size: var(--font-size--sm);
+  }
 }
 
 .kibo-sticky-bottom {
@@ -564,13 +570,15 @@ export default defineComponent({
   height: 3.5rem;
 }
 
-.sf-menu-item {
-  --menu-item-label-color: var(--_c-dark-primary);
-  @include for-desktop {
-    --menu-item-label-color: var(--_c-light-secondary);
-  }
+.kibo-top-bar {
+  background-color: #2b2b2b;
+  height: 3.5rem;
 
-  font-size: var(--font-size--sm);
+  .sf-menu-item {
+    --menu-item-label-color: var(--_c-light-secondary);
+
+    font-size: var(--font-size--sm);
+  }
 }
 
 .line-2 {
