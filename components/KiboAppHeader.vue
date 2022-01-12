@@ -559,7 +559,7 @@ export default defineComponent({
   height: 3.5rem;
 
   .sf-menu-item {
-     &__label {
+    &__label {
       color: var(--menu-item-label-color, var(--_c-light-secondary));
     }
   }
@@ -569,7 +569,6 @@ export default defineComponent({
   background-color: var(--_c-light-secondary);
   height: 3.5rem;
 }
-
 
 .line-2 {
   border: 0.06rem solid var(--_c-gray-middle);
