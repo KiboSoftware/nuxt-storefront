@@ -88,6 +88,13 @@ export const getDiscounts = (cart: Cart) => {
   }))
 }
 
+const isDisabledFulfillmentOption = (fulfillmentTypesSupported, option) => {
+  return (
+    fulfillmentTypesSupported?.filter((type) => type.toLowerCase() === option.value.toLowerCase())
+      .length === 0
+  )
+}
+
 export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Location) => {
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
@@ -100,15 +107,14 @@ export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Loca
     details:
       option.value === "DirectShip"
         ? option.details
+        : isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option)
+        ? "Not available"
         : purchaseLocation?.name
         ? `${option.details}: ${purchaseLocation.name}`
         : "",
     required: option.isRequired,
     shortName: option.shortName,
-    disabled:
-      item.product?.fulfillmentTypesSupported?.filter(
-        (type) => type.toLowerCase() === option.value.toLowerCase()
-      ).length === 0,
+    disabled: isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option),
   }))
 
   return result
