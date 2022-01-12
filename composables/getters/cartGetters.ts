@@ -1,5 +1,4 @@
-import { Location } from "../types"
-import { Cart, CartItem, Maybe, CrProductOption } from "~~/server/types/GraphQL"
+import { Cart, CartItem, Maybe, CrProductOption, Location } from "@/server/types/GraphQL"
 
 export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
 
@@ -62,6 +61,10 @@ export const getCartShippingPrice = (cart: Cart) => cart?.shippingTotal
 
 export const getCartTotalItems = (cart: Cart): number => cart?.items?.length || 0
 
+export const getCartTotalQuantity = (cart: Cart): number => {
+  return cart?.items?.reduce((acc, { quantity }) => acc + quantity, 0)
+}
+
 export const getFormattedPrice = (price: number): string => String(price)
 
 export const getCoupons = (cart: Cart) =>
@@ -120,4 +123,5 @@ export const cartGetters = {
   getDiscounts,
   getCartFulfillmentOptions,
   getCartItem,
+  getCartTotalQuantity,
 }
