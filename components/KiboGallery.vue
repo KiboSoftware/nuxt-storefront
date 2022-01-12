@@ -20,6 +20,7 @@
                 :alt="picture.alt"
                 :width="imageWidth"
                 :height="imageHeight"
+                :placeholder="require('@storefront-ui/shared/images/product_placeholder.svg')"
                 @click="$emit('click:stage', { picture, index })"
               />
             </li>
@@ -339,6 +340,11 @@ export default {
         height: 31.625rem;
       }
     }
+
+    &__slide {
+      display: flex;
+      justify-content: center;
+    }
   }
 
   .sf-image,
@@ -347,6 +353,16 @@ export default {
     @include for-mobile {
       width: calc(var(--spacer-base) * 9.625);
       height: calc(var(--spacer-base) * 4.58);
+    }
+  }
+
+  .sf-image--placeholder {
+    height: calc(var(--spacer-base) * 4.58);
+    width: calc(var(--spacer-base) * 4.58);
+
+    @include for-desktop {
+      height: calc(var(--spacer-base) * 21.08);
+      width: calc(var(--spacer-base) * 21.08);
     }
   }
 }

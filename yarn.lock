@@ -2711,7 +2711,7 @@
     vue "^2.6.12"
     vue2-leaflet "^2.5.2"
 
-"@storefront-ui/vue@^0.11.0":
+"@storefront-ui/vue@^0.11.5":
   version "0.11.5"
   resolved "https://registry.yarnpkg.com/@storefront-ui/vue/-/vue-0.11.5.tgz#4d430deeeb405c45e0c54bb06d4fc367245b8d8c"
   integrity sha512-bevOM1oAtXFGQBRZYJ0i5n9xIDl5eeOi0blGW/pTVYbjxtAzJCC2JE/hmLTmV2wx98sY6xyEi1VbpM24kpkO+A==

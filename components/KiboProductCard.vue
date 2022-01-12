@@ -12,11 +12,12 @@
             <SfImage
               v-for="(picture, key) in image.slice(0, 2)"
               :key="key"
-              class="sf-product-card__picture"
               :src="picture"
+              class="sf-product-card__picture"
               :alt="title"
               :width="imageWidth"
               :height="imageHeight"
+              :placeholder="require('@storefront-ui/shared/images/product_placeholder.svg')"
             />
           </template>
           <SfImage
@@ -26,6 +27,7 @@
             :alt="title"
             :width="imageWidth"
             :height="imageHeight"
+            :placeholder="require('@storefront-ui/shared/images/product_placeholder.svg')"
             @click="closeSearchDialog()"
           />
         </SfButton>
@@ -137,6 +139,7 @@
 </template>
 <script lang="ts">
 import { colorsValues as SF_COLORS } from "@storefront-ui/shared/variables/colors"
+
 import {
   SfPrice,
   SfRating,
@@ -153,6 +156,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer"
 import { computed, ref, defineComponent, onBeforeUnmount } from "@vue/composition-api"
+
 export default defineComponent({
   name: "KiboProductCard",
   components: {
@@ -454,5 +458,10 @@ export default defineComponent({
   font-size: var(--font-size--sm);
   font-family: var(--font-family--primary);
   color: var(--_c-dark-primary);
+}
+
+.sf-image--placeholder {
+  height: calc(var(--spacer-base) * 8.375);
+  width: calc(var(--spacer-base) * 8.375);
 }
 </style>
