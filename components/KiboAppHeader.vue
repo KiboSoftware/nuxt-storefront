@@ -143,9 +143,11 @@
               <SfIcon class="sf-header__icon">
                 <font-awesome-icon icon="shopping-cart" class="fa-icon" />
               </SfIcon>
-              <SfBadge v-if="totalItemsInCart" class="sf-badge--number sf-badge cart-badge">{{
-                totalItemsInCart
-              }}</SfBadge>
+              <SfBadge
+                v-if="totalItemsInCart"
+                class="sf-badge--number sf-badge--cart-count sf-badge cart-badge"
+                >{{ totalItemsInCart }}</SfBadge
+              >
               <div class="kibo-header__icon">
                 <span class="kibo-header__icon-name">{{ $t("Cart") }}</span>
               </div>
