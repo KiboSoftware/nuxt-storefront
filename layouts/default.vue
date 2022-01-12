@@ -1,6 +1,5 @@
-// eslint-disable-next-line vue/multi-word-component-names
 <template>
-  <div>
+  <div class="wrapper">
     <KiboAppHeader />
     <LoginModal />
     <StoreLocatorModal />
@@ -13,8 +12,7 @@
 </template>
 
 <style lang="scss">
-html,
-body {
+* {
   font-family: "Roboto", sans-serif;
   font-size: 1rem;
   line-height: 1.25rem;
@@ -22,12 +20,19 @@ body {
   margin: 0;
 }
 
+.wrapper {
+  max-width: 1430px;
+  margin: 0 auto;
+  background-color: solid 1px white;
+}
+
 .content {
   width: 86.5%;
   margin: 0 auto;
 
   @include for-desktop {
-    max-width: 88rem;
+    width: 81.75rem;
+    max-width: 81.75rem;
   }
 }
 </style>
