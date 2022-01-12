@@ -11,6 +11,7 @@
 
   &__count {
     color: var(--menu-item-count-color, var(--_c-dark-primary));
+    font-size: var(--font-size--sm);
   }
 
   &__label {
