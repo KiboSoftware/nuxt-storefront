@@ -62,7 +62,7 @@
               <CategoryFacet
                 key="category-facet"
                 :is-search-page="isSearchPage"
-                :categories-from-search="categoriesFromSearch"
+                :categories-from-search="getCategoryFacet"
                 :breadcrumbs="breadcrumbs"
               />
               <div key="filters">
@@ -209,7 +209,6 @@ import {
   productSearchGetters,
 } from "@/composables"
 import { useNuxtApp } from "#app"
-import { FacetValue } from "~~/server/types/GraphQL"
 
 export default {
   name: "Category",
@@ -264,24 +263,13 @@ export default {
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
     )
-    const categoriesFromSearch = computed(() => {
-      let header: string, children: FacetValue[]
+    const getCategoryFacet = computed(() => {
       const { categoryCode } = facetsFromUrl.value
-      const facetName = "CategoryCode"
-
-      // Searching categories by facetName i.e. : CategoryCode
-      if (!categoryCode && isSearchPage) {
-        children = productSearchGetters.getFacetByName(
-          productSearchResult?.value,
-          facetName
-        )?.values
-      } else {
-        const facet = productSearchGetters.getFacetByName(productSearchResult?.value, facetName)
-        const parent = facet?.values?.find((facet) => categoryCode === facet.value)
-        header = parent?.label
-        children = parent?.childrenFacetValues
-      }
-      return { header, children }
+      return productSearchGetters.getCategoryFacet(
+        isSearchPage.value,
+        productSearchResult.value,
+        categoryCode
+      )
     })
 
     const sortBy = computed(() =>
@@ -300,7 +288,7 @@ export default {
         ? `${productSearchResult.value?.items?.length || 0} Results for "${
             facetsFromUrl.value?.phrase
           }"`
-        : categoriesFromSearch.value.header
+        : getCategoryFacet.value.header
     })
 
     const selectFilter = (filterValue) => {
@@ -350,7 +338,7 @@ export default {
       products,
       facets,
       selectFilter,
-      categoriesFromSearch,
+      getCategoryFacet,
       sortBy,
       isGridView: true,
       pagination,

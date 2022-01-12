@@ -1,5 +1,5 @@
 <template>
-  <div v-if="pagination.totalItems > 20" class="pagination">
+  <div class="pagination">
     <div class="pagination__select">
       <p class="pagination__select--label">{{ $t("Show Per Page") }}</p>
       <SfSelect
