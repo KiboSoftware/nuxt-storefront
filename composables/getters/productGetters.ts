@@ -1,7 +1,7 @@
 import { buildBreadcrumbs, isProductVariationsSelected } from "@/composables/helpers"
 import { Breadcrumb } from "@/pages/types"
 import { Location, Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
-import { ProductCustom } from "@/composables/types"
+import { ProductCustom, FulFillmentOptions } from "@/composables/types"
 import { useNuxtApp } from "#app"
 
 const ratingAttrFQN = `tenant~rating`
@@ -80,7 +80,7 @@ export const getProductFulfillmentOptions = (product: Product, purchaseLocation:
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
 
-  const result = fullfillmentOptions.map((option) => ({
+  const result: FulFillmentOptions = fullfillmentOptions.map((option) => ({
     value: option.value,
     name: option.name,
     code: option.code,

@@ -1,3 +1,4 @@
+import type { FulFillmentOptions } from "../types"
 import { Cart, CartItem, Maybe, CrProductOption, Location } from "@/server/types/GraphQL"
 
 export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
@@ -87,19 +88,31 @@ export const getDiscounts = (cart: Cart) => {
   }))
 }
 
-export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Location) =>
-  item?.product.fulfillmentTypesSupported.map((option) => ({
-    name: "fulfillment",
-    value: option,
-    label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
+export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Location) => {
+  const nuxt = useNuxtApp()
+  const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
+
+  const result: FulFillmentOptions = fullfillmentOptions.map((option) => ({
+    value: option.value,
+    name: option.name,
+    code: option.code,
+    label: option.label,
     details:
-      option === "DirectShip"
-        ? "Available to Ship"
+      option.value === "DirectShip"
+        ? option.details
         : purchaseLocation?.name
-        ? `Available at: ${purchaseLocation.name}`
+        ? `${option.details}: ${purchaseLocation.name}`
         : "",
-    required: "false",
+    required: option.isRequired,
+    shortName: option.shortName,
+    disabled:
+      item.product?.fulfillmentTypesSupported?.filter(
+        (type) => type.toLowerCase() === option.value.toLowerCase()
+      ).length === 0,
   }))
+
+  return result
+}
 
 export const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
   cart?.items?.find((item) => item.id === cartItemId)

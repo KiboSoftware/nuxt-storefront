@@ -54,6 +54,7 @@
                 :special-price="
                   cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
                 "
+                :cart-item="cartItem"
                 :options="cartItem.product.options"
                 :supported-fulfillment-types="cartItemFulfillmentTypes(cartItem)"
                 :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"

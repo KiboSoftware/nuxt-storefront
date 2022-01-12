@@ -44,7 +44,10 @@
     <div class="kibo-collectedProduct__verticalDivider"></div>
     <div class="kibo-collectedProduct__fullfilment">
       <KiboFulfillmentOptions
+        class="product__fullfillment"
         :fulfillment-options="supportedFulfillmentTypes"
+        :selected-option="selectedFulfillmentValue"
+        :product-code="cartItem.product.productCode"
         @click="handleStoreLocatorClick"
       />
     </div>
@@ -69,7 +72,7 @@ import {
   SfRadio,
 } from "@storefront-ui/vue"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import { useCart, useUiState } from "@/composables"
+import { useCart, useUiState, productGetters } from "@/composables"
 
 export default defineComponent({
   name: "KiboCollectedProduct",
@@ -148,6 +151,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    cartItem: {
+      type: Object,
+      default: () => {},
+    },
   },
   setup(props, context) {
     const { toggleStoreLocatorModal } = useUiState()
@@ -168,6 +175,10 @@ export default defineComponent({
       return typeof props.qty === "string" ? Number(props.qty) : props.qty
     })
 
+    const selectedFulfillmentValue = computed(() =>
+      productGetters.getSelectedFullfillmentOption(props.cartItem)
+    )
+
     const handleQuantitySelectorInput = async ($event) => {
       context.emit("input", $event)
       await updateCartItemQuantity(props.cartItemId, Number($event))
@@ -184,6 +195,7 @@ export default defineComponent({
       handleRemoveCartItem,
       componentIs,
       quantity,
+      selectedFulfillmentValue,
     }
   },
 })

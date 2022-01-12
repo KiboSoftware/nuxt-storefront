@@ -1,6 +1,7 @@
 export const cartItemDetails = `
 fragment cartItemDetails on CartItem {
   id
+  fulfillmentMethod
   productDiscounts{
     discountQuantity
   }

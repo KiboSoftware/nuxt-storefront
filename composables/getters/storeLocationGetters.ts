@@ -1,4 +1,4 @@
-import { Location, RegularHours } from "@/composables/types"
+import { Location, RegularHours } from "@/server/types/GraphQL"
 
 interface TimeDetails {
   openTime: string

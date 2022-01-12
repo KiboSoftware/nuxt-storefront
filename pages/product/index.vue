@@ -192,10 +192,9 @@
                 <KiboFulfillmentOptions
                   class="product__fullfillment"
                   :fulfillment-options="fulfillmentOptions"
-                  :cart-item-purchase-location="purchaseLocation.name"
                   :selected-option="selectedFulfillmentValue"
+                  :product-code="productCode"
                   @click="handleStoreLocatorClick"
-                  @change="selectFulfillmentOption"
                 />
 
                 <SfDivider class="divider-second" />
@@ -282,7 +281,7 @@ import {
   productGetters,
   useCart,
 } from "@/composables"
-import { buildAddToCartInput, isFulfillmentOptionValid } from "@/composables/helpers"
+import { buildAddToCartInput } from "@/composables/helpers"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -306,7 +305,7 @@ export default defineComponent({
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
-    const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
+    const { load, product, configure, loading, error } = useProductSSR(productCode)
     const { addItemsToCart } = useCart()
     const { toggleStoreLocatorModal, toggleAddToCartConfirmationModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
@@ -372,23 +371,6 @@ export default defineComponent({
     ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
-    }
-
-    // Get Fullfillment Options
-    const selectFulfillmentOption = (selectedFulfillmentVal: string) => {
-      const { value, name, shortName } = fulfillmentOptions.value.find(
-        (option: { value: string }) => option.value === selectedFulfillmentVal
-      )
-
-      const isValid = isFulfillmentOptionValid(
-        { value, name },
-        product.value,
-        purchaseLocation.value
-      )
-
-      if (isValid) {
-        setFulfillment(selectedFulfillmentVal, shortName, purchaseLocation?.value?.code)
-      }
     }
 
     // Add to Cart
@@ -457,13 +439,14 @@ export default defineComponent({
       fulfillmentOptions,
       selectedFulfillmentValue,
       handleStoreLocatorClick,
-      selectFulfillmentOption,
+      // selectFulfillmentOption,
       updateShopperEnteredValues,
       isValidForAddToCart,
       showZoomedProduct,
       closeZoomedProduct,
       isProductZoomed,
       isMobile,
+      productCode,
     }
   },
 })
