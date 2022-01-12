@@ -14,7 +14,7 @@
         class="sf-radio"
         @change="selectFulfillment(fulfillmentOption)"
       >
-        <template v-if="fulfillmentOption.label === pickupInStore" #details v-bind="{ details }">
+        <template v-if="fulfillmentOption.label === pickupInStore" #details>
           <p class="sf-radio__details">
             {{ fulfillmentOption.details }}
           </p>
@@ -22,7 +22,6 @@
         <template
           v-if="fulfillmentOption.label === pickupInStore && fulfillmentOption.disabled !== true"
           #description
-          v-bind="{ description }"
         >
           <p class="sf-radio__details" @click="handleStoreLocatorClick">
             {{ cartItemPurchaseLocation ? "Change Store" : "Select Store" }}

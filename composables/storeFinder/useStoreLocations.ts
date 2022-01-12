@@ -1,6 +1,7 @@
-import { Location, GeoCoords } from "@/composables/types"
+import { GeoCoords } from "@/composables/types"
 import { getSpLocations } from "@/gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"
+import { Location } from "@/server/types/GraphQL"
 
 export const useStoreLocations = () => {
   const nuxt = useNuxtApp()

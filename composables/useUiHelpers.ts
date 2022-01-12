@@ -1,4 +1,4 @@
-import type { PrCategory } from "../server/types/GraphQL"
+import { FacetValue, PrCategory } from "./../server/types/GraphQL"
 import type { uiHelpersReturnType, getFacetsFromURLResponse } from "./types"
 import { useNuxtApp } from "#app"
 
@@ -20,13 +20,12 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     }
   }
 
-  const getFacetsFromURL = () => {
+  const getFacetsFromURL = (isSearchPage?: boolean) => {
     // eslint-disable-next-line
     const { query, params } = instance.router.history.current
-    const categoryCode = Object.keys(params).reduce(
-      (prev, curr) => params[curr] || prev,
-      params.slug_1
-    )
+    const categoryCode = !isSearchPage
+      ? Object.keys(params).reduce((prev, curr) => params[curr] || prev, params.slug_1)
+      : query.categoryCode
     const filters = query.filters?.split(",") || []
 
     return {
@@ -75,6 +74,19 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     instance.router.push({ query: { ...query, sort } })
   }
 
+  const setCategoryLink = (isSearchPage: boolean, facetValue: FacetValue) => {
+    const { query } = instance.router.history.current
+    if (isSearchPage) {
+      instance.router.push({ query: { ...query, categoryCode: facetValue.value } })
+    } else {
+      instance.router.push({ path: `/c/${facetValue.value}`, query })
+    }
+  }
+
+  const goBackToPreviousRoute = () => {
+    instance.router.back()
+  }
+
   return {
     getCatLink,
     setTermForUrl,
@@ -82,5 +94,7 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     getProductLink,
     changeFilters,
     changeSorting,
+    setCategoryLink,
+    goBackToPreviousRoute,
   }
 }

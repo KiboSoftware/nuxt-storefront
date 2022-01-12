@@ -41,4 +41,19 @@
       --search-bar-border-color: var(--_c-green-primary);
     }
   }
+
+  &__facet-search {
+    --search-bar-height: 1.625rem;
+    --icon-size: 0.875rem;
+    --font-size--base: 0.75rem;
+    --search-bar-placeholder-color: var(--_c-gray-middle);
+
+    bottom: 10px;
+
+    .sf-search-bar {
+      &__icon {
+        padding: 6px 0 0 2px;
+      }
+    }
+  }
 }

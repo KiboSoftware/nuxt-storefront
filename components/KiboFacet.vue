@@ -2,9 +2,10 @@
   <div>
     <SfSearchBar
       :placeholder="`Search ${facet.label}s`"
+      class="sf-search-bar sf-search-bar__facet-search"
       aria-label="Search"
-      @input="findFilter($event)"
       :value="term"
+      @input="findFilter($event)"
       @keydown.enter="findFilter($event)"
     >
       <template #icon>
@@ -258,18 +259,5 @@ export default defineComponent({
   --filter-count-margin: 0 0.5rem 0 auto;
 
   padding: 0.375rem;
-}
-
-.sf-search-bar {
-  --search-bar-height: 1.625rem;
-  --icon-size: 0.875rem;
-  --font-size--base: 0.75rem;
-  --search-bar-placeholder-color: var(--_c-gray-middle);
-
-  bottom: 10px;
-
-  &__icon {
-    padding: 6px 0 0 2px;
-  }
 }
 </style>

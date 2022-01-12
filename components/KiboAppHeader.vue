@@ -265,7 +265,7 @@ export default defineComponent({
     SfBadge,
   },
   directives: { clickOutside },
-  setup() {
+  setup(_, context) {
     const { categories: allCategories, load: loadSideBarMenu } = useCategoryTree()
 
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
@@ -296,6 +296,8 @@ export default defineComponent({
     const toggleMobileSearchBar = () => {
       isOpenSearchBar.value = !isOpenSearchBar.value
     }
+    const { search: productSearch } = useProductSearch(`product-search`)
+
     const closeSearch = () => {
       if (!isSearchOpen.value) return
 
@@ -323,11 +325,13 @@ export default defineComponent({
         return searchBarRef.value.$el.children[0].focus()
       }
     }
-    const gotoSearchResult = () => {
+
+    const gotoSearchResult = async () => {
       if (term.value) {
         const searchStr = term.value
-        closeSearch()
-        return app.router.push({ path: "/search", query: { phrase: searchStr } })
+        isSearchOpen.value = false
+        app.router.push({ path: "/search", query: { phrase: searchStr } })
+        await productSearch({ ...getFacetsFromURL(), phrase: searchStr })
       }
     }
     const megaMenuCategories = computed(() => {
@@ -339,11 +343,21 @@ export default defineComponent({
       (newVal, oldVal) => {
         const shouldSearchBeOpened =
           !isMobile.value &&
-          term.value.length > 0 &&
-          ((!oldVal && newVal) || (newVal.length !== oldVal.length && isSearchOpen.value === false))
+          term.value?.length > 0 &&
+          ((!oldVal && newVal) ||
+            (newVal?.length !== oldVal?.length && isSearchOpen.value === false))
         if (shouldSearchBeOpened) {
           isSearchOpen.value = true
         }
+      }
+    )
+
+    watch(
+      () => context.root.$route,
+      async () => {
+        const facetsFromUrl = getFacetsFromURL()
+        term.value = facetsFromUrl.phrase
+        await productSearch({ ...facetsFromUrl, phrase: term.value })
       }
     )
 
