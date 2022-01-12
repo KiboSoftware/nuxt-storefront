@@ -7,6 +7,17 @@
           <div class="product">
             <div>
               <div class="product__gallery">
+                <SfIcon
+                  class="product__gallery-zoom-icon smartphone-only"
+                  size="18px"
+                  @click="showZoomedProduct"
+                >
+                  <font-awesome-icon
+                    icon="search-plus"
+                    class="fa-icon"
+                    color="var(--_c-gray-primary)"
+                  />
+                </SfIcon>
                 <LazyHydrate when-idle>
                   <KiboGallery
                     :images="productGallery"
@@ -38,14 +49,8 @@
             </div>
 
             <div class="product__info">
-              <div>
+              <div class="product__heading-container">
                 <h3 class="sf-heading__title h3">{{ productName }}</h3>
-                <SfIcon
-                  icon="drag"
-                  size="42px"
-                  color="#E0E0E1"
-                  class="product__drag-icon smartphone-only"
-                />
               </div>
 
               <div class="product__price-and-rating">
@@ -59,7 +64,7 @@
                   />
                 </div>
 
-                <div class="product__rating">
+                <div class="product__rating desktop-only">
                   <SfRating :score="3" :max="5" />
                   <a href="#" class="product__count"> ({{ totalReviews }}) </a>
 
@@ -82,9 +87,9 @@
                     productOptions.colourOptions &&
                     productOptions.colourOptions.values
                   "
-                  class="product__colors desktop-only"
+                  class="product__colors"
                 >
-                  <div class="product__color-label">{{ $t("Color") }}:</div>
+                  <div class="product__color-label desktop-only">{{ $t("Color") }}:</div>
 
                   <SfColor
                     v-for="(option, i) in productOptions.colourOptions.values"
@@ -187,7 +192,7 @@
                   </div>
                 </div>
 
-                <SfDivider class="divider-first" />
+                <SfDivider class="divider-first desktop-only" />
 
                 <KiboFulfillmentOptions
                   class="product__fullfillment"
@@ -198,7 +203,7 @@
                   @change="selectFulfillmentOption"
                 />
 
-                <SfDivider class="divider-second" />
+                <SfDivider class="divider-second desktop-only" />
 
                 <div class="add-to-cart-wrapper">
                   <KiboProductActions
@@ -210,6 +215,21 @@
                     @addItemToCart="addToCart"
                     @addItemWishlist="addToWishList"
                   />
+                </div>
+
+                <SfDivider class="divider-first smartphone-only" />
+
+                <div class="product__rating smartphone-only">
+                  <SfRating :score="3" :max="5" />
+                  <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+
+                  <SfButton
+                    class="sf-button--text"
+                    data-testid="read-all-reviews"
+                    @click="changeTab(2)"
+                  >
+                    {{ $t("WriteReview") }}
+                  </SfButton>
                 </div>
 
                 <div>
@@ -241,6 +261,7 @@
         </div>
       </SfLoader>
     </LazyHydrate>
+
     <ZoomedProduct
       v-if="isProductZoomed"
       class="product-zoom"
@@ -408,8 +429,7 @@ export default defineComponent({
     }
 
     const addToWishList = () => {
-      // Todo: Add to wishlist
-      console.log("Add to Whislist qunatity: ", qtySelected.value)
+      // Todo: Add to wishlist qtySelected.value
     }
 
     const handleStoreLocatorClick = () => {
@@ -490,16 +510,20 @@ export default defineComponent({
 
   &__price-and-rating {
     align-items: flex-start;
-
-    @include for-desktop {
-      margin: var(--spacer-sm) 0;
-    }
+    margin: var(--spacer-sm) 0;
   }
 
   &__rating {
     display: flex;
-    margin: var(--spacer-xs) 0 0 0;
     gap: var(--spacer-xs);
+
+    @include for-mobile {
+      padding: 34px 0;
+    }
+
+    @include for-desktop {
+      margin: var(--spacer-xs) 0 0 0;
+    }
   }
 
   &__count {
@@ -509,6 +533,7 @@ export default defineComponent({
 
   &__description {
     margin-top: 0.5em;
+    text-align: justify;
   }
 
   &__size {
@@ -594,7 +619,7 @@ export default defineComponent({
   }
 
   &__heading {
-    margin: var(--spacer-sm) auto;
+    margin: 0 auto;
     @include for-desktop {
       margin: var(--spacer-xl) 0 0 0;
     }
@@ -610,7 +635,19 @@ export default defineComponent({
   }
 
   ::v-deep .sf-radio__container {
-    padding-left: 0;
+    padding: 0;
+    height: calc(var(--spacer-base) * 1.125);
+    align-items: center;
+  }
+
+  &__heading-container {
+    height: calc(var(--spacer-sm) * 1.25); //16px;
+    align-items: center;
+  }
+
+  &__gallery-zoom-icon {
+    width: 80%;
+    justify-content: right;
   }
 }
 
@@ -623,6 +660,7 @@ export default defineComponent({
     border-bottom: 1px solid #cdcdcd;
     padding: 0 calc(var(--spacer-sm) * 1.31);
     font-weight: bold;
+    justify-content: space-between;
   }
 
   &__content {
@@ -654,7 +692,11 @@ export default defineComponent({
 }
 
 .divider-first {
-  margin-bottom: var(--spacer-sm);
+  margin-bottom: 0;
+
+  @include for-desktop {
+    margin-bottom: var(--spacer-sm);
+  }
 }
 
 .divider-second {

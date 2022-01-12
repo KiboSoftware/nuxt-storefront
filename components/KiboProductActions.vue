@@ -153,11 +153,21 @@ $cart-button-width: 10.75rem; //172px
 
 .quantity-left {
   color: var(--_c-dark-primary);
-  font-size: var(--font-size--xs);
-  font-style: italic;
-  line-height: var(--font-size--sm);
-  padding-left: calc(var(--spacer-xl) * 1.35);
-  margin-top: calc(var(--spacer-xs) * 1.5);
+
+  @include for-mobile {
+    text-align: center;
+    padding: 30px 0 0 0;
+    font-weight: var(--font-weight--medium);
+    font-size: var(--font-size--sm);
+  }
+
+  @include for-desktop {
+    font-size: var(--font-size--xs);
+    font-style: italic;
+    line-height: var(--font-size--sm);
+    padding-left: calc(var(--spacer-xl) * 1.35);
+    margin-top: calc(var(--spacer-xs) * 1.5);
+  }
 }
 
 .label-quantity {
@@ -196,6 +206,7 @@ $cart-button-width: 10.75rem; //172px
 
 .kibo-quantity-container {
   margin-bottom: 14px;
+  width: 100%;
 
   @include for-desktop {
     flex: 1;
