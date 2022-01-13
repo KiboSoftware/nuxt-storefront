@@ -1,5 +1,5 @@
 <template>
-  <div class="sf-fulfillment-options kibo-collectedProduct__fullfilment-options">
+  <div class="sf-fulfillment-options">
     <slot name="fulfillment-options">
       <SfRadio
         v-for="(fulfillmentOption, index) in fulfillmentOptions"

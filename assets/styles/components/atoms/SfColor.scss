@@ -5,21 +5,24 @@
   border: 0.3125rem solid #fff;
   margin: 1px;
 
+  @include for-mobile {
+    margin-right: 8px;
+  }
+
   &.disabled {
     border: 1px solid var(--_c-gray-middle);
     color: var(--_c-gray-middle);
     pointer-events: none;
     opacity: 0.1;
   }
-  @include for-desktop {
-    &.is-active,
-    &:hover {
-      transform: none;
-    }
 
-    &:active,
-    &--active {
-      outline: 1px solid #000;
-    }
+  &.is-active,
+  &:hover {
+    transform: none;
+  }
+
+  &:active,
+  &--active {
+    outline: 1px solid #000;
   }
 }
