@@ -645,14 +645,6 @@ export default {
   margin: 0 0 var(--spacer-sm) 0;
 }
 
-.category-drill-down {
-  .sf-menu-item {
-    --menu-item-count-margin: 0 calc(var(--spacer-2xs) * 0.5) 0 auto;
-
-    font-family: var(--font-family--primary);
-  }
-}
-
 .sf-filter {
   --filter-label-color: #2b2b2b;
   --filter-count-color: #2b2b2b;

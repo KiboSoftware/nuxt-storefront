@@ -113,6 +113,12 @@ export default defineComponent({
 .filters {
   border: 1px solid var(--c-light);
   border-width: 0 0 1px 0;
+
+  .sf-menu-item {
+    --menu-item-count-margin: 0 calc(var(--spacer-2xs) * 0.5) 0 auto;
+
+    font-family: var(--font-family--primary);
+  }
 }
 
 .list {
@@ -129,15 +135,6 @@ export default defineComponent({
       height: 2rem;
     }
   }
-}
-
-.sf-menu-item {
-  --menu-item-label-color: #2b2b2b;
-  --menu-item-count-color: #2b2b2b;
-  --menu-item-count-margin: 0 calc(var(--spacer-2xs) * 0.5) 0 auto;
-
-  font-size: var(--font-size--sm);
-  font-family: var(--font-family--primary);
 }
 
 .navbar {
