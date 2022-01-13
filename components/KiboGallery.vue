@@ -20,7 +20,7 @@
                 :alt="picture.alt"
                 :width="imageWidth"
                 :height="imageHeight"
-                :placeholder="require('@storefront-ui/shared/images/product_placeholder.svg')"
+                :placeholder="require('@/assets/images/product_placeholder.svg')"
                 @click="$emit('click:stage', { picture, index })"
               />
             </li>

@@ -253,7 +253,7 @@ import {
   categoryGetters,
 } from "@/composables"
 import { useNuxtApp } from "#app"
-import * as logo from "@/assets/kibo_logo.png"
+import * as logo from "@/assets/images/kibo_logo.png"
 
 export default defineComponent({
   components: {
