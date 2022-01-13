@@ -35,7 +35,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(var(--spacer-2xs) * 3);
+    font-size: var(--font-size--xs);
     top: calc(var(--spacer-xs) * -1.25);
 
     --badge-padding: calc(var(--spacer-2xs) * 3);

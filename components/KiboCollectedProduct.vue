@@ -45,6 +45,7 @@
     <div class="kibo-collectedProduct__fullfilment">
       <KiboFulfillmentOptions
         :fulfillment-options="supportedFulfillmentTypes"
+        :is-column-display="true"
         @click="handleStoreLocatorClick"
       />
     </div>
