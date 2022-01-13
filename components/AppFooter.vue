@@ -93,6 +93,18 @@ export default {
 }
 
 .sf-footer {
+  .sf-menu-item {
+    justify-content: flex-start;
+    font-family: var(--font-family--primary);
+    @include for-mobile {
+      padding-left: var(--spacer-base);
+    }
+
+    &__label {
+      color: var(--menu-item-label-color, var(--_c-light-secondary));
+    }
+  }
+
   @include for-desktop {
     border-top: var(--spacer-xs) solid var(--c-primary);
     padding-bottom: 0;

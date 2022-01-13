@@ -242,15 +242,6 @@ export default defineComponent({
   --list-item-margin: 0 0 var(--spacer-sm) 0;
 }
 
-.sf-menu-item {
-  --menu-item-label-color: #2b2b2b;
-  --menu-item-count-color: #2b2b2b;
-  --menu-item-count-margin: 0 0.125rem 0 auto;
-
-  font-size: 0.813rem;
-  font-family: var(--font-family--primary);
-}
-
 .sf-filter {
   --filter-label-color: #2b2b2b;
   --filter-count-color: #2b2b2b;

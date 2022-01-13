@@ -77,25 +77,25 @@ export default defineComponent({
 #SfMegaMenuColumnId .sf-mega-menu-column {
   @include for-desktop {
     .sf-heading {
-      padding: 0.6rem 0 1rem 5rem;
+      padding: calc(var(--spacer-base) * 0.4) 0 calc(var(--spacer-xs) * 2) var(--spacer-2xl);
       text-align: left;
 
       &__title {
-        font-weight: bold;
+        font-weight: var(--font-weight--bold);
         font-size: var(--font-size--base);
       }
     }
 
     .sf-image--wrapper {
-      padding-right: 3rem;
-      padding-left: 6rem;
+      padding-right: calc(var(--spacer-base) * 2);
+      padding-left: calc(var(--spacer-base) * 4);
       width: var(--spacer-4xl);
       height: var(--spacer-4xl);
     }
 
     .sf-list .sf-title {
-      font-weight: bold;
-      margin: 1rem 0;
+      font-weight: var(--font-weight--bold);
+      margin: var(--spacer-sm) 0;
     }
 
     .sf-mega-menu-option {
@@ -107,7 +107,7 @@ export default defineComponent({
         display: flex;
         flex-wrap: nowrap;
         justify-content: space-between;
-        margin-right: 8rem;
+        margin-right: calc(var(--spacer-lg) * 4);
       }
 
       .flex-grow-3 {
@@ -115,8 +115,8 @@ export default defineComponent({
       }
 
       .hr-divider {
-        margin: 1rem 0;
-        border-left: 0.06rem solid var(--c-black);
+        margin: var(--spacer-sm) 0;
+        border-left: calc(var(--spacer-base) * 0.04) solid var(--c-black);
       }
     }
   }

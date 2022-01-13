@@ -1,0 +1,21 @@
+.sf-menu-item {
+  --menu-item-font: var(--font-family--primary);
+
+  @include font(
+    --menu-item-font,
+    var(--font-weight--normal),
+    var(--font-size--sm),
+    1.4,
+    var(--font-family--secondary)
+  );
+
+  &__count {
+    color: var(--menu-item-count-color, var(--_c-dark-primary));
+    font-size: var(--font-size--sm);
+  }
+
+  &__label {
+    color: var(--menu-item-label-color, var(--_c-dark-primary));
+    font-size: var(--font-size--sm);
+  }
+}

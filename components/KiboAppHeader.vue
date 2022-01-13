@@ -557,20 +557,17 @@ export default defineComponent({
 .kibo-top-bar {
   background-color: var(--_c-dark-primary);
   height: 3.5rem;
+
+  .sf-menu-item {
+    &__label {
+      color: var(--menu-item-label-color, var(--_c-light-secondary));
+    }
+  }
 }
 
 .kibo-sticky-bottom {
   background-color: var(--_c-light-secondary);
   height: 3.5rem;
-}
-
-.sf-menu-item {
-  --menu-item-label-color: var(--_c-dark-primary);
-  @include for-desktop {
-    --menu-item-label-color: var(--_c-light-secondary);
-  }
-
-  font-size: var(--font-size--sm);
 }
 
 .line-2 {
