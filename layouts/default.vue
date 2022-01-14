@@ -21,7 +21,7 @@
 }
 
 .wrapper {
-  max-width: 1430px;
+  width: 100%;
   margin: 0 auto;
   background-color: solid 1px white;
 }

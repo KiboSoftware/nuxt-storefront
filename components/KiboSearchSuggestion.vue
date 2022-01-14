@@ -5,9 +5,9 @@
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
-        <div class="suggestion-title"><h3>Top Suggestions</h3></div>
+        <div class="suggestion-title"><h2>Top Suggestions</h2></div>
         <div class="result-list">
-          <div v-if="result.products && result.products.length > 0" class="product-card-list">
+          <div v-if="result.products && result.products.length > 0" class="products__grid">
             <template v-for="(product, index) in result.products">
               <KiboProductCard
                 :key="index"
@@ -176,20 +176,46 @@ export default defineComponent({
     text-align: left;
   }
 
-  .product-card-list {
+  .products__grid {
     display: flex;
     flex-wrap: wrap;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden;
+    overflow-y: auto;
     max-height: 31.875rem;
-  }
+    padding: 0;
 
-  .product-card-list::-webkit-scrollbar {
-    display: none;
+    @include for-desktop {
+      gap: 35px;
+    }
   }
 
   .product_card_details {
-    flex: 33.3%;
+    @include for-desktop {
+      width: calc(var(--spacer-base) * 4.04); //97px;
+    }
+
+    .sf-product-card__image-wrapper {
+      @include for-desktop {
+        width: calc(var(--spacer-base) * 4.04); //97px;
+        height: calc(var(--spacer-base) * 4.04); //97px;
+      }
+    }
+
+    .sf-image {
+      object-fit: contain;
+
+      @include for-desktop {
+        width: calc(var(--spacer-base) * 4.04); //97px;
+        height: calc(var(--spacer-base) * 4.04); //97px;
+      }
+    }
+  }
+
+  .sf-image--placeholder {
+    @include for-desktop {
+      height: calc(var(--spacer-base) * 4.04); //97px;
+      width: calc(var(--spacer-base) * 4.04); //97px;
+    }
   }
 
   .no-record {
@@ -211,17 +237,6 @@ export default defineComponent({
 
   .scroll::-webkit-scrollbar {
     display: none;
-  }
-
-  .kibo-product-card {
-    height: 8.375rem;
-    padding: 1.188rem 0 1.188rem 0;
-    width: 6.063rem;
-  }
-
-  .kpc-title-button {
-    height: 0.563rem;
-    top: 4rem;
   }
 
   .kpc-title {

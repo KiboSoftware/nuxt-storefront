@@ -11,7 +11,7 @@
           <SfSelect
             :required="false"
             valid
-            placeholder="Select sorting"
+            placeholder="Best Match"
             :disabled="false"
             :value="facetsFromUrl.sort"
             @input="changeSorting"
@@ -128,8 +128,6 @@
                 productGetters.getPrice(product).special && productGetters.getPrice(product).special
               "
               :link="localePath(getProductLink(productGetters.getProductId(product)))"
-              image-width="12.563rem"
-              image-height="12.563rem"
               class="products__product-card"
             />
           </transition-group>
@@ -363,7 +361,6 @@ export default {
   display: flex;
 
   &.section {
-    padding: var(--spacer-xs);
     @include for-desktop {
       padding: 0;
     }
@@ -382,7 +379,7 @@ export default {
   }
 
   &.section {
-    padding: var(--spacer-sm);
+    padding: 0.5rem 0;
     @include for-desktop {
       padding: 0;
     }
@@ -455,7 +452,9 @@ export default {
     font-family: var(--font-family--primary);
     font-weight: var(--font-weight--normal);
     color: var(--_c-dark-primary);
+    display: none;
     @include for-desktop {
+      display: block;
       margin: 0 var(--spacer-2xs) 0 0;
     }
   }
@@ -520,13 +519,6 @@ export default {
   width: calc(var(--spacer-3xl) * 1.1875);
 }
 
-.sidebar {
-  flex: 0 0 15%;
-  padding: var(--spacer-sm);
-  border: 1px solid var(--c-light);
-  border-width: 0 1px 0 0;
-}
-
 .list {
   --menu-item-font-size: var(--font-size--sm);
 
@@ -543,7 +535,20 @@ export default {
   }
 }
 
-.products {
+.products__grid {
+  display: flex;
+  flex-wrap: wrap;
+
+  @include for-mobile {
+    gap: calc(84vw - 300px);
+  }
+  @include for-desktop {
+    gap: 70px;
+    margin-left: calc(var(--spacer-base) * 2.08); //97px; //50px;
+  }
+}
+
+.products_old {
   box-sizing: border-box;
   flex: 1;
   margin: 0;
@@ -690,7 +695,14 @@ export default {
 }
 
 .sf-select {
-  --select-width: calc(var(--spacer-3xl) * 1.1875);
   --select-dropdown-text-indent: calc(var(--spacer-xs) * 1.25);
+
+  @include for-mobile {
+    --select-width: calc(var(--spacer-base) * 6.25);
+  }
+
+  @include for-desktop {
+    --select-width: calc(var(--spacer-base) * 7.91);
+  }
 }
 </style>

@@ -79,11 +79,18 @@ export default {
   &__select {
     display: flex;
     align-items: center;
-    margin: 0 var(--spacer-sm);
+
+    @include for-desktop {
+      margin-left: calc(var(--spacer-base) * 2.08);
+    }
 
     &--label {
-      font-size: var(--font-size--xs);
+      font-size: var(--font-size--sm);
       margin-right: var(--spacer-sm);
+
+      @include for-desktop {
+        font-size: var(--font-size--base);
+      }
     }
   }
 }
