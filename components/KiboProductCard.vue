@@ -15,8 +15,6 @@
               :src="picture"
               class="sf-product-card__picture"
               :alt="title"
-              :width="imageWidth"
-              :height="imageHeight"
               :placeholder="require('@/assets/images/product_placeholder.svg')"
             />
           </template>
@@ -25,8 +23,6 @@
             class="sf-product-card__image"
             :src="image"
             :alt="title"
-            :width="imageWidth"
-            :height="imageHeight"
             :placeholder="require('@/assets/images/product_placeholder.svg')"
             @click="closeSearchDialog()"
           />
@@ -101,17 +97,11 @@
       </template>
     </div>
     <slot name="title" v-bind="{ title, link }">
-      <SfButton
-        :link="link"
-        class="sf-button--pure sf-product-card__link kpc-title-button"
-        data-testid="product-link"
-        v-on="$listeners"
-        @click="closeSearchDialog()"
-      >
-        <h3 class="kpc-title">
-          {{ title }}
-        </h3>
-      </SfButton>
+      <div>
+        <nuxt-link :to="link" class="kpc-title" @click="closeSearchDialog()">
+          {{ title }}</nuxt-link
+        >
+      </div>
     </slot>
     <slot name="price" v-bind="{ specialPrice, regularPrice }">
       <SfPrice
@@ -397,13 +387,30 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .kibo-product-card {
-  height: 17.625rem;
-  padding-left: 1%;
-  margin: 0 0 4.688rem 0;
-  width: 24%;
+  // border: solid 1px #a2c3c3;
+  width: calc(var(--spacer-base) * 6.25);
+
+  @include for-desktop {
+    width: calc(var(--spacer-base) * 8.375);
+  }
+
+  .sf-product-card__image-wrapper {
+    width: calc(var(--spacer-base) * 6.25);
+    height: calc(var(--spacer-base) * 6.25);
+    @include for-desktop {
+      width: calc(var(--spacer-base) * 8.375);
+      height: calc(var(--spacer-base) * 8.375);
+    }
+  }
 
   .sf-image {
     object-fit: contain;
+    width: calc(var(--spacer-base) * 6.25);
+    height: calc(var(--spacer-base) * 6.25);
+    @include for-desktop {
+      width: calc(var(--spacer-base) * 8.375);
+      height: calc(var(--spacer-base) * 8.375);
+    }
   }
 }
 
@@ -432,36 +439,30 @@ export default defineComponent({
   margin-bottom: 0.875rem;
 }
 
-.kpc-title-button {
-  top: 9.875rem;
-  height: 2rem;
-}
-
 .kpc-title {
   margin: 0;
   padding: 0;
   line-height: 1.188rem;
   font-size: var(--font-size--base);
-  font-family: var(--font-family--primary);
   color: var(--_c-dark-primary);
   font-weight: var(--font-weight--normal);
-  word-break: break-all;
+  overflow-wrap: break-word;
   overflow: hidden;
-  width: 201px;
-}
-
-.kpc-price {
-  margin-top: 10rem;
+  width: 100%;
+  text-decoration: none;
+  text-align: justify;
 }
 
 .kpc-price > .sf-price__regular {
   font-size: var(--font-size--sm);
-  font-family: var(--font-family--primary);
-  color: var(--_c-dark-primary);
 }
 
 .sf-image--placeholder {
-  height: calc(var(--spacer-base) * 8.375);
-  width: calc(var(--spacer-base) * 8.375);
+  height: calc(var(--spacer-base) * 6.25);
+  width: calc(var(--spacer-base) * 6.25);
+  @include for-desktop {
+    height: calc(var(--spacer-base) * 8.375);
+    width: calc(var(--spacer-base) * 8.375);
+  }
 }
 </style>
