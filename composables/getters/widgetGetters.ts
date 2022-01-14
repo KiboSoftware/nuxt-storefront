@@ -59,4 +59,17 @@ const dropzoneToVueComponent = (dropzoneWidgets = []) => {
   })
 }
 
-export const widgetGetters = { dropzoneToVueComponent }
+const registerWidget = ({ kiboDefitionId, name, propBuilder }) => {
+  if (!kiboDefitionId || !name) {
+    return
+  }
+  widgetToVueMap[kiboDefitionId] = {
+    name,
+    propBuilder: propBuilder || defaultPropBuilder,
+  }
+}
+
+export const widgetGetters = {
+  dropzoneToVueComponent,
+  registerWidget,
+}
