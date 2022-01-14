@@ -28,6 +28,19 @@
     font-size: var(--spacer-xs);
   }
 
+  &--cart-count {
+    --badge-min-width: var(--spacer-sm);
+    --badge-min-height: var(--spacer-sm);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size--xs);
+    top: calc(var(--spacer-xs) * -1.25);
+
+    --badge-padding: calc(var(--spacer-2xs) * 3);
+  }
+
   &--number-mobile {
     --badge-min-width: 0.875rem;
     --badge-min-height: 0.875rem;

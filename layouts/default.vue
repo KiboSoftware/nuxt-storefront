@@ -17,7 +17,6 @@
   font-size: 1rem;
   line-height: 1.25rem;
   font-weight: 400;
-  margin: 0;
 }
 
 .wrapper {

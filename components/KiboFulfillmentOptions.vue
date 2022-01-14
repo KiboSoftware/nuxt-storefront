@@ -12,6 +12,7 @@
         :disabled="fulfillmentOption.disabled"
         :selected="selectedOption == fulfillmentOption.value ? fulfillmentOption.value : ''"
         class="sf-radio"
+        :class="isColumnDisplay && 'column'"
         @change="selectFulfillment(fulfillmentOption)"
       >
         <template v-if="fulfillmentOption.label === pickupInStore" #details>
@@ -59,6 +60,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    isColumnDisplay: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -95,6 +100,19 @@ export default defineComponent({
     line-height: 0.875rem;
     font-style: italic;
     margin: 0 0 auto 0.625rem;
+  }
+}
+
+.column {
+  .sf-radio {
+    &__content {
+      flex-direction: column;
+    }
+
+    &__details {
+      margin: 0;
+      padding: var(--spacer-xs) 0 var(--spacer-2xs) 0;
+    }
   }
 }
 </style>

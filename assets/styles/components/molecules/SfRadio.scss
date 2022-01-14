@@ -20,7 +20,7 @@
     transition: none;
 
     &.is-active {
-      border: 3px solid var(--_c-green-primary);
+      border: 5px solid var(--_c-green-primary);
     }
     @include for-desktop {
       &:active,
@@ -34,12 +34,6 @@
 
   &.is-active {
     background: var(--_c-white);
-  }
-
-  &:hover {
-    .sf-radio__checkmark {
-      border: 3px solid var(--_c-green-primary);
-    }
   }
 
   @include for-desktop {
@@ -68,12 +62,6 @@
         &.is-active {
           border-width: 9px;
           border-color: var(--c-primary);
-        }
-      }
-
-      &:hover {
-        .sf-radio__checkmark {
-          border-color: var(--c-black);
         }
       }
 
