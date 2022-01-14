@@ -150,14 +150,17 @@ export default defineComponent({
     margin-bottom: 0.938rem;
   }
 
-  div.suggestion-title {
+  .suggestion-title {
     margin-top: 1.375rem;
     padding-left: 1.25rem;
-    color: #2b2b2b;
-    font-family: var(--font-family--primary);
-    font-size: 1.25rem;
-    line-height: var(--spacer-base);
-    text-align: left;
+
+    > h3 {
+      color: #2b2b2b;
+      font-family: var(--font-family--primary);
+      font-size: 1.5rem;
+      line-height: var(--spacer-base);
+      text-align: left;
+    }
   }
 
   .category-list {

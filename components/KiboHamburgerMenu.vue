@@ -158,9 +158,9 @@ export default defineComponent({
 .sf-sidebar {
   &__aside {
     position: absolute;
-    height: 91.5%;
+    height: calc(100% - 3.56em);
     width: 90%;
-    top: 8.5%;
+    top: 3.56rem;
   }
 
   &__bottom {
@@ -188,6 +188,8 @@ export default defineComponent({
 }
 
 .sidebar-menu-mobile {
+  padding-bottom: 2px;
+
   .sf-list {
     &__item {
       height: 3.375rem;

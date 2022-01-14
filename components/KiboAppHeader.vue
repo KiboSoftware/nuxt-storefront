@@ -2,7 +2,7 @@
   <div>
     <KiboHamburgerMenu
       v-show="isHamburgerOpen"
-      class="sf-sidebar--left"
+      class="sf-sidebar--left smartphone-only"
       :heading-level="3"
       button
       overlay
@@ -49,21 +49,23 @@
     </KiboHamburgerMenu>
 
     <div v-if="!isMobile">
-      <div class="kibo-top-bar kibo-nav-link">
-        <div><SfMenuItem label="Nav Link 1" /></div>
-        <div><SfMenuItem label="Nav Link 2" /></div>
-        <div><SfMenuItem label="Nav Link 3" /></div>
-        <div><SfMenuItem label="Nav Link 4" /></div>
+      <div class="kibo-top-bar">
+        <div class="kibo-top-bar__content"></div>
+        <div class="kibo-nav-link">
+          <div><SfMenuItem label="Nav Link 1" /></div>
+          <div><SfMenuItem label="Nav Link 2" /></div>
+          <div><SfMenuItem label="Nav Link 3" /></div>
+          <div><SfMenuItem label="Nav Link 4" /></div>
+        </div>
       </div>
       <div class="kibo-header-container">
+        <div class="kibo-img">
+          <SfLink link="/">
+            <SfImage v-if="logo" :src="logo" :alt="title" width="78px" height="78px" />
+            <h1 v-else class="sf-header__title">{{ title }}</h1>
+          </SfLink>
+        </div>
         <div class="kibo-header">
-          <div class="kibo-img">
-            <SfLink link="/">
-              <SfImage v-if="logo" :src="logo" :alt="title" />
-              <h1 v-else class="sf-header__title">{{ title }}</h1>
-            </SfLink>
-          </div>
-
           <div class="kibo-header__spacer"></div>
           <div v-click-outside="closeSearch" class="kibo-header__search-bar">
             <KiboSearchBar
@@ -72,7 +74,6 @@
               aria-label="Search"
               class="sf-header__search"
               :value="term"
-              :loading="loading"
               @input="handleSearch"
               @keydown.enter="gotoSearchResult()"
               @keydown.esc="closeSearch"
@@ -93,7 +94,7 @@
                   @click="isSearchOpen ? (isSearchOpen = false) : (isSearchOpen = true)"
                 >
                   <span class="sf-search-bar__icon">
-                    <SfIcon color="var(--c-text)" size="20px" icon="search" />
+                    <SfIcon color="var(--c-text)" size="18px" icon="search" />
                   </span>
                 </SfButton>
               </template>
@@ -138,7 +139,7 @@
             <SfButton
               v-e2e="'app-header-cart'"
               class="sf-button--pure sf-header__action"
-              link="/cart"
+              @click="gotoCart"
             >
               <SfIcon class="sf-header__icon">
                 <font-awesome-icon icon="shopping-cart" class="fa-icon" />
@@ -206,16 +207,17 @@
         <div class="kibo-mobile__header-column">
           <SfIcon size="1.25rem">
             <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
-            <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
-              totalItemsInCart
-            }}</SfBadge>
+            <SfBadge
+              class="sf-badge sf-badge--numbeisOpenSearchBarr-mobile kibo-mobile__item-count"
+              >{{ totalItemsInCart }}</SfBadge
+            >
           </SfIcon>
         </div>
       </div>
 
-      <div v-if="isOpenSearchBar" class="kibo-mobile__header-search">
+      <div v-show="isOpenSearchBar" class="kibo-mobile__header-search">
         <div class="kibo-mobile__header-search__input">
-          <input name="search" type="search" :placeholder="$t('Search')" />
+          <input ref="mobileSearchRef" name="search" type="search" :placeholder="$t('Search')" />
         </div>
 
         <button
@@ -231,14 +233,21 @@
 
 <script lang="ts">
 import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink, SfBadge } from "@storefront-ui/vue"
-import { computed, ref, onBeforeUnmount, defineComponent, watch } from "@vue/composition-api"
-import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
+import {
+  computed,
+  ref,
+  onBeforeUnmount,
+  defineComponent,
+  watch,
+  onMounted,
+  nextTick,
+} from "@vue/composition-api"
+import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
 import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import debounce from "lodash.debounce"
-
 import { useAsync } from "@nuxtjs/composition-api"
 import {
   usePurchaseLocation,
@@ -286,6 +295,7 @@ export default defineComponent({
     const isSearchOpen = ref(false)
     const results = ref(null)
     const searchBarRef = ref(null)
+    const mobileSearchRef = ref(null)
     const accountIcon = computed(() => {
       return isAuthenticated.value ? "fas" : "far"
     })
@@ -297,6 +307,9 @@ export default defineComponent({
 
     const toggleMobileSearchBar = () => {
       isOpenSearchBar.value = !isOpenSearchBar.value
+      nextTick(() => {
+        mobileSearchRef.value.focus()
+      })
     }
     const { search: productSearch } = useProductSearch(`product-search`)
 
@@ -336,6 +349,7 @@ export default defineComponent({
         await productSearch({ ...getFacetsFromURL(), phrase: searchStr })
       }
     }
+
     const megaMenuCategories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)
     })
@@ -373,6 +387,9 @@ export default defineComponent({
       }
       toggleLoginModal()
     }
+    const gotoCart = () => {
+      app.router.push({ path: "/cart" })
+    }
 
     useAsync(async () => {
       await loadUser()
@@ -384,6 +401,12 @@ export default defineComponent({
     const handleStoreLocatorClick = () => {
       toggleStoreLocatorModal()
     }
+
+    onMounted(() => {
+      nextTick(() => {
+        if (searchBarRef.value.$el) searchBarRef.value.$el.children[0].focus()
+      })
+    })
 
     onBeforeUnmount(() => {
       unMapMobileObserver()
@@ -419,6 +442,7 @@ export default defineComponent({
       handleSearch,
       result,
       searchBarRef,
+      mobileSearchRef,
       results,
       logo,
       title: "Kibo",
@@ -433,12 +457,13 @@ export default defineComponent({
       megaMenuCategories,
       isHamburgerOpen,
       toggleHamburger,
+      gotoCart,
     }
   },
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .sf-header {
   --header-padding: var(--spacer-sm);
   @include for-desktop {
@@ -455,14 +480,15 @@ export default defineComponent({
 
   &__icons {
     display: flex;
-    flex: 1.2;
-    justify-content: space-evenly;
+    flex: 2.5;
+    justify-content: space-between;
     justify-items: center;
-    margin-left: 3%;
   }
 
   &__search {
     width: 100% !important;
+    height: 100%;
+    bottom: var(--h5-font-size);
   }
 
   &__bottom-link {
@@ -472,6 +498,10 @@ export default defineComponent({
 
   &__account {
     top: 0.313rem;
+  }
+
+  &__actions {
+    flex-basis: 30%;
   }
 }
 
@@ -494,18 +524,17 @@ export default defineComponent({
 
 .kibo-img {
   position: absolute;
-  height: 170%;
-  bottom: 12%;
+  top: 1.063rem;
+  left: 3.75%;
   flex: 1;
 }
 
 .kibo-nav-link {
   display: flex;
+  flex: 35%;
   @include for-desktop {
-    justify-content: flex-end;
-    justify-items: center;
-    padding-right: 5%;
-    padding-left: 5%;
+    justify-content: space-between;
+    align-items: center;
   }
 
   &__mobile {
@@ -517,11 +546,10 @@ export default defineComponent({
 .kibo-nav-link div {
   @include for-desktop {
     color: var(--_c-light-secondary);
-    margin-left: 2%;
+    // flex-basis: 8%;
+    align-items: center;
   }
 
-  margin: var(--spacer-2xs) var(--spacer-xs) 0 0;
-  padding: var(--spacer-2xs);
   cursor: pointer;
 }
 
@@ -530,13 +558,11 @@ export default defineComponent({
   display: flex;
   height: 4.2rem;
   align-items: center;
-  padding-right: 2%;
-  padding-left: 2%;
 
   &__search-bar {
     position: relative;
-    flex: 1.5;
-    width: 45%;
+    flex: 3.5;
+    height: 2.125rem;
   }
 
   &__icon {
@@ -552,34 +578,35 @@ export default defineComponent({
   }
 
   &__spacer {
-    flex: 0.35;
+    flex: 1;
   }
 }
 
 .kibo-top-bar {
+  display: flex;
   background-color: var(--_c-dark-primary);
   height: 3.5rem;
 
-  .sf-menu-item {
+  &__content {
+    flex: 65%;
+  }
+
+  ::v-deep .sf-menu-item {
     &__label {
       color: var(--menu-item-label-color, var(--_c-light-secondary));
     }
   }
 }
 
-.kibo-sticky-bottom {
-  background-color: var(--_c-light-secondary);
-  height: 3.5rem;
-}
-
 .line-2 {
-  border: 0.06rem solid var(--_c-gray-middle);
+  border: 0;
+  border-bottom: 0.06rem solid var(--_c-gray-middle);
 }
 
 .kibo-header-container {
   background-color: var(--_c-light-secondary);
   box-shadow: 0 0.13rem var(--spacer-2xs) 0 rgba(0, 0, 0, 0.5);
-  height: 7.9rem;
+  height: 7.938rem;
 }
 
 .fa-icon {
@@ -612,6 +639,13 @@ export default defineComponent({
     height: 3.438rem;
     display: flex;
     align-items: center;
+  }
+}
+
+.sf-search-bar {
+  &__icon {
+    height: 1.25rem;
+    padding-left: 0.625rem;
   }
 }
 
