@@ -191,13 +191,13 @@ export default defineComponent({
 
   .product_card_details {
     @include for-desktop {
-      width: calc(var(--spacer-base) * 4.04); //97px;
+      width: calc(var(--spacer-base) * 4.04);
     }
 
     .sf-product-card__image-wrapper {
       @include for-desktop {
-        width: calc(var(--spacer-base) * 4.04); //97px;
-        height: calc(var(--spacer-base) * 4.04); //97px;
+        width: calc(var(--spacer-base) * 4.04);
+        height: calc(var(--spacer-base) * 4.04);
       }
     }
 
@@ -205,16 +205,16 @@ export default defineComponent({
       object-fit: contain;
 
       @include for-desktop {
-        width: calc(var(--spacer-base) * 4.04); //97px;
-        height: calc(var(--spacer-base) * 4.04); //97px;
+        width: calc(var(--spacer-base) * 4.04);
+        height: calc(var(--spacer-base) * 4.04);
       }
     }
   }
 
   .sf-image--placeholder {
     @include for-desktop {
-      height: calc(var(--spacer-base) * 4.04); //97px;
-      width: calc(var(--spacer-base) * 4.04); //97px;
+      height: calc(var(--spacer-base) * 4.04);
+      width: calc(var(--spacer-base) * 4.04);
     }
   }
 
