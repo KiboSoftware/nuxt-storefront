@@ -87,6 +87,8 @@ import {
   SfOrderSummary,
   SfOrderReview,
 } from "@storefront-ui/vue"
+import { useCheckout, useCart } from "@/composables"
+import { useAsync } from "@nuxtjs/composition-api"
 export default {
   name: "Checkout",
   components: {
@@ -98,6 +100,14 @@ export default {
     SfOrderSummary,
     SfOrderReview,
     SfButton,
+  },
+  setup() {
+    const { cart } = useCart()
+    const { checkout, loadFromCart, load } = useCheckout()
+
+    useAsync(async () => {
+      await loadFromCart(cart.value?.id)
+    }, null)
   },
   data() {
     const countries = []

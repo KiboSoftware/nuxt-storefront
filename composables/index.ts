@@ -22,5 +22,7 @@ export * from "./useSearchSuggestions"
 export * from "./useProductSearch"
 export * from "./useSearchRelatedProducts"
 export * from "./useCategoryTree"
+export * from "./useCheckout"
+export * from "./useShippingMethods"
 
 export * from "./getters/index"
