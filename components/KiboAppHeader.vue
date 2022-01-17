@@ -48,7 +48,7 @@
       </template>
     </KiboHamburgerMenu>
 
-    <div v-if="!isMobile">
+    <div class="desktop-only">
       <div class="kibo-top-bar">
         <div class="kibo-top-bar__content"></div>
         <div class="kibo-nav-link">
@@ -110,7 +110,7 @@
             </div>
           </div>
 
-          <div v-if="!isMobile" class="sf-header__icons">
+          <div class="sf-header__icons">
             <SfButton
               v-e2e="'app-header-location'"
               class="sf-button--pure sf-header__action"
@@ -163,55 +163,62 @@
         </div>
       </div>
     </div>
-    <div v-else class="kibo-mobile">
+    <div class="kibo-mobile smartphone-only">
       <div class="kibo-mobile__header-container">
-        <div class="kibo-mobile__header-column">
-          <SfIcon
-            size="1.25rem"
-            class="sf-header__icon kibo-mobile__header-icon"
-            @click="toggleHamburger"
-          >
-            <font-awesome-icon
-              :icon="['fas', isHamburgerOpen ? 'times' : 'bars']"
-              class="fa-icon"
-              color="var(--c-white)"
-            />
-          </SfIcon>
-        </div>
-        <div class="kibo-mobile__header-column">
-          <div class="kibo-mobile__search-icon" @click="toggleMobileSearchBar">
-            <SfIcon color="var(--c-white)" size="1.25rem" icon="search" />
-          </div>
-          <div class="kibo-mobile__search-pointer-icon">
-            <SfIcon v-if="isOpenSearchBar" size="1.25rem">
-              <font-awesome-icon icon="sort-up" class="fa-icon" color="var(--_c-white-secondary)" />
+        <div class="kibo-mobile__header">
+          <div class="kibo-mobile__header-column">
+            <SfIcon
+              size="1.25rem"
+              class="sf-header__icon kibo-mobile__header-icon"
+              @click="toggleHamburger"
+            >
+              <font-awesome-icon
+                :icon="['fas', isHamburgerOpen ? 'times' : 'bars']"
+                class="fa-icon"
+                color="var(--c-white)"
+              />
             </SfIcon>
           </div>
-        </div>
-        <div class="kibo-mobile__header-column">
-          <SfLink link="/">
-            <SfImage
-              :src="logo"
-              :alt="title"
-              width="2.063rem"
-              height="2.063rem"
-              class="kibo-mobile__logo"
-            />
-          </SfLink>
-        </div>
-        <div class="kibo-mobile__header-column">
-          <SfIcon size="1.25rem">
-            <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
-          </SfIcon>
-        </div>
-        <div class="kibo-mobile__header-column">
-          <SfIcon size="1.25rem">
-            <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
-            <SfBadge
-              class="sf-badge sf-badge--numbeisOpenSearchBarr-mobile kibo-mobile__item-count"
-              >{{ totalItemsInCart }}</SfBadge
-            >
-          </SfIcon>
+          <div class="kibo-mobile__header-column">
+            <div class="kibo-mobile__search-icon" @click="toggleMobileSearchBar">
+              <SfIcon color="var(--c-white)" size="1.25rem" icon="search" />
+            </div>
+            <div class="kibo-mobile__search-pointer-icon">
+              <SfIcon v-if="isOpenSearchBar" size="1.25rem">
+                <font-awesome-icon
+                  icon="sort-up"
+                  class="fa-icon"
+                  color="var(--_c-white-secondary)"
+                />
+              </SfIcon>
+            </div>
+          </div>
+          <div class="kibo-mobile__header-column">
+            <SfLink link="/">
+              <SfImage
+                :src="logo"
+                :alt="title"
+                width="2.063rem"
+                height="2.063rem"
+                class="kibo-mobile__logo"
+              />
+            </SfLink>
+          </div>
+          <div class="kibo-mobile__header-column">
+            <SfIcon size="1.25rem">
+              <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
+            </SfIcon>
+          </div>
+          <div class="kibo-mobile__header-column">
+            <SfIcon size="1.25rem">
+              <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
+              <SfBadge
+                v-if="totalItemsInCart"
+                class="sf-badge sf-badge--number-mobile kibo-mobile__item-count"
+                >{{ totalItemsInCart }}</SfBadge
+              >
+            </SfIcon>
+          </div>
         </div>
       </div>
 
@@ -699,6 +706,8 @@ export default defineComponent({
         width: 100%;
         border: 1px solid var(--_c-gray-middle);
         border-radius: 0.125rem;
+        text-indent: 2%;
+        outline: none;
       }
 
       ::-webkit-input-placeholder {
@@ -729,6 +738,15 @@ export default defineComponent({
 
   &__search-pointer-icon {
     height: 1.25rem;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    margin-left: 1.875rem;
+    margin-right: 1.875rem;
   }
 }
 </style>
