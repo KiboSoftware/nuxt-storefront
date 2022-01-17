@@ -5,7 +5,7 @@
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
-        <div class="suggestion-title"><h2>Top Suggestions</h2></div>
+        <div class="suggestion-title"><h3>Top Suggestions</h3></div>
         <div class="result-list">
           <div v-if="result.products && result.products.length > 0" class="products__grid">
             <template v-for="(product, index) in result.products">
@@ -150,14 +150,17 @@ export default defineComponent({
     margin-bottom: 0.938rem;
   }
 
-  div.suggestion-title {
+  .suggestion-title {
     margin-top: 1.375rem;
     padding-left: 1.25rem;
-    color: #2b2b2b;
-    font-family: var(--font-family--primary);
-    font-size: 1.25rem;
-    line-height: var(--spacer-base);
-    text-align: left;
+
+    > h3 {
+      color: #2b2b2b;
+      font-family: var(--font-family--primary);
+      font-size: 1.5rem;
+      line-height: var(--spacer-base);
+      text-align: left;
+    }
   }
 
   .category-list {

@@ -64,5 +64,10 @@ export default defineComponent({
 <style lang="scss" scoped>
 .sf-search-bar {
   display: flex;
+
+  &__input {
+    text-indent: 2%;
+    outline: none;
+  }
 }
 </style>
