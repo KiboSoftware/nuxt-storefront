@@ -30,7 +30,7 @@
           <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
           <SfIcon
             class="navbar__view__icon"
-            :color="'#2B2B2B'"
+            :color="isGridView ? '#2B2B2B' : '#CDCDCD'"
             icon="tiles"
             size="12px"
             role="button"
@@ -40,7 +40,7 @@
           />
           <SfIcon
             class="navbar__view__icon"
-            :color="'#CDCDCD'"
+            :color="!isGridView ? '#2B2B2B' : '#CDCDCD'"
             icon="list"
             size="12px"
             role="button"
@@ -370,10 +370,7 @@ export default {
   }
 
   &.section {
-    padding: 0.5rem 0;
-    @include for-desktop {
-      padding: 0;
-    }
+    padding: 0;
   }
 
   &__aside,
@@ -386,6 +383,9 @@ export default {
   &__aside {
     padding: 0;
     flex: 1;
+    @include for-mobile {
+      margin: 0 0 0 calc(var(--spacer-xs) * 3.125);
+    }
     @include for-desktop {
       flex: none;
     }
@@ -667,7 +667,7 @@ export default {
 }
 
 .breadcrumbs {
-  margin: var(--spacer-base) 0 var(--spacer-base) 1.563rem;
+  margin: var(--spacer-base) 0;
   @include for-desktop {
     margin: var(--spacer-base) auto var(--spacer-base);
   }
