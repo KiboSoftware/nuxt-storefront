@@ -123,7 +123,7 @@ export default defineComponent({
     background-color: #fff;
     border: 0.063rem solid #cdcdcd;
     @include for-desktop {
-      width: 40.688rem;
+      width: 100%;
     }
   }
 
@@ -137,6 +137,7 @@ export default defineComponent({
     width: 30vw;
     background-color: #fff;
     border: 0.063rem solid #cdcdcd;
+    max-height: 36.688rem;
     @include for-desktop {
       border: none;
     }
@@ -182,12 +183,12 @@ export default defineComponent({
   .products__grid {
     display: flex;
     flex-wrap: wrap;
-    overflow: hidden;
     overflow-y: auto;
     max-height: 31.875rem;
     padding: 0;
 
     @include for-desktop {
+      overflow: hidden;
       gap: 35px;
     }
   }

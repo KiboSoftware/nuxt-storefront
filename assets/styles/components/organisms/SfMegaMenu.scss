@@ -10,13 +10,15 @@
       z-index: 1;
       position: relative;
       padding: 0;
-      max-width: var(--mega-menu-content-width, 100%);
+      max-width: 81.75rem;
+      margin: 0 auto;
     }
   }
 
   .sf-mega-menu-column {
     flex: none;
     padding: 0 3.5%;
+    margin:0;
 
     .sf-mega-menu-column__header.sf-menu-item {
       .sf-menu-item__label {
