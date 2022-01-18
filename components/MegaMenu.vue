@@ -74,50 +74,48 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-#SfMegaMenuColumnId .sf-mega-menu-column {
-  @include for-desktop {
-    .sf-heading {
-      padding: calc(var(--spacer-base) * 0.4) 0 calc(var(--spacer-xs) * 2) var(--spacer-2xl);
-      text-align: left;
+@include for-desktop {
+  .sf-heading {
+    padding: calc(var(--spacer-base) * 0.4) 0 calc(var(--spacer-xs) * 2) var(--spacer-2xl);
+    text-align: left;
 
-      &__title {
-        font-weight: var(--font-weight--bold);
-        font-size: var(--font-size--base);
-      }
-    }
-
-    .sf-image--wrapper {
-      padding-right: calc(var(--spacer-base) * 2);
-      padding-left: calc(var(--spacer-base) * 4);
-      width: var(--spacer-4xl);
-      height: var(--spacer-4xl);
-    }
-
-    .sf-list .sf-title {
+    &__title {
       font-weight: var(--font-weight--bold);
-      margin: var(--spacer-sm) 0;
+      font-size: var(--font-size--base);
+    }
+  }
+
+  .sf-image--wrapper {
+    padding-right: calc(var(--spacer-base) * 2);
+    padding-left: calc(var(--spacer-base) * 4);
+    width: var(--spacer-4xl);
+    height: var(--spacer-4xl);
+  }
+
+  .sf-list .sf-title {
+    font-weight: var(--font-weight--bold);
+    margin: var(--spacer-sm) 0;
+  }
+
+  .sf-mega-menu-option {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+
+    .outer-list {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      margin-right: calc(var(--spacer-lg) * 4);
     }
 
-    .sf-mega-menu-option {
-      display: flex;
-      flex-flow: row wrap;
-      align-items: stretch;
+    .flex-grow-3 {
+      flex-grow: 3;
+    }
 
-      .outer-list {
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: space-between;
-        margin-right: calc(var(--spacer-lg) * 4);
-      }
-
-      .flex-grow-3 {
-        flex-grow: 3;
-      }
-
-      .hr-divider {
-        margin: var(--spacer-sm) 0;
-        border-left: calc(var(--spacer-base) * 0.04) solid var(--c-black);
-      }
+    .hr-divider {
+      margin: var(--spacer-sm) 0;
+      border-left: calc(var(--spacer-base) * 0.04) solid var(--c-black);
     }
   }
 }

@@ -50,22 +50,26 @@
 
     <div class="desktop-only">
       <div class="kibo-top-bar">
-        <div class="kibo-top-bar__content"></div>
-        <div class="kibo-nav-link">
-          <div><SfMenuItem label="Nav Link 1" /></div>
-          <div><SfMenuItem label="Nav Link 2" /></div>
-          <div><SfMenuItem label="Nav Link 3" /></div>
-          <div><SfMenuItem label="Nav Link 4" /></div>
+        <div class="kibo-top-bar__container">
+          <div class="kibo-top-bar__logo">
+            <div class="kibo-top-bar__kibo-img">
+              <SfLink link="/">
+                <SfImage v-if="logo" :src="logo" :alt="title" width="78px" height="78px" />
+                <h1 v-else class="sf-header__title">{{ title }}</h1>
+              </SfLink>
+            </div>
+          </div>
+          <div class="kibo-top-bar__content"></div>
+          <div class="kibo-top-bar__nav-link">
+            <div><SfMenuItem label="Nav Link 1" /></div>
+            <div><SfMenuItem label="Nav Link 2" /></div>
+            <div><SfMenuItem label="Nav Link 3" /></div>
+            <div><SfMenuItem label="Nav Link 4" /></div>
+          </div>
         </div>
       </div>
-      <div class="kibo-header-container">
-        <div class="kibo-img">
-          <SfLink link="/">
-            <SfImage v-if="logo" :src="logo" :alt="title" width="78px" height="78px" />
-            <h1 v-else class="sf-header__title">{{ title }}</h1>
-          </SfLink>
-        </div>
-        <div class="kibo-header">
+      <div class="kibo-header">
+        <div class="kibo-header__container">
           <div class="kibo-header__spacer"></div>
           <div v-click-outside="closeSearch" class="kibo-header__search-bar">
             <KiboSearchBar
@@ -155,12 +159,12 @@
             </SfButton>
           </div>
         </div>
+      </div>
 
-        <div class="line-2"></div>
+      <div class="line-2"></div>
 
-        <div class="kibo-mega-menu">
-          <MegaMenu />
-        </div>
+      <div class="kibo-mega-menu">
+        <MegaMenu />
       </div>
     </div>
     <div class="kibo-mobile smartphone-only">
@@ -486,6 +490,8 @@ export default defineComponent({
   }
 
   &__icons {
+    margin: 0;
+    padding-top: 10px;
     display: flex;
     flex: 2.5;
     justify-content: space-between;
@@ -493,9 +499,9 @@ export default defineComponent({
   }
 
   &__search {
-    width: 100% !important;
-    height: 100%;
-    bottom: var(--h5-font-size);
+    top: 0;
+    margin-top: 14px;
+    height: 2.125rem;
   }
 
   &__bottom-link {
@@ -529,46 +535,33 @@ export default defineComponent({
   top: 0.125rem;
 }
 
-.kibo-img {
-  position: absolute;
-  top: 1.063rem;
-  left: 3.75%;
-  flex: 1;
-}
-
-.kibo-nav-link {
-  display: flex;
-  flex: 35%;
-  @include for-desktop {
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  &__mobile {
-    flex-direction: column;
-    color: var(--_c-dark-primary);
-  }
-}
-
-.kibo-nav-link div {
-  @include for-desktop {
-    color: var(--_c-light-secondary);
-    // flex-basis: 8%;
-    align-items: center;
-  }
-
-  cursor: pointer;
-}
-
 .kibo-header {
-  position: relative;
   display: flex;
   height: 4.2rem;
+  width: 100%;
   align-items: center;
 
-  &__search-bar {
+  &__container {
+    display: flex;
     position: relative;
+    height: 100%;
+    margin: 0 auto;
+    width: 81.75rem;
+  }
+
+  &__spacer {
+    margin-left: 13.06%;
+  }
+
+  &__search-bar {
+    height: 100%;
     flex: 3.5;
+  }
+
+  &__icons {
+    display: flex;
+    position: relative;
+    flex: 2;
     height: 2.125rem;
   }
 
@@ -583,19 +576,45 @@ export default defineComponent({
   &__icon-name {
     font-size: var(--font-size--xs);
   }
-
-  &__spacer {
-    flex: 1;
-  }
 }
 
 .kibo-top-bar {
   display: flex;
   background-color: var(--_c-dark-primary);
+  width: 100%;
   height: 3.5rem;
 
+  &__container {
+    display: flex;
+    margin: 0 auto;
+    width: 81.75rem;
+  }
+
+  &__logo {
+    position: relative;
+    display: flex;
+    flex: 10%;
+  }
+
   &__content {
-    flex: 65%;
+    display: flex;
+    flex: 55%;
+  }
+
+  &__nav-link {
+    display: flex;
+    flex: 35%;
+    cursor: pointer;
+    @include for-desktop {
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  &__kibo-img {
+    position: absolute;
+    top: var(--spacer-sm);
+    left: 0;
   }
 
   ::v-deep .sf-menu-item {
@@ -622,9 +641,10 @@ export default defineComponent({
 
 .search-suggestion-div {
   flex: 1.5;
-  top: 2.65rem;
+  top: 2.9rem;
   position: absolute;
   z-index: 20;
+  max-width: 41.35rem;
 }
 
 .icon-name-sidebar {
