@@ -1,5 +1,4 @@
 import type { UserAuthTicket } from "@kibocommerce/graphql-client"
-export { getGQLClient } from "./getGQLClient"
 
 export const getApiConfig = () => {
   return {
