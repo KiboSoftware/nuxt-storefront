@@ -80,7 +80,6 @@ export default defineComponent({
     HeaderNavigation,
   },
   directives: { clickOutside },
-  // setup(props, { root }) {
   setup() {
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app

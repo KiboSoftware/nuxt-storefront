@@ -25,4 +25,5 @@ export * from "./useCategoryTree"
 export * from "./useCheckout"
 export * from "./useShippingMethods"
 
+export * from "./useDropzoneContent"
 export * from "./getters/index"

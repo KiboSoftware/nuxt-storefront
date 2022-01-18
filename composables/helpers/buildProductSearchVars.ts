@@ -15,6 +15,7 @@ export const buildProductSearchVars = ({
   startIndex = 0,
   sort = "",
   search = "",
+  filter = "",
 }: {
   categoryCode: string
   pageSize?: number
@@ -22,6 +23,7 @@ export const buildProductSearchVars = ({
   startIndex?: number
   sort?: string
   search?: string
+  filter?: string
 }): QueryProductSearchArgs => {
   let facetTemplate = ""
   let facetHierValue = ""
@@ -39,5 +41,6 @@ export const buildProductSearchVars = ({
     facetHierValue,
     facetTemplate,
     facetValueFilter,
+    filter,
   }
 }

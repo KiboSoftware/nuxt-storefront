@@ -8,6 +8,9 @@ const authCookieName = process.env.KIBO_USER_COOKIE_KEY || "kibo_at"
 const maxAge = 60 * 60 * 24 * 5
 
 export default async (req: KiboIncomingMessage, res: Response) => {
+  if (req.headers["x-vol-exclude-user-claims"]) {
+    return
+  }
   const cookieValue = useCookie(req, authCookieName)
   let authTicket = decodeParseCookieValue(cookieValue)
   if (!authTicket || (authTicket && isShopperAuthExpired(authTicket))) {

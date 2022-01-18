@@ -6,11 +6,12 @@ import { useState, useNuxtApp } from "#app"
 export const useProductSearch = (referenceKey: string) => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
+
   const result = useState(`use-productSearch-result-${referenceKey}`, () => {
     return null
   })
 
-  const loading = useState(`use-productSearch-loading-${referenceKey}`, () => false)
+  const loading = useState<Boolean>(`use-productSearch-loading-${referenceKey}`, () => false)
   const error = useState(`use-productSearch-error-${referenceKey}`, () => null)
   const search = async (params: {
     categoryCode?: string
@@ -19,13 +20,15 @@ export const useProductSearch = (referenceKey: string) => {
     itemsPerPage?: number
     phrase?: string
     sort?: string
+    filter?: string
   }) => {
     try {
       loading.value = true
-      const { categoryCode, filters, page, itemsPerPage, phrase, sort } = params
+      const { categoryCode, filters, filter, page, itemsPerPage, phrase, sort } = params
       const variables = buildProductSearchVars({
         categoryCode,
         filters,
+        filter,
         startIndex: page,
         pageSize: itemsPerPage,
         search: phrase,
