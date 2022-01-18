@@ -4,7 +4,11 @@
       <div class="checkout__main">
         <SfSteps :active="currentStep" @change="updateStep($event)">
           <SfStep name="Details">
-            <SfPersonalDetails :value="personalDetails" @input="personalDetails = $event" />
+            <SfPersonalDetails
+              :value="personalDetails"
+              @input="personalDetails = $event"
+              @log-in="logIn"
+            />
           </SfStep>
           <SfStep name="Shipping">
             <SfShipping
@@ -88,7 +92,9 @@ import {
   SfOrderReview,
 } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
-import { useCheckout, useCart } from "@/composables"
+import { useCheckout, useCart, useUiState } from "@/composables"
+import { useNuxtApp } from "#app"
+
 export default {
   name: "Checkout",
   components: {
@@ -102,17 +108,30 @@ export default {
     SfButton,
   },
   setup() {
+    const nuxt = useNuxtApp()
+    const countries = nuxt.nuxt2Context.$config.countries
     const { cart } = useCart()
-    const { checkout, loadFromCart, load } = useCheckout()
+    const { checkout, loadFromCart } = useCheckout()
+    const { toggleLoginModal } = useUiState()
+
+    const months = []
+    const years = []
 
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
     }, null)
-  },
-  data() {
-    const countries = []
-    const months = []
-    const years = []
+
+    const updateStep = (next) => {
+      // prevent to move next by SfStep header
+      if (next < this.currentStep) {
+        this.currentStep = next
+      }
+    }
+
+    const logIn = () => {
+      toggleLoginModal()
+    }
+
     return {
       countries,
       months,
@@ -277,6 +296,9 @@ export default {
           icon: "return",
         },
       ],
+      checkout,
+      updateStep,
+      logIn,
     }
   },
   computed: {
@@ -296,14 +318,6 @@ export default {
         return method
           ? (newVal.shippingMethod = method)
           : (newVal.shippingMethod = { price: "$0.00" })
-      }
-    },
-  },
-  methods: {
-    updateStep(next) {
-      // prevent to move next by SfStep header
-      if (next < this.currentStep) {
-        this.currentStep = next
       }
     },
   },
