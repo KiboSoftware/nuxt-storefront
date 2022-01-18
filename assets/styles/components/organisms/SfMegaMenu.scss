@@ -1,6 +1,7 @@
 @include for-desktop {
   .sf-mega-menu {
     box-shadow: 0 calc(var(--spacer-xs) * 0.25) var(--spacer-2xs) 0 var(--_c-gray-shadow);
+    height: calc(var(--spacer-xl) * 1.44);
 
     &__menu {
       justify-content: flex-start;
@@ -17,8 +18,8 @@
 
   .sf-mega-menu-column {
     flex: none;
-    padding: 0 3.5%;
-    margin: 0;
+    margin: var(--spacer-2xs) var(--spacer-2xl) var(--spacer-2xs) 0;
+    padding: 0;
 
     .sf-mega-menu-column__header.sf-menu-item {
       .sf-menu-item__label {
@@ -27,23 +28,21 @@
     }
 
     &__header {
-      --button-height: calc(var(--spacer-xl) * 1.45);
-
       border-bottom: var(--spacer-2xs) var(--c-white) solid;
       text-transform: capitalize;
-      margin: calc(var(--spacer-base) * 0.5) 0 var(--spacer-2xs) 0;
+      margin: calc(var(--spacer-base) * 0.5) 0 calc(var(--spacer-base) * 0.4) 0;
     }
 
     &__content {
       display: none;
       position: absolute;
-      top: auto;
+      top: calc(var(--spacer-xl) * 1.4);;
+      left: -var(--spacer-base);
       align-items: center;
       padding: 0 2%;
       background-color: var(--c-white);
       box-shadow: 0 calc(var(--spacer-xs) * 0.25) var(--spacer-2xs) 0 var(--_c-gray-shadow);
-      width: 92vw;
-      left: calc(var(--spacer-base) * 0.83);
+      width: 100%;
       transform: none;
 
       .sf-list {
@@ -63,10 +62,10 @@
   }
 
   .sf-mega-menu-column:hover {
+    border-bottom: var(--spacer-xs) var(--_c-green-primary) solid;
+
     .sf-mega-menu-column {
-      &__header {
-        border-bottom: var(--spacer-2xs) var(--_c-green-primary) solid;
-      }
+      border-bottom: var(--spacer-2xs) var(--_c-green-primary) solid;
 
       &__content {
         display: block;
