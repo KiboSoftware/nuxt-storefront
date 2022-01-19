@@ -30,7 +30,7 @@
     &__header {
       border-bottom: var(--spacer-2xs) var(--c-white) solid;
       text-transform: capitalize;
-      margin: calc(var(--spacer-base) * 0.6) 0 calc(var(--spacer-base) * 0.3) 0;
+      margin: calc(var(--spacer-base) * 0.6) 0 var(--spacer-xs) 0;
     }
 
     &__content {
