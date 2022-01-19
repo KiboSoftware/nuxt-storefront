@@ -297,7 +297,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import {
-  useProductSSR,
+  useProduct,
   useUiState,
   usePurchaseLocation,
   productGetters,
@@ -327,7 +327,7 @@ export default defineComponent({
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
-    const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
+    const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { cart, addItemsToCart } = useCart()
     const { toggleStoreLocatorModal, toggleAddToCartConfirmationModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()

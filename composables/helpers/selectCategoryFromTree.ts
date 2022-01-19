@@ -1,21 +1,22 @@
-import * as GraphQL from "~~/server/types/GraphQL"
-function addParent(category: GraphQL.PrCategory, newParent: GraphQL.PrCategory): void {
+import type { Maybe, PrCategory } from "~~/server/types/GraphQL"
+
+function addParent(category: PrCategory, newParent: PrCategory): void {
   if (category.parentCategory) return addParent(category.parentCategory, newParent)
   category.parentCategory = Object.assign({}, newParent)
 }
 
-let targetCategory: GraphQL.PrCategory
+let targetCategory: PrCategory
 export const selectCategoryFromTree = (
-  categoryTree: Array<GraphQL.PrCategory> = [],
+  categoryTree: Array<PrCategory> = [],
   categoryCode: string
-): GraphQL.PrCategory => {
-  const findCategoryById = (category: GraphQL.Maybe<GraphQL.PrCategory>, code: string) => {
+): PrCategory => {
+  const findCategoryById = (category: Maybe<PrCategory>, code: string) => {
     if (category?.categoryCode === code) {
       targetCategory = Object.assign({}, category)
       return true
     }
     return category?.childrenCategories?.find(
-      (childCategory: GraphQL.Maybe<GraphQL.PrCategory>) => {
+      (childCategory: Maybe<PrCategory>) => {
         const found = findCategoryById(childCategory, code)
         if (found) {
           addParent(targetCategory, category)

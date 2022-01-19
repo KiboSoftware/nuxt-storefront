@@ -1,4 +1,4 @@
-import { FacetValue, PrCategory } from "./../server/types/GraphQL"
+import type { FacetValue, PrCategory } from "@/server/types/GraphQL"
 import type { uiHelpersReturnType, getFacetsFromURLResponse } from "./types"
 import { useNuxtApp } from "#app"
 

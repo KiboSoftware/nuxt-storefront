@@ -3,16 +3,15 @@ import type { ConfigureOption } from "./types"
 import { useState, useNuxtApp } from "#app"
 import { getProductQuery } from "@/gql/queries"
 import { configureProductMutation } from "@/gql/mutations"
-import { ProductCustom } from "@/composables/types"
+import type { ProductCustom } from "@/composables/types"
+import type { Maybe } from "@/server/types/GraphQL"
 
-export const useProductSSR = (referenceKey: string) => {
+export const useProduct = (referenceKey: string) => {
   const nuxt = useNuxtApp()
 
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const product = useState(`use-product-${referenceKey}`, (): ProductCustom => {
-    return {} as ProductCustom
-  })
-  const loading = useState(`use-product-loading-${referenceKey}`, () => false)
+  const product = useState<Maybe<ProductCustom>>(`use-product-${referenceKey}`, () => null)
+  const loading = useState<Boolean>(`use-product-loading-${referenceKey}`, () => false)
   const error = useState(`use-product-error-${referenceKey}`, () => null)
 
   const load = async (productCode: string) => {

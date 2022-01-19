@@ -1,11 +1,12 @@
-import { updateCartQuantityMutation } from "./../gql/mutations/cart/updateCartMutation"
+import { updateCartQuantityMutation } from "@/gql/mutations/cart/updateCartMutation"
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/gql/queries/cart"
 import { addToCartMutation } from "@/gql/mutations"
 import { deleteCartItemMutation } from "@/gql/mutations/cart/deleteCartItemMutation"
+import type { Cart, Maybe } from "@/server/types/GraphQL"
 
 export const useCart = () => {
-  const cart = useState(`use-cart-result`, () => {
+  const cart = useState<Maybe<Cart>>(`use-cart-result`, () => {
     return {}
   })
   const loading = useState(`use-cart-loading`, () => false)

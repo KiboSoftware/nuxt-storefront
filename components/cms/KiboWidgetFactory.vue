@@ -13,7 +13,7 @@
 import { useAsync } from "@nuxt/bridge/dist/runtime/capi.legacy"
 import { useDropzoneContent } from "@/composables"
 import { widgetGetters } from "@/composables/getters"
-import KiboHtml from "~~/components/cms/KiboHtml.vue"
+import KiboHtml from "@/components/cms/KiboHtml.vue"
 import KiboFullWidthImage from "@/components/cms/KiboFullWidthImage.vue"
 import KiboPromoBlock from "@/components/cms/KiboPromoBlock.vue"
 import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"

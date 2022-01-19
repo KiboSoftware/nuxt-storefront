@@ -35,7 +35,7 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfList, SfIcon, SfMenuItem, SfButton, SfLink } from "@storefront-ui/vue"
-import { FacetValue } from "~~/server/types/GraphQL"
+import { FacetValue } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "CategoryFacet",

@@ -33,7 +33,7 @@
 import { SfSelect, SfPagination } from "@storefront-ui/vue"
 import { ref } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
-import { FacetResultsData } from "~~/composables/types/facetGetterType"
+import { FacetResultsData } from "@/composables/types/facetGetterType"
 
 export default {
   name: "KiboPagination",

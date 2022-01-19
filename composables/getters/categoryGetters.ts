@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import type { PrCategory } from "../../server/types/GraphQL"
+import type { PrCategory } from "@/server/types/GraphQL"
 
 export const getMegaMenuCategory = (categories: PrCategory[]) => {
   return categories

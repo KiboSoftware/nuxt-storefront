@@ -1,4 +1,4 @@
-import { SearchSuggestionResult } from "~~/server/types/GraphQL"
+import type { SearchSuggestionResult } from "@/server/types/GraphQL"
 
 export const getSearchSuggestions = (suggestionSearch: SearchSuggestionResult) => {
   const productSuggeastionGroup = suggestionSearch.suggestionGroups.find(

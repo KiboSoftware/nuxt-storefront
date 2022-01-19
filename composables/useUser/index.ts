@@ -1,20 +1,19 @@
 import { computed, reactive } from "@vue/composition-api"
-import { getCurrentUser } from "../../gql/queries"
-import { loginMutation } from "../../gql/mutations"
-import { User } from "../types"
+import { getCurrentUser } from "@/gql/queries"
+import { loginMutation } from "@/gql/mutations"
+import type { User } from "../types"
 import { storeClientCookie, removeClientCookie } from "../helpers/cookieHelper"
-import * as GraphQLTypes from "@/server/types/GraphQL"
+import type { Maybe, CustomerUserAuthInfoInput } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const user = useState(`use-user-user`, (): User => {
-    return {} as User
-  })
   const authCookieName = nuxt.nuxt2Context.$config.userCookieKey
-  const isAuthenticated = useState(`use-user-isAuthenticated`, () => false)
-  const loading = useState(`use-user-loading`, () => false)
+
+  const user = useState<Maybe<User>>(`use-user-user`, () => null)
+  const isAuthenticated = useState<Boolean>(`use-user-isAuthenticated`, () => false)
+  const loading = useState<Boolean>(`use-user-loading`, () => false)
   const error = reactive({
     login: null,
     register: null,
@@ -39,7 +38,7 @@ export const useUser = () => {
   }
 
   // User
-  const login = async (params: GraphQLTypes.CustomerUserAuthInfoInput) => {
+  const login = async (params: CustomerUserAuthInfoInput) => {
     const userCredentials = {
       loginInput: {
         username: params.username,

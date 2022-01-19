@@ -2,17 +2,16 @@ import { computed } from "@vue/composition-api"
 import { buildProductSearchVars } from "./helpers/buildProductSearchVars"
 import { searchProductsQuery } from "@/gql/queries"
 import { useState, useNuxtApp } from "#app"
+import type { Maybe, ProductSearchResult } from "@/server/types/GraphQL"
 
 export const useProductSearch = (referenceKey: string) => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
 
-  const result = useState(`use-productSearch-result-${referenceKey}`, () => {
-    return null
-  })
-
+  const result = useState<Maybe<ProductSearchResult>>(`use-productSearch-result-${referenceKey}`, () => null)
   const loading = useState<Boolean>(`use-productSearch-loading-${referenceKey}`, () => false)
   const error = useState(`use-productSearch-error-${referenceKey}`, () => null)
+  
   const search = async (params: {
     categoryCode?: string
     filters?: Array<string>
