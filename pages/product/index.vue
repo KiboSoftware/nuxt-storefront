@@ -328,7 +328,7 @@ export default defineComponent({
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProductSSR(productCode)
-    const { addItemsToCart } = useCart()
+    const { cart, addItemsToCart } = useCart()
     const { toggleStoreLocatorModal, toggleAddToCartConfirmationModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
 
@@ -424,7 +424,7 @@ export default defineComponent({
       )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
-        toggleAddToCartConfirmationModal()
+        if (cart.value) toggleAddToCartConfirmationModal()
       }
     }
 
