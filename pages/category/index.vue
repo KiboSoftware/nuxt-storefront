@@ -541,10 +541,24 @@ export default {
 
   @include for-mobile {
     gap: calc(84vw - 300px);
+
+    @media (min-width: 415px) {
+      gap: 1.875rem;
+    }
   }
+
   @include for-desktop {
-    gap: 70px;
-    margin-left: calc(var(--spacer-base) * 2.08); //97px; //50px;
+    gap: 3.125rem;
+    margin-left: calc(var(--spacer-base) * 2.08);
+  }
+}
+
+.products__grid > * {
+  margin: 0 auto;
+  flex: 0 0 calc(var(--spacer-base) * 5.41); //130px
+  padding: 20px 10px 20px 10px;
+  @include for-desktop {
+    flex: 0 0 calc(var(--spacer-base) * 8.375); //201px
   }
 }
 

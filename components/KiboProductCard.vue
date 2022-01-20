@@ -387,31 +387,29 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .kibo-product-card {
-  // border: solid 1px #a2c3c3;
-  width: calc(var(--spacer-base) * 6.25);
-
-  @include for-desktop {
-    width: calc(var(--spacer-base) * 8.375);
-  }
-
   .sf-product-card__image-wrapper {
-    width: calc(var(--spacer-base) * 6.25);
+    width: 100%;
     height: calc(var(--spacer-base) * 6.25);
+
     @include for-desktop {
-      width: calc(var(--spacer-base) * 8.375);
       height: calc(var(--spacer-base) * 8.375);
     }
   }
 
   .sf-image {
     object-fit: contain;
-    width: calc(var(--spacer-base) * 6.25);
-    height: calc(var(--spacer-base) * 6.25);
+    width: calc(var(--spacer-base) * 5.41); // 130px
+    height: calc(var(--spacer-base) * 6.25); // 150px
+
     @include for-desktop {
-      width: calc(var(--spacer-base) * 8.375);
+      width: calc(var(--spacer-base) * 8.375); // 201px
       height: calc(var(--spacer-base) * 8.375);
     }
   }
+}
+
+.kibo-product-card:hover {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
 .kpc-sf-color {

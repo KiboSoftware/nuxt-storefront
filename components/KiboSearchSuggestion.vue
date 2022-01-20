@@ -185,19 +185,22 @@ export default defineComponent({
     flex-wrap: wrap;
     overflow-y: auto;
     max-height: 31.875rem;
-    padding: 0;
 
     @include for-desktop {
       overflow: hidden;
-      gap: 35px;
+      gap: 1rem;
+    }
+  }
+
+  .products__grid > * {
+    margin: 0 auto;
+    padding: 1.25rem 0.625rem; //20px 10px
+    @include for-desktop {
+      flex: 0 0 calc(var(--spacer-base) * 4.04);
     }
   }
 
   .product_card_details {
-    @include for-desktop {
-      width: calc(var(--spacer-base) * 4.04);
-    }
-
     .sf-product-card__image-wrapper {
       @include for-desktop {
         width: calc(var(--spacer-base) * 4.04);
