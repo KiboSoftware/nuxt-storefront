@@ -546,7 +546,7 @@ export default defineComponent({
     position: relative;
     height: 100%;
     margin: 0 auto;
-    width: 81.75rem;
+    width: min(95vw, 81.75rem);
   }
 
   &__spacer {
@@ -587,7 +587,7 @@ export default defineComponent({
   &__container {
     display: flex;
     margin: 0 auto;
-    width: 81.75rem;
+    width: min(95vw, 81.75rem);
   }
 
   &__logo {

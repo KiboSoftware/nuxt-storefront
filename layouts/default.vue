@@ -30,7 +30,7 @@
   margin: 0 auto;
 
   @include for-desktop {
-    width: 81.75rem;
+    width: min(95vw, 81.75rem);
     max-width: 81.75rem;
   }
 }
