@@ -72,10 +72,10 @@ export default defineComponent({
     ).label
 
     const selectFulfillment = (fulfillmentOption: Fulfillment) => {
-      context.emit("change", fulfillmentOption.value)
+      context.emit("radioChange", fulfillmentOption.value)
     }
     const handleStoreLocatorClick = () => {
-      context.emit("click")
+      context.emit("changeStore", "InStorePickup", true)
     }
     return {
       selectFulfillment,

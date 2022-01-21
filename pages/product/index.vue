@@ -250,6 +250,216 @@
                 </SfAccordion>
               </div>
             </div>
+
+            <div class="product__info">
+              <div class="product__heading-container">
+                <h3 class="sf-heading__title h3">{{ productName }}</h3>
+              </div>
+
+              <div class="product__price-and-rating">
+                <div v-if="product && product.price">
+                  <SfPrice
+                    :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+                    :special="
+                      product.price.salePrice &&
+                      $n(productGetters.getSalePrice(product).special, 'currency')
+                    "
+                  />
+                </div>
+
+                <div class="product__rating desktop-only">
+                  <SfRating :score="3" :max="5" />
+                  <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+
+                  <SfButton
+                    class="sf-button--text"
+                    data-testid="read-all-reviews"
+                    @click="changeTab(2)"
+                  >
+                    {{ $t("WriteReview") }}
+                  </SfButton>
+                </div>
+              </div>
+
+              <div class="product__content">
+                <div class="product__description desktop-only" v-html="shortDescription"></div>
+
+                <div
+                  v-if="
+                    productOptions &&
+                    productOptions.colourOptions &&
+                    productOptions.colourOptions.values
+                  "
+                  class="product__colors"
+                >
+                  <div class="product__color-label desktop-only">{{ $t("Color") }}:</div>
+
+                  <SfColor
+                    v-for="(option, i) in productOptions.colourOptions.values"
+                    :key="i"
+                    data-cy="product-color_update"
+                    :color="option.value"
+                    :class="{ 'sf-color--active': option.isSelected, disabled: false }"
+                    @click="selectOption(productOptions.colourOptions.attributeFQN, option.value)"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    productOptions &&
+                    productOptions.sizeOptions &&
+                    productOptions.sizeOptions.values
+                  "
+                  class="product__size"
+                >
+                  <div
+                    v-for="option in productOptions.sizeOptions.values"
+                    :key="option.value"
+                    class="sf-badge"
+                    :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
+                    @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
+                  >
+                    {{ option.value }}
+                  </div>
+                </div>
+
+                <div v-if="productOptions && productOptions.listOptions">
+                  <SfSelect
+                    v-for="option in productOptions.listOptions"
+                    :key="option.attributeFQN"
+                    data-cy="product-select_size"
+                    :value="productGetters.getOptionSelectedValue(option)"
+                    :label="productGetters.getOptionName(option)"
+                    :required="option.isRequired"
+                    @input="(value) => selectOption(option.attributeFQN, value)"
+                  >
+                    <SfSelectOption
+                      v-for="optionVal in option.values"
+                      :key="optionVal.value"
+                      :value="optionVal.value"
+                    >
+                      {{ optionVal.stringValue }}
+                    </SfSelectOption>
+                  </SfSelect>
+                </div>
+
+                <div v-if="productOptions && productOptions.yesNoOptions">
+                  <div v-for="option in productOptions.yesNoOptions" :key="option.name">
+                    <SfCheckbox
+                      :name="option.attributeFQN"
+                      :label="option.attributeDetail.name"
+                      hint-message=""
+                      :required="option.isRequired"
+                      info-message=""
+                      error-message=""
+                      valid
+                      :disabled="false"
+                      :selected="productGetters.getOptionSelectedValue(option) ? true : false"
+                      @change="
+                        (value) =>
+                          selectOption(
+                            option.attributeFQN,
+                            undefined,
+                            productGetters.getOptionSelectedValue(option) ? false : true
+                          )
+                      "
+                    />
+                  </div>
+                </div>
+
+                <div v-if="productOptions && productOptions.textBoxOptions">
+                  <div
+                    v-for="option in productOptions.textBoxOptions"
+                    :key="option.name"
+                    class="textBoxOptions"
+                  >
+                    <SfInput
+                      :label="option.attributeDetail.name"
+                      :value="option.values[0].shopperEnteredValue"
+                      :name="option.attributeFQN"
+                      type="text"
+                      valid
+                      error-message="Error message value of form input. It appears if `valid` is `false`."
+                      :required="option.isRequired"
+                      :disabled="false"
+                      :has-show-password="false"
+                      @input="
+                        (shopperEnteredValue) =>
+                          updateShopperEnteredValues(
+                            option.attributeFQN,
+                            undefined,
+                            shopperEnteredValue
+                          )
+                      "
+                    />
+                  </div>
+                </div>
+
+                <SfDivider class="divider-first desktop-only" />
+
+                <KiboFulfillmentOptions
+                  class="product__fullfillment"
+                  :fulfillment-options="productFulfillmentOptions"
+                  :cart-item-purchase-location="purchaseLocation.name"
+                  :selected-option="selectedFulfillmentValue"
+                  @changeStore="handleFulfillmentOption"
+                  @radioChange="handleFulfillmentOption"
+                />
+
+                <SfDivider class="divider-second desktop-only" />
+
+                <div class="add-to-cart-wrapper">
+                  <KiboProductActions
+                    v-model="qtySelected"
+                    :quantity-left="quantityLeft"
+                    :is-valid-for-add-to-cart="isValidForAddToCart"
+                    :label-add-to-cart="$t('Add to Cart')"
+                    :label-add-to-wishlist="$t('Add to Wishlist')"
+                    @addItemToCart="addToCart"
+                    @addItemWishlist="addToWishList"
+                  />
+                </div>
+
+                <SfDivider class="divider-first smartphone-only" />
+
+                <div class="product__rating smartphone-only">
+                  <SfRating :score="3" :max="5" />
+                  <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+
+                  <SfButton
+                    class="sf-button--text"
+                    data-testid="read-all-reviews"
+                    @click="changeTab(2)"
+                  >
+                    {{ $t("WriteReview") }}
+                  </SfButton>
+                </div>
+
+                <div>
+                  <h4 class="sf-heading__title h4">Product Information</h4>
+                  <div class="product__description" v-html="description"></div>
+                </div>
+
+                <div class="smartphone-only">
+                  <SfAccordion
+                    open=""
+                    :first-open="false"
+                    :multiple="false"
+                    transition=""
+                    show-chevron
+                    class="prod-spec-mobile"
+                  >
+                    <SfAccordionItem header="Product Specs">
+                      <SfList class="accordion-list">
+                        <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
+                          {{ i }}: {{ p.join(", ") }}
+                        </SfListItem>
+                      </SfList>
+                    </SfAccordionItem>
+                  </SfAccordion>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -279,7 +489,7 @@ import {
   SfAccordion,
 } from "@storefront-ui/vue"
 
-import { defineComponent, computed } from "@vue/composition-api"
+import { defineComponent, computed, ref, onBeforeUnmount } from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
 
@@ -288,9 +498,11 @@ import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
+import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import { useProduct, useUiState, usePurchaseLocation, useCart } from "@/composables"
 import { productGetters } from "@/lib/getters"
-import { buildAddToCartInput, isFulfillmentOptionValid } from "@/composables/helpers"
+import { buildAddToCartInput } from "@/composables/helpers"
+import { useNuxtApp, useState } from "#app"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -315,8 +527,10 @@ export default defineComponent({
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { cart, addItemsToCart } = useCart()
-    const { toggleStoreLocatorModal, toggleAddToCartConfirmationModal } = useUiState()
+    const { toggleAddToCartConfirmationModal } = useUiState()
     const { purchaseLocation } = usePurchaseLocation()
+    const nuxt = useNuxtApp()
+    const modal = nuxt.nuxt2Context.$modal
 
     useAsync(async () => {
       await load(productCode)
@@ -333,7 +547,7 @@ export default defineComponent({
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
-    const fulfillmentOptions = computed(() =>
+    const productFulfillmentOptions = computed(() =>
       productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
     )
     const selectedFulfillmentValue = computed(() =>
@@ -381,19 +595,37 @@ export default defineComponent({
     }
 
     // Get Fullfillment Options
-    const selectFulfillmentOption = (selectedFulfillmentVal: string) => {
-      const { value, name, shortName } = fulfillmentOptions.value.find(
-        (option: { value: string }) => option.value === selectedFulfillmentVal
+    const handleFulfillmentOption = (
+      selectedFulfillmentValue?: string,
+      isChangeStore?: boolean
+    ) => {
+      const selectedfulfillmentOption = productFulfillmentOptions.value.find(
+        (option: { value: string }) => option.value === selectedFulfillmentValue
       )
 
-      const isValid = isFulfillmentOptionValid(
-        { value, name },
-        product.value,
-        purchaseLocation.value
-      )
+      // If the selectedFulfillmentOption is Ship to Home or
+      // any purchaseLocation is selected in case of Pickup or change store is not clicked, set the fulfillment
+      if (
+        (!isChangeStore && purchaseLocation?.value?.code) ||
+        selectedfulfillmentOption.value === "DirectShip"
+      ) {
+        setFulfillment(
+          selectedFulfillmentValue,
+          selectedfulfillmentOption.shortName,
+          purchaseLocation?.value?.code
+        )
+      }
 
-      if (isValid) {
-        setFulfillment(selectedFulfillmentVal, shortName, purchaseLocation?.value?.code)
+      // If no store is selected or change store is selected, open the storeLocatorModal
+      else {
+        modal.show({
+          component: StoreLocatorModal,
+          props: {
+            setFulfillment,
+            selectedFulfillmentValue,
+            fulfillmentOption: selectedfulfillmentOption,
+          },
+        })
       }
     }
 
@@ -415,10 +647,6 @@ export default defineComponent({
 
     const addToWishList = () => {
       // Todo: Add to wishlist qtySelected.value
-    }
-
-    const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
     }
 
     const showZoomedProduct = () => {
@@ -459,10 +687,9 @@ export default defineComponent({
       productGetters,
       product,
       isOpenNotification: false,
-      fulfillmentOptions,
+      productFulfillmentOptions,
       selectedFulfillmentValue,
-      handleStoreLocatorClick,
-      selectFulfillmentOption,
+      handleFulfillmentOption,
       updateShopperEnteredValues,
       isValidForAddToCart,
       showZoomedProduct,

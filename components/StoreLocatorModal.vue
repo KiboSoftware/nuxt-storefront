@@ -1,86 +1,68 @@
 <template>
-  <SfModal
-    class="sf-modal"
-    :visible="isStoreLocatorOpen"
-    cross
-    overlay
-    :persistent="false"
-    @close="closeModal"
-  >
-    <template #modal-bar>
-      <SfBar
-        class="sf-modal__bar smartphone-only"
-        :close="true"
-        :title="$t('Select Store')"
-        @click:close="closeModal"
-      />
-    </template>
-    <transition name="sf-fade" mode="out-in">
-      <div class="modal-content">
-        <p class="title">{{ $t("Select Store") }}</p>
-        <div class="section-border"></div>
-        <div class="location-search">
-          <SfSearchBar
-            v-model="zipCodeInput"
-            placeholder="Enter Zip Code"
-            class="Search-bar"
-            aria-label="Search"
-          />
-          <button
-            :class="`color-primary sf-button sf-button--small ${
-              !zipCodeInput ? 'is-disabled--button' : ''
-            }`"
-            :aria-disabled="false"
-            :link="null"
-            @click="searchByZipCode"
-          >
-            Search
-          </button>
-        </div>
-        <p>
-          <span class="current-location" @click="handleCurrentLocation">{{
-            $t("current location")
-          }}</span>
+  <transition name="sf-fade" mode="out-in">
+    <div class="modal-content">
+      <div class="location-search">
+        <SfSearchBar
+          v-model="zipCodeInput"
+          placeholder="Enter Zip Code"
+          class="Search-bar"
+          aria-label="Search"
+        />
+        <button
+          :class="`color-primary sf-button sf-button--small ${
+            !zipCodeInput ? 'is-disabled--button' : ''
+          }`"
+          :aria-disabled="false"
+          :link="null"
+          @click="searchByZipCode"
+        >
+          Search
+        </button>
+      </div>
+      <p>
+        <span class="current-location" @click="handleCurrentLocation">{{
+          $t("current location")
+        }}</span>
+      </p>
+      <div class="store-count section-border">
+        <p :class="getStoreCountText.color">
+          {{ getStoreCountText.text }}
         </p>
-        <div class="store-count section-border">
-          <p :class="getStoreCountText.color">
-            {{ getStoreCountText.text }}
-          </p>
-        </div>
-        <div class="store-container">
-          <div v-for="location in storeDetails" :key="location.code">
-            <KiboStoreDetails
-              :location="location"
-              :selected-store="selectedStore"
-              @change="handleStoreChange(location.code)"
-            />
-          </div>
-        </div>
-        <div v-if="storeDetails.length" class="action-buttons">
-          <button
-            class="color-light sf-button sf-button--small"
-            :aria-disabled="false"
-            :link="null"
-            @click="closeModal"
-          >
-            {{ $t("Cancel") }}
-          </button>
-          <button
-            :class="handleSetStoreButtonStatus"
-            :aria-disabled="false"
-            :link="null"
-            @click="setStore"
-          >
-            {{ $t("Set Store") }}
-          </button>
+      </div>
+      <div class="store-container">
+        <div v-for="location in storeDetails" :key="location.code">
+          <KiboStoreDetails
+            :location="location"
+            :selected-store="selectedStore"
+            @change="handleStoreChange(location.code)"
+          />
         </div>
       </div>
-    </transition>
-  </SfModal>
+      <div v-if="storeDetails.length" class="action-buttons">
+        <button
+          class="color-light sf-button sf-button--small"
+          :aria-disabled="false"
+          :link="null"
+          @click="closeModal"
+        >
+          {{ $t("Cancel") }}
+        </button>
+        <button
+          :class="handleSetStoreButtonStatus"
+          :aria-disabled="false"
+          :link="null"
+          @click="setStore"
+        >
+          {{ $t("Set Store") }}
+        </button>
+      </div>
+    </div>
+  </transition>
 </template>
 <script lang="ts">
-import { SfModal, SfSearchBar, SfBar } from "@storefront-ui/vue"
-import { computed, ref } from "@nuxtjs/composition-api"
+import { SfSearchBar } from "@storefront-ui/vue"
+import { computed, ref, PropType } from "@vue/composition-api"
+import { StoreLocatorModalProps } from "@/components/types/storeLocatorPropType"
 import {
   useCurrentLocation,
   useStoreLocations,
@@ -95,15 +77,21 @@ import {
 export default {
   name: "StoreLocatorModal",
   components: {
-    SfModal,
     SfSearchBar,
-    SfBar,
   },
-  setup() {
+  props: {
+    properties: {
+      type: Object as PropType<StoreLocatorModalProps>,
+      default: () => {
+        return {} as StoreLocatorModalProps
+      },
+    },
+  },
+  setup(props, context) {
     const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
     const { currentLocation, loadWithNavigator } = useCurrentLocation()
     const { locations, search: searchStoreLocations } = useStoreLocations()
-    const { set, load: loadPurchaseLocation } = usePurchaseLocation()
+    const { set, load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
     const zipCodeInput = ref("")
     const initialState = ref(true)
@@ -119,7 +107,7 @@ export default {
     }
 
     const closeModal = () => {
-      toggleStoreLocatorModal()
+      context.emit("onClose")
       selectedStore.value = ""
       locations.value = []
       zipCodeInput.value = ""
@@ -134,9 +122,21 @@ export default {
       selectedStore.value = locationCode
     }
 
-    const setStore = () => {
+    const setStore = async () => {
+      const { setFulfillment, selectedFulfillmentValue, fulfillmentOption } =
+        props.properties as StoreLocatorModalProps
+
       set(selectedStore.value)
-      loadPurchaseLocation()
+      await loadPurchaseLocation()
+
+      // If opened modal from PDP
+      if (setFulfillment) {
+        setFulfillment(
+          selectedFulfillmentValue,
+          fulfillmentOption.shortName,
+          purchaseLocation.value
+        )
+      }
       closeModal()
     }
 
@@ -184,6 +184,7 @@ export default {
       setStore,
       closeModal,
       getStoreCountText,
+      props,
     }
   },
 }
@@ -192,12 +193,6 @@ export default {
 .sf-modal {
   --modal-width: 39.375rem;
   --modal-content-padding: 0;
-}
-
-.title {
-  font-weight: 700;
-  font-size: var(--h4-font-size);
-  padding: var(--spacer-2xs) var(--spacer-lg);
 }
 
 .location-search {
