@@ -114,7 +114,6 @@ const getSegregatedOptions = (product: ProductCustom) => {
   const nuxt = useNuxtApp()
   const colorAttributeFQN = nuxt.nuxt2Context.$config.colorAttributeFQN.toLowerCase()
   const sizeAttributeFQN = nuxt.nuxt2Context.$config.sizeAttributeFQN.toLowerCase()
-  const colorAndSizeOptions = [colorAttributeFQN, sizeAttributeFQN]
 
   const colourOptions = options?.find(
     (option) => option?.attributeFQN?.toLowerCase() === colorAttributeFQN.toLowerCase()
@@ -127,7 +126,8 @@ const getSegregatedOptions = (product: ProductCustom) => {
   const listOptions = options?.filter(
     (option) =>
       option?.attributeDetail?.inputType?.toLowerCase() === "list" &&
-      !colorAndSizeOptions.includes(option?.attributeFQN)
+      option?.attributeFQN?.toLowerCase() !== colorAttributeFQN.toLowerCase() &&
+      option?.attributeFQN?.toLowerCase() !== sizeAttributeFQN.toLowerCase()
   )
 
   const yesNoOptions = options?.filter(

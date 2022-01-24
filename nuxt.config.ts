@@ -113,8 +113,8 @@ export default defineNuxtConfig({
   publicRuntimeConfig: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
     userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo_at",
-    colorAttributeFQN: "Tenant~color",
-    sizeAttributeFQN: "Tenant~size",
+    colorAttributeFQN: "Tenant~Color",
+    sizeAttributeFQN: "Tenant~Size",
     fullfillmentOptions: [
       {
         value: "DirectShip",
