@@ -1,11 +1,14 @@
 <template>
   <SfMegaMenu id="SfMegaMenuColumnId" :visible="visible" title="Title" transition-name="sf-fade">
-    <SfMegaMenuColumn
-      v-for="(category, key) in megaMenuCategories"
-      :key="key"
-      :title="categoryGetters.getName(category)"
-      :link="localePath(getCatLink(category))"
-    >
+    <SfMegaMenuColumn v-for="(category, key) in megaMenuCategories" :key="key">
+      <template #title>
+        <SfMenuItem
+          :label="categoryGetters.getName(category)"
+          class="sf-mega-menu-column__header"
+          :link="localePath(getCatLink(category))"
+        />
+      </template>
+
       <div class="sf-mega-menu-option">
         <div class="flex-grow-3">
           <SfList class="outer-list">
@@ -86,9 +89,9 @@ export default defineComponent({
   }
 
   .sf-image--wrapper {
-    padding-right: calc(var(--spacer-base) * 2);
-    padding-left: calc(var(--spacer-base) * 4);
-    width: var(--spacer-4xl);
+    padding-right: var(--spacer-base);
+    padding-left: var(--spacer-2xl);
+    width: calc(var(--spacer-lg) * 9);
     height: var(--spacer-4xl);
   }
 
@@ -114,6 +117,7 @@ export default defineComponent({
     }
 
     .hr-divider {
+      width: 30%;
       margin: var(--spacer-sm) 0;
       border-left: calc(var(--spacer-base) * 0.04) solid var(--c-black);
     }
