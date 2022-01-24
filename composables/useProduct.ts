@@ -1,9 +1,8 @@
 import { mergeProducts } from "./helpers/mergeProduct"
-import type { ConfigureOption } from "./types"
 import { useState, useNuxtApp } from "#app"
-import { getProductQuery } from "@/gql/queries"
-import { configureProductMutation } from "@/gql/mutations"
-import type { ProductCustom } from "@/composables/types"
+import { getProductQuery } from "@/lib/gql/queries"
+import { configureProductMutation } from "@/lib/gql/mutations"
+import type { ProductCustom, ConfigureOption } from "@/composables/types"
 import type { Maybe } from "@/server/types/GraphQL"
 
 export const useProduct = (referenceKey: string) => {

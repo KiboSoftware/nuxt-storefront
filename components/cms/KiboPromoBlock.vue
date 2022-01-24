@@ -14,6 +14,10 @@
 <script>
 import { SfImage, SfButton } from "@storefront-ui/vue"
 export default {
+  components: {
+    SfImage,
+    SfButton,
+  },
   props: {
     image: {
       type: Object,
@@ -27,10 +31,6 @@ export default {
     description: {
       type: String,
     },
-  },
-  components: {
-    SfImage,
-    SfButton,
   },
 }
 </script>

@@ -1,4 +1,4 @@
-import { getSearchSuggestions } from "@/gql/queries"
+import { getSearchSuggestions } from "@/lib/gql/queries"
 import { useState, useNuxtApp } from "#app"
 import type { SearchSuggestionResult, Maybe} from "@/server/types/GraphQL"
 

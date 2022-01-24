@@ -300,9 +300,11 @@ import {
   useProduct,
   useUiState,
   usePurchaseLocation,
-  productGetters,
   useCart,
 } from "@/composables"
+import { 
+  productGetters 
+} from "@/lib/getters"
 import { buildAddToCartInput, isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({

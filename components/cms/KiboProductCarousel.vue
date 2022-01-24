@@ -14,9 +14,9 @@
           <SfArrow aria-label="next" class="sf-arrow--right sf-arrow--long" @click="go('next')" />
         </template>
         <SfCarouselItem
-          class="carousel__item"
           v-for="(product, i) in products"
           :key="`carousel-item-${productGetters.getProductId(product)}`"
+          class="carousel__item"
         >
           <KiboProductCard
             :key="productGetters.getProductId(product)"
@@ -46,21 +46,20 @@
 <script>
 import { SfCarousel, SfArrow } from "@storefront-ui/vue"
 import { useProductSearch, useUiHelpers } from "@/composables"
-import { productGetters } from "@/composables/getters"
+import { productGetters } from "@/lib/getters"
 export default {
+  components: {
+    SfCarousel,
+    SfArrow,
+  },
   props: {
     productCodes: {
-      type: Array,
-      default: [],
+      type: Array
     },
     title: {
       type: String,
       default: "",
     },
-  },
-  components: {
-    SfCarousel,
-    SfArrow,
   },
   setup(props) {
     const { search, result } = useProductSearch(`top-sellers`)

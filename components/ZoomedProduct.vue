@@ -27,7 +27,8 @@
 import { defineComponent, computed } from "@vue/composition-api"
 import { useAsync } from "@nuxtjs/composition-api"
 import { SfLoader, SfBar } from "@storefront-ui/vue"
-import { useProduct, productGetters } from "@/composables"
+import { useProduct } from "@/composables"
+import { productGetters } from "@/lib/getters"
 
 export default defineComponent({
   components: {

@@ -92,11 +92,14 @@ import {
   usePurchaseLocation,
   useCart,
   useUiState,
+  useUiHelpers
+} from "@/composables"
+
+import {
   cartGetters,
   storeLocationGetters,
-  useUiHelpers,
   productGetters,
-} from "@/composables"
+} from "@/lib/getters"
 
 export default defineComponent({
   name: "DetailedCart",

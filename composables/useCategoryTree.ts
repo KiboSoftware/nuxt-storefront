@@ -1,5 +1,5 @@
 import { computed } from "@vue/composition-api"
-import { categoryTreeQuery } from "@/gql/queries"
+import { categoryTreeQuery } from "@/lib/gql/queries"
 import type { PrCategory } from "@/server/types/GraphQL"
 import * as types from "@/composables/types"
 import { useNuxtApp, useState } from "#app"

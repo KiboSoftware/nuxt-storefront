@@ -5,8 +5,8 @@ import {
   updateCartQuantityMutation,
   addToCartMutation,
   deleteCartItemMutation,
-} from "@/gql/mutations"
-import { getCartQuery } from "@/gql/queries"
+} from "@/lib/gql/mutations"
+import { getCartQuery } from "@/lib/gql/queries"
 
 Vue.use(VueCompositionApi)
 

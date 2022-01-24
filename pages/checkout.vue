@@ -87,8 +87,8 @@ import {
   SfOrderSummary,
   SfOrderReview,
 } from "@storefront-ui/vue"
-import { useCheckout, useCart } from "@/composables"
 import { useAsync } from "@nuxtjs/composition-api"
+import { useCheckout, useCart } from "@/composables"
 export default {
   name: "Checkout",
   components: {

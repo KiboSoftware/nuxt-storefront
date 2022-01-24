@@ -12,23 +12,23 @@
 <script>
 import { useAsync } from "@nuxt/bridge/dist/runtime/capi.legacy"
 import { useDropzoneContent } from "@/composables"
-import { widgetGetters } from "@/composables/getters"
+import { widgetGetters } from "@/lib/getters"
 import KiboHtml from "@/components/cms/KiboHtml.vue"
 import KiboFullWidthImage from "@/components/cms/KiboFullWidthImage.vue"
 import KiboPromoBlock from "@/components/cms/KiboPromoBlock.vue"
 import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
 
 export default {
-  props: {
-    documentName: {
-      type: String,
-    },
-  },
   components: {
     KiboHtml,
     KiboFullWidthImage,
     KiboPromoBlock,
     KiboProductCarousel,
+  },
+  props: {
+    documentName: {
+      type: String,
+    },
   },
   setup(props) {
     const { documentName } = props
