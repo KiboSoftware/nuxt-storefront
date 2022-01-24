@@ -532,7 +532,6 @@ export default defineComponent({
 
 .cart-badge {
   position: absolute;
-  top: 0.125rem;
 }
 
 .kibo-header {
@@ -700,9 +699,15 @@ export default defineComponent({
   }
 
   &__item-count {
-    padding-left: 0.25rem;
+    padding: 0.125rem;
     margin-bottom: 1.438rem;
     margin-left: -0.5rem;
+
+    --badge-min-width: var(--spacer-sm);
+    --badge-min-height: var(--spacer-sm);
+
+    justify-content: center;
+    font-size: 0.563rem;
   }
 
   &__logo > .sf-image {

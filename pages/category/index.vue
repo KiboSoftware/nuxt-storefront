@@ -30,7 +30,7 @@
           <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
           <SfIcon
             class="navbar__view__icon"
-            :color="'#2B2B2B'"
+            :color="isGridView ? '#2B2B2B' : '#CDCDCD'"
             icon="tiles"
             size="12px"
             role="button"
@@ -40,7 +40,7 @@
           />
           <SfIcon
             class="navbar__view__icon"
-            :color="'#CDCDCD'"
+            :color="!isGridView ? '#2B2B2B' : '#CDCDCD'"
             icon="list"
             size="12px"
             role="button"
@@ -53,51 +53,44 @@
     </div>
     <div class="main section">
       <div class="sidebar desktop-only">
-        <LazyHydrate when-idle>
-          <SfLoader
-            :class="{ 'loading--categories': productSearchLoading }"
-            :loading="productSearchLoading"
-          >
-            <transition-group>
-              <CategoryFacet
-                key="category-facet"
-                :is-search-page="isSearchPage"
-                :categories-from-search="getCategoryFacet"
-                :breadcrumbs="breadcrumbs"
-              />
-              <div key="filters">
-                <SfAccordion :show-chevron="true" open="all" :multiple="false">
-                  <div v-for="(facet, i) in facets" :key="i">
-                    <SfAccordionItem
-                      :key="`filter-title-${facetGetters.getFacetField(facet)}`"
-                      :header="facetGetters.getFacetName(facet)"
-                      class="filters"
+        <transition-group>
+          <CategoryFacet
+            key="category-facet"
+            :is-search-page="isSearchPage"
+            :categories-from-search="getCategoryFacet"
+            :breadcrumbs="breadcrumbs"
+          />
+          <div key="filters">
+            <SfAccordion :show-chevron="true" open="all" :multiple="false">
+              <div v-for="(facet, i) in facets" :key="i">
+                <SfAccordionItem
+                  :key="`filter-title-${facetGetters.getFacetField(facet)}`"
+                  :header="facetGetters.getFacetName(facet)"
+                  class="filters"
+                >
+                  <template #header="{ header, isOpen, accordionClick }">
+                    <SfButton
+                      :aria-pressed="isOpen.toString()"
+                      :aria-expanded="isOpen.toString()"
+                      :class="{ 'is-open': false }"
+                      class="sf-button--pure sf-accordion-item__header"
+                      @click="accordionClick"
                     >
-                      <template #header="{ header, isOpen, accordionClick }">
-                        <SfButton
-                          :aria-pressed="isOpen.toString()"
-                          :aria-expanded="isOpen.toString()"
-                          :class="{ 'is-open': false }"
-                          class="sf-button--pure sf-accordion-item__header"
-                          @click="accordionClick"
-                        >
-                          {{ header }}
-                          <slot name="additional-info" />
-                          <SfChevron
-                            tabindex="0"
-                            class="sf-accordion-item__chevron"
-                            :class="{ 'sf-chevron--top': isOpen }"
-                          />
-                        </SfButton>
-                      </template>
-                      <KiboFacet :facet="facet" @selectFilter="selectFilter" />
-                    </SfAccordionItem>
-                  </div>
-                </SfAccordion>
+                      {{ header }}
+                      <slot name="additional-info" />
+                      <SfChevron
+                        tabindex="0"
+                        class="sf-accordion-item__chevron"
+                        :class="{ 'sf-chevron--top': isOpen }"
+                      />
+                    </SfButton>
+                  </template>
+                  <KiboFacet :facet="facet" @selectFilter="selectFilter" />
+                </SfAccordionItem>
               </div>
-            </transition-group>
-          </SfLoader>
-        </LazyHydrate>
+            </SfAccordion>
+          </div>
+        </transition-group>
       </div>
       <SfLoader
         :class="{ 'loading--products': productSearchLoading }"
@@ -196,7 +189,6 @@ import {
   SfAccordion,
   SfChevron,
 } from "@storefront-ui/vue"
-import LazyHydrate from "vue-lazy-hydration"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
 import {
   useUiHelpers,
@@ -216,7 +208,6 @@ export default {
     SfIcon,
     SfSelect,
     SfBreadcrumbs,
-    LazyHydrate,
     SfLoader,
     SfProductCardHorizontal,
     SfAccordion,
@@ -379,10 +370,7 @@ export default {
   }
 
   &.section {
-    padding: 0.5rem 0;
-    @include for-desktop {
-      padding: 0;
-    }
+    padding: 0;
   }
 
   &__aside,
@@ -395,6 +383,9 @@ export default {
   &__aside {
     padding: 0;
     flex: 1;
+    @include for-mobile {
+      margin: 0 0 0 calc(var(--spacer-xs) * 3.125);
+    }
     @include for-desktop {
       flex: none;
     }
@@ -407,7 +398,7 @@ export default {
     align-items: flex-start;
     padding: 0;
     @include for-desktop {
-      padding: var(--spacer-xs) var(--spacer-xl);
+      padding: var(--spacer-xs) calc(var(--spacer-xs) * 3.125);
       flex-direction: row;
       align-items: center;
     }
@@ -517,6 +508,13 @@ export default {
 
   flex: unset;
   width: calc(var(--spacer-3xl) * 1.1875);
+}
+
+.sidebar {
+  flex: 0 0 15%;
+  padding: var(--spacer-sm) var(--spacer-sm) var(--spacer-sm) 0;
+  border: 1px solid var(--c-light);
+  border-width: 0 1px 0 0;
 }
 
 .list {
@@ -642,12 +640,6 @@ export default {
     margin-top: calc(var(--spacer-2xl) * 1.125);
   }
 
-  &--categories {
-    @include for-desktop {
-      margin-top: calc(var(--spacer-xl) * 1.5);
-    }
-  }
-
   &--products {
     @include for-desktop {
       margin-top: calc(var(--spacer-lg) * 1.0625);
@@ -689,7 +681,7 @@ export default {
 }
 
 .breadcrumbs {
-  margin: var(--spacer-base) 0 var(--spacer-base) 1.563rem;
+  margin: var(--spacer-base) 0;
   @include for-desktop {
     margin: var(--spacer-base) auto var(--spacer-base);
   }

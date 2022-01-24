@@ -24,7 +24,7 @@
       :selected="facetValueGetters.getIsApplied(option)"
       @change="selectFilter(facetValueGetters.getFilter(option))"
     />
-    <div v-if="!isViewMoreClicked && facetOptions.length > 5">
+    <div v-if="!isViewMoreClicked && facetOptions.length > 5 && facetAllOptions.length > 6">
       <SfButton
         font-size="13px"
         class="sf-button--text navbar__button navbar__button--plus list__item"
@@ -74,6 +74,12 @@ export default defineComponent({
         facetAllOptions.value = newValue
       },
     })
+    watch(
+      () => props.facet,
+      (facetValue) => {
+        facetAllOptions.value = facetGetters.getFacetValues(facetValue)
+      }
+    )
 
     const findFilter = (paramValue) => {
       if (!paramValue.target) {
@@ -98,6 +104,7 @@ export default defineComponent({
       facetOptions,
       findFilter,
       term,
+      facetAllOptions,
     }
   },
 })
@@ -165,14 +172,14 @@ export default defineComponent({
 
     &--plus {
       font-family: var(--font-family--primary);
-      font-size: 0.813rem;
+      font-size: var(--font-size--sm);
       margin: 0 0;
       height: 0.875rem;
       padding: 1rem 0.375rem;
     }
 
     &--back {
-      font-size: 0.813rem;
+      font-size: var(--font-size--sm);
       margin: var(--spacer-sm) 0 var(--spacer-sm) 0;
       font-family: var(--font-family--primary);
     }
@@ -245,8 +252,8 @@ export default defineComponent({
 .sf-filter {
   --filter-label-color: #2b2b2b;
   --filter-count-color: #2b2b2b;
-  --filter-label-font-size: 0.813rem;
-  --filter-count-font-size: 0.813rem;
+  --filter-label-font-size: var(--font-size--sm);
+  --filter-count-font-size: var(--font-size--sm);
   --filter-count-margin: 0 0.5rem 0 auto;
 
   padding: 0.375rem;
