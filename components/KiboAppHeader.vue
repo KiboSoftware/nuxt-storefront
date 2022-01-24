@@ -485,7 +485,7 @@ export default defineComponent({
   right: 0;
   bottom: 0;
   background-color: var(--overlay-background, rgba(var(--c-gray-base), 0.7));
-  z-index: 1;
+  z-index: 2;
 }
 
 .sf-header {
