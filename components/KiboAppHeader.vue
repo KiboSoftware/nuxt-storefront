@@ -72,6 +72,7 @@
         <div class="kibo-header__container">
           <div class="kibo-header__spacer"></div>
           <div v-click-outside="closeSearch" class="kibo-header__search-bar">
+            <div v-show="isSearchOpen" class="search-overlay" @click="closeSearch"></div>
             <KiboSearchBar
               ref="searchBarRef"
               :placeholder="$t('Search')"
@@ -475,6 +476,18 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.search-overlay {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--overlay-background, rgba(var(--c-gray-base), 0.7));
+  z-index: 2;
+}
+
 .sf-header {
   --header-padding: var(--spacer-sm);
   @include for-desktop {
@@ -502,6 +515,12 @@ export default defineComponent({
     top: 0;
     margin-top: 14px;
     height: 2.125rem;
+
+    @include for-desktop {
+      z-index: 2;
+      background: var(--c-white);
+      border-radius: var(--spacer-2xs);
+    }
   }
 
   &__bottom-link {
