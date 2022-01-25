@@ -90,7 +90,7 @@ export default {
   setup(props, context) {
     const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
     const { currentLocation, loadWithNavigator } = useCurrentLocation()
-    const { locations, search: searchStoreLocations } = useStoreLocations()
+    const { locations, search: searchStoreLocations } = useStoreLocations("available-stores")
     const { set, load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
     const zipCodeInput = ref("")
@@ -100,8 +100,7 @@ export default {
       zipCodeInput.value = ""
       await loadWithNavigator()
       await searchStoreLocations({
-        latitude: currentLocation.value.latitude,
-        longitude: currentLocation.value.longitude,
+        filter: `geo near(${currentLocation.value.latitude},${currentLocation.value.longitude},160934)`,
       })
       initialState.value = false
     }
@@ -123,20 +122,35 @@ export default {
     }
 
     const setStore = async () => {
-      const { setFulfillment, selectedFulfillmentValue, fulfillmentOption } =
-        props.properties as StoreLocatorModalProps
+      const {
+        setFulfillment,
+        selectedFulfillmentValue,
+        fulfillmentOption,
+        updateCartItem,
+        cartItemId,
+        cartItemInput,
+      } = props?.properties as StoreLocatorModalProps
 
-      set(selectedStore.value)
-      await loadPurchaseLocation()
+      // If opened modal from Cart Item
+      if (updateCartItem) {
+        cartItemInput.fulfillmentMethod = "Pickup"
+        cartItemInput.fulfillmentLocationCode = selectedStore.value
+        cartItemInput.purchaseLocation = selectedStore.value
+        updateCartItem(cartItemId, cartItemInput)
+      } else {
+        set(selectedStore.value)
+        await loadPurchaseLocation()
 
-      // If opened modal from PDP
-      if (setFulfillment) {
-        setFulfillment(
-          selectedFulfillmentValue,
-          fulfillmentOption.shortName,
-          purchaseLocation.value
-        )
+        // If opened modal from PDP
+        if (setFulfillment) {
+          setFulfillment(
+            selectedFulfillmentValue,
+            fulfillmentOption.shortName,
+            purchaseLocation.value
+          )
+        }
       }
+
       closeModal()
     }
 
@@ -147,7 +161,7 @@ export default {
     })
 
     const searchByZipCode = async () => {
-      await searchStoreLocations(zipCodeInput.value)
+      await searchStoreLocations({ filter: `geo near(${zipCodeInput.value},160934)` })
       initialState.value = false
     }
 

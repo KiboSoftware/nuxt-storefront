@@ -3,7 +3,8 @@ import { getCartQuery } from "@/lib/gql/queries"
 import {
   addToCartMutation,
   deleteCartItemMutation,
-  updateCartQuantityMutation,
+  updateCartItemQuantityMutation,
+  updateCartItemMutation,
 } from "@/lib/gql/mutations"
 import type { Cart, Maybe } from "@/server/types/GraphQL"
 
@@ -21,6 +22,7 @@ export const useCart = () => {
     const cartResponse = await fetcher({
       query: getCartQuery,
     })
+
     return cartResponse.data.currentCart
   }
 
@@ -62,7 +64,7 @@ export const useCart = () => {
     try {
       loading.value = true
       await fetcher({
-        query: updateCartQuantityMutation,
+        query: updateCartItemQuantityMutation,
         variables,
       })
     } catch (err) {
@@ -93,6 +95,26 @@ export const useCart = () => {
     }
   }
 
+  const updateCartItem = async (cartItemId: string, cartItemInput) => {
+    const variables = {
+      cartItemId,
+      cartItemInput,
+    }
+    try {
+      loading.value = true
+      await fetcher({
+        query: updateCartItemMutation,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+      cart.value = await getCart()
+    }
+  }
+
   return {
     loading,
     addItemsToCart,
@@ -102,5 +124,6 @@ export const useCart = () => {
     cart,
     error,
     newestCartItemId,
+    updateCartItem,
   }
 }

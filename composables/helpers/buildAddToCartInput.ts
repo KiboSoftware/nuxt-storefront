@@ -15,5 +15,6 @@ export const buildAddToCartInput = (
     quantity,
     fulfillmentMethod: product?.fulfillmentMethodShortName,
     purchaseLocation: product?.purchaseLocationCode,
+    fulfillmentLocationCode: product?.purchaseLocationCode,
   }
 }

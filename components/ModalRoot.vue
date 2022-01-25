@@ -1,5 +1,5 @@
 <template>
-  <SfModal class="sf-modal" :visible="componentRef" @close="handleClose">
+  <SfModal class="sf-modal" :visible="!!componentRef" @close="handleClose">
     <template #modal-bar>
       <SfBar class="sf-modal__bar bar-heading" :title="titleRef" @click:close="handleClose" />
     </template>
@@ -16,7 +16,7 @@ export default {
     const componentRef = ref(null)
     const titleRef = ref("")
     const properties = ref(null)
-    ModalBus.$on("open", ({ component, props = null }) => {
+    ModalBus.$on("open", ({ component, props }) => {
       componentRef.value = component
       titleRef.value = "Select Store"
       properties.value = props

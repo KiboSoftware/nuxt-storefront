@@ -10,10 +10,15 @@
         :details="fulfillmentOption.details"
         :required="fulfillmentOption.required"
         :disabled="fulfillmentOption.disabled"
-        :selected="selectedOption == fulfillmentOption.value ? fulfillmentOption.value : ''"
+        :selected="
+          selectedOption &&
+          fulfillmentOption.value.toLowerCase().includes(selectedOption.toLowerCase())
+            ? fulfillmentOption.value
+            : ''
+        "
         class="sf-radio"
         :class="isColumnDisplay && 'column'"
-        @change="selectFulfillment(fulfillmentOption)"
+        @change="selectFulfillment"
       >
         <template v-if="fulfillmentOption.label === pickupInStore" #details>
           <p class="sf-radio__details">
@@ -21,11 +26,11 @@
           </p>
         </template>
         <template
-          v-if="fulfillmentOption.label === pickupInStore && fulfillmentOption.disabled !== true"
+          v-if="fulfillmentOption.label === pickupInStore && !fulfillmentOption.disabled"
           #description
         >
           <p class="sf-radio__details" @click="handleStoreLocatorClick">
-            {{ cartItemPurchaseLocation ? "Change Store" : "Select Store" }}
+            {{ fulfillmentOption.description }}
           </p>
         </template>
       </SfRadio>
@@ -35,7 +40,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfRadio } from "@storefront-ui/vue"
-import { Fulfillment } from "./types/fulfillment"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -71,8 +75,8 @@ export default defineComponent({
       (option) => option.value === "InStorePickup"
     ).label
 
-    const selectFulfillment = (fulfillmentOption: Fulfillment) => {
-      context.emit("radioChange", fulfillmentOption.value)
+    const selectFulfillment = (fulfillmentOptionValue: string) => {
+      context.emit("radioChange", fulfillmentOptionValue)
     }
     const handleStoreLocatorClick = () => {
       context.emit("changeStore", "InStorePickup", true)

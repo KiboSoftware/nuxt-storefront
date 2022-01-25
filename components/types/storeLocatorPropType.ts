@@ -1,5 +1,5 @@
 import { FulFillmentOption } from "@/composables/types/fulfillmentOption"
-import { Location } from "@/server/types/GraphQL"
+import { CartItem, Location } from "@/server/types/GraphQL"
 
 export type StoreLocatorModalProps = {
   setFulfillment?: (
@@ -7,6 +7,9 @@ export type StoreLocatorModalProps = {
     shortName: string,
     purchaseLocation: Location
   ) => void
-  selectedFulfillmentValue: ""
-  fulfillmentOption: FulFillmentOption
+  selectedFulfillmentValue?: string
+  fulfillmentOption?: FulFillmentOption
+  updateCartItem?: (cartItemId: string, cartItemInput: CartItem) => CartItem
+  cartItemId?: string
+  cartItemInput?: CartItem
 }

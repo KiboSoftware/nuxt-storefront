@@ -56,7 +56,8 @@
                   cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
                 "
                 :options="cartItem.product.options"
-                :supported-fulfillment-types="cartItemFulfillmentTypes(cartItem)"
+                :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
+                :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
                 :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
@@ -90,7 +91,8 @@ import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefron
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
 import { usePurchaseLocation, useCart, useUiState, useUiHelpers } from "@/composables"
-import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
+
+import { cartGetters, storeLocationGetters, productGetters, useStoreLocations } from "@/lib/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -107,6 +109,7 @@ export default defineComponent({
     const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
     const router = useRouter()
+    const { locations, search: searchStoreLocations } = useStoreLocations("selected-stores")
 
     const breadcrumbs = [
       {
@@ -121,6 +124,14 @@ export default defineComponent({
 
     useAsync(async () => {
       await loadCart()
+      const filterOperator = `code eq`
+      const locationCodes = cart.value?.items
+        .filter((item) => {
+          return item.fulfillmentMethod === "Pickup"
+        })
+        .map((item) => item.fulfillmentLocationCode)
+      const filter = locationCodes?.map((code) => `${filterOperator} ${code}`).join(" or ")
+      await searchStoreLocations({ filter })
     }, null)
 
     const handleStoreLocatorClick = () => {
@@ -136,13 +147,20 @@ export default defineComponent({
     const cartItems = computed(() => cartGetters.getItems(cart.value))
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
-    const cartItemFulfillmentTypes = (cartItem) => {
-      return cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
+    const cartItemFulfillmentLocation = (cartItem) => {
+      return cartGetters.getFulfillmentLocation(cartItem, locations.value)
     }
 
     const checkout = () => {
       router.push({ path: "/checkout" })
     }
+
+    const cartItemFulfillmentOptions = (cartItem) => {
+      return cartGetters.getCartFulfillmentOptions(cartItem, cartItemFulfillmentLocation(cartItem))
+    }
+
+    const getCartItemSelectedFulfillmentOption = (cartItem) =>
+      cartGetters.getSelectedFullfillmentOption(cartItem)
 
     return {
       breadcrumbs,
@@ -150,10 +168,11 @@ export default defineComponent({
       cartItems,
       cartOrder,
       handleStoreLocatorClick,
-      cartItemFulfillmentTypes,
+      cartItemFulfillmentOptions,
       getProductLink,
       productGetters,
       checkout,
+      getCartItemSelectedFulfillmentOption,
     }
   },
 })

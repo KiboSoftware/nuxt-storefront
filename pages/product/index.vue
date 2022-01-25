@@ -594,7 +594,7 @@ export default defineComponent({
       await configure(shopperEnteredValues, product.value?.productCode)
     }
 
-    // Get Fullfillment Options
+    // handle Fullfillment Options radio click and change store
     const handleFulfillmentOption = (
       selectedFulfillmentValue?: string,
       isChangeStore?: boolean
