@@ -88,18 +88,9 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import {
-  usePurchaseLocation,
-  useCart,
-  useUiState,
-  useUiHelpers
-} from "@/composables"
+import { usePurchaseLocation, useCart, useUiState, useUiHelpers } from "@/composables"
 
-import {
-  cartGetters,
-  storeLocationGetters,
-  productGetters,
-} from "@/lib/getters"
+import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -162,8 +153,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 #detailed-cart {
   box-sizing: border-box;
   @include for-desktop {

@@ -46,7 +46,7 @@
 import { SfMegaMenu, SfList, SfMenuItem, SfImage } from "@storefront-ui/vue"
 import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
 import { useCategoryTree, useUiHelpers } from "@/composables"
-import { categoryGetters } from "@/lib/getters";
+import { categoryGetters } from "@/lib/getters"
 
 export default defineComponent({
   components: {
@@ -63,9 +63,9 @@ export default defineComponent({
     })
     const { getCatLink } = useUiHelpers()
 
-    onMounted(async () => {
-      await loadCategories()
-    })
+    // onMounted(async () => {
+    //   await loadCategories()
+    // })
 
     return {
       getCatLink,

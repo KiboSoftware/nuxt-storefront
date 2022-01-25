@@ -1,5 +1,6 @@
 <template>
   <div class="wrapper">
+    <KiboAppData />
     <KiboAppHeader />
     <LoginModal />
     <StoreLocatorModal />
@@ -12,6 +13,8 @@
 </template>
 
 <style lang="scss">
+@import "~@storefront-ui/vue/styles";
+
 * {
   font-family: "Roboto", sans-serif;
   font-size: 1rem;

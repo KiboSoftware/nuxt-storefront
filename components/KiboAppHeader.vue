@@ -408,12 +408,12 @@ export default defineComponent({
       app.router.push({ path: "/cart" })
     }
 
-    useAsync(async () => {
-      await loadUser()
-      await loadPurchaseLocation()
-      await loadCart()
-      await loadSideBarMenu()
-    }, null)
+    // useAsync(async () => {
+    //   await loadUser()
+    //   await loadPurchaseLocation()
+    //   await loadCart()
+    //   await loadSideBarMenu()
+    // }, null)
 
     const handleStoreLocatorClick = () => {
       toggleStoreLocatorModal()

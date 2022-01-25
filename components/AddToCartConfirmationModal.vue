@@ -175,7 +175,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
 $cart-button-width: calc(var(--spacer-3xl) + var(--spacer-base));
 
 .collected-product-list {
