@@ -296,15 +296,8 @@ import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
-import {
-  useProduct,
-  useUiState,
-  usePurchaseLocation,
-  useCart,
-} from "@/composables"
-import { 
-  productGetters 
-} from "@/lib/getters"
+import { useProduct, useUiState, usePurchaseLocation, useCart } from "@/composables"
+import { productGetters } from "@/lib/getters"
 import { buildAddToCartInput, isFulfillmentOptionValid } from "@/composables/helpers"
 
 export default defineComponent({
@@ -336,7 +329,6 @@ export default defineComponent({
 
     useAsync(async () => {
       await load(productCode)
-      await loadPurchaseLocation()
     }, null)
 
     const productName = computed(() => productGetters.getName(product.value))

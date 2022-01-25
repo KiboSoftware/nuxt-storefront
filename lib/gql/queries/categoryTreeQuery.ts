@@ -1,6 +1,6 @@
 import { categoryInfo } from "../fragments"
 
-export const categoryTreeQuery = /* GraphQL */`
+export const categoryTreeQuery = /* GraphQL */ `
   ${categoryInfo}
 
   query {
@@ -9,21 +9,6 @@ export const categoryTreeQuery = /* GraphQL */`
         ...categoryInfo
         childrenCategories {
           ...categoryInfo
-          childrenCategories {
-            ...categoryInfo
-            childrenCategories {
-              ...categoryInfo
-              childrenCategories {
-                ...categoryInfo
-                childrenCategories {
-                  ...categoryInfo
-                  childrenCategories {
-                    ...categoryInfo
-                  }
-                }
-              }
-            }
-          }
         }
       }
     }
