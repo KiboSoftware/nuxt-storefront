@@ -3,7 +3,7 @@ export * from "./useUiHelpers"
 export * from "./useUiState"
 
 // Product
-export * from "./useProductSSR"
+export * from "./useProduct"
 
 // User
 export * from "./useUser"
@@ -20,10 +20,9 @@ export * from "./storeFinder/useStoreLocations"
 export * from "./useFacet"
 export * from "./useSearchSuggestions"
 export * from "./useProductSearch"
-export * from "./useSearchRelatedProducts"
 export * from "./useCategoryTree"
 export * from "./useCheckout"
 export * from "./useShippingMethods"
 
 export * from "./useDropzoneContent"
-export * from "./getters/index"
+

@@ -52,7 +52,7 @@
 
 <script>
 import { SfHeader, SfImage, SfIcon, SfBadge, SfButton } from "@storefront-ui/vue"
-import { computed, ref, onBeforeUnmount } from "@vue/composition-api"
+import { computed, ref, onBeforeUnmount , useAsync } from "@nuxtjs/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/click-outside/click-outside-directive.js"
 import {
   mapMobileObserver,
@@ -60,13 +60,11 @@ import {
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 
 import debounce from "lodash.debounce"
-import { useAsync } from "@nuxtjs/composition-api"
+
 import HeaderNavigation from "./HeaderNavigation"
 import LocaleSelector from "./LocaleSelector"
-import { useUiState, usePurchaseLocation } from "@/composables"
-import { useUser } from "@/composables/useUser"
-import { storeLocationGetters, userGetters, cartGetters } from "@/composables/getters"
-import { useCart } from "@/composables/useCart"
+import { useUiState, usePurchaseLocation, useUser, useCart } from "@/composables"
+import { storeLocationGetters, userGetters, cartGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({

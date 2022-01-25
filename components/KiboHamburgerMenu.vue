@@ -59,7 +59,8 @@
 import { onMounted, defineComponent, computed, ref } from "@vue/composition-api"
 import { SfOverlay, SfList, SfMenuItem, SfBar, SfIcon } from "@storefront-ui/vue"
 import { focusTrap, clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
-import { useCategoryTree, useUiHelpers, categoryGetters, useUiState } from "@/composables"
+import { useCategoryTree, useUiHelpers, useUiState } from "@/composables"
+import { categoryGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({

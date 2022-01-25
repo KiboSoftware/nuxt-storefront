@@ -1,6 +1,6 @@
 import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
-import { getSpLocations } from "@/gql/queries/spLocations"
+import { getSpLocations } from "@/lib/gql/queries/spLocations"
 import { Location } from "@/server/types/GraphQL"
 
 export const usePurchaseLocation = () => {

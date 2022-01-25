@@ -1,8 +1,8 @@
 import Vue from "vue"
 import VueCompositionApi from "@vue/composition-api"
-import { useProductSSR } from "@/composables/useProductSSR"
-import { getProductQuery } from "~~/gql/queries/product/getProduct"
-import { configureProductMutation } from "~~/gql/mutations/product/configureProductMutation"
+import { useProduct } from "@/composables/useProduct"
+import { getProductQuery } from "~~/lib/gql/queries/product/getProduct"
+import { configureProductMutation } from "~~/lib/gql/mutations/product/configureProductMutation"
 
 Vue.use(VueCompositionApi)
 const mockGetProductQuery = getProductQuery
@@ -65,12 +65,12 @@ jest.mock("#app", () => ({
   }),
 }))
 
-describe("[composable] useProductSSR", () => {
+describe("[composable] useProduct", () => {
   const productCode = "MS-JKT-012"
 
   // getProduct
   test("load: should load product", async () => {
-    const { product, load, loading, error } = useProductSSR(productCode)
+    const { product, load, loading, error } = useProduct(productCode)
     await load(productCode)
     expect(product.value).toEqual(getProductResponse)
     expect(loading.value).toBeFalsy()
@@ -79,7 +79,7 @@ describe("[composable] useProductSSR", () => {
 
   // configureProduct
   test("load: should configure product", async () => {
-    const { product, configure, loading, error } = useProductSSR(productCode)
+    const { product, configure, loading, error } = useProduct(productCode)
     await configure(
       [{ attributeFQN: "Tenant~color", value: "Black", shopperEnteredValue: undefined }],
       productCode

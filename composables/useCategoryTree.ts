@@ -1,15 +1,13 @@
 import { computed } from "@vue/composition-api"
-import { categoryTreeQuery } from "@/gql/queries"
-import * as GraphQLTypes from "@/server/types/GraphQL"
+import { categoryTreeQuery } from "@/lib/gql/queries"
+import type { PrCategory } from "@/server/types/GraphQL"
 import * as types from "@/composables/types"
 import { useNuxtApp, useState } from "#app"
 
 export const useCategoryTree = (): types.UseCategoryTreeResponse => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const categories = useState(`use-category-tree-categories`, (): GraphQLTypes.PrCategory[] => {
-    return [] as GraphQLTypes.PrCategory[]
-  })
+  const categories = useState<Array<PrCategory>>(`use-category-tree-categories`, () => [])
 
   const loading = useState(`use-category-tree-loading`, () => false)
   const error = useState(`use-category-tree-error`, () => null)

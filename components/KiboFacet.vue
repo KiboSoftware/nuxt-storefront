@@ -40,8 +40,8 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfButton, SfIcon, SfSearchBar, SfFilter } from "@storefront-ui/vue"
-import { facetGetters, facetValueGetters } from "@/composables"
-import { FacetValue } from "~~/server/types/GraphQL"
+import { facetGetters, facetValueGetters } from "@/lib/getters"
+import { FacetValue } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "KiboFacet",

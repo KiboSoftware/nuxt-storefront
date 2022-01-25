@@ -268,13 +268,17 @@ import {
   useUiState,
   useUser,
   useSearchSuggestions,
+  useCategoryTree
+} from "@/composables"
+
+import {
   userGetters,
   storeLocationGetters,
   searchSuggestionGetters,
   cartGetters,
-  useCategoryTree,
-  categoryGetters,
-} from "@/composables"
+  categoryGetters
+} from "@/lib/getters"
+
 import { useNuxtApp } from "#app"
 import * as logo from "@/assets/images/kibo_logo.png"
 

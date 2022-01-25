@@ -1,5 +1,5 @@
 import { useState, useNuxtApp } from "#app"
-import { getDocumentsQuery } from "@/gql/queries"
+import { getDocumentsQuery } from "@/lib/gql/queries"
 
 const walkDropzonez = (dropzones = []) => {
   let widgets = []

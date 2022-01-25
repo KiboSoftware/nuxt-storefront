@@ -85,9 +85,12 @@ import {
   useCurrentLocation,
   useStoreLocations,
   usePurchaseLocation,
-  storeLocationGetters,
   useUiState,
 } from "@/composables"
+
+import {
+    storeLocationGetters
+} from "@/lib/getters"
 
 export default {
   name: "StoreLocatorModal",

@@ -1,8 +1,8 @@
 import Vue from "vue"
 import VueCompositionApi from "@vue/composition-api"
 import * as cookieHelper from "@/composables/helpers/cookieHelper"
-import { loginMutation } from "@/gql/mutations"
-import { getCurrentUser } from "@/gql/queries"
+import { loginMutation } from "@/lib/gql/mutations"
+import { getCurrentUser } from "@/lib/gql/queries"
 import { useUser } from "@/composables/useUser"
 Vue.use(VueCompositionApi)
 const mockCurrentUser = getCurrentUser

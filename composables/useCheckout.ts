@@ -1,6 +1,6 @@
 import { computed } from "@vue/composition-api"
-import { getOrCreateCheckoutFromCartMutation, setShippingInfoMutation } from "@/gql/mutations"
-import { getCheckoutQuery } from "@/gql/queries"
+import { getOrCreateCheckoutFromCartMutation, setShippingInfoMutation } from "@/lib/gql/mutations"
+import { getCheckoutQuery } from "@/lib/gql/queries"
 import { useState, useNuxtApp } from "#app"
 import type { Checkout, Maybe } from "@/server/types/GraphQL"
 

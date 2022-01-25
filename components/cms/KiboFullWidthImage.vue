@@ -6,6 +6,9 @@
 <script>
 import { SfImage } from "@storefront-ui/vue"
 export default {
+  components: {
+    SfImage,
+  },
   props: {
     src: {
       type: String,
@@ -23,9 +26,6 @@ export default {
       type: String,
       default: "",
     },
-  },
-  components: {
-    SfImage,
   },
 }
 </script>

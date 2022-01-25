@@ -1,5 +1,5 @@
 import { computed } from "@vue/composition-api"
-import { getShippingRatesQuery } from "@/gql/queries"
+import { getShippingRatesQuery } from "@/lib/gql/queries"
 import type { Maybe, ShippingRate } from "@/server/types/GraphQL"
 
 export const useShippingMethods = () => {

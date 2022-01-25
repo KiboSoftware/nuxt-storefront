@@ -1,5 +1,5 @@
-import { FacetValue, PrCategory } from "./../server/types/GraphQL"
 import type { uiHelpersReturnType, getFacetsFromURLResponse } from "./types"
+import type { FacetValue, PrCategory } from "@/server/types/GraphQL"
 import { useNuxtApp } from "#app"
 
 const nonFilters = ["page", "sort", "phrase", "itemsPerPage"]

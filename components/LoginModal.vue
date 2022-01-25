@@ -143,7 +143,8 @@ import {
   SfLoader,
 } from "@storefront-ui/vue"
 
-import { useCart, useUiState, useUser, userGetters } from "@/composables"
+import { useCart, useUiState, useUser } from "@/composables"
+import { userGetters } from "@/lib/getters"
 import { LoginFormType } from "@/components/types/login"
 
 export default {

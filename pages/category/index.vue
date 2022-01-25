@@ -193,11 +193,15 @@ import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-ap
 import {
   useUiHelpers,
   useFacet,
-  useProductSearch,
+  useProductSearch
+} from "@/composables"
+
+import {
   productGetters,
   facetGetters,
   productSearchGetters,
-} from "@/composables"
+} from "@/lib/getters"
+
 import { useNuxtApp } from "#app"
 
 export default {

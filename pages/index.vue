@@ -1,6 +1,6 @@
 <template>
   <div>
-    <KiboWidgetFactory :documentName="pageName" />
+    <KiboWidgetFactory :document-name="pageName" />
   </div>
 </template>
 
@@ -8,8 +8,8 @@
 import KiboWidgetFactory from "@/components/cms/KiboWidgetFactory.vue"
 
 export default {
-  layout: "full-width",
   components: { KiboWidgetFactory },
+  layout: "full-width",
   setup() {
     const pageName = "home-page"
     return {

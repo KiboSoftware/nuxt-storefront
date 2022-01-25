@@ -27,7 +27,8 @@
 import { defineComponent, computed } from "@vue/composition-api"
 import { useAsync } from "@nuxtjs/composition-api"
 import { SfLoader, SfBar } from "@storefront-ui/vue"
-import { useProductSSR, productGetters } from "@/composables"
+import { useProduct } from "@/composables"
+import { productGetters } from "@/lib/getters"
 
 export default defineComponent({
   components: {
@@ -35,7 +36,7 @@ export default defineComponent({
   },
   setup(_, context) {
     const { productCode } = context.root.$route.params
-    const { load, product, loading, error } = useProductSSR(productCode)
+    const { load, product, loading, error } = useProduct(productCode)
 
     useAsync(async () => {
       await load(productCode)
