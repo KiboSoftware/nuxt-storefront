@@ -22,6 +22,7 @@ export const useCart = () => {
     const cartResponse = await fetcher({
       query: getCartQuery,
     })
+
     return cartResponse.data.currentCart
   }
 
@@ -111,6 +112,26 @@ export const useCart = () => {
     } finally {
       loading.value = false
       await load()
+    }
+  }
+
+  const updateCartItem = async (cartItemId: string, cartItemInput) => {
+    const variables = {
+      cartItemId,
+      cartItemInput,
+    }
+    try {
+      loading.value = true
+      await fetcher({
+        query: updateCartItemMutation,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+      cart.value = await getCart()
     }
   }
 

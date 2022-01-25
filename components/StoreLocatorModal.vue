@@ -117,6 +117,7 @@ export default {
       if (handleSetStore) {
         handleSetStore(selectedStore.value)
       }
+
       closeModal()
     }
 
