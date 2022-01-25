@@ -183,6 +183,11 @@ export default defineNuxtConfig({
         path: "/search",
         component: resolve(__dirname, "pages/category/index.vue"),
       })
+      routes.push({
+        name: "cms_page",
+        path: "/pages/:pageName",
+        component: resolve(__dirname, "pages/cms-page.vue"),
+      })
     },
     middleware: [],
   },
