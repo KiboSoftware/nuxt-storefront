@@ -78,6 +78,7 @@
               :placeholder="$t('Search')"
               aria-label="Search"
               class="sf-header__search"
+              :class="{ 'search-box-on-top': isSearchOpen }"
               :value="term"
               @input="handleSearch"
               @keydown.enter="gotoSearchResult()"
@@ -268,7 +269,7 @@ import {
   useUiState,
   useUser,
   useSearchSuggestions,
-  useCategoryTree
+  useCategoryTree,
 } from "@/composables"
 
 import {
@@ -276,7 +277,7 @@ import {
   storeLocationGetters,
   searchSuggestionGetters,
   cartGetters,
-  categoryGetters
+  categoryGetters,
 } from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
@@ -519,12 +520,6 @@ export default defineComponent({
     top: 0;
     margin-top: 14px;
     height: 2.125rem;
-
-    @include for-desktop {
-      z-index: 2;
-      background: var(--c-white);
-      border-radius: var(--spacer-2xs);
-    }
   }
 
   &__bottom-link {
@@ -538,6 +533,15 @@ export default defineComponent({
 
   &__actions {
     flex-basis: 30%;
+  }
+}
+
+.search-box-on-top {
+  z-index: 2;
+
+  @include for-desktop {
+    background: var(--c-white);
+    border-radius: var(--spacer-2xs);
   }
 }
 
