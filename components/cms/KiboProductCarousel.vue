@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="carousel-wrapper">
     <h2>{{ title }}</h2>
     <div>
       <SfCarousel
@@ -87,5 +87,11 @@ export default {
 <style lang="scss" scoped>
 h2 {
   text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.carousel-wrapper {
+  margin: 80px 0 100px;
 }
 </style>
