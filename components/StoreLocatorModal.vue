@@ -63,12 +63,7 @@
 import { SfSearchBar } from "@storefront-ui/vue"
 import { computed, ref, PropType } from "@vue/composition-api"
 import type { StoreLocatorModalProps } from "@/components/types/storeLocatorPropType"
-import {
-  useCurrentLocation,
-  useStoreLocations,
-  usePurchaseLocation,
-  useUiState,
-} from "@/composables"
+import { useCurrentLocation, useStoreLocations, usePurchaseLocation } from "@/composables"
 
 import { storeLocationGetters } from "@/lib/getters"
 
@@ -86,7 +81,6 @@ export default {
     },
   },
   setup(props, context) {
-    const { isStoreLocatorOpen, toggleStoreLocatorModal } = useUiState()
     const { currentLocation, loadWithNavigator } = useCurrentLocation()
     const { locations, search: searchStoreLocations } = useStoreLocations("available-stores")
     const { set, load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
@@ -172,14 +166,12 @@ export default {
 
     return {
       currentLocation,
-      isStoreLocatorOpen,
       locations,
       storeDetails,
       selectedStore,
       zipCodeInput,
       handleStoreChange,
       handleCurrentLocation,
-      toggleStoreLocatorModal,
       searchByZipCode,
       handleSetStoreButtonStatus,
       setStore,

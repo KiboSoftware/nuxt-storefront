@@ -71,9 +71,11 @@ import {
   SfAccordion,
   SfRadio,
 } from "@storefront-ui/vue"
+import { defineComponent, computed } from "@vue/composition-api"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import { useCart, useUiState } from "@/composables"
+import { useCart } from "@/composables"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
+import { useNuxtApp } from "#app"
 
 export default defineComponent({
   name: "KiboCollectedProduct",
@@ -158,16 +160,12 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { toggleStoreLocatorModal } = useUiState()
     const { cart, updateCartItemQuantity, removeCartItem, updateCartItem } = useCart()
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
     const removeHandler = () => {
       context.emit("click:remove")
-    }
-    const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
     }
 
     const componentIs = computed(() => {
@@ -215,7 +213,6 @@ export default defineComponent({
 
     return {
       removeHandler,
-      handleStoreLocatorClick,
       handleQuantitySelectorInput,
       handleRemoveCartItem,
       handleFulfillmentOption,

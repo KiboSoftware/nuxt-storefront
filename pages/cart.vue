@@ -90,13 +90,7 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import {
-  usePurchaseLocation,
-  useCart,
-  useUiState,
-  useUiHelpers,
-  useStoreLocations,
-} from "@/composables"
+import { usePurchaseLocation, useCart, useUiHelpers, useStoreLocations } from "@/composables"
 
 import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
 
@@ -111,7 +105,6 @@ export default defineComponent({
   },
   setup() {
     const { getProductLink } = useUiHelpers()
-    const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
     const router = useRouter()
@@ -139,10 +132,6 @@ export default defineComponent({
       const filter = locationCodes?.map((code) => `${filterOperator} ${code}`).join(" or ")
       await searchStoreLocations({ filter })
     }, null)
-
-    const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
-    }
 
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
@@ -173,7 +162,6 @@ export default defineComponent({
       selectedLocation,
       cartItems,
       cartOrder,
-      handleStoreLocatorClick,
       cartItemFulfillmentOptions,
       getProductLink,
       productGetters,

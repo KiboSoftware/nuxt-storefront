@@ -1,4 +1,4 @@
-import { reactive, computed } from '@nuxtjs/composition-api';
+import { reactive, computed } from "@nuxtjs/composition-api"
 
 const state = reactive({
   isWishlistSidebarOpen: false,
@@ -7,7 +7,6 @@ const state = reactive({
   isCategoryGridView: true,
   isFilterSidebarOpen: false,
   isMobileMenuOpen: false,
-  isStoreLocatorOpen: false,
   isAddToCartConfirmationOpen: false,
   isHamburgerOpen: false,
 })
@@ -28,12 +27,6 @@ export const useUiState = () => {
   const toggleLoginModal = () => {
     if (state.isMobileMenuOpen) toggleMobileMenu()
     state.isLoginModalOpen = !state.isLoginModalOpen
-  }
-
-  const isStoreLocatorOpen = computed(() => state.isStoreLocatorOpen)
-  const toggleStoreLocatorModal = () => {
-    if (state.isMobileMenuOpen) toggleMobileMenu()
-    state.isStoreLocatorOpen = !state.isStoreLocatorOpen
   }
 
   const isAddToCartConfirmationOpen = computed(() => state.isAddToCartConfirmationOpen)
@@ -80,9 +73,7 @@ export const useUiState = () => {
     changeToCategoryListView,
     toggleFilterSidebar,
     toggleMobileMenu,
-    toggleStoreLocatorModal,
     toggleHamburger,
-    isStoreLocatorOpen,
     isAddToCartConfirmationOpen,
     toggleAddToCartConfirmationModal,
   }
