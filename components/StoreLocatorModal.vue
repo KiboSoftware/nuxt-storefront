@@ -134,7 +134,7 @@ export default {
 
         // If opened modal from PDP
         if (setFulfillment) {
-          setFulfillment(selectedFulfillmentValue, purchaseLocation.value)
+          setFulfillment(selectedFulfillmentValue, purchaseLocation.value?.code)
         }
       }
 
