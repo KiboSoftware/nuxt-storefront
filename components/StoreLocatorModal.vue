@@ -62,7 +62,7 @@
 <script lang="ts">
 import { SfSearchBar } from "@storefront-ui/vue"
 import { computed, ref, PropType } from "@vue/composition-api"
-import { StoreLocatorModalProps } from "@/components/types/storeLocatorPropType"
+import type { StoreLocatorModalProps } from "@/components/types/storeLocatorPropType"
 import {
   useCurrentLocation,
   useStoreLocations,
@@ -70,9 +70,7 @@ import {
   useUiState,
 } from "@/composables"
 
-import {
-    storeLocationGetters
-} from "@/lib/getters"
+import { storeLocationGetters } from "@/lib/getters"
 
 export default {
   name: "StoreLocatorModal",
