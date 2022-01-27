@@ -22,8 +22,9 @@ export const useCart = () => {
     const cartResponse = await fetcher({
       query: getCartQuery,
     })
-
     return cartResponse.data.currentCart
+    // TODO
+    // return normalizeCart(cartResponse.data.currentCart)
   }
 
   const load = async () => {
