@@ -2,17 +2,16 @@
   <div id="checkout">
     <div class="checkout">
       <div class="checkout__main">
-        <SfSteps :active="currentStep" @change="updateStep($event)">
+        <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
           <SfStep name="Details">
             <SfPersonalDetails
               :value="personalDetails"
-              @input="personalDetails = $event"
+              @input="updatePersonalDetails"
               @log-in="logIn"
             />
           </SfStep>
           <SfStep name="Shipping">
             <SfShipping
-              :value="shipping"
               :shipping-methods="shippingMethods"
               :countries="countries"
               @input="shipping = $event"
@@ -41,7 +40,7 @@
       </div>
       <div class="checkout__aside">
         <transition name="sf-fade">
-          <SfOrderSummary
+          <KiboOrderSummary
             v-if="currentStep <= 2"
             key="order-summary"
             class="checkout__aside-order"
@@ -69,7 +68,7 @@
       <SfButton
         class="sf-button--full-width actions__button"
         data-testid="next-button"
-        @click="currentStep++"
+        @click="updateStep"
         >{{ steps[currentStep] }}</SfButton
       >
       <SfButton
@@ -80,7 +79,8 @@
     </div>
   </div>
 </template>
-<script>
+
+<script lang="ts">
 import {
   SfSteps,
   SfButton,
@@ -88,7 +88,6 @@ import {
   SfShipping,
   SfPayment,
   SfConfirmOrder,
-  SfOrderSummary,
   SfOrderReview,
 } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
@@ -103,28 +102,253 @@ export default {
     SfShipping,
     SfPayment,
     SfConfirmOrder,
-    SfOrderSummary,
     SfOrderReview,
     SfButton,
   },
   setup() {
     const nuxt = useNuxtApp()
     const countries = nuxt.nuxt2Context.$config.countries
+    const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart } = useCheckout()
+    const { checkout, loadFromCart, setPersonalInfo } = useCheckout()
     const { toggleLoginModal } = useUiState()
 
     const months = []
     const years = []
 
+    enum Steps {
+      GO_TO_SHIPPING = "Go to Shipping",
+      GO_TO_PAYMENT = "Go to Payment",
+      PAY_FOR_ORDER = "Pay for Order",
+      CONFIRM_AND_PAY = "Confirm and pay",
+    }
+    const steps = [
+      Steps.GO_TO_SHIPPING,
+      Steps.GO_TO_PAYMENT,
+      Steps.PAY_FOR_ORDER,
+      Steps.CONFIRM_AND_PAY,
+    ]
+
+    const payment = {
+      sameAsShipping: false,
+      firstName: "",
+      lastName: "",
+      streetName: "",
+      apartment: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phoneNumber: "",
+      paymentMethod: "",
+      invoice: false,
+      cardNumber: "",
+      cardHolder: "",
+      cardMonth: "",
+      cardYear: "",
+      cardCVC: "",
+      cardKeep: false,
+    }
+
+    const order = {
+      password: "",
+      createAccount: false,
+      firstName: "John",
+      lastName: "Dog",
+      email: "john.dog@gmail.com",
+      orderItems: [
+        {
+          title: "Cream Beach Bag",
+          image: "/assets/storybook/Home/productA.jpg",
+          price: { regular: "$100.00" },
+          configuration: [
+            { name: "Size", value: "XS" },
+            { name: "Color", value: "White" },
+          ],
+          qty: 1,
+          sku: "MSD23-345-324",
+        },
+        {
+          title: "Vila stripe maxi dress",
+          image: "/assets/storybook/Home/productB.jpg",
+          price: { regular: "$50.00", special: "$20.05" },
+          configuration: [
+            { name: "Size", value: "XS" },
+            { name: "Color", value: "White" },
+          ],
+          qty: 2,
+          sku: "MSD23-345-325",
+        },
+      ],
+    }
+
+    const paymentMethods = [
+      {
+        label: "Visa Debit",
+        value: "debit",
+      },
+      {
+        label: "MasterCard",
+        value: "mastercard",
+      },
+      {
+        label: "Visa Electron",
+        value: "electron",
+      },
+      {
+        label: "Cash on delivery",
+        value: "cash",
+      },
+      {
+        label: "Check",
+        value: "check",
+      },
+    ]
+
+    const shipping = {
+      firstName: "",
+      lastName: "",
+      streetName: "",
+      apartment: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phoneNumber: "",
+      shippingMethod: {
+        price: "$0.00",
+      },
+    }
+
+    const shippingMethods = [
+      {
+        isOpen: false,
+        price: "Free",
+        delivery: "Delivery from 3 to 7 business days",
+        label: "Pickup in the store",
+        value: "store",
+        description:
+          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
+      },
+      {
+        isOpen: false,
+        price: "$9.90",
+        delivery: "Delivery from 4 to 6 business days",
+        label: "Delivery to home",
+        value: "home",
+        description:
+          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
+      },
+      {
+        isOpen: false,
+        price: "$9.90",
+        delivery: "Delivery from 4 to 6 business days",
+        label: "Paczkomaty InPost",
+        value: "inpost",
+        description:
+          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
+      },
+      {
+        isOpen: false,
+        price: "$11.00",
+        delivery: "Delivery within 48 hours",
+        label: "48 hours coffee",
+        value: "coffee",
+        description:
+          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
+      },
+      {
+        isOpen: false,
+        price: "$14.00",
+        delivery: "Delivery within 24 hours",
+        label: "Urgent 24h",
+        value: "urgent",
+        description:
+          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
+      },
+    ]
+
+    let personalDetails = { firstName: "", lastName: "", email: "" }
+
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
     }, null)
 
-    const updateStep = (next) => {
-      // prevent to move next by SfStep header
-      if (next < this.currentStep) {
-        this.currentStep = next
+    const getOrder = computed(() => {
+      return {
+        ...order,
+        ...personalDetails,
+        shipping: { ...shipping },
+        payment: { ...payment },
+      }
+    })
+
+    const createUserAccout = () => {
+      console.log("User account created successfully.")
+    }
+
+    const updatePersonalDetails = (updatedPersonalDetails) => {
+      personalDetails = { ...updatedPersonalDetails }
+    }
+
+    const savePersonalDetails = async () => {
+      const updatedCheckoutInput = {
+        ...checkout.value,
+        email: personalDetails.email,
+        totalCollected: 0,
+        amountAvailableForRefund: 0,
+        amountRemainingForPayment: 0,
+        amountRefunded: 0,
+      }
+
+      const variables = {
+        orderId: checkout.value.id,
+        updateMode: "ApplyToOriginal",
+        orderInput: updatedCheckoutInput,
+      }
+
+      await setPersonalInfo(variables)
+    }
+
+    const saveShippingDetails = () => {
+      console.log("Saved shipping details.")
+    }
+
+    const savePaymentDetails = () => {
+      console.log("Saved payment details.")
+    }
+
+    const updateStep = (selectedStep: number) => {
+      const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1
+
+      switch (steps[currentStep.value]) {
+        case Steps.GO_TO_SHIPPING: {
+          savePersonalDetails()
+          break
+        }
+
+        case Steps.GO_TO_PAYMENT: {
+          saveShippingDetails()
+          break
+        }
+
+        case Steps.PAY_FOR_ORDER: {
+          savePaymentDetails()
+          break
+        }
+
+        case Steps.CONFIRM_AND_PAY: {
+          if (typeof selectedStep !== "number") {
+            createUserAccout()
+          }
+
+          break
+        }
+      }
+
+      // prevent to move nextStep by SfStep header
+      if (nextStep < steps.length) {
+        currentStep.value = nextStep
       }
     }
 
@@ -136,148 +360,19 @@ export default {
       countries,
       months,
       years,
-      currentStep: 0,
-      steps: ["Go to shipping", "Go to payment", "Pay for order", "Confirm and pay"],
-      personalDetails: { firstName: "", lastName: "", email: "" },
-      shipping: {
-        firstName: "",
-        lastName: "",
-        streetName: "",
-        apartment: "",
-        city: "",
-        state: "",
-        zipCode: "",
-        country: "",
-        phoneNumber: "",
-        shippingMethod: {
-          price: "$0.00",
-        },
-      },
-      payment: {
-        sameAsShipping: false,
-        firstName: "",
-        lastName: "",
-        streetName: "",
-        apartment: "",
-        city: "",
-        state: "",
-        zipCode: "",
-        country: "",
-        phoneNumber: "",
-        paymentMethod: "",
-        invoice: false,
-        cardNumber: "",
-        cardHolder: "",
-        cardMonth: "",
-        cardYear: "",
-        cardCVC: "",
-        cardKeep: false,
-      },
-      order: {
-        password: "",
-        createAccount: false,
-        firstName: "John",
-        lastName: "Dog",
-        email: "john.dog@gmail.com",
-        orderItems: [
-          {
-            title: "Cream Beach Bag",
-            image: "/assets/storybook/Home/productA.jpg",
-            price: { regular: "$50.00" },
-            configuration: [
-              { name: "Size", value: "XS" },
-              { name: "Color", value: "White" },
-            ],
-            qty: 1,
-            sku: "MSD23-345-324",
-          },
-          {
-            title: "Vila stripe maxi dress",
-            image: "/assets/storybook/Home/productB.jpg",
-            price: { regular: "$50.00", special: "$20.05" },
-            configuration: [
-              { name: "Size", value: "XS" },
-              { name: "Color", value: "White" },
-            ],
-            qty: 2,
-            sku: "MSD23-345-325",
-          },
-        ],
-      },
-      paymentMethods: [
-        {
-          label: "Visa Debit",
-          value: "debit",
-        },
-        {
-          label: "MasterCard",
-          value: "mastercard",
-        },
-        {
-          label: "Visa Electron",
-          value: "electron",
-        },
-        {
-          label: "Cash on delivery",
-          value: "cash",
-        },
-        {
-          label: "Check",
-          value: "check",
-        },
-      ],
-      shippingMethods: [
-        {
-          isOpen: false,
-          price: "Free",
-          delivery: "Delivery from 3 to 7 business days",
-          label: "Pickup in the store",
-          value: "store",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$9.90",
-          delivery: "Delivery from 4 to 6 business days",
-          label: "Delivery to home",
-          value: "home",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$9.90",
-          delivery: "Delivery from 4 to 6 business days",
-          label: "Paczkomaty InPost",
-          value: "inpost",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$11.00",
-          delivery: "Delivery within 48 hours",
-          label: "48 hours coffee",
-          value: "coffee",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-        {
-          isOpen: false,
-          price: "$14.00",
-          delivery: "Delivery within 24 hours",
-          label: "Urgent 24h",
-          value: "urgent",
-          description:
-            "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-        },
-      ],
+      currentStep,
+      steps,
+      personalDetails,
+      shipping,
+      payment,
+      order,
+      paymentMethods,
+      shippingMethods,
       buttonNames: [
-        { name: "Go to shipping" },
-        { name: "Go to payment" },
-        { name: "Review Order" },
-        { name: "Place my order" },
+        { name: "Go to Shipping" },
+        { name: "Go to Payment" },
+        { name: "Pay for Order" },
+        { name: "Confirm and Pay" },
       ],
       characteristics: [
         {
@@ -299,17 +394,9 @@ export default {
       checkout,
       updateStep,
       logIn,
+      getOrder,
+      updatePersonalDetails,
     }
-  },
-  computed: {
-    getOrder() {
-      return {
-        ...this.order,
-        ...this.personalDetails,
-        shipping: { ...this.shipping },
-        payment: { ...this.payment },
-      }
-    },
   },
   watch: {
     shipping(newVal, oldVal) {
@@ -323,6 +410,7 @@ export default {
   },
 }
 </script>
+
 <style lang="scss" scoped>
 @import "~@storefront-ui/vue/styles";
 
@@ -341,6 +429,7 @@ export default {
     --steps-content-padding: 0;
 
     display: flex;
+    gap: 2.67%; //35px;
   }
 
   &__main {
@@ -350,19 +439,20 @@ export default {
     @include for-desktop {
       flex: 1;
       padding: var(--spacer-xl) 0 0 0;
+      width: 65.74%; //860px;
     }
   }
 
   &__aside {
     @include for-desktop {
       flex: 0 0 26.8125rem;
-      margin: 0 0 0 var(--spacer-base);
+      width: 31.57%; //413px;
     }
 
     &-order {
       box-sizing: border-box;
       width: 100%;
-      background: var(--c-light);
+      background: white;
       padding: var(--spacer-base) var(--spacer-sm) var(--spacer-xl);
       @include for-desktop {
         padding: var(--spacer-xl);
