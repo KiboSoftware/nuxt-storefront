@@ -261,7 +261,6 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import debounce from "lodash.debounce"
-import { useAsync } from "@nuxtjs/composition-api"
 import {
   usePurchaseLocation,
   useCart,
@@ -294,15 +293,15 @@ export default defineComponent({
   },
   directives: { clickOutside },
   setup(_, context) {
-    const { categories: allCategories, load: loadSideBarMenu } = useCategoryTree()
-
-    const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
-    const { result, search, loading } = useSearchSuggestions()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
+
+    const { categories: allCategories } = useCategoryTree()
+    const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
+    const { result, search, loading } = useSearchSuggestions()
     const { user, load: loadUser } = useUser()
-    const { purchaseLocation, load: loadPurchaseLocation } = usePurchaseLocation()
-    const { cart, load: loadCart } = useCart()
+    const { purchaseLocation } = usePurchaseLocation()
+    const { cart } = useCart()
 
     const searchValue = ref("")
     const isAuthenticated = computed(() => {
@@ -407,13 +406,6 @@ export default defineComponent({
     const gotoCart = () => {
       app.router.push({ path: "/cart" })
     }
-
-    useAsync(async () => {
-      await loadUser()
-      await loadPurchaseLocation()
-      await loadCart()
-      await loadSideBarMenu()
-    }, null)
 
     const handleStoreLocatorClick = () => {
       toggleStoreLocatorModal()

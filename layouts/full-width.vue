@@ -1,5 +1,6 @@
 <template>
   <div>
+    <KiboAppData />
     <KiboAppHeader />
     <LoginModal />
     <StoreLocatorModal />
