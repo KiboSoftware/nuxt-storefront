@@ -16,15 +16,16 @@ export default {
     const componentRef = ref(null)
     const titleRef = ref("")
     const properties = ref(null)
+
+    const handleClose = () => {
+      componentRef.value = null
+    }
+
     ModalBus.$on("open", ({ component, props }) => {
       componentRef.value = component
       titleRef.value = "Select Store"
       properties.value = props
     })
-
-    const handleClose = () => {
-      componentRef.value = null
-    }
 
     return {
       handleClose,

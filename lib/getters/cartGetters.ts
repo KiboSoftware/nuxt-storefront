@@ -93,27 +93,17 @@ const isDisabledFulfillmentOption = (fulfillmentTypesSupported, option) => {
 }
 
 const getFulfillmentDetails = (option, item, cartItemFulfillmentLocation: string) => {
-  if (isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option.value)) {
-    return "Not Available "
+  const details = {
+    DirectShip: option.details,
+    InStorePickup:
+      item?.fulfillmentMethod === "Pickup" && cartItemFulfillmentLocation
+        ? `Available at ${cartItemFulfillmentLocation}`
+        : "",
   }
 
-  if (item?.fulfillmentMethod === "Ship") {
-    if (option.value === "DirectShip") {
-      return option.details
-    }
-    if (option.value === "PickupInStore") {
-      return ""
-    }
-  }
-
-  if (item?.fulfillmentMethod === "Pickup") {
-    if (option.value === "DirectShip") {
-      return option.details
-    }
-    if (option.value === "InStorePickup") {
-      return cartItemFulfillmentLocation ? `Available at ${cartItemFulfillmentLocation}` : ""
-    }
-  }
+  return isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option.value)
+    ? "Not Available"
+    : "" || details[option.value]
 }
 
 const getFulfillmentDescription = (cartItemFulfillmentLocation: string) => {

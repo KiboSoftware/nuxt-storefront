@@ -73,7 +73,6 @@ import {
 } from "@storefront-ui/vue"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
 import { useCart, useUiState } from "@/composables"
-import { FulFillmentOption } from "@/composables/types/fulfillmentOption"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default defineComponent({
@@ -191,32 +190,16 @@ export default defineComponent({
     // Get Fullfillment Options
     const handleFulfillmentOption = async (
       selectedFulfillmentValue?: string,
-      isChangeStore?: boolean
+      shouldOpenModal?: boolean
     ) => {
-      const selectedfulfillmentOption = props.supportedFulfillmentTypes.find(
-        (option: { value: string }) => option.value === selectedFulfillmentValue
-      ) as FulFillmentOption
-
       const itemToBeUpdated = cart.value.items.find((item) => item.id === props.cartItemId)
-      if (selectedfulfillmentOption.value === "DirectShip") {
-        itemToBeUpdated.fulfillmentMethod = selectedfulfillmentOption.shortName
+      if (selectedFulfillmentValue === "Ship") {
+        itemToBeUpdated.fulfillmentMethod = selectedFulfillmentValue
         itemToBeUpdated.fulfillmentLocationCode = null
         itemToBeUpdated.purchaseLocation = null
       }
 
-      // If the selectedFulfillmentOption is Ship to Home or
-      // any purchaseLocation is selected in case of Pickup or change store is not clicked, set the fulfillment
-      if (
-        (!isChangeStore && selectedfulfillmentOption.details) ||
-        selectedfulfillmentOption.value === "DirectShip"
-      ) {
-        alert("SetFulfillment")
-        await updateCartItem(props.cartItemId, itemToBeUpdated)
-      }
-
-      // If no store is selected or change store is selected, open the storeLocatorModal
-      else {
-        alert("open Modal")
+      if (shouldOpenModal) {
         modal.show({
           component: StoreLocatorModal,
           props: {
@@ -225,6 +208,8 @@ export default defineComponent({
             cartItemInput: itemToBeUpdated,
           },
         })
+      } else {
+        await updateCartItem(props.cartItemId, itemToBeUpdated)
       }
     }
 

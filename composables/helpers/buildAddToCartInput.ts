@@ -13,7 +13,7 @@ export const buildAddToCartInput = (
       variationProductCode: product?.variationProductCode || "",
     },
     quantity,
-    fulfillmentMethod: product?.fulfillmentMethodShortName,
+    fulfillmentMethod: product?.fulfillmentMethod,
     purchaseLocation: product?.purchaseLocationCode,
     fulfillmentLocationCode: product?.purchaseLocationCode,
   }

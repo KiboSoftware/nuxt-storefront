@@ -95,6 +95,8 @@ export default {
     const selectedStore = ref("")
     const zipCodeInput = ref("")
     const initialState = ref(true)
+    const { setFulfillment, selectedFulfillmentValue, updateCartItem, cartItemId, cartItemInput } =
+      props?.properties as StoreLocatorModalProps
 
     const handleCurrentLocation = async () => {
       zipCodeInput.value = ""
@@ -122,15 +124,6 @@ export default {
     }
 
     const setStore = async () => {
-      const {
-        setFulfillment,
-        selectedFulfillmentValue,
-        fulfillmentOption,
-        updateCartItem,
-        cartItemId,
-        cartItemInput,
-      } = props?.properties as StoreLocatorModalProps
-
       // If opened modal from Cart Item
       if (updateCartItem) {
         cartItemInput.fulfillmentMethod = "Pickup"
@@ -143,11 +136,7 @@ export default {
 
         // If opened modal from PDP
         if (setFulfillment) {
-          setFulfillment(
-            selectedFulfillmentValue,
-            fulfillmentOption.shortName,
-            purchaseLocation.value
-          )
+          setFulfillment(selectedFulfillmentValue, purchaseLocation.value)
         }
       }
 

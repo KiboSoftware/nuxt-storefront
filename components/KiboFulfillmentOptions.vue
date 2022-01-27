@@ -4,21 +4,17 @@
       <SfRadio
         v-for="(fulfillmentOption, index) in fulfillmentOptions"
         :key="`${fulfillmentOption.name}_${index}`"
-        :name="fulfillmentOption.name"
-        :value="fulfillmentOption.value"
+        name="fulfillment"
+        :value="fulfillmentOption.shortName"
         :label="fulfillmentOption.label"
         :details="fulfillmentOption.details"
         :required="fulfillmentOption.required"
         :disabled="fulfillmentOption.disabled"
-        :selected="
-          selectedOption &&
-          fulfillmentOption.value.toLowerCase().includes(selectedOption.toLowerCase())
-            ? fulfillmentOption.value
-            : ''
-        "
+        :selected="selectedOption"
         class="sf-radio"
         :class="isColumnDisplay && 'column'"
-        @change="selectFulfillment"
+        @change="selectFulfillment(fulfillmentOption)"
+        @input="selectFulfillment(fulfillmentOption)"
       >
         <template v-if="fulfillmentOption.label === pickupInStore" #details>
           <p class="sf-radio__details">
@@ -41,15 +37,12 @@
 import { defineComponent } from "@vue/composition-api"
 import { SfRadio } from "@storefront-ui/vue"
 import { useNuxtApp } from "#app"
+import { FulFillmentOption } from "@/composables/types/fulfillmentOption"
 
 export default defineComponent({
   name: "KiboFulfillmentOptions",
   components: {
     SfRadio,
-  },
-  model: {
-    prop: "selectedOption",
-    event: "change",
   },
   props: {
     fulfillmentOptions: {
@@ -72,15 +65,17 @@ export default defineComponent({
   setup(_, context) {
     const nuxt = useNuxtApp()
     const pickupInStore = nuxt.nuxt2Context.$config.fullfillmentOptions.find(
-      (option) => option.value === "InStorePickup"
+      (option) => option.shortName === "Pickup"
     ).label
 
-    const selectFulfillment = (fulfillmentOptionValue: string) => {
-      context.emit("radioChange", fulfillmentOptionValue)
+    const selectFulfillment = (fulfillmentOption: FulFillmentOption) => {
+      const shouldOpenModal = fulfillmentOption.shortName === "Pickup" && !fulfillmentOption.details
+      context.emit("radioChange", fulfillmentOption.shortName, shouldOpenModal)
     }
     const handleStoreLocatorClick = () => {
-      context.emit("changeStore", "InStorePickup", true)
+      context.emit("changeStore", "Pickup", true)
     }
+
     return {
       selectFulfillment,
       handleStoreLocatorClick,

@@ -597,33 +597,16 @@ export default defineComponent({
     // handle Fullfillment Options radio click and change store
     const handleFulfillmentOption = (
       selectedFulfillmentValue?: string,
-      isChangeStore?: boolean
+      shouldOpenModal?: boolean
     ) => {
-      const selectedfulfillmentOption = productFulfillmentOptions.value.find(
-        (option: { value: string }) => option.value === selectedFulfillmentValue
-      )
-
-      // If the selectedFulfillmentOption is Ship to Home or
-      // any purchaseLocation is selected in case of Pickup or change store is not clicked, set the fulfillment
-      if (
-        (!isChangeStore && purchaseLocation?.value?.code) ||
-        selectedfulfillmentOption.value === "DirectShip"
-      ) {
-        setFulfillment(
-          selectedFulfillmentValue,
-          selectedfulfillmentOption.shortName,
-          purchaseLocation?.value?.code
-        )
-      }
-
-      // If no store is selected or change store is selected, open the storeLocatorModal
-      else {
+      if (!shouldOpenModal) {
+        setFulfillment(selectedFulfillmentValue, purchaseLocation?.value?.code)
+      } else {
         modal.show({
           component: StoreLocatorModal,
           props: {
             setFulfillment,
             selectedFulfillmentValue,
-            fulfillmentOption: selectedfulfillmentOption,
           },
         })
       }

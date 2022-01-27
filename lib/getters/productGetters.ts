@@ -91,6 +91,7 @@ export const getProductFulfillmentOptions = (product: Product, purchaseLocation:
         : purchaseLocation?.name
         ? `${option.details}: ${purchaseLocation.name}`
         : "",
+    description: purchaseLocation?.name ? `Change Store` : `Select Store`,
     required: option.isRequired,
     shortName: option.shortName,
     disabled:
