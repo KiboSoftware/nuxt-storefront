@@ -528,7 +528,8 @@ export default defineComponent({
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal } = useUiState()
-    const { purchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
+
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
@@ -605,8 +606,11 @@ export default defineComponent({
         modal.show({
           component: StoreLocatorModal,
           props: {
-            setFulfillment,
-            selectedFulfillmentValue,
+            handleSetStore: async (selectedStore: string) => {
+              set(selectedStore)
+              await loadPurchaseLocation()
+              setFulfillment(selectedFulfillmentValue, purchaseLocation.value?.code)
+            },
           },
         })
       }

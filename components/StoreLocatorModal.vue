@@ -63,7 +63,7 @@
 import { SfSearchBar } from "@storefront-ui/vue"
 import { computed, ref, PropType } from "@vue/composition-api"
 import type { StoreLocatorModalProps } from "@/components/types/storeLocatorPropType"
-import { useCurrentLocation, useStoreLocations, usePurchaseLocation } from "@/composables"
+import { useCurrentLocation, useStoreLocations } from "@/composables"
 
 import { storeLocationGetters } from "@/lib/getters"
 
@@ -83,12 +83,10 @@ export default {
   setup(props, context) {
     const { currentLocation, loadWithNavigator } = useCurrentLocation()
     const { locations, search: searchStoreLocations } = useStoreLocations("available-stores")
-    const { set, load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
     const selectedStore = ref("")
     const zipCodeInput = ref("")
     const initialState = ref(true)
-    const { setFulfillment, selectedFulfillmentValue, updateCartItem, cartItemId, cartItemInput } =
-      props?.properties as StoreLocatorModalProps
+    const { handleSetStore } = props?.properties as StoreLocatorModalProps
 
     const handleCurrentLocation = async () => {
       zipCodeInput.value = ""
@@ -115,23 +113,10 @@ export default {
       selectedStore.value = locationCode
     }
 
-    const setStore = async () => {
-      // If opened modal from Cart Item
-      if (updateCartItem) {
-        cartItemInput.fulfillmentMethod = "Pickup"
-        cartItemInput.fulfillmentLocationCode = selectedStore.value
-        cartItemInput.purchaseLocation = selectedStore.value
-        updateCartItem(cartItemId, cartItemInput)
-      } else {
-        set(selectedStore.value)
-        await loadPurchaseLocation()
-
-        // If opened modal from PDP
-        if (setFulfillment) {
-          setFulfillment(selectedFulfillmentValue, purchaseLocation.value?.code)
-        }
+    const setStore = () => {
+      if (handleSetStore) {
+        handleSetStore(selectedStore.value)
       }
-
       closeModal()
     }
 

@@ -300,7 +300,7 @@ export default defineComponent({
     const { result, search, loading } = useSearchSuggestions()
     const modal = nuxt.nuxt2Context.$modal
     const { user, load: loadUser } = useUser()
-    const { purchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const { cart } = useCart()
 
     const searchValue = ref("")
@@ -409,6 +409,12 @@ export default defineComponent({
     const handleStoreLocatorClick = () => {
       modal.show({
         component: StoreLocatorModal,
+        props: {
+          handleSetStore: async (selectedStore: string) => {
+            set(selectedStore)
+            await loadPurchaseLocation()
+          },
+        },
       })
     }
 

@@ -193,7 +193,6 @@ export default defineComponent({
       const itemToBeUpdated = cart.value.items.find((item) => item.id === props.cartItemId)
       if (selectedFulfillmentValue === "Ship") {
         itemToBeUpdated.fulfillmentMethod = selectedFulfillmentValue
-        itemToBeUpdated.fulfillmentLocationCode = null
         itemToBeUpdated.purchaseLocation = null
       }
 
@@ -201,9 +200,12 @@ export default defineComponent({
         modal.show({
           component: StoreLocatorModal,
           props: {
-            updateCartItem,
-            cartItemId: props.cartItemId,
-            cartItemInput: itemToBeUpdated,
+            handleSetStore: async (selectedStore) => {
+              itemToBeUpdated.fulfillmentMethod = "Pickup"
+              itemToBeUpdated.fulfillmentLocationCode = selectedStore
+              itemToBeUpdated.purchaseLocation = selectedStore
+              await updateCartItem(props.cartItemId, itemToBeUpdated)
+            },
           },
         })
       } else {
