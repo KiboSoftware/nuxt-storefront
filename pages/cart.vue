@@ -89,20 +89,8 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import { useNuxtApp } from "#app"
-
-import {
-  usePurchaseLocation,
-  useCart,
-  useUiState,
-  useUiHelpers
-} from "@/composables"
-
-import {
-  cartGetters,
-  storeLocationGetters,
-  productGetters,
-} from "@/lib/getters"
+import { usePurchaseLocation, useCart, useUiState, useUiHelpers } from "@/composables"
+import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -118,8 +106,7 @@ export default defineComponent({
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
-    const nuxt = useNuxtApp()
-    const app = nuxt.nuxt2Context.app
+    const router = useRouter()
 
     const breadcrumbs = [
       {
@@ -154,7 +141,7 @@ export default defineComponent({
     }
 
     const checkout = () => {
-      app.router.push({ path: "/checkout" })
+      router.push({ path: "/checkout" })
     }
 
     return {

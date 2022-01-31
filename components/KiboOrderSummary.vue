@@ -30,7 +30,7 @@
         />
         <SfProperty
           :name="propertiesNames[2]"
-          :value="shippingMethod.price"
+          :value="shippingMethod"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
         <SfDivider class="sf-order-summary__divider" />
@@ -85,6 +85,8 @@ import {
   SfCharacteristic,
   SfInput,
 } from "@storefront-ui/vue"
+import { checkoutGetters } from "@/lib/getters"
+
 export default {
   name: "SfOrderSummary",
   components: {
@@ -120,50 +122,14 @@ export default {
   setup(props) {
     const { order } = props
 
-    const products = computed(() => {
-      return order.orderItems
-    })
-
-    const totalItems = computed(() => {
-      return products.value
-        ? products.value.reduce((previous, current) => {
-            return previous + current.qty
-          }, 0)
-        : 0
-    })
-
-    const shipping = computed(() => {
-      return order.shipping || {}
-    })
-
-    const shippingMethod = computed(() => {
-      return shipping.value.shippingMethod || { price: "" }
-    })
-
-    const subtotal = computed(() => {
-      const subtotal = products.value
-        ? products.value.reduce((previous, current) => {
-            const qty = current.qty
-            const price = current.price.special ? current.price.special : current.price.regular
-            const total = qty * parseFloat(price?.replace("$", ""))
-            return previous + total
-          }, 0)
-        : 0
-      return "$" + subtotal.toFixed(2)
-    })
-
-    const total = computed(() => {
-      const subtotalFloat = parseFloat(subtotal.value?.replace("$", ""))
-      const shipping = parseFloat(shippingMethod.price?.replace("$", ""))
-      const total = subtotalFloat + (isNaN(shipping) ? 0 : shipping)
-      return "$" + total.toFixed(2)
-    })
+    const totalItems = computed(() => checkoutGetters.getLineItemTotal(order))
+    const shippingMethod = computed(() => checkoutGetters.getShippingMethod(order))
+    const subtotal = computed(() => checkoutGetters.getSubtotal(order))
+    const total = computed(() => checkoutGetters.getTotal(order))
 
     return {
       promoCode: "",
-      products,
       totalItems,
-      shipping,
       shippingMethod,
       subtotal,
       total,

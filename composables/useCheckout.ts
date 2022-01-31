@@ -45,11 +45,11 @@ export const useCheckout = () => {
   const setPersonalInfo = async (variables) => {
     loading.value = true
     try {
-      const response = await fetcher({
+      await fetcher({
         query: updateOrder,
         variables,
       })
-      checkout.value = response?.data?.checkout
+      await load(checkout.value.id)
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)

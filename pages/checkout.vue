@@ -112,6 +112,7 @@ export default {
     const { cart } = useCart()
     const { checkout, loadFromCart, setPersonalInfo } = useCheckout()
     const { toggleLoginModal } = useUiState()
+    const { createAccountAndLogin } = useUser()
 
     const months = []
     const years = []
@@ -268,33 +269,30 @@ export default {
       },
     ]
 
-    let personalDetails = { firstName: "", lastName: "", email: "" }
+    const personalDetails = ref({ firstName: "", lastName: "", email: "", password: "" })
 
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
     }, null)
 
     const getOrder = computed(() => {
-      return {
-        ...order,
-        ...personalDetails,
-        shipping: { ...shipping },
-        payment: { ...payment },
-      }
+      const order = checkout.value
+      return order
     })
 
-    const createUserAccout = () => {
-      console.log("User account created successfully.")
+    const createUserAccount = async () => {
+      const params = { ...personalDetails.value, acceptsMarketing: true, isActive: true, id: 0 }
+      await createAccountAndLogin(params)
     }
 
     const updatePersonalDetails = (updatedPersonalDetails) => {
-      personalDetails = { ...updatedPersonalDetails }
+      personalDetails.value = { ...updatedPersonalDetails }
     }
 
     const savePersonalDetails = async () => {
       const updatedCheckoutInput = {
         ...checkout.value,
-        email: personalDetails.email,
+        email: personalDetails.value.email,
         totalCollected: 0,
         amountAvailableForRefund: 0,
         amountRemainingForPayment: 0,
@@ -339,7 +337,7 @@ export default {
 
         case Steps.CONFIRM_AND_PAY: {
           if (typeof selectedStep !== "number") {
-            createUserAccout()
+            createUserAccount()
           }
 
           break
