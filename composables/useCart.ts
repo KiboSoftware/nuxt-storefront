@@ -18,7 +18,7 @@ export const useCart = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
 
-  const getCart = async (): Promise<Object> => {
+  const getCart = async (): Promise<Cart> => {
     const cartResponse = await fetcher({
       query: getCartQuery,
     })

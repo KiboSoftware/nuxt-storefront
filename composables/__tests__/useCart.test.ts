@@ -3,13 +3,15 @@ import {
   updateCartItemQuantityMutation,
   addToCartMutation,
   deleteCartItemMutation,
+  updateCartItemMutation,
 } from "@/lib/gql/mutations"
 import { getCartQuery } from "@/lib/gql/queries"
 
 const mockedAddToCartMutation = addToCartMutation
 const mockedGetCartQuery = getCartQuery
-const mockedUpdateCartQuantityMutation = updateCartItemQuantityMutation
+const mockedUpdateCartItemQuantityMutation = updateCartItemQuantityMutation
 const mockedDeleteCartItemMutation = deleteCartItemMutation
+const mockedUpdateCartItemMutation = updateCartItemMutation
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
@@ -40,7 +42,7 @@ jest.mock("#app", () => ({
             },
           })
         }
-        if (query === mockedUpdateCartQuantityMutation) {
+        if (query === mockedUpdateCartItemQuantityMutation) {
           expect(variables).toStrictEqual({
             itemId: "mocked-cart-item-id",
             quantity: 1,
@@ -52,12 +54,18 @@ jest.mock("#app", () => ({
             itemId: "mocked-cart-item-id",
           })
         }
+        if (query === mockedUpdateCartItemMutation) {
+          expect(variables).toStrictEqual({
+            cartItemId: "mock-cart-item-id",
+            cartItemInput: "mock-cart-item-input",
+          })
+        }
       }),
     },
   }),
 }))
 
-xdescribe("[composable] useCart", () => {
+describe("[composable] useCart", () => {
   test("load: should load current cart", async () => {
     const { cart, load, error, loading } = useCart()
     await load()
@@ -98,6 +106,15 @@ xdescribe("[composable] useCart", () => {
     const { removeCartItem, loading, error } = useCart()
     const cartItemId = "mocked-cart-item-id"
     await removeCartItem(cartItemId)
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeNull()
+  })
+
+  test("updateCartItem: should update a cart item", async () => {
+    const { updateCartItem, loading, error } = useCart()
+    const cartItemId = "mock-cart-item-id"
+    const cartItemInput = "mock-cart-item-input"
+    await updateCartItem(cartItemId, cartItemInput)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })

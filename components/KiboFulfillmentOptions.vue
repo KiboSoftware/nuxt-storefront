@@ -1,7 +1,7 @@
 <template>
   <div class="sf-fulfillment-options">
     <slot name="fulfillment-options">
-      <SfRadio
+      <KiboRadio
         v-for="(fulfillmentOption, index) in fulfillmentOptions"
         :key="`${fulfillmentOption.name}_${index}`"
         name="fulfillment"
@@ -29,21 +29,17 @@
             {{ fulfillmentOption.description }}
           </p>
         </template>
-      </SfRadio>
+      </KiboRadio>
     </slot>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfRadio } from "@storefront-ui/vue"
 import { useNuxtApp } from "#app"
 import { FulFillmentOption } from "@/composables/types/fulfillmentOption"
 
 export default defineComponent({
   name: "KiboFulfillmentOptions",
-  components: {
-    SfRadio,
-  },
   props: {
     fulfillmentOptions: {
       type: Array,
