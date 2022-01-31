@@ -10,11 +10,7 @@ import { CartItemInput } from "@/server/types/GraphQL"
 
 const mockedAddToCartMutation = addToCartMutation
 const mockedGetCartQuery = getCartQuery
-<<<<<<< HEAD
 const mockedUpdateCartItemQuantityMutation = updateCartItemQuantityMutation
-=======
-const mockedUpdateCartQuantityMutation = updateCartItemQuantityMutation
->>>>>>> 3353a61 (set cart item fulfillment flow implementation)
 const mockedDeleteCartItemMutation = deleteCartItemMutation
 const mockedUpdateCartItemMutation = updateCartItemMutation
 
