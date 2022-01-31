@@ -1,8 +1,4 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import { useStoreLocations } from "./../storeFinder/useStoreLocations"
-
-Vue.use(VueCompositionApi)
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {

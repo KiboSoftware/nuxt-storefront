@@ -1,7 +1,4 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import { useSearchSuggestions } from "./../useSearchSuggestions"
-Vue.use(VueCompositionApi)
 
 const searchResponse = {
   suggestionSearch: "Mocked suggestion search result",

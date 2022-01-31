@@ -5,7 +5,9 @@ module.exports = {
     "^~~/(.*)$": "<rootDir>/$1",
     "^vue$": "vue/dist/vue.common.js",
     "^#app$": "@nuxt/bridge/dist/runtime/index.mjs",
+    "^@nuxtjs/composition-api$": "@nuxt/bridge/dist/runtime/capi.legacy.mjs",
   },
+  setupFilesAfterEnv: ["./jest.setup.js"],
   transform: {
     "\\.(js|ts|mjs)$": [
       "babel-jest",
