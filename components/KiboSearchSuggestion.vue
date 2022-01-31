@@ -57,14 +57,12 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfLoader } from "@storefront-ui/vue"
-import { useUiHelpers } from "../composables"
-import KiboProductCard from "./KiboProductCard.vue"
 import { useNuxtApp } from "#app"
+import { useUiHelpers } from "@/composables"
 
 export default defineComponent({
   components: {
     SfLoader,
-    KiboProductCard,
   },
 
   props: {
@@ -161,6 +159,7 @@ export default defineComponent({
       font-size: 1.5rem;
       line-height: var(--spacer-base);
       text-align: left;
+      font-weight: bold;
     }
   }
 
@@ -168,7 +167,7 @@ export default defineComponent({
     color: #2b2b2b;
     font-family: var(--font-family--primary);
     font-size: var(--spacer-sm);
-    line-height: 1.188rem;
+    line-height: var(--spacer-lg);
     text-align: left;
     cursor: pointer;
   }

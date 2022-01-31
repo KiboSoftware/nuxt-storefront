@@ -38,7 +38,11 @@
             <div class="category-content">
               <SfList>
                 <SfListItem v-for="(category, key) in megaMenuCategories" :key="key">
-                  <SfMenuItem :label="$t(category.content.name)" @click="goNext(category)" />
+                  <SfMenuItem
+                    :label="$t(category.content.name)"
+                    :icon="showOrHideIcon(category)"
+                    @click="goNext(category)"
+                  />
                 </SfListItem>
               </SfList>
             </div>
@@ -59,9 +63,9 @@
 import { onMounted, defineComponent, computed, ref } from "@vue/composition-api"
 import { SfOverlay, SfList, SfMenuItem, SfBar, SfIcon } from "@storefront-ui/vue"
 import { focusTrap, clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
+import { useNuxtApp } from "#app"
 import { useCategoryTree, useUiHelpers, useUiState } from "@/composables"
 import { categoryGetters } from "@/lib/getters"
-import { useNuxtApp } from "#app"
 
 export default defineComponent({
   components: {
@@ -114,6 +118,7 @@ export default defineComponent({
         }
       } else {
         toggleHamburger()
+        resetHamburger()
         const linkPath = getCatLink(item)
         return app.router.push({ path: linkPath })
       }
@@ -135,6 +140,15 @@ export default defineComponent({
         return false
       }
     }
+    const resetHamburger = () => {
+      title.value = "Back"
+      subTitle.value = "All Departments"
+      megaMenuCategories.value = categories.value
+      parentCategoryCodes.value = []
+    }
+    const showOrHideIcon = (item) => {
+      return item.childrenCategories.length ? "chevron_right" : ""
+    }
 
     onMounted(async () => {
       await loadCategories()
@@ -151,6 +165,8 @@ export default defineComponent({
       oldTitle,
       back,
       toggleHamburger,
+      resetHamburger,
+      showOrHideIcon,
     }
   },
 })
