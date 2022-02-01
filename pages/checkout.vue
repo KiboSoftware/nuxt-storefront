@@ -8,7 +8,43 @@
               :value="personalDetails"
               @input="updatePersonalDetails"
               @log-in="logIn"
-            />
+            >
+              <template #create-account>
+                <SfCheckbox
+                  v-model="showCreateAccount"
+                  name="createAccount"
+                  label="I want to create an account"
+                  class="form__checkbox"
+                  data-testid="create-account-checkbox"
+                  @change="$emit('create-account', createAccount)"
+                />
+                <transition :name="transition">
+                  <div v-if="showCreateAccount" class="password">
+                    <SfInput
+                      v-model="password"
+                      :has-show-password="true"
+                      type="password"
+                      label="Create Password"
+                      class="form__element"
+                      required
+                      error-message="Required"
+                      data-testid="create-password-input"
+                    />
+
+                    <SfInput
+                      v-model="confirmPassword"
+                      :has-show-password="true"
+                      type="password"
+                      label="Confirm Password"
+                      class="form__element"
+                      required
+                      error-message="Required"
+                      data-testid="confirm-password-input"
+                    />
+                  </div>
+                </transition>
+              </template>
+            </SfPersonalDetails>
           </SfStep>
           <SfStep name="Shipping">
             <SfShipping
@@ -89,6 +125,8 @@ import {
   SfPayment,
   SfConfirmOrder,
   SfOrderReview,
+  SfCheckbox,
+  SfInput,
 } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { useCheckout, useCart, useUiState } from "@/composables"
@@ -104,6 +142,8 @@ export default {
     SfConfirmOrder,
     SfOrderReview,
     SfButton,
+    SfCheckbox,
+    SfInput,
   },
   setup() {
     const nuxt = useNuxtApp()
@@ -113,6 +153,10 @@ export default {
     const { checkout, loadFromCart, setPersonalInfo } = useCheckout()
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
+    const showCreateAccount = ref(false)
+    const password = ref(null)
+    const confirmPassword = ref(null)
+    const transition = "sf-fade"
 
     const months = []
     const years = []
@@ -269,19 +313,29 @@ export default {
       },
     ]
 
-    const personalDetails = ref({ firstName: "", lastName: "", email: "", password: "" })
+    const personalDetails = ref({ firstName: "", lastName: "", email: "" })
 
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
     }, null)
 
     const getOrder = computed(() => {
-      const order = checkout.value
-      return order
+      return checkout.value
     })
 
+    const createAccount = (value) => {
+      if (!value) password.value = ""
+    }
+
     const createUserAccount = async () => {
-      const params = { ...personalDetails.value, acceptsMarketing: true, isActive: true, id: 0 }
+      const params = {
+        ...personalDetails.value,
+        password: password.value,
+        acceptsMarketing: true,
+        isActive: true,
+        id: 0,
+      }
+
       await createAccountAndLogin(params)
     }
 
@@ -305,6 +359,7 @@ export default {
         orderInput: updatedCheckoutInput,
       }
 
+      if (!updatedCheckoutInput.email) return
       await setPersonalInfo(variables)
     }
 
@@ -394,6 +449,11 @@ export default {
       logIn,
       getOrder,
       updatePersonalDetails,
+      showCreateAccount,
+      createAccount,
+      password,
+      confirmPassword,
+      transition,
     }
   },
   watch: {
@@ -480,5 +540,18 @@ export default {
       margin: 0;
     }
   }
+}
+
+.form {
+  &__checkbox {
+    width: 100%;
+  }
+}
+
+.password {
+  width: 100%;
+  display: flex;
+  gap: var(--spacer-base);
+  flex-direction: column;
 }
 </style>
