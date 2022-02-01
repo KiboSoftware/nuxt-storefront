@@ -12,7 +12,6 @@
       </SfListItem>
       <div v-if="!isViewMoreClicked && categoryFacets.length > 4">
         <SfButton
-          font-size="13px"
           class="sf-button--text navbar__button navbar__button--plus list__item"
           aria-label="View More"
           @click="handleViewMoreClick()"
@@ -70,6 +69,13 @@ export default defineComponent({
     const isViewMoreClicked = ref(false)
     const allCatgeoryFacets = ref(categoriesFromSearch.children || [])
 
+    watch(
+      () => props.categoriesFromSearch,
+      (childrenValue) => {
+        allCatgeoryFacets.value = childrenValue?.children || []
+      }
+    )
+
     const handleViewMoreClick = () => {
       isViewMoreClicked.value = true
     }
@@ -111,7 +117,7 @@ export default defineComponent({
 
 .category-drill-down,
 .filters {
-  border: 1px solid var(--c-light);
+  border: 1px solid var(--_c-white-secondary);
   border-width: 0 0 1px 0;
 
   .sf-menu-item {
@@ -185,7 +191,7 @@ export default defineComponent({
 
   &__plus-icon {
     margin: 0 calc(var(--spacer-2xs) * 0.5) calc(var(--spacer-2xs) * 0.5) 0;
-    order: 1;
+    order: 0;
     @include for-desktop {
       margin: 0 var(--spacer-xs) 0 0;
       order: 0;
@@ -205,7 +211,7 @@ export default defineComponent({
 
     &--plus {
       font-family: var(--font-family--primary);
-      font-size: var(--font-size--sm);
+      font-size: var(--font-size--sm) !important;
       margin: 0 0;
       height: calc(var(--spacer-xs) * 1.75);
       padding: var(--spacer-sm) calc(var(--spacer-2xs) * 1.5);

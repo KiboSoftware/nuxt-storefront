@@ -27,9 +27,14 @@ const getCategoryFacet = (isSearchPage, productSearchResult, categoryCode) => {
   return { header, children }
 }
 
+const getTotalProducts = (searchData: ProductSearchResult) => {
+  return searchData?.totalCount
+}
+
 export const productSearchGetters = {
   getProducts,
   getFacets,
   getFacetByName,
   getCategoryFacet,
+  getTotalProducts,
 }

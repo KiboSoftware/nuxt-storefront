@@ -5,6 +5,7 @@
       <div class="navbar__main">
         <div class="navbar__aside" v-if="!productSearchLoading">
           <SfHeading :level="1" :title="pageHeader" class="category-name sf-heading__title" />
+          <div class="total-products total-products__upper-total">{{ totalProducts }} Results</div>
         </div>
         <div class="navbar__aside" v-if="productSearchLoading">
           <KiboSkeletonLoading
@@ -16,7 +17,7 @@
             skeleton-class="plp-total-products-count sk-loading"
           />
         </div>
-        <div class="navbar__sort" v-if="!productSearchLoading">
+        <div v-if="!showMobileFilters && !productSearchLoading" class="navbar__sort">
           <span class="navbar__label">{{ $t("Sort by") }}</span>
           <SfSelect
             :required="false"
@@ -35,6 +36,10 @@
               {{ option.value }}
             </SfSelectOption>
           </SfSelect>
+          <SfButton class="sf-button--small smartphone-only filter-button" @click="filterByToggle">
+            Filter By
+            <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
+          </SfButton>
         </div>
         <div class="navbar__sort" v-if="productSearchLoading">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
@@ -66,7 +71,112 @@
         </div>
       </div>
     </div>
-    <div class="main section">
+    <div v-if="showMobileFilters">
+      <div>
+        <div class="filter-by">
+          <span class="filter-by__title">Filter By</span>
+          <SfIcon
+            icon="cross"
+            size="0.938rem"
+            color="#7C7C7C"
+            @click="filterByToggle"
+            class="filter-by-cross-icon"
+          />
+        </div>
+        <div v-if="appliedFilters.value.length" class="applied-filters-container">
+          <div class="applied-filters">
+            <div
+              v-for="(filter, ind) in appliedFilters.value"
+              :key="ind"
+              class="applied-filters__values tiles"
+            >
+              <span class="applied-filters__filter-name">{{ filter.label }}</span>
+              <span class="applied-filters__values--padding-left">
+                <SfIcon
+                  icon="cross"
+                  size="0.7rem"
+                  @click="() => selectFilter(filter.filterValue)"
+                />
+              </span>
+            </div>
+          </div>
+        </div>
+        <hr class="filter-hr" />
+      </div>
+      <div key="filters">
+        <SfAccordion :show-chevron="true" open="all" :multiple="false">
+          <div v-for="(facet, i) in facets" :key="i">
+            <SfAccordionItem
+              :key="`filter-title-${facetGetters.getFacetField(facet)}`"
+              :header="facetGetters.getFacetName(facet)"
+              class="filters"
+            >
+              <template #header="{ header, isOpen, accordionClick }">
+                <SfButton
+                  :aria-pressed="isOpen.toString()"
+                  :aria-expanded="isOpen.toString()"
+                  :class="{ 'is-open': false }"
+                  class="sf-button--pure sf-accordion-item__header"
+                  @click="accordionClick"
+                >
+                  {{ header }}
+                  <slot name="additional-info" />
+                  <SfChevron
+                    tabindex="0"
+                    class="sf-accordion-item__chevron"
+                    :class="{ 'sf-chevron--top': isOpen }"
+                  />
+                </SfButton>
+              </template>
+              <KiboFacet :facet="facet" @selectFilter="selectFilter" />
+            </SfAccordionItem>
+            <hr class="facet-hr smartphone-only" />
+          </div>
+        </SfAccordion>
+      </div>
+      <div class="filter-buttons">
+        <SfButton
+          class="sf-button--small color-light smartphone-only clear"
+          @click="clearAllFilters()"
+          :disabled="!appliedFilters.value.length"
+          :class="`${!appliedFilters.value.length ? 'clear__is-disabled--button' : ''}`"
+        >
+          Clear All
+        </SfButton>
+        <SfButton
+          class="sf-button--small smartphone-only view"
+          :class="`${!appliedFilters.value.length ? 'view__is-disabled--button' : ''}`"
+          @click="filterByToggle"
+          :disabled="!appliedFilters.value.length"
+        >
+          View Results
+        </SfButton>
+      </div>
+      <div v-if="totalProducts" class="total-products total-products__lower-total">
+        {{ totalProducts }} Results
+      </div>
+    </div>
+    <div>
+      <div
+        v-if="!showMobileFilters && appliedFilters.value.length"
+        class="applied-filters-container"
+      >
+        <div class="applied-filters applied-filters__withoutFilter">
+          <div
+            v-for="(filter, ind) in appliedFilters.value"
+            :key="ind"
+            class="applied-filters__values tiles"
+          >
+            <span class="applied-filters__filter-name">{{ filter.label }}</span>
+            <span class="applied-filters__values--padding-left">
+              <SfIcon icon="cross" size="0.7rem" @click="() => selectFilter(filter.filterValue)" />
+            </span>
+          </div>
+        </div>
+        <div class="sf-link" @click="clearAllFilters">Clear All</div>
+      </div>
+    </div>
+    <div v-if="!showMobileFilters" class="main section">
       <div class="sidebar desktop-only">
         <transition-group>
           <CategoryFacet
@@ -208,6 +318,7 @@ import {
   SfProductCardHorizontal,
   SfAccordion,
   SfChevron,
+  SfProperty,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
 import { useUiHelpers, useFacet, useProductSearch } from "@/composables"
@@ -227,6 +338,7 @@ export default {
     SfProductCardHorizontal,
     SfAccordion,
     SfChevron,
+    SfProperty,
   },
   setup(_, context) {
     const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink } =
@@ -244,6 +356,8 @@ export default {
     })
     const isSearchPage = ref(false)
     const route = useRoute()
+
+    const showMobileFilters = ref(false)
 
     // Determining if search page using categoryCode present in URL or not
     if (!route.value.params?.categoryCode) {
@@ -266,6 +380,9 @@ export default {
     const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
+    )
+    const totalProducts = computed(() =>
+      productSearchGetters.getTotalProducts(productSearchResult?.value)
     )
     const getCategoryFacet = computed(() => {
       const { categoryCode } = facetsFromUrl.value
@@ -294,7 +411,7 @@ export default {
           }"`
         : getCategoryFacet.value.header
     })
-
+    const appliedFilters = ref({})
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
       const filters = qs.filters?.split(",") || []
@@ -306,7 +423,7 @@ export default {
       }
       changeFilters(filters.join(","))
     }
-
+    appliedFilters.value = computed(() => facetGetters.getSelectedFacets(facets.value))
     watch(
       () => context.root.$route,
       async () => {
@@ -316,6 +433,7 @@ export default {
           ...getFacetsFromURL(isSearchPage.value),
           itemsPerPage: showPerPage.value,
         })
+        appliedFilters.value = computed(() => facetGetters.getSelectedFacets(facets.value))
       }
     )
 
@@ -329,6 +447,14 @@ export default {
 
     const handleCategoryClick = (item) => {
       setCategoryLink(isSearchPage.value, item)
+    }
+
+    const clearAllFilters = () => {
+      changeFilters("")
+    }
+
+    const filterByToggle = () => {
+      showMobileFilters.value = !showMobileFilters.value
     }
 
     return {
@@ -352,6 +478,11 @@ export default {
       pageHeader,
       handleCategoryClick,
       isSearchPage,
+      totalProducts,
+      showMobileFilters,
+      appliedFilters,
+      clearAllFilters,
+      filterByToggle,
     }
   },
 }
@@ -371,15 +502,37 @@ export default {
   }
 }
 
+.filter-by {
+  padding: calc(var(--spacer-2xs) * 8) 0 calc(var(--spacer-2xs) * 5) 0;
+  display: flex;
+  justify-content: space-between;
+
+  &__title {
+    font-size: 20px;
+    font-weight: bold;
+  }
+}
+
+.sf-heading {
+  &__title {
+    @include for-mobile {
+      font-size: var(--h3-font-size) !important;
+    }
+  }
+}
+
 .navbar {
   position: relative;
   display: flex;
   border: 1px solid var(--c-light);
   border-width: 0 0 1px 0;
-  height: 4.813rem;
   flex-wrap: wrap;
   @include for-desktop {
     border-width: 1px 0 1px 0;
+  }
+
+  @include for-mobile {
+    border: none;
   }
 
   &.section {
@@ -394,8 +547,8 @@ export default {
   }
 
   &__aside {
-    padding: 0;
     flex: 1;
+    padding: 0;
     @include for-mobile {
       justify-content: space-between;
       width: 100%;
@@ -430,6 +583,7 @@ export default {
   &__button {
     display: flex;
     align-items: center;
+    font-size: var(--font-size--sm);
 
     --button-text-decoration: none;
 
@@ -686,12 +840,15 @@ export default {
 
 .category-drill-down,
 .filters {
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
+  @include for-desktop {
+    border: 1px solid var(--_c-white-secondary);
+    border-width: 0 0 1px 0;
+  }
 }
 
 .category-name {
   margin: 0;
+  font-size: var(--font-size--lg);
   @include for-desktop {
     margin: 0 0 0 -1.563rem;
   }
@@ -714,7 +871,22 @@ export default {
   &__header {
     font-size: var(--font-size--sm);
     font-weight: bold;
+    @include for-mobile {
+      font-size: var(--font-size--lg);
+    }
   }
+
+  @include for-mobile {
+    --accordion-item-header-font-size: var(--font-size--base);
+    --accordion-item-header-font-weight: var(--font-weight--normal);
+    --accordion-item-header-border-width: 0;
+    --accordion-item-content-border-width: 0;
+    --accordion-item-content-padding: var(--spacer-2xs) 0;
+  }
+}
+
+.option {
+  min-width: 160px;
 }
 
 .sf-select {
@@ -722,11 +894,129 @@ export default {
 
   @include for-mobile {
     --select-width: calc(var(--spacer-base) * 6.25);
+    --select-dropdown-border-color: var(--_c-dark-primary);
   }
 
   @include for-desktop {
     --select-width: calc(var(--spacer-base) * 7.91);
   }
+
+  ::v-deep &__dropdown {
+    @include for-mobile {
+      font-size: var(--font-size--sm);
+    }
+  }
+}
+
+.applied-filters-container {
+  @include for-desktop {
+    display: none;
+  }
+}
+
+.applied-filters {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  padding: 0;
+  font-size: var(--font-size--sm);
+
+  &__withoutFilter {
+    padding: 0;
+  }
+
+  &__filter-name {
+    font-size: var(--font-size--sm);
+  }
+
+  &__item {
+    background: var(--c-light);
+    padding: var(--spacer-xs);
+    margin: var(--spacer-2xs);
+  }
+
+  &__values {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 var(--spacer-xs);
+    border-right: 2px solid var(--c-text-muted);
+    margin: 0 var(--spacer-sm) var(--spacer-sm) 0;
+
+    &--padding-left {
+      padding-left: var(--spacer-xs);
+    }
+  }
+}
+
+.filter-button {
+  background-color: #fff;
+  padding: 1rem 3.125rem 1rem 0.688rem;
+  border: 1px solid var(--c-black);
+  color: var(--_c-dark-primary);
+  font-size: var(--font-size--sm);
+  width: 150px;
+  margin: 0 0 var(--spacer-2xs) 0;
+
+  &__plus-icon {
+    margin: 0 -2.625rem 0 auto;
+  }
+}
+
+.filter-buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: var(--spacer-base);
+}
+
+.tiles {
+  background-color: #fff;
+  border: 1px solid var(--_c-dark-primary);
+  border-radius: var(--spacer-sm);
+  height: calc(var(--spacer-2xs) * 7);
+}
+
+.view {
+  font-size: var(--font-size--sm);
+
+  &__is-disabled--button {
+    --button-background: var(--_c-light-green-secondary);
+
+    color: #fefefe;
+  }
+}
+
+.clear {
+  font-size: var(--font-size--sm);
+
+  &__is-disabled--button {
+    --button-color: var(--c-text-disabled);
+    --button-border-color: transparent;
+    --button-background: var(--c-light);
+
+    color: var(--_c-gray-middle);
+  }
+}
+
+.filter-by-cross-icon {
+  margin: 0 var(--spacer-2xs);
+}
+
+.filter-hr {
+  margin: 0 -7.8% 0;
+  height: 1px;
+  border-width: 0;
+  color: var(--_c-gray-middle);
+  background-color: var(--_c-gray-middle);
+}
+
+.facet-hr {
+  margin: 0 -7.8% 0;
+  height: 1px;
+  border-width: 0;
+  color: var(--_c-white-secondary);
+  background-color: var(--_c-white-secondary);
 }
 
 .total-products {

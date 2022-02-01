@@ -26,7 +26,6 @@
     />
     <div v-if="!isViewMoreClicked && facetOptions.length > 5 && facetAllOptions.length > 6">
       <SfButton
-        font-size="13px"
         class="sf-button--text navbar__button navbar__button--plus list__item"
         aria-label="View More"
         @click="handleViewMoreClick()"
@@ -151,8 +150,8 @@ export default defineComponent({
   }
 
   &__plus-icon {
-    margin: 0 0.125rem 0.125rem 0;
-    order: 1;
+    margin: 0 0.5rem 0 -0.375rem;
+    order: 0;
     @include for-desktop {
       margin: 0 var(--spacer-xs) 0 0;
       order: 0;
@@ -172,7 +171,7 @@ export default defineComponent({
 
     &--plus {
       font-family: var(--font-family--primary);
-      font-size: var(--font-size--sm);
+      font-size: var(--font-size--sm) !important;
       margin: 0 0;
       height: 0.875rem;
       padding: 1rem 0.375rem;
@@ -257,5 +256,12 @@ export default defineComponent({
   --filter-count-margin: 0 0.5rem 0 auto;
 
   padding: 0.375rem;
+
+  @include for-mobile {
+    --filter-label-margin: 0 0 0 var(--spacer-xs);
+    --filter-count-margin: 0 0 0 auto;
+
+    padding-left: 0;
+  }
 }
 </style>
