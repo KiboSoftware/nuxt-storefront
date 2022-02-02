@@ -33,6 +33,7 @@
             class="color-primary sf-button sf-button--full-width"
             :aria-disabled="false"
             :link="null"
+            @click="checkout"
           >
             {{ $t("Checkout") }}
           </button>
@@ -88,18 +89,8 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import {
-  usePurchaseLocation,
-  useCart,
-  useUiState,
-  useUiHelpers
-} from "@/composables"
-
-import {
-  cartGetters,
-  storeLocationGetters,
-  productGetters,
-} from "@/lib/getters"
+import { usePurchaseLocation, useCart, useUiState, useUiHelpers } from "@/composables"
+import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "DetailedCart",
@@ -115,6 +106,7 @@ export default defineComponent({
     const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
+    const router = useRouter()
 
     const breadcrumbs = [
       {
@@ -148,6 +140,10 @@ export default defineComponent({
       return cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
     }
 
+    const checkout = () => {
+      router.push({ path: "/checkout" })
+    }
+
     return {
       breadcrumbs,
       selectedLocation,
@@ -157,6 +153,7 @@ export default defineComponent({
       cartItemFulfillmentTypes,
       getProductLink,
       productGetters,
+      checkout,
     }
   },
 })

@@ -146,6 +146,7 @@ export default defineNuxtConfig({
         { value: "Oldest", id: "createDate asc" },
       ],
     },
+    countries: ["US", "AT", "DE", "NL"],
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
