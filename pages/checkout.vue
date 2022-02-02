@@ -48,9 +48,10 @@
           </SfStep>
           <SfStep name="Shipping">
             <SfShipping
+              :value="shippingDetails"
               :shipping-methods="shippingMethods"
               :countries="countries"
-              @input="shipping = $event"
+              @input="updateShippingDetails"
             />
           </SfStep>
           <SfStep name="Payment">
@@ -150,7 +151,7 @@ export default {
     const countries = nuxt.nuxt2Context.$config.countries
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo } = useCheckout()
+    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo } = useCheckout()
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
     const showCreateAccount = ref(false)
@@ -265,6 +266,18 @@ export default {
       },
     }
 
+    const shippingDetails = ref({
+      firstName: "",
+      lastName: "",
+      streetName: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phoneNumber: "",
+      shippingMethod: "",
+    })
+
     const shippingMethods = [
       {
         isOpen: false,
@@ -363,8 +376,45 @@ export default {
       await setPersonalInfo(variables)
     }
 
-    const saveShippingDetails = () => {
-      console.log("Saved shipping details.")
+    const updateShippingDetails = (updatedShippingDetails) => {
+      shippingDetails.value = { ...updatedShippingDetails }
+    }
+
+    const saveShippingDetails = async () => {
+      const params = {
+        orderId: checkout.value.id,
+        fulfillmentInfoInput: {
+          fulfillmentContact: {
+            email: personalDetails.value.email,
+            firstName: shippingDetails.value.firstName,
+            middleNameOrInitial: "",
+            lastNameOrSurname: shippingDetails.value.lastName,
+            companyOrOrganization: "",
+            phoneNumbers: {
+              home: shippingDetails.value.phoneNumber,
+              mobile: "",
+              work: "",
+            },
+            address: {
+              address1: shippingDetails.value.streetName,
+              address2: "",
+              address3: "",
+              address4: "",
+              cityOrTown: shippingDetails.value.city,
+              stateOrProvince: shippingDetails.value.state,
+              postalOrZipCode: shippingDetails.value.zipCode,
+              countryCode: shippingDetails.value.country,
+              addressType: "",
+              isValidated: false,
+            },
+          },
+          isDestinationCommercial: false,
+          shippingMethodCode: "",
+          shippingMethodName: shippingDetails.value.shippingMethod,
+        },
+      }
+
+      await setShippingInfo(params)
     }
 
     const savePaymentDetails = () => {
@@ -415,8 +465,6 @@ export default {
       years,
       currentStep,
       steps,
-      personalDetails,
-      shipping,
       payment,
       order,
       paymentMethods,
@@ -448,7 +496,11 @@ export default {
       updateStep,
       logIn,
       getOrder,
+      personalDetails,
       updatePersonalDetails,
+      shipping,
+      shippingDetails,
+      updateShippingDetails,
       showCreateAccount,
       createAccount,
       password,
