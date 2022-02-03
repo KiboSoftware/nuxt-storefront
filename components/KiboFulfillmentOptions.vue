@@ -26,7 +26,7 @@
           #description
         >
           <p class="sf-radio__details" @click="handleStoreLocatorClick">
-            {{ fulfillmentOption.description }}
+            {{ fulfillmentOption.fulfillmentLocation ? $t("Change Store") : $t("Select Store") }}
           </p>
         </template>
       </KiboRadio>

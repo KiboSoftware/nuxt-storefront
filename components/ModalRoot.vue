@@ -21,9 +21,17 @@ export default {
       componentRef.value = null
     }
 
+    const getTitle = (componentName) => {
+      const titles = {
+        StoreLocatorModal: "Select Store",
+      }
+
+      return titles[componentName] || ""
+    }
+
     ModalBus.$on("open", ({ component, props }) => {
       componentRef.value = component
-      titleRef.value = "Select Store"
+      titleRef.value = getTitle(component?.name)
       properties.value = props
     })
 

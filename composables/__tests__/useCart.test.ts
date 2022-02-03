@@ -6,6 +6,7 @@ import {
   updateCartItemMutation,
 } from "@/lib/gql/mutations"
 import { getCartQuery } from "@/lib/gql/queries"
+import { CartItemInput } from "~~/server/types/GraphQL"
 
 const mockedAddToCartMutation = addToCartMutation
 const mockedGetCartQuery = getCartQuery
@@ -57,7 +58,9 @@ jest.mock("#app", () => ({
         if (query === mockedUpdateCartItemMutation) {
           expect(variables).toStrictEqual({
             cartItemId: "mock-cart-item-id",
-            cartItemInput: "mock-cart-item-input",
+            cartItemInput: {
+              id: "mock-cart-item-input-id",
+            },
           })
         }
       }),
@@ -113,7 +116,9 @@ describe("[composable] useCart", () => {
   test("updateCartItem: should update a cart item", async () => {
     const { updateCartItem, loading, error } = useCart()
     const cartItemId = "mock-cart-item-id"
-    const cartItemInput = "mock-cart-item-input"
+    const cartItemInput = {
+      id: "mock-cart-item-input-id",
+    } as CartItemInput
     await updateCartItem(cartItemId, cartItemInput)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()

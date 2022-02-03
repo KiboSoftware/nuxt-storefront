@@ -1,3 +1,4 @@
+import { CartItemInput } from "./../server/types/GraphQL"
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/lib/gql/queries"
 import {
@@ -96,7 +97,7 @@ export const useCart = () => {
     }
   }
 
-  const updateCartItem = async (cartItemId: string, cartItemInput) => {
+  const updateCartItem = async (cartItemId: string, cartItemInput: CartItemInput) => {
     const variables = {
       cartItemId,
       cartItemInput,

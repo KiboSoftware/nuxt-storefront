@@ -92,27 +92,6 @@ const isDisabledFulfillmentOption = (fulfillmentTypesSupported, option) => {
   return !fulfillmentTypesSupported?.includes(option)
 }
 
-const getFulfillmentDetails = (option, item, cartItemFulfillmentLocation: string) => {
-  const details = {
-    DirectShip: option.details,
-    InStorePickup:
-      item?.fulfillmentMethod === "Pickup" && cartItemFulfillmentLocation
-        ? `Available at ${cartItemFulfillmentLocation}`
-        : "",
-  }
-
-  return isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option.value)
-    ? "Not Available"
-    : "" || details[option.value]
-}
-
-const getFulfillmentDescription = (cartItemFulfillmentLocation: string) => {
-  if (cartItemFulfillmentLocation) {
-    return "Change Store"
-  }
-  return "Select Store"
-}
-
 export const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLocation: string) => {
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
@@ -122,12 +101,12 @@ export const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLoc
     name: option.name,
     code: option.code,
     label: option.label,
-    details: getFulfillmentDetails(option, item, cartItemFulfillmentLocation),
-    description: getFulfillmentDescription(cartItemFulfillmentLocation),
-
+    details: option.details,
     required: option.isRequired,
     shortName: option.shortName,
     disabled: isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option.value),
+    cartItem: item,
+    fulfillmentLocation: cartItemFulfillmentLocation,
   }))
 
   return result
