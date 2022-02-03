@@ -60,6 +60,32 @@
               :countries="countries"
               @input="getPaymentMethodData"
             />
+            <SfPayment
+              :payment-methods="paymentMethods"
+              :months="months"
+              :years="years"
+              @input="payment = $event"
+            >
+              <template #billing-form>
+                <KiboBillingAddress
+                  :value="billingDetails"
+                  :shipping="shippingDetails"
+                  :countries="countries"
+                  :billing-inputs-labels="[
+                    'First name',
+                    'Last name',
+                    'Street address',
+                    'Apt, Suite, etc.',
+                    'City',
+                    'State/Province',
+                    'Zip-code',
+                    'Phone number',
+                  ]"
+                  billing-select-label="Country"
+                  @billingAddressData="updateBillingDetails"
+                />
+              </template>
+            </SfPayment>
           </SfStep>
           <SfStep name="Review">
             <SfConfirmOrder
@@ -125,10 +151,18 @@ import {
   SfCheckbox,
   SfInput,
 } from "@storefront-ui/vue"
-import { useAsync } from "@nuxtjs/composition-api"
-import { useCheckout, useCart, useUiState, usePaymentMethods, useUser } from "@/composables"
-import { computed, ref, useNuxtApp } from "#app"
+import { useAsync, computed, ref } from "@nuxtjs/composition-api"
+import {
+  useCheckout,
+  useCart,
+  useUiState,
+  usePaymentMethods,
+  useUser,
+  useShippingMethods,
+} from "@/composables"
+import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
+import { shopperContactGetters } from "~~/lib/getters"
 
 export default {
   name: "Checkout",
@@ -150,7 +184,9 @@ export default {
 
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo } = useCheckout()
+    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo } =
+      useCheckout()
+    const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
@@ -240,95 +276,27 @@ export default {
       },
     }
 
-    const shippingDetails = ref({
-      firstName: "",
-      lastName: "",
-      streetName: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-      shippingMethod: "",
-    })
-
-    const shippingMethods = [
-      {
-        isOpen: false,
-        price: "Free",
-        delivery: "Delivery from 3 to 7 business days",
-        label: "Pickup in the store",
-        value: "store",
-        description:
-          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-      },
-      {
-        isOpen: false,
-        price: "$9.90",
-        delivery: "Delivery from 4 to 6 business days",
-        label: "Delivery to home",
-        value: "home",
-        description:
-          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-      },
-      {
-        isOpen: false,
-        price: "$9.90",
-        delivery: "Delivery from 4 to 6 business days",
-        label: "Paczkomaty InPost",
-        value: "inpost",
-        description:
-          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-      },
-      {
-        isOpen: false,
-        price: "$11.00",
-        delivery: "Delivery within 48 hours",
-        label: "48 hours coffee",
-        value: "coffee",
-        description:
-          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-      },
-      {
-        isOpen: false,
-        price: "$14.00",
-        delivery: "Delivery within 24 hours",
-        label: "Urgent 24h",
-        value: "urgent",
-        description:
-          "Novelty! From now on you have the option of picking up an order in the selected InPack parceled. Just remember that in the case of orders paid on delivery, only the card payment will be accepted.",
-      },
-    ]
-
-    const personalDetails = ref({ firstName: "", lastName: "", email: "" })
-    let paymentDetails = ref(defaultPaymentDetails())
-
-    useAsync(async () => {
-      await loadFromCart(cart.value?.id)
-    }, null)
-
     const getOrder = computed(() => {
       return checkout?.value
     })
 
-    const createAccount = (value) => {
-      if (!value) password.value = ""
+    const logIn = () => {
+      toggleLoginModal()
     }
 
-    const createUserAccount = async () => {
-      const params = {
-        ...personalDetails.value,
-        password: password.value,
-        acceptsMarketing: true,
-        isActive: true,
-        id: 0,
-      }
-
-      await createAccountAndLogin(params)
+    // personalDetails
+    const personalDetails = ref({ firstName: "", lastName: "", email: "" })
+    let paymentDetails = ref(defaultPaymentDetails())
+    const populatePersonalDetails = () => {
+      personalDetails.value = shopperContactGetters.getPersonalDetails(
+        checkout.value?.fulfillmentInfo?.fulfillmentContact,
+        personalDetails.value
+      )
     }
 
-    const updatePersonalDetails = (updatedPersonalDetails) => {
-      personalDetails.value = { ...updatedPersonalDetails }
+    const updatePersonalDetails = (newPersonalDetails) => {
+      personalDetails.value = { ...newPersonalDetails }
+      console.log("updated personal details ", personalDetails.value)
     }
 
     const savePersonalDetails = async () => {
@@ -341,18 +309,38 @@ export default {
         amountRefunded: 0,
       }
 
-      const variables = {
-        orderId: checkout?.value?.id,
+      const params = {
+        orderId: checkout.value?.id,
         updateMode: "ApplyToOriginal",
         orderInput: updatedCheckoutInput,
       }
 
       if (!updatedCheckoutInput.email) return
-      await setPersonalInfo(variables)
+      await setPersonalInfo(params)
+      populatePersonalDetails()
     }
 
-    const updateShippingDetails = (updatedShippingDetails) => {
-      shippingDetails.value = { ...updatedShippingDetails }
+    // shippingDetails
+    const shippingDetails = ref({
+      firstName: "",
+      lastName: "",
+      streetName: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phoneNumber: "",
+      shippingMethod: "home",
+    })
+
+    const populateShippingDetails = () => {
+      shippingDetails.value = shopperContactGetters.getShippingDetails(
+        checkout.value?.fulfillmentInfo?.fulfillmentContact
+      )
+    }
+
+    const updateShippingDetails = (newShippingDetails) => {
+      shippingDetails.value = { ...newShippingDetails }
     }
 
     const saveShippingDetails = async () => {
@@ -390,6 +378,73 @@ export default {
       }
 
       await setShippingInfo(params)
+      populateShippingDetails()
+    }
+
+    // billing
+    const billingDetails = ref({
+      firstName: "",
+      lastName: "",
+      streetName: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phoneNumber: "",
+      billingMethod: "home",
+    })
+
+    const populateBillingDetails = () => {
+      billingDetails.value = shopperContactGetters.getBillingDetails(
+        checkout.value?.billingInfo?.billingContact
+      )
+    }
+
+    const updateBillingDetails = (newBillingDetails) => {
+      billingDetails.value = { ...newBillingDetails }
+    }
+
+    const saveBillingDetails = async () => {
+      const params = {
+        orderId: checkout.value.id,
+        fulfillmentInfoInput: {
+          fulfillmentContact: {
+            email: personalDetails.value.email,
+            firstName: billingDetails.value.firstName,
+            middleNameOrInitial: "",
+            lastNameOrSurname: billingDetails.value.lastName,
+            companyOrOrganization: "",
+            phoneNumbers: {
+              home: billingDetails.value.phoneNumber,
+              mobile: "",
+              work: "",
+            },
+            address: {
+              address1: billingDetails.value.streetName,
+              address2: "",
+              address3: "",
+              address4: "",
+              cityOrTown: billingDetails.value.city,
+              stateOrProvince: billingDetails.value.state,
+              postalOrZipCode: billingDetails.value.zipCode,
+              countryCode: billingDetails.value.country,
+              addressType: "",
+              isValidated: false,
+            },
+          },
+          isDestinationCommercial: false,
+          billingMethodCode: "",
+          billingMethodName: billingDetails.value.billingMethod,
+        },
+      }
+
+      await setBillingInfo(params)
+      populateBillingDetails()
+    }
+
+    // accountCreation
+    const createAccount = (value) => {
+      if (!value) password.value = ""
     }
 
     const getPaymentMethodData = (updatedPaymentDetails) => {
@@ -419,12 +474,33 @@ export default {
       if (checkout?.value?.id && paymentAction)
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
     }
-
+    // paymentDetails
     const savePaymentDetails = async () => {
       // Need to add billing address save function
       await addPaymentMethod()
     }
 
+    const createUserAccount = async () => {
+      const params = {
+        ...updatedPersonalDetails.value,
+        password: password.value,
+        acceptsMarketing: true,
+        isActive: true,
+        id: 0,
+      }
+
+      await createAccountAndLogin(params)
+    }
+    // useAsync
+    useAsync(async () => {
+      await loadFromCart(cart.value?.id)
+      await loadShippingMethods(checkout.value.id)
+
+      populateShippingDetails()
+      populatePersonalDetails()
+    }, null)
+
+    // others
     const updateStep = (selectedStep: number) => {
       const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1
 
@@ -440,6 +516,7 @@ export default {
         }
 
         case Steps.PAY_FOR_ORDER: {
+          saveBillingDetails()
           savePaymentDetails()
           break
         }
@@ -457,10 +534,6 @@ export default {
       if (nextStep < steps.length) {
         currentStep.value = nextStep
       }
-    }
-
-    const logIn = () => {
-      toggleLoginModal()
     }
 
     return {
@@ -502,6 +575,8 @@ export default {
       shipping,
       shippingDetails,
       updateShippingDetails,
+      billingDetails,
+      updateBillingDetails,
       showCreateAccount,
       createAccount,
       password,

@@ -4,6 +4,7 @@ import VueCompositionApi from "@vue/composition-api"
 import {
   getOrCreateCheckoutFromCartMutation,
   setShippingInfoMutation,
+  setBillingInfoMutation,
   updateOrder,
 } from "@/lib/gql/mutations"
 import { getCheckoutQuery } from "@/lib/gql/queries"
@@ -14,6 +15,7 @@ Vue.use(VueCompositionApi)
 const mockGetOrCreateCheckoutFromCartMutation = getOrCreateCheckoutFromCartMutation
 const mockGetCheckoutQuery = getCheckoutQuery
 const mockSetShippingInfoMutation = setShippingInfoMutation
+const mockSetBillingInfoMutation = setBillingInfoMutation
 const mockUpdateOrder = updateOrder
 
 // Response
@@ -46,6 +48,7 @@ const getCheckoutQueryResponse = {
   },
 }
 const setShippingInfoResponse = {}
+const setBillingInfoResponse = {}
 const updateOrderResponse = {}
 
 jest.mock("#app", () => ({
@@ -61,6 +64,8 @@ jest.mock("#app", () => ({
           return { data: getCheckoutQueryResponse }
         } else if (params.query === mockSetShippingInfoMutation) {
           return { data: setShippingInfoResponse }
+        } else if (params.query === mockSetBillingInfoMutation) {
+          return { data: setBillingInfoResponse }
         } else if (params.query === mockUpdateOrder) {
           return { data: updateOrderResponse }
         }
@@ -78,8 +83,16 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] useUser", () => {
-  const { load, loadFromCart, checkout, setPersonalInfo, setShippingInfo, loading, error } =
-    useCheckout()
+  const {
+    load,
+    loadFromCart,
+    checkout,
+    setPersonalInfo,
+    setShippingInfo,
+    setBillingInfo,
+    loading,
+    error,
+  } = useCheckout()
 
   test("useCheckout : should get or create checkout ", async () => {
     const cartId = "12f9641217a5a300010448c9000045a4"
@@ -122,6 +135,12 @@ describe("[composable] useUser", () => {
 
   test("useCheckout : should save shipping info ", async () => {
     await setShippingInfo({})
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeFalsy()
+  })
+
+  test("useCheckout : should save billing info ", async () => {
+    await setBillingInfo({})
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()
   })

@@ -57,6 +57,60 @@ export const baseCheckoutFragment = /* GraphQL */ `
       }
       couponCode
     }
+
+    billingInfo {
+      billingContact {
+        email
+        firstName
+        middleNameOrInitial
+        lastNameOrSurname
+        companyOrOrganization
+        phoneNumbers {
+          home
+          mobile
+          work
+        }
+        address {
+          address1
+          address2
+          address3
+          address4
+          cityOrTown
+          stateOrProvince
+          postalOrZipCode
+          countryCode
+          addressType
+          isValidated
+        }
+      }
+    }
+
+    fulfillmentInfo {
+      fulfillmentContact {
+        email
+        firstName
+        middleNameOrInitial
+        lastNameOrSurname
+        companyOrOrganization
+        phoneNumbers {
+          home
+          mobile
+          work
+        }
+        address {
+          address1
+          address2
+          address3
+          address4
+          cityOrTown
+          stateOrProvince
+          postalOrZipCode
+          countryCode
+          addressType
+          isValidated
+        }
+      }
+    }
   }
 `
 export const billingContactFragment = /* GraphQL */ `
