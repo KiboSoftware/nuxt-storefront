@@ -3,10 +3,20 @@
     <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
     <div class="navbar section">
       <div class="navbar__main">
-        <div class="navbar__aside">
+        <div class="navbar__aside" v-if="!productSearchLoading">
           <SfHeading :level="1" :title="pageHeader" class="category-name sf-heading__title" />
         </div>
-        <div class="navbar__sort">
+        <div class="navbar__aside" v-if="productSearchLoading">
+          <KiboSkeletonLoading
+            class="category-name"
+            skeleton-class="plp-category-name sk-loading"
+          />
+          <KiboSkeletonLoading
+            class="total-products"
+            skeleton-class="plp-total-products-count sk-loading"
+          />
+        </div>
+        <div class="navbar__sort" v-if="!productSearchLoading">
           <span class="navbar__label">{{ $t("Sort by") }}</span>
           <SfSelect
             :required="false"
@@ -25,6 +35,11 @@
               {{ option.value }}
             </SfSelectOption>
           </SfSelect>
+        </div>
+        <div class="navbar__sort" v-if="productSearchLoading">
+          <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
+          <KiboSkeletonLoading skeleton-class="plp-select" />
+          <KiboSkeletonLoading skeleton-class="plp-select smartphone-only" />
         </div>
         <div class="navbar__view desktop-only">
           <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
@@ -92,88 +107,94 @@
           </div>
         </transition-group>
       </div>
-      <SfLoader
-        :class="{ 'loading--products': productSearchLoading }"
-        :loading="productSearchLoading"
-      >
-        <div v-if="!productSearchLoading" class="products">
-          <transition-group
-            v-if="isGridView"
-            appear
-            name="products__slide"
-            tag="div"
-            class="products__grid"
-          >
-            <KiboProductCard
-              v-for="(product, i) in products"
-              :key="productGetters.getProductId(product)"
-              :style="{ '--index': i }"
-              :title="productGetters.getName(product)"
-              :image="productGetters.getCoverImage(product)"
-              :show-add-to-cart-button="true"
-              :regular-price="`$${productGetters.getPrice(product).regular}`"
-              :score-rating="3"
-              :max-rating="5"
-              wishlist-icon=""
-              is-in-wishlist-icon=""
-              :is-in-wishlist="false"
-              :special-price="
-                productGetters.getPrice(product).special && productGetters.getPrice(product).special
-              "
-              :link="localePath(getProductLink(productGetters.getProductId(product)))"
-              class="products__product-card"
-            />
-          </transition-group>
-          <transition-group v-else appear name="products__slide" tag="div" class="products__list">
-            <SfProductCardHorizontal
-              v-for="(product, i) in products"
-              :key="productGetters.getProductId(product)"
-              :style="{ '--index': i }"
-              :title="productGetters.getName(product)"
-              :description="productGetters.getDescription(product)"
-              :image="productGetters.getCoverImage(product)"
-              :regular-price="`$${productGetters.getPrice(product).regular}`"
-              :special-price="
-                productGetters.getPrice(product).special && productGetters.getPrice(product).special
-              "
-              :max-rating="5"
-              :link="localePath(getProductLink(productGetters.getProductId(product)))"
-              class="products__product-card-horizontal"
-            >
-              <template #configuration>
-                <SfProperty
-                  class="desktop-only"
-                  name="Size"
-                  value="XS"
-                  style="margin: 0 0 1rem 0"
-                />
-                <SfProperty class="desktop-only" name="Color" value="white" />
-              </template>
-              <template #actions>
-                <SfButton
-                  class="sf-button--text desktop-only"
-                  style="margin: 0 0 1rem auto; display: block"
-                  @click="$emit('click:add-to-wishlist')"
-                >
-                  {{ $t("Save for later") }}
-                </SfButton>
-                <SfButton
-                  class="sf-button--text desktop-only"
-                  style="margin: 0 0 0 auto; display: block"
-                  @click="$emit('click:add-to-compare')"
-                >
-                  {{ $t("Add to compare") }}
-                </SfButton>
-              </template>
-            </SfProductCardHorizontal>
-          </transition-group>
-          <KiboPagination
-            :loading="loading"
-            :pagination="pagination"
-            @changeShowItemsPerPage="changeShowItemsPerPage"
+      <div v-if="productSearchLoading">
+        <transition-group
+          v-if="isGridView"
+          appear
+          name="products__slide"
+          tag="div"
+          class="products__grid"
+        >
+          <div v-for="i in 20" :key="i">
+            <KiboSkeletonLoading skeleton-class="product-card-image sk-loading" />
+            <KiboSkeletonLoading skeleton-class="product-card-name sk-loading" />
+            <KiboSkeletonLoading skeleton-class="product-card-price sk-loading" />
+            <KiboSkeletonLoading skeleton-class="product-card-rating sk-loading" />
+          </div>
+        </transition-group>
+      </div>
+      <div v-if="!productSearchLoading" class="products">
+        <transition-group
+          v-if="isGridView"
+          appear
+          name="products__slide"
+          tag="div"
+          class="products__grid"
+        >
+          <KiboProductCard
+            v-for="(product, i) in products"
+            :key="productGetters.getProductId(product)"
+            :style="{ '--index': i }"
+            :title="productGetters.getName(product)"
+            :image="productGetters.getCoverImage(product)"
+            :show-add-to-cart-button="true"
+            :regular-price="`$${productGetters.getPrice(product).regular}`"
+            :score-rating="3"
+            :max-rating="5"
+            wishlist-icon=""
+            is-in-wishlist-icon=""
+            :is-in-wishlist="false"
+            :special-price="
+              productGetters.getPrice(product).special && productGetters.getPrice(product).special
+            "
+            :link="localePath(getProductLink(productGetters.getProductId(product)))"
+            class="products__product-card"
           />
-        </div>
-      </SfLoader>
+        </transition-group>
+        <transition-group v-else appear name="products__slide" tag="div" class="products__list">
+          <SfProductCardHorizontal
+            v-for="(product, i) in products"
+            :key="productGetters.getProductId(product)"
+            :style="{ '--index': i }"
+            :title="productGetters.getName(product)"
+            :description="productGetters.getDescription(product)"
+            :image="productGetters.getCoverImage(product)"
+            :regular-price="`$${productGetters.getPrice(product).regular}`"
+            :special-price="
+              productGetters.getPrice(product).special && productGetters.getPrice(product).special
+            "
+            :max-rating="5"
+            :link="localePath(getProductLink(productGetters.getProductId(product)))"
+            class="products__product-card-horizontal"
+          >
+            <template #configuration>
+              <SfProperty class="desktop-only" name="Size" value="XS" style="margin: 0 0 1rem 0" />
+              <SfProperty class="desktop-only" name="Color" value="white" />
+            </template>
+            <template #actions>
+              <SfButton
+                class="sf-button--text desktop-only"
+                style="margin: 0 0 1rem auto; display: block"
+                @click="$emit('click:add-to-wishlist')"
+              >
+                {{ $t("Save for later") }}
+              </SfButton>
+              <SfButton
+                class="sf-button--text desktop-only"
+                style="margin: 0 0 0 auto; display: block"
+                @click="$emit('click:add-to-compare')"
+              >
+                {{ $t("Add to compare") }}
+              </SfButton>
+            </template>
+          </SfProductCardHorizontal>
+        </transition-group>
+        <KiboPagination
+          :loading="loading"
+          :pagination="pagination"
+          @changeShowItemsPerPage="changeShowItemsPerPage"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -184,23 +205,14 @@ import {
   SfIcon,
   SfSelect,
   SfBreadcrumbs,
-  SfLoader,
   SfProductCardHorizontal,
   SfAccordion,
   SfChevron,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
-import {
-  useUiHelpers,
-  useFacet,
-  useProductSearch
-} from "@/composables"
+import { useUiHelpers, useFacet, useProductSearch } from "@/composables"
 
-import {
-  productGetters,
-  facetGetters,
-  productSearchGetters,
-} from "@/lib/getters"
+import { productGetters, facetGetters, productSearchGetters } from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
 
@@ -212,7 +224,6 @@ export default {
     SfIcon,
     SfSelect,
     SfBreadcrumbs,
-    SfLoader,
     SfProductCardHorizontal,
     SfAccordion,
     SfChevron,
@@ -388,7 +399,8 @@ export default {
     padding: 0;
     flex: 1;
     @include for-mobile {
-      margin: 0 0 0 calc(var(--spacer-xs) * 3.125);
+      justify-content: space-between;
+      width: 100%;
     }
     @include for-desktop {
       flex: none;
@@ -471,6 +483,10 @@ export default {
     @include for-desktop {
       flex: none;
       margin: 0 0 0 auto;
+    }
+    @include for-mobile {
+      justify-content: space-between;
+      width: 100%;
     }
   }
 
@@ -677,8 +693,7 @@ export default {
 }
 
 .category-name {
-  margin: 0 0 0 calc(var(--spacer-base) * -1.0833);
-  // margin: 0;
+  margin: 0;
   @include for-desktop {
     margin: 0 0 0 -1.563rem;
   }
@@ -713,6 +728,24 @@ export default {
 
   @include for-desktop {
     --select-width: calc(var(--spacer-base) * 7.91);
+  }
+}
+
+.total-products {
+  display: flex;
+  justify-content: center;
+  font-size: var(--font-size--sm);
+
+  &__upper-total {
+    color: var(--_c-gray-primary);
+  }
+
+  &__lower-total {
+    color: var(--c-black);
+    font-weight: bold;
+  }
+  @include for-desktop {
+    display: none;
   }
 }
 </style>
