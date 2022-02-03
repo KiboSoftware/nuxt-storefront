@@ -347,6 +347,16 @@ export default {
       await loadShippingMethods(checkout.value?.id)
     }
 
+    const populateShippingDetails = () => {
+      shippingDetails.value = shopperContactGetters.getShippingDetails(
+        checkout.value?.fulfillmentInfo?.fulfillmentContact
+      )
+    }
+
+    const updateShippingDetails = (newShippingDetails) => {
+      shippingDetails.value = { ...newShippingDetails }
+    }
+
     // shippingMethods
     const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
     const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
@@ -373,6 +383,73 @@ export default {
       }
 
       await setShippingInfo(params)
+      populateShippingDetails()
+    }
+
+    // billing
+    const billingDetails = ref({
+      firstName: "",
+      lastName: "",
+      streetName: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "",
+      phoneNumber: "",
+      billingMethod: "home",
+    })
+
+    const populateBillingDetails = () => {
+      billingDetails.value = shopperContactGetters.getBillingDetails(
+        checkout.value?.billingInfo?.billingContact
+      )
+    }
+
+    const updateBillingDetails = (newBillingDetails) => {
+      billingDetails.value = { ...newBillingDetails }
+    }
+
+    const saveBillingDetails = async () => {
+      const params = {
+        orderId: checkout.value.id,
+        fulfillmentInfoInput: {
+          fulfillmentContact: {
+            email: personalDetails.value.email,
+            firstName: billingDetails.value.firstName,
+            middleNameOrInitial: "",
+            lastNameOrSurname: billingDetails.value.lastName,
+            companyOrOrganization: "",
+            phoneNumbers: {
+              home: billingDetails.value.phoneNumber,
+              mobile: "",
+              work: "",
+            },
+            address: {
+              address1: billingDetails.value.streetName,
+              address2: "",
+              address3: "",
+              address4: "",
+              cityOrTown: billingDetails.value.city,
+              stateOrProvince: billingDetails.value.state,
+              postalOrZipCode: billingDetails.value.zipCode,
+              countryCode: billingDetails.value.country,
+              addressType: "",
+              isValidated: false,
+            },
+          },
+          isDestinationCommercial: false,
+          billingMethodCode: "",
+          billingMethodName: billingDetails.value.billingMethod,
+        },
+      }
+
+      await setBillingInfo(params)
+      populateBillingDetails()
+    }
+
+    // accountCreation
+    const createAccount = (value) => {
+      if (!value) password.value = ""
     }
 
     const handleStoreLocatorClick = () => {
@@ -448,7 +525,9 @@ export default {
     // useAsync
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
+      await loadShippingMethods(checkout.value.id)
 
+      populateShippingDetails()
       populatePersonalDetails()
       loadPurchaseLocation()
     }, null)
@@ -529,6 +608,7 @@ export default {
       shippingDetails,
       saveShippingDetails,
       updatedShippingAddress,
+      updateShippingDetails,
 
       items,
       shippingRates,
