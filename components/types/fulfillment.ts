@@ -1,3 +1,5 @@
+import type { CartItem } from "@/server/types/GraphQL"
+
 // fulFillment
 export type Fulfillment = {
   name?: string
