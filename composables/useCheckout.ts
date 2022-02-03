@@ -102,7 +102,7 @@ export const useCheckout = () => {
     loadFromCart,
     setShippingInfo,
     setPersonalInfo,
-    setBillingInfo,
-    submit,
+    // setBillingInfo,
+    // submit,
   }
 }

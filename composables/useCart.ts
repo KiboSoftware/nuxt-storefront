@@ -24,8 +24,6 @@ export const useCart = () => {
       query: getCartQuery,
     })
     return cartResponse.data.currentCart
-    // TODO
-    // return normalizeCart(cartResponse.data.currentCart)
   }
 
   const load = async () => {
