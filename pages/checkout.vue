@@ -296,7 +296,6 @@ export default {
 
     const updatePersonalDetails = (newPersonalDetails) => {
       personalDetails.value = { ...newPersonalDetails }
-      console.log("updated personal details ", personalDetails.value)
     }
 
     const savePersonalDetails = async () => {
@@ -317,7 +316,6 @@ export default {
 
       if (!updatedCheckoutInput.email) return
       await setPersonalInfo(params)
-      populatePersonalDetails()
     }
 
     // shippingDetails
@@ -325,6 +323,7 @@ export default {
       firstName: "",
       lastName: "",
       streetName: "",
+      apartment: "",
       city: "",
       state: "",
       zipCode: "",
@@ -360,7 +359,7 @@ export default {
             },
             address: {
               address1: shippingDetails.value.streetName,
-              address2: "",
+              address2: shippingDetails.value.apartment,
               address3: "",
               address4: "",
               cityOrTown: shippingDetails.value.city,
@@ -386,12 +385,12 @@ export default {
       firstName: "",
       lastName: "",
       streetName: "",
+      apartment: "",
       city: "",
       state: "",
       zipCode: "",
       country: "",
       phoneNumber: "",
-      billingMethod: "home",
     })
 
     const populateBillingDetails = () => {
@@ -407,21 +406,16 @@ export default {
     const saveBillingDetails = async () => {
       const params = {
         orderId: checkout.value.id,
-        fulfillmentInfoInput: {
-          fulfillmentContact: {
+        billingInfoInput: {
+          billingContact: {
             email: personalDetails.value.email,
             firstName: billingDetails.value.firstName,
             middleNameOrInitial: "",
             lastNameOrSurname: billingDetails.value.lastName,
             companyOrOrganization: "",
-            phoneNumbers: {
-              home: billingDetails.value.phoneNumber,
-              mobile: "",
-              work: "",
-            },
             address: {
               address1: billingDetails.value.streetName,
-              address2: "",
+              address2: billingDetails.value.apartment,
               address3: "",
               address4: "",
               cityOrTown: billingDetails.value.city,
@@ -431,10 +425,12 @@ export default {
               addressType: "",
               isValidated: false,
             },
+            phoneNumbers: {
+              home: billingDetails.value.phoneNumber,
+              mobile: "",
+              work: "",
+            },
           },
-          isDestinationCommercial: false,
-          billingMethodCode: "",
-          billingMethodName: billingDetails.value.billingMethod,
         },
       }
 

@@ -2,8 +2,8 @@ const getFirstName = (shopper) => shopper?.firstName
 const getLastName = (shopper) => shopper?.lastNameOrSurname
 const getMiddleName = (shopper) => shopper?.middleNameOrInitial
 const getEmail = (shopper) => shopper?.email
-const getAddressLine1 = (shopper) => shopper?.address?.address1
-const getAddressLine2 = (shopper) => shopper?.address?.address2
+const getStreetName = (shopper) => shopper?.address?.address1
+const getApartment = (shopper) => shopper?.address?.address2
 const getAddressLine3 = (shopper) => shopper?.address?.address3
 const getAddressLine4 = (shopper) => shopper?.address?.address4
 const getStateOrProvince = (shopper) => shopper?.address?.stateOrProvince
@@ -30,6 +30,7 @@ const getAddressDetails = (shopper) => {
       firstName: "",
       lastName: "",
       streetName: "",
+      apartment: "",
       city: "",
       state: "",
       zipCode: "",
@@ -46,6 +47,7 @@ const getAddressDetails = (shopper) => {
       stateOrProvince: state,
       postalOrZipCode: zipCode,
       address1: streetName,
+      address2: apartment,
       countryCode: country,
     },
     phoneNumbers: { home: phoneNumber },
@@ -55,6 +57,7 @@ const getAddressDetails = (shopper) => {
     firstName,
     lastName,
     streetName,
+    apartment,
     city,
     state,
     zipCode,
@@ -77,8 +80,8 @@ export const shopperContactGetters = {
   getLastName,
   getMiddleName,
   getEmail,
-  getAddressLine1,
-  getAddressLine2,
+  getStreetName,
+  getApartment,
   getAddressLine3,
   getAddressLine4,
   getStateOrProvince,
