@@ -1,12 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import Vue from "vue"
 import { defineNuxtPlugin } from "#app"
-import { ModalBus } from "@/eventBus/eventBus"
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default defineNuxtPlugin((nuxtApp: any) => {
   const modal = {
-    show: ({ component, props }) => {
-      ModalBus.$emit("open", {
+    subscription: new Vue(),
+    show({ component, title, props }) {
+      this.subscription.$emit("open", {
         component,
+        title,
         props,
       })
     },

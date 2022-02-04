@@ -9,29 +9,24 @@
 <script lang="ts">
 import { SfModal, SfSearchBar, SfBar } from "@storefront-ui/vue"
 import { ref } from "@vue/composition-api"
-import { ModalBus } from "../eventBus/eventBus"
+import { useNuxtApp } from "#app"
+
 export default {
   components: { SfModal, SfSearchBar, SfBar },
   setup() {
     const componentRef = ref(null)
     const titleRef = ref("")
     const properties = ref(null)
+    const nuxt = useNuxtApp()
+    const modal = nuxt.nuxt2Context.$modal
 
     const handleClose = () => {
       componentRef.value = null
     }
 
-    const getTitle = (componentName) => {
-      const titles = {
-        StoreLocatorModal: "Select Store",
-      }
-
-      return titles[componentName] || ""
-    }
-
-    ModalBus.$on("open", ({ component, props }) => {
+    modal.subscription.$on("open", ({ component, title, props }) => {
       componentRef.value = component
-      titleRef.value = getTitle(component?.name)
+      titleRef.value = title
       properties.value = props
     })
 

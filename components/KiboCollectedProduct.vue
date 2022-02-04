@@ -229,6 +229,7 @@ export default defineComponent({
       if (shouldOpenModal) {
         modal.show({
           component: StoreLocatorModal,
+          title: "Select Store",
           props: {
             handleSetStore: async (selectedStore: string) => {
               itemToBeUpdated.fulfillmentMethod = "Pickup"

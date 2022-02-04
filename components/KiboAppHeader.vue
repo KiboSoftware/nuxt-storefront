@@ -409,6 +409,7 @@ export default defineComponent({
     const handleStoreLocatorClick = () => {
       modal.show({
         component: StoreLocatorModal,
+        title: "Select Store",
         props: {
           handleSetStore: async (selectedStore: string) => {
             set(selectedStore)
