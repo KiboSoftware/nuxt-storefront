@@ -226,7 +226,6 @@ export default defineComponent({
       if (shouldOpenModal) {
         modal.show({
           component: StoreLocatorModal,
-          title: "Select Store",
           props: {
             title: context?.root?.$t("Select Store"),
             handleSetStore: async (selectedStore: string) => {
