@@ -391,12 +391,12 @@ export default {
       firstName: "",
       lastName: "",
       streetName: "",
+      apartment: "",
       city: "",
       state: "",
       zipCode: "",
       country: "",
       phoneNumber: "",
-      billingMethod: "home",
     })
 
     const populateBillingDetails = () => {
@@ -412,21 +412,16 @@ export default {
     const saveBillingDetails = async () => {
       const params = {
         orderId: checkout.value.id,
-        fulfillmentInfoInput: {
-          fulfillmentContact: {
+        billingInfoInput: {
+          billingContact: {
             email: personalDetails.value.email,
             firstName: billingDetails.value.firstName,
             middleNameOrInitial: "",
             lastNameOrSurname: billingDetails.value.lastName,
             companyOrOrganization: "",
-            phoneNumbers: {
-              home: billingDetails.value.phoneNumber,
-              mobile: "",
-              work: "",
-            },
             address: {
               address1: billingDetails.value.streetName,
-              address2: "",
+              address2: billingDetails.value.apartment,
               address3: "",
               address4: "",
               cityOrTown: billingDetails.value.city,
@@ -436,10 +431,12 @@ export default {
               addressType: "",
               isValidated: false,
             },
+            phoneNumbers: {
+              home: billingDetails.value.phoneNumber,
+              mobile: "",
+              work: "",
+            },
           },
-          isDestinationCommercial: false,
-          billingMethodCode: "",
-          billingMethodName: billingDetails.value.billingMethod,
         },
       }
 
