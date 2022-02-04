@@ -135,7 +135,7 @@ export const useCart = () => {
         query: deleteCartCouponMutation,
         variables: { cartId: cart.value?.id, couponCode },
       })
-      cart.value = response.data.updateCartCoupon
+      cart.value = response.data.deleteCartCoupon
     } catch (err) {
       loading.value = false
     }

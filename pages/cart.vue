@@ -18,32 +18,13 @@
           />
         </div>
         <div><hr class="sf-divider" /></div>
-        <div class="promo">
-          <SfInput
-            v-model="couponApplied"
-            name="promo"
-            placeholder="Enter Promo Code"
-            class="promo__input"
-            type="text"
-            :valid="isValidCoupon"
-            :error-message="invalidCouponErrorText"
-          />
-          <button
-            class="color-primary sf-button sf-button--small"
-            :aria-disabled="false"
-            :link="null"
-            @click="applyPromocode"
-          >
-            {{ $t("Apply") }}
-          </button>
-        </div>
-        <div v-if="AreCouponsApplied" class="coupon">
-          <KiboCoupon
-            v-for="(coupon, index) in appliedCoupons"
-            :key="index"
-            :coupon-code="coupon"
-          />
-        </div>
+        <KiboApplyCoupon
+          :is-valid-coupon="isValidCoupon"
+          :invalid-coupon-error-text="invalidCouponErrorText"
+          :are-coupons-applied="areCouponsApplied"
+          :applied-coupons="appliedCoupons"
+          @applyPromocode="applyPromocode"
+        />
         <div class="sf-property--full-width sf-property price-container">
           <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
           <KiboPrice
@@ -112,7 +93,7 @@
   </div>
 </template>
 <script>
-import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
+import { SfButton, SfImage, SfHeading, SfBreadcrumbs } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
 import { usePurchaseLocation, useCart, useUiHelpers, useStoreLocations } from "@/composables"
@@ -126,7 +107,6 @@ export default defineComponent({
     SfImage,
     SfButton,
     SfHeading,
-    SfInput,
   },
   setup() {
     const { getProductLink } = useUiHelpers()
@@ -135,7 +115,6 @@ export default defineComponent({
     const { locations, search: searchStoreLocations } = useStoreLocations("selected-stores")
 
     const { cart, load: loadCart, applyCoupon } = useCart()
-    const couponApplied = ref("")
     const breadcrumbs = [
       {
         text: "Home",
@@ -205,7 +184,7 @@ export default defineComponent({
       return cart.value?.couponCodes
     })
 
-    const AreCouponsApplied = computed(() => {
+    const areCouponsApplied = computed(() => {
       return cart.value?.couponCodes.length
     })
 
@@ -223,7 +202,7 @@ export default defineComponent({
       isValidCoupon,
       invalidCouponErrorText,
       appliedCoupons,
-      AreCouponsApplied,
+      areCouponsApplied,
       handleStoreLocatorClick,
       cartItemFulfillmentTypes,
       getProductLink,

@@ -11,8 +11,8 @@ export const getCartItemPrice = (
   item: CartItem
 ): { regular: Maybe<String> | undefined; special: Maybe<String> | undefined } => {
   return {
-    regular: `$${item.productDiscounts?.length ? item.subtotal : item.total}`,
-    ...(item.productDiscounts?.length && { special: `$${item.total}` }),
+    regular: `$${item.product?.price?.price}`,
+    ...(item.product?.price?.salePrice && { special: `$${item.product?.price?.salePrice}` }),
   }
 }
 
