@@ -24,9 +24,9 @@ export default {
       componentRef.value = null
     }
 
-    modal.subscription.$on("open", ({ component, title, props }) => {
+    modal.subscription.$on("open", ({ component, props }) => {
       componentRef.value = component
-      titleRef.value = title
+      titleRef.value = props?.title
       properties.value = props
     })
 

@@ -198,5 +198,4 @@ export default {
   "Select Shipping Option": "Select Shipping Option",
   Price: "Price",
   "Change Store": "Change Store",
-  "Select Store": "Select Store",
 }
