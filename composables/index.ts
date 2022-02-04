@@ -12,7 +12,7 @@ export * from "./useUser"
 export * from "./useCart"
 
 // Store Finder
-export * from "./storeFinder/usePurchaseLocation"
+export * from "./usePurchaseLocation"
 export * from "./storeFinder/useCurrentLocation"
 export * from "./storeFinder/useStoreLocations"
 
@@ -25,4 +25,3 @@ export * from "./useCheckout"
 export * from "./useShippingMethods"
 
 export * from "./useDropzoneContent"
-

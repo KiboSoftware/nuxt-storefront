@@ -150,7 +150,7 @@ export default defineNuxtConfig({
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: [/^@storefront-ui/, "leaflet", "hammerjs"],
+    transpile: ["leaflet", "hammerjs"],
     loaders: {
       sass: {
         implementation: require("sass"),

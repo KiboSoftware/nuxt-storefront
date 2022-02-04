@@ -1,21 +1,19 @@
 import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
-import { getSpLocations } from "@/lib/gql/queries/spLocations"
+import { getSpLocations } from "@/lib/gql/queries"
 import { Location } from "@/server/types/GraphQL"
 
 export const usePurchaseLocation = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const app = nuxt.nuxt2Context.app
-  const storeLocationCookie = nuxt.nuxt2Context.$config.storeLocationCookie
-  const purchaseLocation = useState(`use-purchaseLocation`, (): Location => {
-    return {} as Location
-  })
-  const loading = useState(`use-purchaseLocation-loading`, () => false)
+  const purchaseLocationCookieName = nuxt.nuxt2Context.$config.storeLocationCookie
+  const purchaseLocation = useState<Location>(`use-purchaseLocation`, () => ({}))
+  const loading = useState<Boolean>(`use-purchaseLocation-loading`, () => false)
   const error = useState(`use-purchaseLocation-error`, () => null)
 
   const load = async () => {
-    const locationCookieValue = app.$cookies.get(storeLocationCookie)
+    const locationCookieValue = app.$cookies.get(purchaseLocationCookieName)
     if (locationCookieValue) {
       try {
         loading.value = true
@@ -36,9 +34,9 @@ export const usePurchaseLocation = () => {
 
   const set = (locationCode: string | null) => {
     if (locationCode === null) {
-      removeClientCookie(storeLocationCookie)
+      removeClientCookie(purchaseLocationCookieName)
     }
-    storeClientCookie(storeLocationCookie, locationCode as string)
+    storeClientCookie(purchaseLocationCookieName, locationCode as string)
   }
 
   return {
