@@ -47,11 +47,12 @@
             </SfPersonalDetails>
           </SfStep>
           <SfStep name="Shipping">
-            <SfShipping
+            <KiboShipping
               :value="shippingDetails"
-              :shipping-methods="shippingMethods"
               :countries="countries"
+              :shipping-methods="shippingMethodDetails"
               @input="updateShippingDetails"
+              @saveShippingAddress="saveShippingDetails"
             />
           </SfStep>
           <SfStep name="Payment">
@@ -145,7 +146,7 @@ import {
   SfSteps,
   SfButton,
   SfPersonalDetails,
-  SfShipping,
+  SfPayment,
   SfConfirmOrder,
   SfOrderReview,
   SfCheckbox,
@@ -162,14 +163,14 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters } from "~~/lib/getters"
+import { shopperContactGetters, shippingMethodGetters } from "~~/lib/getters"
 
 export default {
   name: "Checkout",
   components: {
     SfSteps,
     SfPersonalDetails,
-    SfShipping,
+    SfPayment,
     SfConfirmOrder,
     SfOrderReview,
     SfButton,
@@ -261,20 +262,28 @@ export default {
       ],
     }
 
-    const shipping = {
-      firstName: "",
-      lastName: "",
-      streetName: "",
-      apartment: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-      shippingMethod: {
-        price: "$0.00",
+    const paymentMethods = [
+      {
+        label: "Visa Debit",
+        value: "debit",
       },
-    }
+      {
+        label: "MasterCard",
+        value: "mastercard",
+      },
+      {
+        label: "Visa Electron",
+        value: "electron",
+      },
+      {
+        label: "Cash on delivery",
+        value: "cash",
+      },
+      {
+        label: "Check",
+        value: "check",
+      },
+    ]
 
     const getOrder = computed(() => {
       return checkout?.value
@@ -329,13 +338,20 @@ export default {
       zipCode: "",
       country: "",
       phoneNumber: "",
-      shippingMethod: "home",
+      shippingMethod: {
+        name: "",
+        code: "",
+      },
     })
+    const shippingMethodDetails = ref([])
 
     const populateShippingDetails = () => {
       shippingDetails.value = shopperContactGetters.getShippingDetails(
-        checkout.value?.fulfillmentInfo?.fulfillmentContact
+        checkout.value?.fulfillmentInfo
       )
+    }
+    const populateShppingMethodDetails = () => {
+      shippingMethodDetails.value = shippingMethodGetters.getShippingMethods(shippingMethods.value)
     }
 
     const updateShippingDetails = (newShippingDetails) => {
@@ -371,13 +387,16 @@ export default {
             },
           },
           isDestinationCommercial: false,
-          shippingMethodCode: "",
-          shippingMethodName: shippingDetails.value.shippingMethod,
+          shippingMethodCode: shippingDetails.value.shippingMethod.code,
+          shippingMethodName: shippingDetails.value.shippingMethod.name,
         },
       }
 
       await setShippingInfo(params)
       populateShippingDetails()
+
+      await loadShippingMethods(checkout.value.id)
+      populateShppingMethodDetails()
     }
 
     // billing
@@ -478,7 +497,7 @@ export default {
 
     const createUserAccount = async () => {
       const params = {
-        ...updatedPersonalDetails.value,
+        ...personalDetails.value,
         password: password.value,
         acceptsMarketing: true,
         isActive: true,
@@ -490,7 +509,6 @@ export default {
     // useAsync
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
-      await loadShippingMethods(checkout.value.id)
 
       populateShippingDetails()
       populatePersonalDetails()
@@ -568,9 +586,10 @@ export default {
       getOrder,
       personalDetails,
       updatePersonalDetails,
-      shipping,
       shippingDetails,
       updateShippingDetails,
+      saveShippingDetails,
+      shippingMethodDetails,
       billingDetails,
       updateBillingDetails,
       showCreateAccount,

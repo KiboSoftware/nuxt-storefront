@@ -67,8 +67,18 @@ const getAddressDetails = (shopper) => {
   }
 }
 
-const getShippingDetails = (shopper) => {
-  return getAddressDetails(shopper)
+const getShippingDetails = ({
+  fulfillmentContact: shopper,
+  shippingMethodName: name,
+  shippingMethodCode: code,
+}) => {
+  return {
+    ...getAddressDetails(shopper),
+    shippingMethod: {
+      name,
+      code,
+    },
+  }
 }
 
 const getBillingDetails = (shopper) => {

@@ -1,6 +1,6 @@
-const getMethodCode = (shippingMethod) => shippingMethod.code
-const getMethodName = (shippingMethod) => shippingMethod.name
-const getCurrencyCode = (shippingMethod) => shippingMethod.method
+const getMethodCode = (shippingMethod) => shippingMethod.shippingMethodCode
+const getMethodName = (shippingMethod) => shippingMethod.shippingMethodName
+const getCurrencyCode = (shippingMethod) => shippingMethod.currencyCode
 const getPrice = (shippingMethod) => shippingMethod.price
 
 const ShippingRate = (shippingMethod) => {
@@ -12,6 +12,17 @@ const ShippingRate = (shippingMethod) => {
   }
 }
 
+const getShippingMethods = (shippingMethods) => {
+  return shippingMethods.map((shippingMethod) => ({
+    isOpen: "false",
+    price: getPrice(shippingMethod),
+    delivery: "",
+    label: getMethodName(shippingMethod),
+    value: getMethodCode(shippingMethod),
+    description: "",
+  }))
+}
+
 export const shippingMethodGetters = {
   getMethodCode,
   getMethodName,
@@ -19,4 +30,5 @@ export const shippingMethodGetters = {
   getPrice,
 
   ShippingRate,
+  getShippingMethods,
 }
