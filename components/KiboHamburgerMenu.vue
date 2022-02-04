@@ -39,7 +39,7 @@
               <SfList>
                 <SfListItem v-for="(category, key) in megaMenuCategories" :key="key">
                   <SfMenuItem
-                    :label="$t(category.content.name)"
+                    :label="category.content.name"
                     :icon="showOrHideIcon(category)"
                     @click="goNext(category)"
                   />
