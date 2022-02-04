@@ -349,8 +349,11 @@ export default {
 
     const populateShippingDetails = () => {
       shippingDetails.value = shopperContactGetters.getShippingDetails(
-        checkout.value?.fulfillmentInfo?.fulfillmentContact
+        checkout.value?.fulfillmentInfo
       )
+    }
+    const populateShppingMethodDetails = () => {
+      shippingMethodDetails.value = shippingMethodGetters.getShippingMethods(shippingMethods.value)
     }
 
     const updateShippingDetails = (newShippingDetails) => {
@@ -384,6 +387,9 @@ export default {
 
       await setShippingInfo(params)
       populateShippingDetails()
+
+      await loadShippingMethods(checkout.value.id)
+      populateShppingMethodDetails()
     }
 
     // billing
@@ -522,7 +528,6 @@ export default {
     // useAsync
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
-      await loadShippingMethods(checkout.value.id)
 
       populateShippingDetails()
       populatePersonalDetails()
@@ -601,7 +606,6 @@ export default {
 
       personalDetails,
       updatePersonalDetails,
-
       shippingDetails,
       saveShippingDetails,
       updatedShippingAddress,
