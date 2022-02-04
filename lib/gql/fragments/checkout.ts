@@ -60,6 +60,7 @@ export const baseCheckoutFragment = /* GraphQL */ `
 
     billingInfo {
       billingContact {
+        id
         email
         firstName
         middleNameOrInitial
@@ -86,6 +87,8 @@ export const baseCheckoutFragment = /* GraphQL */ `
     }
 
     fulfillmentInfo {
+      shippingMethodCode
+      shippingMethodName
       fulfillmentContact {
         email
         firstName

@@ -185,7 +185,6 @@ export default {
     }
 
     watch(sameAsShipping, () => {
-      console.log("In watch ", props.shipping)
       if (sameAsShipping.value) {
         billingDetails.value.firstName = props.shipping.firstName
         billingDetails.value.lastName = props.shipping.lastName
