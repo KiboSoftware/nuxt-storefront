@@ -117,16 +117,19 @@ export const billingContactFragment = /* GraphQL */ `
   fragment billingContactFragment on Contact {
     id
     firstName
+    middleNameOrInitial
     lastNameOrSurname
     email
     address {
       address1
       address2
       address3
+      addressType
       stateOrProvince
       postalOrZipCode
       cityOrTown
       countryCode
+      isValidated
     }
     phoneNumbers {
       home
