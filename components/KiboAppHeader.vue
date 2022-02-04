@@ -259,10 +259,10 @@ import {
   useCart,
   useUiHelpers,
   useUiState,
-  useUser,
   useSearchSuggestions,
   useCategoryTree,
   useProductSearch,
+  useUser,
 } from "@/composables"
 
 import {

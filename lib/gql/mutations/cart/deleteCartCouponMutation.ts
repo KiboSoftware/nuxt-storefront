@@ -1,10 +1,11 @@
 import { cartDetails } from "@/lib/gql/fragments"
 
-export const deleteCartCouponMutation = `
-${cartDetails}
+export const deleteCartCouponMutation = /* GraphQL */ `
+  ${cartDetails}
 
-mutation deleteCartCoupon($cartId: String!, $couponCode: String!) {
+  mutation deleteCartCoupon($cartId: String!, $couponCode: String!) {
     deleteCartCoupon(cartId: $cartId, couponCode: $couponCode) {
-        ...cartDetails
+      ...cartDetails
     }
-}`
+  }
+`
