@@ -288,6 +288,7 @@ export default defineComponent({
   setup(_, context) {
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
+    console.log(context, app)
 
     const { categories: allCategories } = useCategoryTree()
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
@@ -404,7 +405,6 @@ export default defineComponent({
     const handleStoreLocatorClick = () => {
       modal.show({
         component: StoreLocatorModal,
-        title: "Select Store",
         props: {
           title: context?.root?.$t("Select Store"),
           handleSetStore: async (selectedStore: string) => {
