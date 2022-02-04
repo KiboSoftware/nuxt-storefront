@@ -1,7 +1,9 @@
 import Vue from "vue"
 // import Vuetify from 'vuetify'
 import { config } from "@vue/test-utils"
+import VueCompositionApi from "@vue/composition-api"
 
+Vue.use(VueCompositionApi)
 Vue.config.silent = true
 
 // Vue.config.ignoredElements = ['nuxt-link']

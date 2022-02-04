@@ -1,10 +1,7 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import { useProduct } from "@/composables/useProduct"
 import { getProductQuery } from "~~/lib/gql/queries/product/getProduct"
 import { configureProductMutation } from "~~/lib/gql/mutations/product/configureProductMutation"
 
-Vue.use(VueCompositionApi)
 const mockGetProductQuery = getProductQuery
 const mockConfigureProductMutation = configureProductMutation
 

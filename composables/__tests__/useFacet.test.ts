@@ -1,9 +1,5 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import { useFacet } from "../useFacet"
 import { Maybe, PrCategory } from "@/server/types/GraphQL"
-
-Vue.use(VueCompositionApi)
 
 const categoryTreeResponse: Maybe<Array<Maybe<PrCategory>>> = []
 

@@ -1,9 +1,6 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import { useCurrentLocation } from "../storeFinder/useCurrentLocation"
 import * as getCurrentUserPosition from "../storeFinder/utils/getUserCurrentPosition"
 
-Vue.use(VueCompositionApi)
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }

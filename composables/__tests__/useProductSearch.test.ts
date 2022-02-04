@@ -1,8 +1,4 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import { useProductSearch } from "../useProductSearch"
-
-Vue.use(VueCompositionApi)
 
 const productSearchResponse = {
   data: {

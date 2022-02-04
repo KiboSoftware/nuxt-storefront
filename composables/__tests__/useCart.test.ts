@@ -1,14 +1,10 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
-import { useCart } from "@/composables"
+import { useCart } from "@/composables/useCart"
 import {
   updateCartQuantityMutation,
   addToCartMutation,
   deleteCartItemMutation,
 } from "@/lib/gql/mutations"
 import { getCartQuery } from "@/lib/gql/queries"
-
-Vue.use(VueCompositionApi)
 
 const mockedAddToCartMutation = addToCartMutation
 const mockedGetCartQuery = getCartQuery

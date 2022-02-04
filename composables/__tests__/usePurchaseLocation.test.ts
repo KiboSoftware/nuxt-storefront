@@ -1,9 +1,5 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import * as cookieHelper from "../helpers/cookieHelper"
 import { usePurchaseLocation } from "./../storeFinder/usePurchaseLocation"
-
-Vue.use(VueCompositionApi)
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {

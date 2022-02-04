@@ -1,5 +1,3 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
 import * as cookieHelper from "@/composables/helpers/cookieHelper"
 import {
   loginMutation,
@@ -9,8 +7,6 @@ import {
 import { getCurrentUser } from "@/lib/gql/queries"
 
 import { useUser } from "@/composables/useUser"
-
-Vue.use(VueCompositionApi)
 
 const mockCurrentUser = getCurrentUser
 const mockLoginMutation = loginMutation
