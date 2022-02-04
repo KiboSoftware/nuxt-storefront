@@ -52,5 +52,7 @@ export default {
 
 .bar-heading {
   color: var(--_c-dark-primary);
+  justify-content: flex-start;
+  padding-left: var(--spacer-lg);
 }
 </style>
