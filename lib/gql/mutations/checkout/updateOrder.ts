@@ -4,9 +4,9 @@ import {
   fullfillmentInfoFragment,
 } from "../../fragments"
 
-export const getCheckoutQuery = /* GraphQL */ `
-  query getCheckout($checkoutId: String!) {
-    checkout: order(orderId: $checkoutId) {
+export const updateOrder = /* GraphQL */ `
+  mutation updatePersonalDetails($orderId: String!, $updateMode: String, $orderInput: OrderInput) {
+    checkout: updateOrder(orderId: $orderId, updateMode: $updateMode, orderInput: $orderInput) {
       ...baseCheckoutFragment
       items {
         ...checkoutLineItemFragment
@@ -16,6 +16,7 @@ export const getCheckoutQuery = /* GraphQL */ `
       }
     }
   }
+
   ${baseCheckoutFragment}
   ${checkoutLineItemFragment}
   ${fullfillmentInfoFragment}

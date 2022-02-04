@@ -1,9 +1,17 @@
 import * as cookieHelper from "@/composables/helpers/cookieHelper"
-import { loginMutation } from "@/lib/gql/mutations"
+import {
+  loginMutation,
+  createAccountMutation,
+  createAccountLoginMutation,
+} from "@/lib/gql/mutations"
 import { getCurrentUser } from "@/lib/gql/queries"
+
 import { useUser } from "@/composables/useUser"
+
 const mockCurrentUser = getCurrentUser
 const mockLoginMutation = loginMutation
+const mockCreateAccountMutation = createAccountMutation
+const mockCreateAccountLoginMutation = createAccountLoginMutation
 
 const currentUser = {
   emailAddress: "test@email.com",
@@ -36,6 +44,22 @@ const loginResponse = {
   },
 }
 
+const createAccountResponse = {
+  account: {
+    emailAddress: "firstName@gmail.com",
+    userName: null,
+    firstName: "firstName",
+    lastName: "lastName",
+    localeCode: null,
+    userId: null,
+    id: 1054,
+    isAnonymous: true,
+    attributes: [],
+  },
+}
+
+const createAccountLoginResponse = {}
+
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
@@ -51,6 +75,10 @@ jest.mock("#app", () => ({
           return {
             data: loginResponse,
           }
+        } else if (params.query === mockCreateAccountMutation) {
+          return { data: createAccountResponse }
+        } else if (params.query === mockCreateAccountLoginMutation) {
+          return { data: createAccountLoginResponse }
         }
       }),
       app: {
@@ -66,7 +94,8 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] useUser", () => {
-  const { user, login, load, logout, isAuthenticated, loading, error } = useUser()
+  const { user, login, createAccountAndLogin, load, logout, isAuthenticated, loading, error } =
+    useUser()
   test("useUser : should login using mutation ", async () => {
     const storeClientCookieSpy = jest.spyOn(cookieHelper, "storeClientCookie")
     await login({ username: "sssss", password: "abcd@only" })
@@ -85,5 +114,25 @@ describe("[composable] useUser", () => {
     const removeClientCookieSpy = jest.spyOn(cookieHelper, "removeClientCookie")
     logout()
     expect(removeClientCookieSpy).toHaveBeenCalled()
+  })
+
+  test("useUser : should create new account using mutation ", async () => {
+    const storeClientCookieSpy = jest.spyOn(cookieHelper, "storeClientCookie")
+
+    const params = {
+      firstName: "firstName",
+      lastName: "lastName",
+      email: "firstName@gmail.com",
+      password: "Password@1",
+      acceptsMarketing: true,
+      isActive: true,
+      id: 0,
+    }
+    await createAccountAndLogin(params)
+
+    expect(storeClientCookieSpy).toHaveBeenCalled()
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toStrictEqual({ login: null, register: null })
+    expect(isAuthenticated.value).toBeFalsy()
   })
 })

@@ -2,7 +2,11 @@ import { computed, reactive } from "@vue/composition-api"
 import type { User } from "./types"
 import { storeClientCookie, removeClientCookie } from "./helpers/cookieHelper"
 import { getCurrentUser } from "@/lib/gql/queries"
-import { loginMutation } from "@/lib/gql/mutations"
+import {
+  createAccountLoginMutation,
+  loginMutation,
+  createAccountMutation,
+} from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
@@ -87,12 +91,76 @@ export const useUser = () => {
     }
   }
 
+  // CreateAccount
+  const createAccountAndLogin = async (params) => {
+    const { email, firstName, lastName, password, acceptsMarketing, isActive, id } = params
+
+    const createAccountMutationVars = {
+      createAccountInput: {
+        emailAddress: email,
+        firstName,
+        lastName,
+        acceptsMarketing,
+        isActive,
+        id,
+      },
+    }
+
+    try {
+      loading.value = true
+
+      const customerAccountResponse = await fetcher({
+        query: createAccountMutation,
+        variables: createAccountMutationVars,
+      })
+
+      const accountId = customerAccountResponse.data?.account?.id
+
+      if (accountId) {
+        const createAccountLoginMutationVars = {
+          id: accountId,
+          createAccountLoginInput: {
+            emailAddress: email,
+            username: email,
+            password,
+          },
+        }
+
+        const response = await fetcher({
+          query: createAccountLoginMutation,
+          variables: createAccountLoginMutationVars,
+        })
+
+        const account = response?.data?.account
+
+        // set cookie
+        const cookie = {
+          accessToken: account?.accessToken,
+          accessTokenExpiration: account?.accessTokenExpiration,
+          refreshToken: account?.refreshToken,
+          refreshTokenExpiration: account?.refreshTokenExpiration,
+          userId: account?.userId,
+        }
+        storeClientCookie(authCookieName, cookie)
+
+        await load()
+        resetErrorValues()
+      } else if (customerAccountResponse.errors) {
+        error.login = customerAccountResponse.errors[0]
+      } else return false
+    } catch (err) {
+    } finally {
+      loading.value = false
+    }
+  }
+
   // return
   return {
     user,
     load,
     login,
     logout,
+    createAccountAndLogin,
     isAuthenticated,
     loading: computed(() => loading.value),
     error: computed(() => error),

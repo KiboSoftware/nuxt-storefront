@@ -146,10 +146,11 @@ export default defineNuxtConfig({
         { value: "Oldest", id: "createDate asc" },
       ],
     },
+    countries: ["US", "AT", "DE", "NL"],
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: [/^@storefront-ui/, "leaflet", "hammerjs"],
+    transpile: ["leaflet", "hammerjs"],
     loaders: {
       sass: {
         implementation: require("sass"),

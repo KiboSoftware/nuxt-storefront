@@ -44,9 +44,9 @@
 </template>
 <script lang="tsx">
 import { SfMegaMenu, SfList, SfMenuItem, SfImage } from "@storefront-ui/vue"
-import { ref, onMounted, defineComponent, computed } from "@vue/composition-api"
+import { ref, defineComponent, computed } from "@vue/composition-api"
 import { useCategoryTree, useUiHelpers } from "@/composables"
-import { categoryGetters } from "@/lib/getters";
+import { categoryGetters } from "@/lib/getters"
 
 export default defineComponent({
   components: {
@@ -56,16 +56,12 @@ export default defineComponent({
     SfImage,
   },
   setup() {
-    const { categories: allCategories, load: loadCategories } = useCategoryTree()
+    const { categories: allCategories } = useCategoryTree()
     const visible = ref(true)
     const megaMenuCategories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)
     })
     const { getCatLink } = useUiHelpers()
-
-    onMounted(async () => {
-      await loadCategories()
-    })
 
     return {
       getCatLink,

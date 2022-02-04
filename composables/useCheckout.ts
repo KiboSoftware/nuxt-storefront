@@ -1,5 +1,9 @@
 import { computed } from "@vue/composition-api"
-import { getOrCreateCheckoutFromCartMutation, setShippingInfoMutation } from "@/lib/gql/mutations"
+import {
+  getOrCreateCheckoutFromCartMutation,
+  setShippingInfoMutation,
+  updateOrder,
+} from "@/lib/gql/mutations"
 import { getCheckoutQuery } from "@/lib/gql/queries"
 import { useState, useNuxtApp } from "#app"
 import type { Checkout, Maybe } from "@/server/types/GraphQL"
@@ -38,10 +42,26 @@ export const useCheckout = () => {
   const load = async (checkoutId: String) => await getOrCreateCheckout({ checkoutId })
   const loadFromCart = async (cartId: String) => await getOrCreateCheckout({ cartId })
 
+  const setPersonalInfo = async (variables) => {
+    loading.value = true
+    try {
+      await fetcher({
+        query: updateOrder,
+        variables,
+      })
+      await load(checkout.value.id)
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   const setShippingInfo = async (variables) => {
     loading.value = true
     try {
-      const response = await fetcher({
+      await fetcher({
         query: setShippingInfoMutation,
         variables,
       })
@@ -63,5 +83,8 @@ export const useCheckout = () => {
     load,
     loadFromCart,
     setShippingInfo,
+    setPersonalInfo,
+    setBillingInfo,
+    submit,
   }
 }
