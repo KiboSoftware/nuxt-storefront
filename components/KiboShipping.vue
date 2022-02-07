@@ -99,7 +99,9 @@
           @input="updateField('phoneNumber', $event)"
         />
 
-        <SfButton @click="saveShippingAddress($event)"> Save shipping address </SfButton>
+        <SfButton @click="saveShippingAddress($event)">
+          {{ $t("Save Shipping Address") }}
+        </SfButton>
       </slot>
     </div>
     <slot
@@ -115,44 +117,44 @@
     <div class="form">
       <slot name="shipping-methods-form" v-bind="{ shippingMethods }">
         <div class="form__radio-group" data-testid="shipping-method">
-          <SfRadio
-            v-for="item in shippingMethods"
-            :key="item.value"
-            v-model="shippingMethod"
-            :label="item.label"
-            :value="item.value"
-            name="shippingMethod"
-            :description="item.description"
-            class="form__radio shipping"
-            @input="updateField('shippingMethod', { name: item.label, code: item.value })"
-          >
-            <template #label="{ label }">
-              <div class="sf-radio__label shipping__label">
+          <h1>Shipt to Home</h1>
+          <div v-for="item in shippingMethods.shipItems" :key="item.id">
+            <div class="shippingWrapper">
+              <div class="lineItem_image">
+                <SfImage
+                  class="sf-gallery__thumb"
+                  :src="item.product.imageUrl"
+                  :alt="item.product.name"
+                  :width="100"
+                  :height="100"
+                />
+              </div>
+
+              <div class="lineItem">
+                {{ item.product.name }} <br />
+                $ {{ item.product.price.price }} <br />
+              </div>
+              <div class="rates">
                 <div>
-                  {{ label }}
-                  <SfButton
-                    class="sf-button--text shipping__action desktop-only"
-                    :class="{ 'shipping__action--is-active': item.isOpen }"
-                    @click=";(item.isOpen = !item.isOpen), $emit('toggle-info', item.value)"
-                    >{{ item.isOpen ? "- info" : "+ info" }}
-                  </SfButton>
+                  <SfRadio
+                    v-for="rates in item.shippingRates"
+                    :key="rates.shippingMethodCode"
+                    :label="rates.shippingMethodName"
+                    :value="rates.shippingMethodCode"
+                    name="shippingMethod"
+                    :description="item.shippingMethodName"
+                    class="form__radio shipping"
+                    @input="
+                      updateField('shippingMethod', {
+                        name: rates.shippingMethodName,
+                        code: rates.shippingMethodCode,
+                      })
+                    "
+                  ></SfRadio>
                 </div>
-                <div class="shipping__label-price">{{ item.price }}</div>
               </div>
-            </template>
-            <template #description="{ description }">
-              <div class="sf-radio__description shipping__description">
-                <div class="shipping__delivery">
-                  <span>{{ item.delivery }}</span>
-                </div>
-                <transition name="sf-fade">
-                  <div v-if="item.isOpen" class="shipping__info">
-                    {{ description }}
-                  </div>
-                </transition>
-              </div>
-            </template>
-          </SfRadio>
+            </div>
+          </div>
         </div>
       </slot>
     </div>
@@ -160,7 +162,7 @@
 </template>
 
 <script>
-import { SfHeading, SfInput, SfButton, SfSelect, SfRadio } from "@storefront-ui/vue"
+import { SfHeading, SfInput, SfButton, SfSelect, SfImage, SfRadio } from "@storefront-ui/vue"
 export default {
   name: "KiboShipping",
   components: {
@@ -168,6 +170,7 @@ export default {
     SfInput,
     SfButton,
     SfSelect,
+    SfImage,
     SfRadio,
   },
   props: {
@@ -176,8 +179,8 @@ export default {
       default: () => ({}),
     },
     shippingMethods: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
     headingTitle: {
       type: String,
@@ -243,14 +246,14 @@ export default {
 
     watch(props.value, () => {
       firstName.value = props.value.firstName
-      lastNamefirstName.value = props.value.lastName
-      streetNamefirstName.value = props.value.streetName
-      cityfirstName.value = props.value.city
-      statefirstName.value = props.value.state
-      zipCodefirstName.value = props.value.zipCode
-      countryfirstName.value = props.value.country
-      phoneNumberfirstName.value = props.value.phoneNumber
-      shippingMethodfirstName.value = props.value.shippingMethod
+      lastName.value = props.value.lastName
+      streetName.value = props.value.streetName
+      city.value = props.value.city
+      state.value = props.value.state
+      zipCode.value = props.value.zipCode
+      country.value = props.value.country
+      phoneNumber.value = props.value.phoneNumber
+      shippingMethod.value = props.value.shippingMethod
     })
 
     return {
@@ -273,4 +276,22 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
+
+.shippingWrapper {
+  display: flex;
+  width: 40rem;
+  flex-direction: row;
+
+  .lineItem_image {
+    width: 10rem;
+  }
+
+  .lineItem {
+    width: 20rem;
+  }
+
+  .rates {
+    width: 10rem;
+  }
+}
 </style>

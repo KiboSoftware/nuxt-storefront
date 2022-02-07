@@ -180,4 +180,6 @@ export default {
   "Exp. Date MM/YY": "Exp. Date MM/YY",
   "Security Code": "Security Code",
   "Save payment method": "Save payment method",
+  "Save Shipping Address": "Save shipping address",
+  Info: "info",
 }

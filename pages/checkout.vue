@@ -163,7 +163,7 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters } from "~~/lib/getters"
+import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "~~/lib/getters"
 
 export default {
   name: "Checkout",
@@ -343,15 +343,11 @@ export default {
         code: "",
       },
     })
-    const shippingMethodDetails = ref([])
 
     const populateShippingDetails = () => {
       shippingDetails.value = shopperContactGetters.getShippingDetails(
         checkout.value?.fulfillmentInfo
       )
-    }
-    const populateShppingMethodDetails = () => {
-      shippingMethodDetails.value = shippingMethodGetters.getShippingMethods(shippingMethods.value)
     }
 
     const updateShippingDetails = (newShippingDetails) => {
@@ -397,6 +393,29 @@ export default {
 
       await loadShippingMethods(checkout.value.id)
       populateShppingMethodDetails()
+    }
+
+    // shippingMethods
+    const shippingMethodDetails = ref({
+      shipItems: [],
+      pickupItems: [],
+      deliveryItems: [],
+      shippingRates: [],
+    })
+
+    const populateShppingMethodDetails = () => {
+      shippingMethodDetails.value = {
+        shipItems: checkoutGetters.getShipItems(checkout.value),
+        pickupItems: checkoutGetters.getPickupItems(checkout.value),
+        deliveryItems: checkoutGetters.getDeliveryItems(checkout.value),
+      }
+
+      shippingMethodDetails.value.shipItems = shippingMethodDetails.value.shipItems.map((item) => ({
+        ...item,
+        shippingRates: shippingMethodGetters.getShippingRates(shippingMethods.value),
+      }))
+
+      console.log("---shippingMethodDetails.value-----", shippingMethodDetails.value)
     }
 
     // billing
@@ -584,12 +603,16 @@ export default {
       updateStep,
       logIn,
       getOrder,
+
       personalDetails,
       updatePersonalDetails,
+
       shippingDetails,
       updateShippingDetails,
       saveShippingDetails,
+
       shippingMethodDetails,
+
       billingDetails,
       updateBillingDetails,
       showCreateAccount,
