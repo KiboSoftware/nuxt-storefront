@@ -71,110 +71,24 @@
         </div>
       </div>
     </div>
-    <div v-if="showMobileFilters">
-      <div>
-        <div class="filter-by">
-          <span class="filter-by__title">Filter By</span>
-          <SfIcon
-            icon="cross"
-            size="0.938rem"
-            color="#7C7C7C"
-            @click="filterByToggle"
-            class="filter-by-cross-icon"
-          />
-        </div>
-        <div v-if="appliedFilters.value.length" class="applied-filters-container">
-          <div class="applied-filters">
-            <div
-              v-for="(filter, ind) in appliedFilters.value"
-              :key="ind"
-              class="applied-filters__values tiles"
-            >
-              <span class="applied-filters__filter-name">{{ filter.label }}</span>
-              <span class="applied-filters__values--padding-left">
-                <SfIcon
-                  icon="cross"
-                  size="0.7rem"
-                  @click="() => selectFilter(filter.filterValue)"
-                />
-              </span>
-            </div>
-          </div>
-        </div>
-        <hr class="filter-hr" />
-      </div>
-      <div key="filters">
-        <SfAccordion :show-chevron="true" open="all" :multiple="false">
-          <div v-for="(facet, i) in facets" :key="i">
-            <SfAccordionItem
-              :key="`filter-title-${facetGetters.getFacetField(facet)}`"
-              :header="facetGetters.getFacetName(facet)"
-              class="filters"
-            >
-              <template #header="{ header, isOpen, accordionClick }">
-                <SfButton
-                  :aria-pressed="isOpen.toString()"
-                  :aria-expanded="isOpen.toString()"
-                  :class="{ 'is-open': false }"
-                  class="sf-button--pure sf-accordion-item__header"
-                  @click="accordionClick"
-                >
-                  {{ header }}
-                  <slot name="additional-info" />
-                  <SfChevron
-                    tabindex="0"
-                    class="sf-accordion-item__chevron"
-                    :class="{ 'sf-chevron--top': isOpen }"
-                  />
-                </SfButton>
-              </template>
-              <KiboFacet :facet="facet" @selectFilter="selectFilter" />
-            </SfAccordionItem>
-            <hr class="facet-hr smartphone-only" />
-          </div>
-        </SfAccordion>
-      </div>
-      <div class="filter-buttons">
-        <SfButton
-          class="sf-button--small color-light smartphone-only clear"
-          @click="clearAllFilters()"
-          :disabled="!appliedFilters.value.length"
-          :class="`${!appliedFilters.value.length ? 'clear__is-disabled--button' : ''}`"
-        >
-          Clear All
-        </SfButton>
-        <SfButton
-          class="sf-button--small smartphone-only view"
-          :class="`${!appliedFilters.value.length ? 'view__is-disabled--button' : ''}`"
-          @click="filterByToggle"
-          :disabled="!appliedFilters.value.length"
-        >
-          View Results
-        </SfButton>
-      </div>
-      <div v-if="totalProducts" class="total-products total-products__lower-total">
-        {{ totalProducts }} Results
-      </div>
+    <div v-if="showMobileFilters" class="smartphone-only">
+      <KiboMobilePLPFilterBy
+        title="Filter By"
+        :kiboFacets="facets"
+        :appliedFilters="appliedFilters.value"
+        :totalProducts="totalProducts"
+        @removeFilter="selectFilter"
+        @clearFilters="clearAllFilters"
+        @close="filterByToggle"
+        @changeFilter="selectFilter"
+      />
     </div>
-    <div>
-      <div
-        v-if="!showMobileFilters && appliedFilters.value.length"
-        class="applied-filters-container"
-      >
-        <div class="applied-filters applied-filters__withoutFilter">
-          <div
-            v-for="(filter, ind) in appliedFilters.value"
-            :key="ind"
-            class="applied-filters__values tiles"
-          >
-            <span class="applied-filters__filter-name">{{ filter.label }}</span>
-            <span class="applied-filters__values--padding-left">
-              <SfIcon icon="cross" size="0.7rem" @click="() => selectFilter(filter.filterValue)" />
-            </span>
-          </div>
-        </div>
-        <div class="sf-link" @click="clearAllFilters">Clear All</div>
-      </div>
+    <div v-if="!showMobileFilters && appliedFilters.value.length" class="smartphone-only">
+      <KiboFilterTiles
+        :appliedFilters="appliedFilters.value"
+        @removeSelectedFilter="selectFilter"
+      />
+      <div class="sf-link" @click="clearAllFilters">Clear All</div>
     </div>
     <div v-if="!showMobileFilters" class="main section">
       <div class="sidebar desktop-only">
@@ -186,34 +100,7 @@
             :breadcrumbs="breadcrumbs"
           />
           <div key="filters">
-            <SfAccordion :show-chevron="true" open="all" :multiple="false">
-              <div v-for="(facet, i) in facets" :key="i">
-                <SfAccordionItem
-                  :key="`filter-title-${facetGetters.getFacetField(facet)}`"
-                  :header="facetGetters.getFacetName(facet)"
-                  class="filters"
-                >
-                  <template #header="{ header, isOpen, accordionClick }">
-                    <SfButton
-                      :aria-pressed="isOpen.toString()"
-                      :aria-expanded="isOpen.toString()"
-                      :class="{ 'is-open': false }"
-                      class="sf-button--pure sf-accordion-item__header"
-                      @click="accordionClick"
-                    >
-                      {{ header }}
-                      <slot name="additional-info" />
-                      <SfChevron
-                        tabindex="0"
-                        class="sf-accordion-item__chevron"
-                        :class="{ 'sf-chevron--top': isOpen }"
-                      />
-                    </SfButton>
-                  </template>
-                  <KiboFacet :facet="facet" @selectFilter="selectFilter" />
-                </SfAccordionItem>
-              </div>
-            </SfAccordion>
+            <KiboFacetAccordion :kiboFacets="facets" @selectFilter="selectFilter" />
           </div>
         </transition-group>
       </div>
@@ -316,8 +203,6 @@ import {
   SfSelect,
   SfBreadcrumbs,
   SfProductCardHorizontal,
-  SfAccordion,
-  SfChevron,
   SfProperty,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
@@ -336,8 +221,6 @@ export default {
     SfSelect,
     SfBreadcrumbs,
     SfProductCardHorizontal,
-    SfAccordion,
-    SfChevron,
     SfProperty,
   },
   setup(_, context) {
@@ -423,7 +306,14 @@ export default {
       }
       changeFilters(filters.join(","))
     }
-    appliedFilters.value = computed(() => facetGetters.getSelectedFacets(facets.value))
+    appliedFilters.value = computed(() =>
+      facetGetters.getSelectedFacets(facets.value).map((facet) => {
+        return {
+          label: facet.label,
+          value: facet.filterValue,
+        }
+      })
+    )
     watch(
       () => context.root.$route,
       async () => {
@@ -433,7 +323,14 @@ export default {
           ...getFacetsFromURL(isSearchPage.value),
           itemsPerPage: showPerPage.value,
         })
-        appliedFilters.value = computed(() => facetGetters.getSelectedFacets(facets.value))
+        appliedFilters.value = computed(() =>
+          facetGetters.getSelectedFacets(facets.value).map((facet) => {
+            return {
+              label: facet.label,
+              value: facet.filterValue,
+            }
+          })
+        )
       }
     )
 
@@ -499,17 +396,6 @@ export default {
     @include for-desktop {
       padding: 0;
     }
-  }
-}
-
-.filter-by {
-  padding: calc(var(--spacer-2xs) * 8) 0 calc(var(--spacer-2xs) * 5) 0;
-  display: flex;
-  justify-content: space-between;
-
-  &__title {
-    font-size: 20px;
-    font-weight: bold;
   }
 }
 
@@ -819,33 +705,6 @@ export default {
   }
 }
 
-.category-title {
-  color: #2b2b2b;
-  font-size: var(--font-size--lg);
-  font-family: var(--font-family--primary);
-  line-height: calc(var(--spacer-sm) * 1.375);
-  text-align: left;
-  margin: 0 0 var(--spacer-sm) 0;
-}
-
-.sf-filter {
-  --filter-label-color: #2b2b2b;
-  --filter-count-color: #2b2b2b;
-  --filter-label-font-size: var(--font-size--sm);
-  --filter-count-font-size: var(--font-size--sm);
-  --filter-count-margin: 0 var(--spacer-xs) 0 auto;
-
-  padding: calc(var(--spacer-2xs) * 1.5);
-}
-
-.category-drill-down,
-.filters {
-  @include for-desktop {
-    border: 1px solid var(--_c-white-secondary);
-    border-width: 0 0 1px 0;
-  }
-}
-
 .category-name {
   margin: 0;
   font-size: var(--font-size--lg);
@@ -858,30 +717,6 @@ export default {
   margin: var(--spacer-base) 0;
   @include for-desktop {
     margin: var(--spacer-base) auto var(--spacer-base);
-  }
-}
-
-.sf-accordion-item {
-  --accordion-item-header-padding: calc(var(--spacer-base) * 1.25) 0;
-
-  &__chevron {
-    margin-left: auto;
-  }
-
-  &__header {
-    font-size: var(--font-size--sm);
-    font-weight: bold;
-    @include for-mobile {
-      font-size: var(--font-size--lg);
-    }
-  }
-
-  @include for-mobile {
-    --accordion-item-header-font-size: var(--font-size--base);
-    --accordion-item-header-font-weight: var(--font-weight--normal);
-    --accordion-item-header-border-width: 0;
-    --accordion-item-content-border-width: 0;
-    --accordion-item-content-padding: var(--spacer-2xs) 0;
   }
 }
 
@@ -908,117 +743,6 @@ export default {
   }
 }
 
-.applied-filters-container {
-  @include for-desktop {
-    display: none;
-  }
-}
-
-.applied-filters {
-  display: flex;
-  flex: 1;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  padding: 0;
-  font-size: var(--font-size--sm);
-
-  &__withoutFilter {
-    padding: 0;
-  }
-
-  &__filter-name {
-    font-size: var(--font-size--sm);
-  }
-
-  &__item {
-    background: var(--c-light);
-    padding: var(--spacer-xs);
-    margin: var(--spacer-2xs);
-  }
-
-  &__values {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 var(--spacer-xs);
-    border-right: 2px solid var(--c-text-muted);
-    margin: 0 var(--spacer-sm) var(--spacer-sm) 0;
-
-    &--padding-left {
-      padding-left: var(--spacer-xs);
-    }
-  }
-}
-
-.filter-button {
-  background-color: #fff;
-  padding: 1rem 3.125rem 1rem 0.688rem;
-  border: 1px solid var(--c-black);
-  color: var(--_c-dark-primary);
-  font-size: var(--font-size--sm);
-  width: 150px;
-  margin: 0 0 var(--spacer-2xs) 0;
-
-  &__plus-icon {
-    margin: 0 -2.625rem 0 auto;
-  }
-}
-
-.filter-buttons {
-  display: flex;
-  justify-content: space-around;
-  padding: var(--spacer-base);
-}
-
-.tiles {
-  background-color: #fff;
-  border: 1px solid var(--_c-dark-primary);
-  border-radius: var(--spacer-sm);
-  height: calc(var(--spacer-2xs) * 7);
-}
-
-.view {
-  font-size: var(--font-size--sm);
-
-  &__is-disabled--button {
-    --button-background: var(--_c-light-green-secondary);
-
-    color: #fefefe;
-  }
-}
-
-.clear {
-  font-size: var(--font-size--sm);
-
-  &__is-disabled--button {
-    --button-color: var(--c-text-disabled);
-    --button-border-color: transparent;
-    --button-background: var(--c-light);
-
-    color: var(--_c-gray-middle);
-  }
-}
-
-.filter-by-cross-icon {
-  margin: 0 var(--spacer-2xs);
-}
-
-.filter-hr {
-  margin: 0 -7.8% 0;
-  height: 1px;
-  border-width: 0;
-  color: var(--_c-gray-middle);
-  background-color: var(--_c-gray-middle);
-}
-
-.facet-hr {
-  margin: 0 -7.8% 0;
-  height: 1px;
-  border-width: 0;
-  color: var(--_c-white-secondary);
-  background-color: var(--_c-white-secondary);
-}
-
 .total-products {
   display: flex;
   justify-content: center;
@@ -1034,6 +758,20 @@ export default {
   }
   @include for-desktop {
     display: none;
+  }
+}
+
+.filter-button {
+  background-color: #fff;
+  padding: 1rem 3.125rem 1rem 0.688rem;
+  border: 1px solid var(--c-black);
+  color: var(--_c-dark-primary);
+  font-size: var(--font-size--sm);
+  width: 150px;
+  margin: 0 0 var(--spacer-2xs) 0;
+
+  &__plus-icon {
+    margin: 0 -2.625rem 0 auto;
   }
 }
 </style>
