@@ -1,20 +1,22 @@
-const getFirstName = (shopper) => shopper?.firstName
-const getLastName = (shopper) => shopper?.lastNameOrSurname
-const getMiddleName = (shopper) => shopper?.middleNameOrInitial
-const getEmail = (shopper) => shopper?.email
-const getStreetName = (shopper) => shopper?.address?.address1
-const getApartment = (shopper) => shopper?.address?.address2
-const getAddressLine3 = (shopper) => shopper?.address?.address3
-const getAddressLine4 = (shopper) => shopper?.address?.address4
-const getStateOrProvince = (shopper) => shopper?.address?.stateOrProvince
-const getPostalOrZipCode = (shopper) => shopper?.address?.postalOrZipCode
-const getCityOrTown = (shopper) => shopper?.address?.cityOrTown
-const getCountryCode = (shopper) => shopper?.address?.countryCode
-const getPhoneHome = (shopper) => shopper?.phoneNumbers?.home
-const getPhoneMobile = (shopper) => shopper?.phoneNumbers?.mobile
-const getPhoneWork = (shopper) => shopper?.phoneNumbers?.work
+import { Shopper } from "@/composables/types"
 
-const getPersonalDetails = (shopper, personalDetails) => {
+const getFirstName = (shopper: Shopper) => shopper?.firstName
+const getLastName = (shopper: Shopper) => shopper?.lastNameOrSurname
+const getMiddleName = (shopper: Shopper) => shopper?.middleNameOrInitial
+const getEmail = (shopper: Shopper) => shopper?.email
+const getStreetName = (shopper: Shopper) => shopper?.address?.address1
+const getApartment = (shopper: Shopper) => shopper?.address?.address2
+const getAddressLine3 = (shopper: Shopper) => shopper?.address?.address3
+const getAddressLine4 = (shopper: Shopper) => shopper?.address?.address4
+const getStateOrProvince = (shopper: Shopper) => shopper?.address?.stateOrProvince
+const getPostalOrZipCode = (shopper: Shopper) => shopper?.address?.postalOrZipCode
+const getCityOrTown = (shopper: Shopper) => shopper?.address?.cityOrTown
+const getCountryCode = (shopper: Shopper) => shopper?.address?.countryCode
+const getPhoneHome = (shopper: Shopper) => shopper?.phoneNumbers?.home
+const getPhoneMobile = (shopper: Shopper) => shopper?.phoneNumbers?.mobile
+const getPhoneWork = (shopper: Shopper) => shopper?.phoneNumbers?.work
+
+const getPersonalDetails = (shopper: Shopper, personalDetails) => {
   if (!shopper) return { firstName: "", lastName: "", email: "" }
 
   return {
@@ -24,7 +26,7 @@ const getPersonalDetails = (shopper, personalDetails) => {
   }
 }
 
-const getAddressDetails = (shopper) => {
+const getAddressDetails = (shopper: Shopper) => {
   if (!shopper)
     return {
       firstName: "",
@@ -81,7 +83,7 @@ const getShippingDetails = ({
   }
 }
 
-const getBillingDetails = (shopper) => {
+const getBillingDetails = (shopper: Shopper) => {
   return getAddressDetails(shopper)
 }
 
