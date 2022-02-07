@@ -352,9 +352,6 @@ export default {
         checkout.value?.fulfillmentInfo
       )
     }
-    const populateShppingMethodDetails = () => {
-      shippingMethodDetails.value = shippingMethodGetters.getShippingMethods(shippingMethods.value)
-    }
 
     const updateShippingDetails = (newShippingDetails) => {
       shippingDetails.value = { ...newShippingDetails }
@@ -390,6 +387,29 @@ export default {
 
       await loadShippingMethods(checkout.value.id)
       populateShppingMethodDetails()
+    }
+
+    // shippingMethods
+    const shippingMethodDetails = ref({
+      shipItems: [],
+      pickupItems: [],
+      deliveryItems: [],
+      shippingRates: [],
+    })
+
+    const populateShppingMethodDetails = () => {
+      shippingMethodDetails.value = {
+        shipItems: checkoutGetters.getShipItems(checkout.value),
+        pickupItems: checkoutGetters.getPickupItems(checkout.value),
+        deliveryItems: checkoutGetters.getDeliveryItems(checkout.value),
+      }
+
+      shippingMethodDetails.value.shipItems = shippingMethodDetails.value.shipItems.map((item) => ({
+        ...item,
+        shippingRates: shippingMethodGetters.getShippingRates(shippingMethods.value),
+      }))
+
+      console.log("---shippingMethodDetails.value-----", shippingMethodDetails.value)
     }
 
     // billing
@@ -606,6 +626,7 @@ export default {
 
       personalDetails,
       updatePersonalDetails,
+
       shippingDetails,
       saveShippingDetails,
       updatedShippingAddress,
