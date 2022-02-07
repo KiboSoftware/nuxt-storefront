@@ -186,25 +186,13 @@ export default {
 
     watch(sameAsShipping, () => {
       if (sameAsShipping.value) {
-        billingDetails.value.firstName = props.shipping.firstName
-        billingDetails.value.lastName = props.shipping.lastName
-        billingDetails.value.streetName = props.shipping.streetName
-        billingDetails.value.apartment = props.shipping.apartment
-        billingDetails.value.city = props.shipping.city
-        billingDetails.value.state = props.shipping.state
-        billingDetails.value.zipCode = props.shipping.zipCode
-        billingDetails.value.country = props.shipping.country
-        billingDetails.value.phoneNumber = props.shipping.phoneNumber
+        Object.keys(billingDetails.value).forEach((key) => {
+          billingDetails.value[key] = props.shipping[key]
+        })
       } else {
-        billingDetails.value.firstName = ""
-        billingDetails.value.lastName = ""
-        billingDetails.value.streetName = ""
-        billingDetails.value.apartment = ""
-        billingDetails.value.city = ""
-        billingDetails.value.state = ""
-        billingDetails.value.zipCode = ""
-        billingDetails.value.country = ""
-        billingDetails.value.phoneNumber = ""
+        Object.keys(billingDetails.value).forEach((key) => {
+          billingDetails.value[key] = ""
+        })
       }
       context.emit("billingAddressData", { ...billingDetails.value })
     })
