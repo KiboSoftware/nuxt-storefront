@@ -16,7 +16,7 @@ const getShippingRates = (shippingMethods) => {
 
 const getShippingMethods = (shippingMethods) => {
   return shippingMethods.map((shippingMethod) => ({
-    isOpen: "false",
+    isOpen: false,
     price: getPrice(shippingMethod),
     delivery: "",
     label: getMethodName(shippingMethod),
