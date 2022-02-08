@@ -81,17 +81,6 @@
                   :value="billingDetails"
                   :shipping="shippingDetails"
                   :countries="countries"
-                  :billing-inputs-labels="[
-                    'First name',
-                    'Last name',
-                    'Street address',
-                    'Apt, Suite, etc.',
-                    'City',
-                    'State/Province',
-                    'Zip-code',
-                    'Phone number',
-                  ]"
-                  billing-select-label="Country"
                   @billingAddressData="updateBillingDetails"
                 />
               </template>
@@ -528,6 +517,7 @@ export default {
 
       populateShippingDetails()
       populatePersonalDetails()
+      populateBillingDetails()
     }, null)
 
     // others

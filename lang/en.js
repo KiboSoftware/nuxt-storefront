@@ -187,8 +187,11 @@ export default {
   "Last Name": "Last name",
   "Street Address": "Street address",
   Apt: "Apt, Suite, etc. ",
-  City: "State/Province",
+  City: "City",
+  State: "State/Province",
   "Zip Code": "Zip-code",
   Country: "Country",
   "Phone Number": "Phone number",
+  "Save Billing Address": "Save billing address",
+  "Save Billing Address Same As Shipping": "Save billing address same as shipping",
 }

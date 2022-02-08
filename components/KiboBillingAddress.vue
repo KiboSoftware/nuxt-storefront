@@ -1,16 +1,16 @@
 <template>
-  <div class="sf-payment" data-testid="payment">
+  <div class="sf-payment" data-testid="billingAddress">
     <div class="form">
       <SfCheckbox
         v-model="sameAsShipping"
-        :label="sameAsShippingCheckboxLabel"
+        :label="$t('Save Billing Address Same As Shipping')"
         name="copyShippingAddress"
         class="form__element form__checkbox"
         @change="$emit('same-as-shipping')"
       />
       <SfInput
         v-model="billingDetails.firstName"
-        :label="billingInputsLabels[0]"
+        :label="$t('First Name')"
         name="firstName"
         class="form__element form__element--half"
         required
@@ -18,7 +18,7 @@
       />
       <SfInput
         v-model="billingDetails.lastName"
-        :label="billingInputsLabels[1]"
+        :label="$t('Last Name')"
         name="lastName"
         class="form__element form__element--half form__element--half-even"
         required
@@ -26,7 +26,7 @@
       />
       <SfInput
         v-model="billingDetails.address1"
-        :label="billingInputsLabels[2]"
+        :label="$t('Street Address')"
         name="streetName"
         class="form__element form__element--half"
         required
@@ -34,7 +34,7 @@
       />
       <SfInput
         v-model="billingDetails.address2"
-        :label="billingInputsLabels[3]"
+        :label="$t('Apt')"
         name="apartment"
         class="form__element form__element--half form__element--half-even"
         required
@@ -42,7 +42,7 @@
       />
       <SfInput
         v-model="billingDetails.city"
-        :label="billingInputsLabels[4]"
+        :label="$t('City')"
         name="city"
         class="form__element form__element--half"
         required
@@ -50,7 +50,7 @@
       />
       <SfInput
         v-model="billingDetails.state"
-        :label="billingInputsLabels[5]"
+        :label="$t('State')"
         name="state"
         class="form__element form__element--half form__element--half-even"
         required
@@ -58,7 +58,7 @@
       />
       <SfInput
         v-model="billingDetails.zipCode"
-        :label="billingInputsLabels[6]"
+        :label="$t('Zip Code')"
         name="zipCode"
         class="form__element form__element--half"
         required
@@ -66,8 +66,8 @@
       />
       <SfSelect
         v-model="billingDetails.country"
-        :label="billingSelectLabel"
-        :placeholder="`Select ${billingSelectLabel}`"
+        :label="$t('Country')"
+        :placeholder="`Select ${$t('Country')}`"
         class="form__element form__element--half form__element--half-even form__select"
         required
         data-testid="country"
@@ -83,7 +83,7 @@
       </SfSelect>
       <SfInput
         v-model="billingDetails.phoneNumber"
-        :label="billingInputsLabels[7]"
+        :label="$t('Phone Number')"
         name="phone"
         class="form__element"
         required
@@ -91,7 +91,7 @@
       />
       <SfCheckbox
         v-model="saveBillingAddress"
-        :label="saveBillingAddressCheckboxlabel"
+        :label="$t('Save Billing Address')"
         name="getBillingAddress"
         class="form__element form__checkbox"
         @change="$emit('saveBillingAddress', saveBillingAddress)"
@@ -114,34 +114,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    sameAsShippingCheckboxLabel: {
-      type: String,
-      default: "Billing address same as shipping",
-    },
-    billingInputsLabels: {
-      type: Array,
-      default: () => [
-        "First name",
-        "Last name",
-        "Street name",
-        "House/Apartment number",
-        "City",
-        "State/Province",
-        "Zip-code",
-        "Phone number",
-      ],
-    },
-    billingSelectLabel: {
-      type: String,
-      default: "Country",
-    },
-    saveBillingAddressCheckboxlabel: {
-      type: String,
-      default: "Save billing address",
-    },
     countries: {
       type: Array,
-      default: () => ["USA", "Canada"],
+      default: () => [],
     },
     shipping: {
       type: Object,
