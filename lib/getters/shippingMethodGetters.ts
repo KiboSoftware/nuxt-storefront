@@ -14,10 +14,6 @@ const getShippingRates = (shippingMethods) => {
   }))
 }
 
-const getShippingRates = (shippingMethods) => {
-  return shippingMethods.map((shippingMethod) => ShippingRate(shippingMethod))
-}
-
 export const shippingMethodGetters = {
   getMethodCode,
   getMethodName,
@@ -26,12 +22,3 @@ export const shippingMethodGetters = {
 
   getShippingRates,
 }
-
-// return shippingMethods.map((shippingMethod) => ({
-//   isOpen: false,
-//   price: getPrice(shippingMethod),
-//   delivery: "",
-//   label: getMethodName(shippingMethod),
-//   value: getMethodCode(shippingMethod),
-//   description: "",
-// }))
