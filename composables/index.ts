@@ -25,3 +25,4 @@ export * from "./useCheckout"
 export * from "./useShippingMethods"
 
 export * from "./useDropzoneContent"
+export * from "./useCustomerCreditCards"

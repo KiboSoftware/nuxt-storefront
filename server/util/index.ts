@@ -6,6 +6,7 @@ export const getApiConfig = () => {
     sharedSecret: process.env.KIBO_SHARED_SECRET as string,
     authHost: (process.env.KIBO_AUTH_URL || process.env.KIBO_AUTH_HOST) as string,
     apiHost: process.env.KIBO_API_HOST as string,
+    pciHost: process.env.KIBO_PCI_HOST as string,
   }
 }
 export const isShopperAuthExpired = (userAuthTicket: UserAuthTicket) => {

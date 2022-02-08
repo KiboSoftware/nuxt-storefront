@@ -176,4 +176,7 @@ export default {
   "Show Per Page": "Show Per Page",
   Back: "Back",
   "My Account": "My Account",
+  "Card number": "Card number",
+  "Exp. Date MM/YY": "Exp. Date MM/YY",
+  "Security Code": "Security Code",
 }

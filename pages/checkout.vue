@@ -55,13 +55,13 @@
             />
           </SfStep>
           <SfStep name="Payment">
-            <SfPayment
+            <KiboPayment
               :payment-methods="paymentMethods"
               :shipping="shipping"
               :countries="countries"
               :months="months"
               :years="years"
-              @input="payment = $event"
+              @input="getPaymentMethodData"
             />
           </SfStep>
           <SfStep name="Review">
@@ -123,15 +123,16 @@ import {
   SfButton,
   SfPersonalDetails,
   SfShipping,
-  SfPayment,
   SfConfirmOrder,
   SfOrderReview,
   SfCheckbox,
   SfInput,
 } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
-import { useCheckout, useCart, useUiState } from "@/composables"
-import { useNuxtApp } from "#app"
+import { useCheckout, useCart, useUiState, useCustomerCreditCards, useUser } from "@/composables"
+import { creditCardPaymentGetters } from "@/lib/getters"
+import { computed, ref, useNuxtApp } from "#app"
+import { buildPaymentMethodInput } from "@/composables/helpers"
 
 export default {
   name: "Checkout",
@@ -139,7 +140,6 @@ export default {
     SfSteps,
     SfPersonalDetails,
     SfShipping,
-    SfPayment,
     SfConfirmOrder,
     SfOrderReview,
     SfButton,
@@ -149,11 +149,16 @@ export default {
   setup() {
     const nuxt = useNuxtApp()
     const countries = nuxt.nuxt2Context.$config.countries
+    const paymentType = nuxt.nuxt2Context.$config.paymentAction.paymentType
+    const currencyCode = nuxt.nuxt2Context.$config.paymentAction.currencyCode
+    const paymentWorkflow = nuxt.nuxt2Context.$config.paymentAction.paymentWorkflow
+
     const currentStep = ref(0)
     const { cart } = useCart()
     const { checkout, loadFromCart, setPersonalInfo, setShippingInfo } = useCheckout()
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
+    const { tokenizeCard, addPaymentMethodByTokenizeCard } = useCustomerCreditCards()
     const showCreateAccount = ref(false)
     const password = ref(null)
     const confirmPassword = ref(null)
@@ -230,24 +235,8 @@ export default {
 
     const paymentMethods = [
       {
-        label: "Visa Debit",
-        value: "debit",
-      },
-      {
-        label: "MasterCard",
-        value: "mastercard",
-      },
-      {
-        label: "Visa Electron",
-        value: "electron",
-      },
-      {
-        label: "Cash on delivery",
-        value: "cash",
-      },
-      {
-        label: "Check",
-        value: "check",
+        label: "Credit / Debit Card",
+        value: "creditCard",
       },
     ]
 
@@ -327,13 +316,20 @@ export default {
     ]
 
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
+    let cardDetails = ref({
+      cardNumber: "",
+      expiryDate: "",
+      securityCode: "",
+      cardKeep: false,
+      cardType: "",
+    })
 
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
     }, null)
 
     const getOrder = computed(() => {
-      return checkout.value
+      return checkout?.value
     })
 
     const createAccount = (value) => {
@@ -358,7 +354,7 @@ export default {
 
     const savePersonalDetails = async () => {
       const updatedCheckoutInput = {
-        ...checkout.value,
+        ...checkout?.value,
         email: personalDetails.value.email,
         totalCollected: 0,
         amountAvailableForRefund: 0,
@@ -367,7 +363,7 @@ export default {
       }
 
       const variables = {
-        orderId: checkout.value.id,
+        orderId: checkout?.value?.id,
         updateMode: "ApplyToOriginal",
         orderInput: updatedCheckoutInput,
       }
@@ -382,7 +378,7 @@ export default {
 
     const saveShippingDetails = async () => {
       const params = {
-        orderId: checkout.value.id,
+        orderId: checkout?.value?.id,
         fulfillmentInfoInput: {
           fulfillmentContact: {
             email: personalDetails.value.email,
@@ -417,8 +413,41 @@ export default {
       await setShippingInfo(params)
     }
 
-    const savePaymentDetails = () => {
-      console.log("Saved payment details.")
+    const getPaymentMethodData = (updatedPaymentDetails) => {
+      cardDetails = {
+        ...updatedPaymentDetails,
+      }
+    }
+
+    const addPaymentMethod = async () => {
+      const creditCardData = {
+        cardNumber: cardDetails.value.cardNumber,
+        cardType: cardDetails.value.cardType,
+        // cardholderName: creditCardPaymentGetters.getNameOnCard(cardDetails.value),
+        cvv: cardDetails.value.securityCode,
+        expireMonth: creditCardPaymentGetters.getExpireMonth(cardDetails?.value),
+        expireYear: creditCardPaymentGetters.getExpireMonth(cardDetails?.value),
+      }
+
+      const tokenizedData = await tokenizeCard(creditCardData)
+
+      if (tokenizedData) {
+        const paymentAction = buildPaymentMethodInput(
+          paymentType,
+          currencyCode,
+          paymentWorkflow,
+          checkout,
+          creditCardData,
+          tokenizedData
+        )
+
+        await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
+      }
+    }
+
+    const savePaymentDetails = async () => {
+      // Need to add billing address save function
+      await addPaymentMethod()
     }
 
     const updateStep = (selectedStep: number) => {
@@ -506,6 +535,7 @@ export default {
       password,
       confirmPassword,
       transition,
+      getPaymentMethodData,
     }
   },
   watch: {
