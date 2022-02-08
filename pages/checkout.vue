@@ -50,10 +50,19 @@
             <KiboShipping
               :value="shippingDetails"
               :countries="countries"
-              :shipping-methods="shippingMethodDetails"
               @input="updateShippingDetails"
               @saveShippingAddress="saveShippingDetails"
-            />
+            >
+              <template #shipping-methods-form>
+                <KiboShippingMethodForm
+                  :ship-items="shipItems"
+                  :pickup-items="pickupItems"
+                  :delivery-items="deliveryItems"
+                  :shipping-rates="shippingRates"
+                  @saveShippingMethod="saveShippingMethod"
+                />
+              </template>
+            </KiboShipping>
           </SfStep>
           <SfStep name="Payment">
             <KiboPayment
@@ -310,7 +319,7 @@ export default {
     const savePersonalDetails = async () => {
       const updatedCheckoutInput = {
         ...checkout?.value,
-        email: personalDetails.value.email,
+        email: personalDetails.value?.email,
         totalCollected: 0,
         amountAvailableForRefund: 0,
         amountRemainingForPayment: 0,
@@ -331,8 +340,8 @@ export default {
     const shippingDetails = ref({
       firstName: "",
       lastName: "",
-      streetName: "",
-      apartment: "",
+      address1: "",
+      address2: "",
       city: "",
       state: "",
       zipCode: "",
@@ -359,71 +368,59 @@ export default {
         orderId: checkout?.value?.id,
         fulfillmentInfoInput: {
           fulfillmentContact: {
-            email: personalDetails.value.email,
-            firstName: shippingDetails.value.firstName,
+            email: personalDetails.value?.email,
+            firstName: shippingDetails.value?.firstName,
             middleNameOrInitial: "",
-            lastNameOrSurname: shippingDetails.value.lastName,
+            lastNameOrSurname: shippingDetails.value?.lastName,
             companyOrOrganization: "",
             phoneNumbers: {
-              home: shippingDetails.value.phoneNumber,
+              home: shippingDetails.value?.phoneNumber,
               mobile: "",
               work: "",
             },
             address: {
-              address1: shippingDetails.value.streetName,
-              address2: shippingDetails.value.apartment,
+              address1: shippingDetails.value?.address1,
+              address2: shippingDetails.value?.address2,
               address3: "",
               address4: "",
-              cityOrTown: shippingDetails.value.city,
-              stateOrProvince: shippingDetails.value.state,
-              postalOrZipCode: shippingDetails.value.zipCode,
-              countryCode: shippingDetails.value.country,
+              cityOrTown: shippingDetails.value?.city,
+              stateOrProvince: shippingDetails.value?.state,
+              postalOrZipCode: shippingDetails.value?.zipCode,
+              countryCode: shippingDetails.value?.country,
               addressType: "",
               isValidated: false,
             },
           },
           isDestinationCommercial: false,
-          shippingMethodCode: shippingDetails.value.shippingMethod.code,
-          shippingMethodName: shippingDetails.value.shippingMethod.name,
+          shippingMethodCode: shippingDetails.value?.shippingMethod.code,
+          shippingMethodName: shippingDetails.value?.shippingMethod.name,
         },
       }
 
       await setShippingInfo(params)
       populateShippingDetails()
 
-      await loadShippingMethods(checkout.value.id)
-      populateShppingMethodDetails()
+      await loadShippingMethods(checkout.value?.id)
     }
 
     // shippingMethods
-    const shippingMethodDetails = ref({
-      shipItems: [],
-      pickupItems: [],
-      deliveryItems: [],
-      shippingRates: [],
-    })
+    const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
+    const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
+    const deliveryItems = computed(() => checkoutGetters.getDeliveryItems(checkout.value))
+    const shippingRates = computed(() =>
+      shippingMethodGetters.getShippingRates(shippingMethods.value)
+    )
 
-    const populateShppingMethodDetails = () => {
-      shippingMethodDetails.value = {
-        shipItems: checkoutGetters.getShipItems(checkout.value),
-        pickupItems: checkoutGetters.getPickupItems(checkout.value),
-        deliveryItems: checkoutGetters.getDeliveryItems(checkout.value),
-      }
-
-      shippingMethodDetails.value.shipItems = shippingMethodDetails.value.shipItems.map((item) => ({
-        ...item,
-        shippingRates: shippingMethodGetters.getShippingRates(shippingMethods.value),
-      }))
-
-      console.log("---shippingMethodDetails.value-----", shippingMethodDetails.value)
+    const saveShippingMethod = (value) => {
+      console.log("Save shipping method: ", value)
     }
 
     // billing
     const billingDetails = ref({
       firstName: "",
       lastName: "",
-      streetName: "",
-      apartment: "",
+      address1: "",
+      address2: "",
       city: "",
       state: "",
       zipCode: "",
@@ -443,28 +440,28 @@ export default {
 
     const saveBillingDetails = async () => {
       const params = {
-        orderId: checkout.value.id,
+        orderId: checkout.value?.id,
         billingInfoInput: {
           billingContact: {
-            email: personalDetails.value.email,
-            firstName: billingDetails.value.firstName,
+            email: personalDetails.value?.email,
+            firstName: billingDetails.value?.firstName,
             middleNameOrInitial: "",
-            lastNameOrSurname: billingDetails.value.lastName,
+            lastNameOrSurname: billingDetails.value?.lastName,
             companyOrOrganization: "",
             address: {
-              address1: billingDetails.value.streetName,
-              address2: billingDetails.value.apartment,
+              address1: billingDetails.value?.address1,
+              address2: billingDetails.value?.address2,
               address3: "",
               address4: "",
-              cityOrTown: billingDetails.value.city,
-              stateOrProvince: billingDetails.value.state,
-              postalOrZipCode: billingDetails.value.zipCode,
-              countryCode: billingDetails.value.country,
+              cityOrTown: billingDetails.value?.city,
+              stateOrProvince: billingDetails.value?.state,
+              postalOrZipCode: billingDetails.value?.zipCode,
+              countryCode: billingDetails.value?.country,
               addressType: "",
               isValidated: false,
             },
             phoneNumbers: {
-              home: billingDetails.value.phoneNumber,
+              home: billingDetails.value?.phoneNumber,
               mobile: "",
               work: "",
             },
@@ -534,29 +531,29 @@ export default {
     }, null)
 
     // others
-    const updateStep = (selectedStep: number) => {
+    const updateStep = async (selectedStep: number) => {
       const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1
 
       switch (steps[currentStep.value]) {
         case Steps.GO_TO_SHIPPING: {
-          savePersonalDetails()
+          await savePersonalDetails()
           break
         }
 
         case Steps.GO_TO_PAYMENT: {
-          saveShippingDetails()
+          await saveShippingDetails()
           break
         }
 
         case Steps.PAY_FOR_ORDER: {
-          saveBillingDetails()
-          savePaymentDetails()
+          await saveBillingDetails()
+          await savePaymentDetails()
           break
         }
 
         case Steps.CONFIRM_AND_PAY: {
           if (typeof selectedStep !== "number") {
-            createUserAccount()
+            await createUserAccount()
           }
 
           break
@@ -611,7 +608,11 @@ export default {
       updateShippingDetails,
       saveShippingDetails,
 
-      shippingMethodDetails,
+      shipItems,
+      deliveryItems,
+      pickupItems,
+      shippingRates,
+      saveShippingMethod,
 
       billingDetails,
       updateBillingDetails,

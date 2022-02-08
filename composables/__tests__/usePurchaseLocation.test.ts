@@ -1,4 +1,4 @@
-import * as cookieHelper from "../helpers/cookieHelper"
+import * as cookieHelper from "@/composables/helpers/cookieHelper"
 import { usePurchaseLocation } from "@/composables"
 
 jest.mock("#app", () => ({

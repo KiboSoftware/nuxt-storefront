@@ -10,8 +10,7 @@
     <div class="form">
       <slot name="form" v-bind="{ inputsLabels, selectLabel, countries }">
         <SfInput
-          v-model="firstName"
-          :value="firstName"
+          :value="shippingAddress.firstName"
           :label="inputsLabels[0]"
           name="firstName"
           class="form__element form__element--half"
@@ -19,8 +18,7 @@
           @input="updateField('firstName', $event)"
         />
         <SfInput
-          v-model="lastName"
-          :value="lastName"
+          :value="shippingAddress.lastName"
           :label="inputsLabels[1]"
           name="lastName"
           class="form__element form__element--half form__element--half-even"
@@ -28,26 +26,23 @@
           @input="updateField('lastName', $event)"
         />
         <SfInput
-          v-model="streetName"
-          :value="streetName"
+          :value="shippingAddress.address1"
           :label="inputsLabels[2]"
           name="streetName"
           class="form__element form__element--half"
           required
-          @input="updateField('streetName', $event)"
+          @input="updateField('address1', $event)"
         />
         <SfInput
-          v-model="apartment"
-          :value="apartment"
+          :value="shippingAddress.address2"
           :label="inputsLabels[3]"
           name="apartment"
           class="form__element form__element--half form__element--half-even"
           required
-          @input="updateField('apartment', $event)"
+          @input="updateField('address2', $event)"
         />
         <SfInput
-          v-model="city"
-          :value="city"
+          :value="shippingAddress.city"
           :label="inputsLabels[4]"
           name="city"
           class="form__element form__element--half"
@@ -55,8 +50,7 @@
           @input="updateField('city', $event)"
         />
         <SfInput
-          v-model="state"
-          :value="state"
+          :value="shippingAddress.state"
           :label="inputsLabels[5]"
           name="state"
           class="form__element form__element--half form__element--half-even"
@@ -64,8 +58,7 @@
           @input="updateField('state', $event)"
         />
         <SfInput
-          v-model="zipCode"
-          :value="zipCode"
+          :value="shippingAddress.zipCode"
           :label="inputsLabels[6]"
           name="zipCode"
           class="form__element form__element--half"
@@ -73,7 +66,7 @@
           @input="updateField('zipCode', $event)"
         />
         <SfSelect
-          v-model="country"
+          :value="shippingAddress.country"
           :placeholder="selectLabel"
           class="form__element form__element--half form__element--half-even form__select sf-select--underlined"
           :label="inputsLabels[7]"
@@ -90,8 +83,7 @@
           </SfSelectOption>
         </SfSelect>
         <SfInput
-          v-model="phoneNumber"
-          :value="phoneNumber"
+          :value="shippingAddress.phoneNumber"
           :label="inputsLabels[8]"
           name="phone"
           class="form__element"
@@ -114,55 +106,13 @@
         class="sf-heading--left sf-heading--no-underline title"
       />
     </slot>
-    <div class="form">
-      <slot name="shipping-methods-form" v-bind="{ shippingMethods }">
-        <div class="form__radio-group" data-testid="shipping-method">
-          <h1>Shipt to Home</h1>
-          <div v-for="item in shippingMethods.shipItems" :key="item.id">
-            <div class="shippingWrapper">
-              <div class="lineItem_image">
-                <SfImage
-                  class="sf-gallery__thumb"
-                  :src="item.product.imageUrl"
-                  :alt="item.product.name"
-                  :width="100"
-                  :height="100"
-                />
-              </div>
-
-              <div class="lineItem">
-                {{ item.product.name }} <br />
-                $ {{ item.product.price.price }} <br />
-              </div>
-              <div class="rates">
-                <div>
-                  <SfRadio
-                    v-for="rates in item.shippingRates"
-                    :key="rates.shippingMethodCode"
-                    :label="rates.shippingMethodName"
-                    :value="rates.shippingMethodCode"
-                    name="shippingMethod"
-                    :description="item.shippingMethodName"
-                    class="form__radio shipping"
-                    @input="
-                      updateField('shippingMethod', {
-                        name: rates.shippingMethodName,
-                        code: rates.shippingMethodCode,
-                      })
-                    "
-                  ></SfRadio>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </slot>
-    </div>
+    <slot name="shipping-methods-form"> </slot>
   </div>
 </template>
 
 <script>
-import { SfHeading, SfInput, SfButton, SfSelect, SfImage, SfRadio } from "@storefront-ui/vue"
+import { SfHeading, SfInput, SfButton, SfSelect } from "@storefront-ui/vue"
+
 export default {
   name: "KiboShipping",
   components: {
@@ -170,15 +120,9 @@ export default {
     SfInput,
     SfButton,
     SfSelect,
-    SfImage,
-    SfRadio,
   },
   props: {
     value: {
-      type: Object,
-      default: () => ({}),
-    },
-    shippingMethods: {
       type: Object,
       default: () => ({}),
     },
@@ -222,51 +166,18 @@ export default {
     },
   },
   setup(props, context) {
-    const firstName = ref("")
-    const lastName = ref("")
-    const streetName = ref("")
-    const apartment = ref("")
-    const city = ref("")
-    const state = ref("")
-    const zipCode = ref("")
-    const country = ref("")
-    const phoneNumber = ref("")
-    const shippingMethod = ref({ name: "", code: "" })
+    const shippingAddress = computed(() => props.value)
 
     const updateField = (fieldName, fieldValue) => {
-      context.emit("input", {
-        ...props.value,
-        [fieldName]: fieldValue,
-      })
+      shippingAddress.value[fieldName] = fieldValue
     }
 
     const saveShippingAddress = () => {
-      context.emit("saveShippingAddress")
+      context.emit("saveShippingAddress", shippingAddress.value)
     }
 
-    watch(props.value, () => {
-      firstName.value = props.value.firstName
-      lastName.value = props.value.lastName
-      streetName.value = props.value.streetName
-      city.value = props.value.city
-      state.value = props.value.state
-      zipCode.value = props.value.zipCode
-      country.value = props.value.country
-      phoneNumber.value = props.value.phoneNumber
-      shippingMethod.value = props.value.shippingMethod
-    })
-
     return {
-      firstName,
-      lastName,
-      streetName,
-      apartment,
-      city,
-      state,
-      zipCode,
-      country,
-      phoneNumber,
-      shippingMethod,
+      shippingAddress,
       updateField,
       saveShippingAddress,
     }
@@ -276,22 +187,4 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
-
-.shippingWrapper {
-  display: flex;
-  width: 40rem;
-  flex-direction: row;
-
-  .lineItem_image {
-    width: 10rem;
-  }
-
-  .lineItem {
-    width: 20rem;
-  }
-
-  .rates {
-    width: 10rem;
-  }
-}
 </style>
