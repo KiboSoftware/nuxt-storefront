@@ -401,26 +401,14 @@ export default {
     }
 
     // billing
-    const billingDetails = ref({
-      firstName: "",
-      lastName: "",
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-    })
-
-    const populateBillingDetails = () => {
-      billingDetails.value = shopperContactGetters.getBillingDetails(
-        checkout.value?.billingInfo?.billingContact
-      )
-    }
+    const billingDetails = computed(() =>
+      shopperContactGetters.getBillingDetails(checkout.value?.billingInfo?.billingContact)
+    )
 
     const updateBillingDetails = (newBillingDetails) => {
-      billingDetails.value = { ...newBillingDetails }
+      Object.keys(billingDetails.value).forEach((key) => {
+        billingDetails.value[key] = newBillingDetails[key]
+      })
     }
 
     const saveBillingDetails = async () => {
@@ -455,7 +443,6 @@ export default {
       }
 
       await setBillingInfo(params)
-      populateBillingDetails()
     }
 
     // accountCreation
