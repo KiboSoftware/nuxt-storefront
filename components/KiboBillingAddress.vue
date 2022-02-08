@@ -3,7 +3,6 @@
     <div class="form">
       <SfCheckbox
         v-model="sameAsShipping"
-        :value="sameAsShipping"
         :label="sameAsShippingCheckboxLabel"
         name="copyShippingAddress"
         class="form__element form__checkbox"
@@ -11,7 +10,6 @@
       />
       <SfInput
         v-model="billingDetails.firstName"
-        :value="billingDetails.firstName"
         :label="billingInputsLabels[0]"
         name="firstName"
         class="form__element form__element--half"
@@ -20,7 +18,6 @@
       />
       <SfInput
         v-model="billingDetails.lastName"
-        :value="billingDetails.lastName"
         :label="billingInputsLabels[1]"
         name="lastName"
         class="form__element form__element--half form__element--half-even"
@@ -28,26 +25,23 @@
         @input="updateField('lastName', $event)"
       />
       <SfInput
-        v-model="billingDetails.streetName"
-        :value="billingDetails.streetName"
+        v-model="billingDetails.address1"
         :label="billingInputsLabels[2]"
         name="streetName"
         class="form__element form__element--half"
         required
-        @input="updateField('streetName', $event)"
+        @input="updateField('address1', $event)"
       />
       <SfInput
-        v-model="billingDetails.apartment"
-        :value="billingDetails.apartment"
+        v-model="billingDetails.address2"
         :label="billingInputsLabels[3]"
         name="apartment"
         class="form__element form__element--half form__element--half-even"
         required
-        @input="updateField('apartment', $event)"
+        @input="updateField('address2', $event)"
       />
       <SfInput
         v-model="billingDetails.city"
-        :value="billingDetails.city"
         :label="billingInputsLabels[4]"
         name="city"
         class="form__element form__element--half"
@@ -56,7 +50,6 @@
       />
       <SfInput
         v-model="billingDetails.state"
-        :value="billingDetails.state"
         :label="billingInputsLabels[5]"
         name="state"
         class="form__element form__element--half form__element--half-even"
@@ -65,7 +58,6 @@
       />
       <SfInput
         v-model="billingDetails.zipCode"
-        :value="billingDetails.zipCode"
         :label="billingInputsLabels[6]"
         name="zipCode"
         class="form__element form__element--half"
@@ -74,7 +66,6 @@
       />
       <SfSelect
         v-model="billingDetails.country"
-        :value="billingDetails.country"
         :label="billingSelectLabel"
         :placeholder="`Select ${billingSelectLabel}`"
         class="form__element form__element--half form__element--half-even form__select"
@@ -92,7 +83,6 @@
       </SfSelect>
       <SfInput
         v-model="billingDetails.phoneNumber"
-        :value="billingDetails.phoneNumber"
         :label="billingInputsLabels[7]"
         name="phone"
         class="form__element"
@@ -101,7 +91,6 @@
       />
       <SfCheckbox
         v-model="saveBillingAddress"
-        :value="saveBillingAddress"
         :label="saveBillingAddressCheckboxlabel"
         name="getBillingAddress"
         class="form__element form__checkbox"
@@ -164,8 +153,8 @@ export default {
     const billingDetails = ref({
       firstName: "",
       lastName: "",
-      streetName: "",
-      apartment: "",
+      address1: "",
+      address2: "",
       city: "",
       state: "",
       zipCode: "",
@@ -181,7 +170,6 @@ export default {
         ...billingDetails.value,
         [fieldName]: fieldValue,
       })
-      console.log("After In UF val", billingDetails)
     }
 
     watch(sameAsShipping, () => {

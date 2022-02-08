@@ -1,22 +1,22 @@
-import { Shopper } from "@/composables/types"
+import { CustomerContact } from "@/server/types/GraphQL"
 
-const getFirstName = (shopper: Shopper) => shopper?.firstName
-const getLastName = (shopper: Shopper) => shopper?.lastNameOrSurname
-const getMiddleName = (shopper: Shopper) => shopper?.middleNameOrInitial
-const getEmail = (shopper: Shopper) => shopper?.email
-const getStreetName = (shopper: Shopper) => shopper?.address?.address1
-const getApartment = (shopper: Shopper) => shopper?.address?.address2
-const getAddressLine3 = (shopper: Shopper) => shopper?.address?.address3
-const getAddressLine4 = (shopper: Shopper) => shopper?.address?.address4
-const getStateOrProvince = (shopper: Shopper) => shopper?.address?.stateOrProvince
-const getPostalOrZipCode = (shopper: Shopper) => shopper?.address?.postalOrZipCode
-const getCityOrTown = (shopper: Shopper) => shopper?.address?.cityOrTown
-const getCountryCode = (shopper: Shopper) => shopper?.address?.countryCode
-const getPhoneHome = (shopper: Shopper) => shopper?.phoneNumbers?.home
-const getPhoneMobile = (shopper: Shopper) => shopper?.phoneNumbers?.mobile
-const getPhoneWork = (shopper: Shopper) => shopper?.phoneNumbers?.work
+const getFirstName = (shopper: CustomerContact) => shopper?.firstName
+const getLastName = (shopper: CustomerContact) => shopper?.lastNameOrSurname
+const getMiddleName = (shopper: CustomerContact) => shopper?.middleNameOrInitial
+const getEmail = (shopper: CustomerContact) => shopper?.email
+const getAddressLine1 = (shopper: CustomerContact) => shopper?.address?.address1
+const getAddressLine2 = (shopper: CustomerContact) => shopper?.address?.address2
+const getAddressLine3 = (shopper: CustomerContact) => shopper?.address?.address3
+const getAddressLine4 = (shopper: CustomerContact) => shopper?.address?.address4
+const getStateOrProvince = (shopper: CustomerContact) => shopper?.address?.stateOrProvince
+const getPostalOrZipCode = (shopper: CustomerContact) => shopper?.address?.postalOrZipCode
+const getCityOrTown = (shopper: CustomerContact) => shopper?.address?.cityOrTown
+const getCountryCode = (shopper: CustomerContact) => shopper?.address?.countryCode
+const getPhoneHome = (shopper: CustomerContact) => shopper?.phoneNumbers?.home
+const getPhoneMobile = (shopper: CustomerContact) => shopper?.phoneNumbers?.mobile
+const getPhoneWork = (shopper: CustomerContact) => shopper?.phoneNumbers?.work
 
-const getPersonalDetails = (shopper: Shopper, personalDetails) => {
+const getPersonalDetails = (shopper: CustomerContact, personalDetails) => {
   if (!shopper) return { firstName: "", lastName: "", email: "" }
 
   return {
@@ -26,19 +26,18 @@ const getPersonalDetails = (shopper: Shopper, personalDetails) => {
   }
 }
 
-const getAddressDetails = (shopper: Shopper) => {
+const getAddressDetails = (shopper: CustomerContact) => {
   if (!shopper)
     return {
       firstName: "",
       lastName: "",
-      streetName: "",
-      apartment: "",
+      address1: "",
+      address2: "",
       city: "",
       state: "",
       zipCode: "",
       country: "",
       phoneNumber: "",
-      shippingMethod: "",
     }
 
   const {
@@ -48,8 +47,8 @@ const getAddressDetails = (shopper: Shopper) => {
       cityOrTown: city,
       stateOrProvince: state,
       postalOrZipCode: zipCode,
-      address1: streetName,
-      address2: apartment,
+      address1,
+      address2,
       countryCode: country,
     },
     phoneNumbers: { home: phoneNumber },
@@ -58,14 +57,13 @@ const getAddressDetails = (shopper: Shopper) => {
   return {
     firstName,
     lastName,
-    streetName,
-    apartment,
+    address1,
+    address2,
     city,
     state,
     zipCode,
     country,
     phoneNumber,
-    shippingMethod: "home",
   }
 }
 
@@ -83,7 +81,7 @@ const getShippingDetails = ({
   }
 }
 
-const getBillingDetails = (shopper: Shopper) => {
+const getBillingDetails = (shopper: CustomerContact) => {
   return getAddressDetails(shopper)
 }
 
@@ -92,8 +90,8 @@ export const shopperContactGetters = {
   getLastName,
   getMiddleName,
   getEmail,
-  getStreetName,
-  getApartment,
+  getAddressLine1,
+  getAddressLine2,
   getAddressLine3,
   getAddressLine4,
   getStateOrProvince,

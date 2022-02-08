@@ -182,4 +182,13 @@ export default {
   "Save payment method": "Save payment method",
   "Save Shipping Address": "Save shipping address",
   Info: "info",
+  "Ship To Home": "Ship to Home",
+  "First Name": "First name",
+  "Last Name": "Last name",
+  "Street Address": "Street address",
+  Apt: "Apt, Suite, etc. ",
+  City: "State/Province",
+  "Zip Code": "Zip-code",
+  Country: "Country",
+  "Phone Number": "Phone number",
 }
