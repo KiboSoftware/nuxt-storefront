@@ -125,18 +125,7 @@ export default {
   },
 
   setup(props, context) {
-    const billingDetails = ref({
-      firstName: "",
-      lastName: "",
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-    })
-
+    const billingDetails = ref({ ...props.value })
     const sameAsShipping = ref(false)
     const saveBillingAddress = ref(false)
 
