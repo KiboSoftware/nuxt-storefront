@@ -18,6 +18,7 @@
             {{ checkoutLineItemGetters.getProductName(item) }} <br />
             $ {{ checkoutLineItemGetters.getProductPrice(item) }} <br />
           </div>
+
           <div class="rates">
             <div>
               <SfRadio
@@ -40,7 +41,7 @@
                     code: rates.shippingMethodCode,
                   })
                 "
-              ></SfRadio>
+              />
             </div>
           </div>
         </div>
@@ -88,7 +89,9 @@ export default {
     })
 
     const updateField = (fieldName, itemIndex, fieldValue) => {
-      shippingMethod.value[fieldName][itemIndex] = fieldValue
+      shippingMethod.value[fieldName][itemIndex] = { ...fieldValue }
+      shippingMethod.value[fieldName] = [...shippingMethod.value[fieldName]]
+
       context.emit("saveShippingMethod", shippingMethod.value)
     }
 
