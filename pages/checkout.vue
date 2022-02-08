@@ -385,39 +385,27 @@ export default {
       await setShippingInfo(params)
       populateShippingDetails()
 
-      await loadShippingMethods(checkout.value.id)
-      populateShppingMethodDetails()
+      await loadShippingMethods(checkout.value?.id)
     }
 
     // shippingMethods
-    const shippingMethodDetails = ref({
-      shipItems: [],
-      pickupItems: [],
-      deliveryItems: [],
-      shippingRates: [],
-    })
+    const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
+    const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
+    const deliveryItems = computed(() => checkoutGetters.getDeliveryItems(checkout.value))
+    const shippingRates = computed(() =>
+      shippingMethodGetters.getShippingRates(shippingMethods.value)
+    )
 
-    const populateShppingMethodDetails = () => {
-      shippingMethodDetails.value = {
-        shipItems: checkoutGetters.getShipItems(checkout.value),
-        pickupItems: checkoutGetters.getPickupItems(checkout.value),
-        deliveryItems: checkoutGetters.getDeliveryItems(checkout.value),
-      }
-
-      shippingMethodDetails.value.shipItems = shippingMethodDetails.value.shipItems.map((item) => ({
-        ...item,
-        shippingRates: shippingMethodGetters.getShippingRates(shippingMethods.value),
-      }))
-
-      console.log("---shippingMethodDetails.value-----", shippingMethodDetails.value)
+    const saveShippingMethod = (value) => {
+      console.log("Save shipping method: ", value)
     }
 
     // billing
     const billingDetails = ref({
       firstName: "",
       lastName: "",
-      streetName: "",
-      apartment: "",
+      address1: "",
+      address2: "",
       city: "",
       state: "",
       zipCode: "",
@@ -437,28 +425,28 @@ export default {
 
     const saveBillingDetails = async () => {
       const params = {
-        orderId: checkout.value.id,
+        orderId: checkout.value?.id,
         billingInfoInput: {
           billingContact: {
-            email: personalDetails.value.email,
-            firstName: billingDetails.value.firstName,
+            email: personalDetails.value?.email,
+            firstName: billingDetails.value?.firstName,
             middleNameOrInitial: "",
-            lastNameOrSurname: billingDetails.value.lastName,
+            lastNameOrSurname: billingDetails.value?.lastName,
             companyOrOrganization: "",
             address: {
-              address1: billingDetails.value.streetName,
-              address2: billingDetails.value.apartment,
+              address1: billingDetails.value?.address1,
+              address2: billingDetails.value?.address2,
               address3: "",
               address4: "",
-              cityOrTown: billingDetails.value.city,
-              stateOrProvince: billingDetails.value.state,
-              postalOrZipCode: billingDetails.value.zipCode,
-              countryCode: billingDetails.value.country,
+              cityOrTown: billingDetails.value?.city,
+              stateOrProvince: billingDetails.value?.state,
+              postalOrZipCode: billingDetails.value?.zipCode,
+              countryCode: billingDetails.value?.country,
               addressType: "",
               isValidated: false,
             },
             phoneNumbers: {
-              home: billingDetails.value.phoneNumber,
+              home: billingDetails.value?.phoneNumber,
               mobile: "",
               work: "",
             },
