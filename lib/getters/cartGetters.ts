@@ -9,10 +9,10 @@ export const getCartItemImage = (item: CartItem) => item?.product?.imageUrl
 
 export const getCartItemPrice = (
   item: CartItem
-): { regular: Maybe<String> | undefined; special: Maybe<String> | undefined } => {
+): { regular: Maybe<Number> | undefined | null; special: Maybe<Number> | undefined | null } => {
   return {
-    regular: `$${item.product?.price?.price}`,
-    ...(item.product?.price?.salePrice && { special: `$${item.product?.price?.salePrice}` }),
+    regular: item.product?.price?.price,
+    special: item.product?.price?.salePrice,
   }
 }
 
@@ -52,9 +52,10 @@ export const getCartItemSku = (item: CartItem) =>
 
 function getTotals(cart: Cart) {
   return {
-    total: `$${cart?.orderDiscounts?.length ? cart?.discountedSubtotal : cart?.total}`,
-    subtotal: `$${cart?.subtotal}`,
-    ...(cart?.orderDiscounts.length && { special: `$${cart?.discountedTotal}` }),
+    total: cart?.total,
+    subtotal: cart?.subtotal,
+    discountedSubtotal: cart?.discountedSubtotal,
+    discountedTotal: cart?.discountedTotal,
   }
 }
 
@@ -117,7 +118,8 @@ export const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
   cart?.items?.find((item) => item.id === cartItemId)
 
 export const getCartItemOptions = (item: CartItem) => item?.product?.options
-const productAppliedCoupons = (cartItem) => {
+
+const getProductAppliedCoupons = (cartItem) => {
   return cartItem?.productDiscounts?.map((each) => each.couponCode)
 }
 
@@ -149,5 +151,5 @@ export const cartGetters = {
   getCartTotalQuantity,
   getSelectedFullfillmentOption,
   getFulfillmentLocation,
-  productAppliedCoupons,
+  getProductAppliedCoupons,
 }

@@ -12,14 +12,18 @@
         </component>
       </div>
       <div class="kibo-collectedProduct__price-wrapper">
+        <p>{{ typeof specialPrice }}</p>
         <KiboPrice
           v-if="regularPrice"
-          :regular="regularPrice"
-          :special="specialPrice"
+          :regular="$n(regularPrice, 'currency')"
+          :special="specialPrice && $n(specialPrice, 'currency')"
           class="kibo-collectedProduct__price"
           :small="true"
           :coupons="couponsApplied"
         />
+        <ins v-if="specialPrice" class="kibo-promo-success">
+          {{ `${couponsApplied ? "'" + couponsApplied.join(" , ") + "'" : ""}` }} promo code applied
+        </ins>
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
         <p>Qty:</p>
@@ -269,5 +273,13 @@ export default defineComponent({
     object-fit: contain;
     background: var(--c-white);
   }
+}
+
+.kibo-promo-success {
+  font-size: var(--font-size--xs);
+  text-decoration: none;
+  color: var(--c-danger);
+  font-style: italic;
+  text-align: right;
 }
 </style>

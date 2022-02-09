@@ -49,11 +49,6 @@
         </ins>
       </slot>
     </div>
-    <slot name="promo-success" v-bind="{ props }">
-      <ins v-if="props.special" class="kibo-promo-success">
-        {{ `${props.coupons ? "'" + props.coupons.join(" , ") + "'" : ""}` }} promo code applied
-      </ins>
-    </slot>
   </div>
 </template>
 <script>
@@ -81,12 +76,3 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss">
-.kibo-promo-success {
-  font-size: var(--font-size--xs);
-  text-decoration: none;
-  color: var(--c-danger);
-  font-style: italic;
-  text-align: right;
-}
-</style>

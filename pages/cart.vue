@@ -12,8 +12,8 @@
         <div class="sf-property--full-width sf-property">
           <span class="sf-property__name-noBold">{{ $t("Order Subtotal") }}</span>
           <KiboPrice
-            v-if="cartOrder.subtotal"
-            :regular="cartOrder.subtotal"
+            v-if="$n(cartOrder.subtotal, 'currency')"
+            :regular="$n(cartOrder.subtotal, 'currency')"
             class="kibo-collectedProduct__price sf-property__price"
           />
         </div>
@@ -29,8 +29,8 @@
           <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
           <KiboPrice
             v-if="cartOrder.total"
-            :regular="cartOrder.total"
-            :special="cartOrder.special"
+            :regular="$n(cartOrder.total, 'currency')"
+            :special="cartOrder.special && $n(cartOrder.special, 'currency')"
             class="kibo-collectedProduct__price sf-property__price"
           />
         </div>
@@ -144,7 +144,16 @@ export default defineComponent({
     })
 
     const cartItems = computed(() => cartGetters.getItems(cart.value))
-    const cartOrder = computed(() => cartGetters.getTotals(cart.value))
+    const cartOrder = computed(() => {
+      const { total, subtotal, discountedSubtotal, discountedTotal } = cartGetters.getTotals(
+        cart.value
+      )
+      return {
+        total: cart.value?.orderDiscounts?.length ? discountedSubtotal : total,
+        subtotal,
+        ...(cart.value?.orderDiscounts.length && { special: discountedTotal }),
+      }
+    })
 
     const cartItemFulfillmentLocation = (cartItem) =>
       cartGetters.getFulfillmentLocation(cartItem, locations.value)
@@ -189,7 +198,7 @@ export default defineComponent({
     })
 
     const productAppliedCoupons = (cartItem) => {
-      return cartGetters.productAppliedCoupons(cartItem)
+      return cartGetters.getProductAppliedCoupons(cartItem)
     }
 
     return {
