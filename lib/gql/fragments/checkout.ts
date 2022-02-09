@@ -37,6 +37,7 @@ export const checkoutLineItemFragment = /* GraphQL */ `
     product {
       ...checkoutItemProductFragment
     }
+    fulfillmentMethod
   }
   ${checkoutItemProductFragment}
 `

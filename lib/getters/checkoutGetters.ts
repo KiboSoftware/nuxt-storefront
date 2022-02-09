@@ -13,10 +13,13 @@ const getLineItemTotal = (checkout) => {
       }, 0)
     : 0
 }
-const getLineItemTaxTotal = () => 0
-const getItemsByFulfillment = (checkout, fulfillmentMethod) =>
-  checkout?.items?.filter((lineItem) => lineItem.fulfillmentMethod === fulfillmentMethod)
-const getPickupItems = (checkout) => getItemsByFulfillment(checkout, "Pickup")
+const getLineItemTaxTotal = (checkout) => (checkout.taxTotal ? checkout.taxTotal : 0)
+const getItemsByFulfillment = (checkout, fulfillmentMethod) => {
+  return checkout?.items?.filter((lineItem) => lineItem.fulfillmentMethod === fulfillmentMethod)
+}
+const getPickupItems = (checkout) => {
+  return getItemsByFulfillment(checkout, "Pickup")
+}
 const getShipItems = (checkout) => getItemsByFulfillment(checkout, "Ship")
 const getDeliveryItems = (checkout) => getItemsByFulfillment(checkout, "Delivery")
 
