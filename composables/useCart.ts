@@ -1,14 +1,18 @@
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/lib/gql/queries"
-import { addToCartMutation, deleteCartItemMutation, updateCartQuantityMutation } from "@/lib/gql/mutations"
+import {
+  addToCartMutation,
+  deleteCartItemMutation,
+  updateCartQuantityMutation,
+} from "@/lib/gql/mutations"
 import type { Cart, Maybe } from "@/server/types/GraphQL"
 
 export const useCart = () => {
   const cart = useState<Maybe<Cart>>(`use-cart-result`, () => {
     return {}
   })
-  const loading = useState(`use-cart-loading`, () => false)
-  const newestCartItemId = useState(`use-newest-cart-item`, () => null)
+  const loading = useState<Boolean>(`use-cart-loading`, () => false)
+  const newestCartItemId = useState<string>(`use-newest-cart-item`, () => null)
   const error = useState(`use-cart-error`, () => null)
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch

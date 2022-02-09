@@ -190,17 +190,9 @@ import {
   SfChevron,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
-import {
-  useUiHelpers,
-  useFacet,
-  useProductSearch
-} from "@/composables"
+import { useUiHelpers, useFacet, useProductSearch } from "@/composables"
 
-import {
-  productGetters,
-  facetGetters,
-  productSearchGetters,
-} from "@/lib/getters"
+import { productGetters, facetGetters, productSearchGetters } from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
 
@@ -346,8 +338,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 #category {
   box-sizing: border-box;
 }

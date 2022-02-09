@@ -28,20 +28,23 @@ export default defineNuxtConfig({
   buildModules: ["@nuxtjs/stylelint-module", "@nuxtjs/style-resources", "@nuxtjs/fontawesome"],
   fontawesome: {
     icons: {
-      solid: true,
-      brands: true,
-      regular: true,
+      solid: [
+        "faCheckCircle",
+        "faUserCircle",
+        "faMapMarkerAlt",
+        "faShoppingCart",
+        "faTimes",
+        "faBars",
+        "faSortUp",
+        "faTrashAlt",
+        "faSearchPlus",
+      ],
+      regular: ["faUserCircle"],
     },
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [
-    "@nuxtjs/axios",
-    "@nuxtjs/pwa",
-    "nuxt-i18n",
-    "@storefront-ui/nuxt",
-    "cookie-universal-nuxt",
-  ],
+  modules: ["@nuxtjs/pwa", "nuxt-i18n", "@storefront-ui/nuxt", "cookie-universal-nuxt"],
   i18n: {
     currency: "USD",
     country: "US",
@@ -94,22 +97,15 @@ export default defineNuxtConfig({
       cookieKey: KIBO_LOCALE_COOKIE,
     },
   },
-  axios: {
-    baseURL: "",
-    browserBaseURL: "",
-  },
   styleResources: {
     scss: [
       require.resolve("@storefront-ui/shared/styles/_helpers.scss", {
         paths: [process.cwd()],
       }),
       "./assets/styles/_variables.scss",
-      "./assets/styles/components/_atoms.scss",
-      "./assets/styles/components/_molecules.scss",
-      "./assets/styles/components/_organisms.scss",
-      "./assets/styles/components/_custom.scss",
     ],
   },
+  css: ["./assets/styles/_global.scss"],
   publicRuntimeConfig: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
     userCookieKey: process.env.KIBO_USER_COOKIE_KEY || "kibo_at",
@@ -159,6 +155,7 @@ export default defineNuxtConfig({
         implementation: require("sass"),
       },
     },
+    extractCSS: true,
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

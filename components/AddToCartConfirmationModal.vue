@@ -127,8 +127,10 @@
 <script lang="ts">
 import { SfModal, SfBar, SfImage, SfPrice, SfButton, SfIcon } from "@storefront-ui/vue"
 import { computed } from "@nuxtjs/composition-api"
-import { useUiState } from "@/composables"
+import { useUiState, useCart } from "@/composables"
 import { cartGetters } from "@/lib/getters"
+import { useNuxtApp } from "#app"
+
 export default {
   name: "AddToCartConfirmationModal",
   components: {
@@ -175,7 +177,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
 $cart-button-width: calc(var(--spacer-3xl) + var(--spacer-base));
 
 .collected-product-list {

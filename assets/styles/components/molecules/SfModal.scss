@@ -9,7 +9,6 @@
     .sf-icon img {
       width: var(--font-size--base);
       height: var(--font-size--base);
-      margin-bottom: var(--spacer-base);
 
       --icon-color: var(--_c-white-secondary);
 
@@ -22,7 +21,7 @@
     &__title {
       font-size: calc(var(--spacer-2xs) + var(--spacer-sm));
       line-height: var(--spacer-base);
-      
+
       @include for-desktop {
         min-width: 25rem;
       }
@@ -31,10 +30,10 @@
       font-family: var(--font-family--primary);
     }
   }
-  
+
   .sf-icon svg path {
     stroke: var(--_c-white-secondary);
-    
+
     --icon-color: var(--_c-gray-middle);
   }
 }
