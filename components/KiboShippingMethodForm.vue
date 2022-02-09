@@ -1,10 +1,32 @@
 <template>
   <div class="form">
-    <div class="form__radio-group" data-testid="shipping-method">
-      <h1>{{ $t("Ship To Home") }}</h1>
-      <div v-for="(item, itemIndex) in shipItems" :key="item.id">
+    <div data-testid="shipping-method">
+      <h3 class="sf-heading__title h3">{{ $t("Ship To Home") }}</h3>
+
+      <div class="rates">
+        <div>
+          <SfSelect
+            :value="selectedShippingMethodCode"
+            :placeholder="$t('Select Shipping Option')"
+            class="form__element form__element--half form__element--half-even form__select sf-select--underlined"
+            :valid="true"
+            data-testid="rates"
+            @input="updateField($event)"
+          >
+            <SfSelectOption
+              v-for="rates in shippingRates"
+              :key="rates.shippingMethodCode"
+              :value="rates.shippingMethodCode"
+            >
+              {{ rates.shippingMethodName }}
+            </SfSelectOption>
+          </SfSelect>
+        </div>
+      </div>
+
+      <div v-for="item in shipItems" :key="item.id">
         <div class="shippingWrapper">
-          <div class="lineItem_image">
+          <div class="shipItem_image">
             <SfImage
               class="sf-gallery__thumb"
               :src="checkoutLineItemGetters.getProductImage(item)"
@@ -14,36 +36,26 @@
             />
           </div>
 
-          <div class="lineItem">
-            {{ checkoutLineItemGetters.getProductName(item) }} <br />
-            $ {{ checkoutLineItemGetters.getProductPrice(item) }} <br />
-          </div>
-
-          <div class="rates">
-            <div>
-              <SfRadio
-                v-for="rates in shippingRates"
-                :key="rates.shippingMethodCode"
-                :label="rates.shippingMethodName"
-                :value="rates.shippingMethodCode"
-                :selected="
-                  shippingMethod.shipItems[itemIndex] &&
-                  shippingMethod.shipItems[itemIndex].code == rates.shippingMethodCode
-                    ? rates.shippingMethodCode
-                    : ''
-                "
-                :name="checkoutLineItemGetters.getId(item)"
-                :description="item.shippingMethodName"
-                class="form__radio shipping"
-                @input="
-                  updateField('shipItems', itemIndex, {
-                    name: rates.shippingMethodName,
-                    code: rates.shippingMethodCode,
-                  })
-                "
-              />
+          <div class="shipItem">
+            <div class="shipItem__title">
+              {{ checkoutLineItemGetters.getProductName(item) }}
+            </div>
+            <div
+              v-for="option in checkoutLineItemGetters.getProductOptions(item)"
+              :key="option.attributeFQN"
+              class="shipItem__props"
+            >
+              <span class="title"> {{ option.name }}: </span> {{ option.value }} <br />
+            </div>
+            <div class="shipItem__props">
+              <span class="title"> Price: </span> ${{
+                checkoutLineItemGetters.getProductPrice(item)
+              }}
             </div>
           </div>
+        </div>
+        <div class="divider">
+          <hr class="sf-divider" />
         </div>
       </div>
     </div>
@@ -51,14 +63,14 @@
 </template>
 
 <script>
-import { SfImage, SfRadio } from "@storefront-ui/vue"
+import { SfImage, SfSelect } from "@storefront-ui/vue"
 import { checkoutLineItemGetters } from "@/lib/getters"
 
 export default {
   name: "KiboShipping",
   components: {
     SfImage,
-    SfRadio,
+    SfSelect,
   },
   props: {
     value: {
@@ -82,23 +94,29 @@ export default {
       default: () => [],
     },
   },
-  setup(_, context) {
+  setup(props, context) {
+    const selectedShippingMethodCode = ref("")
+
     const shippingMethod = ref({
       shipItems: [],
       pickupItems: [],
     })
 
-    const updateField = (fieldName, itemIndex, fieldValue) => {
-      shippingMethod.value[fieldName][itemIndex] = { ...fieldValue }
-      shippingMethod.value[fieldName] = [...shippingMethod.value[fieldName]]
+    const updateField = (shippingMethodCode) => {
+      selectedShippingMethodCode.value = shippingMethodCode
 
-      context.emit("saveShippingMethod", shippingMethod.value)
+      const { shippingMethodName } = props.shippingRates.find(
+        (rate) => rate.shippingMethodCode === shippingMethodCode
+      )
+
+      context.emit("saveShippingMethod", { shippingMethodCode, shippingMethodName })
     }
 
     return {
       updateField,
       checkoutLineItemGetters,
       shippingMethod,
+      selectedShippingMethodCode,
     }
   },
 }
@@ -107,23 +125,52 @@ export default {
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
 
+.rates {
+  margin: var(--spacer-base) 0;
+}
+
 .shippingWrapper {
   display: flex;
-  width: 40rem;
-  flex-direction: row;
-  gap: 1rem;
-  margin: 1rem;
+  justify-content: center;
 
-  .lineItem_image {
-    width: 10rem;
+  .shipItem_image {
+    width: 38%;
+    height: calc(var(--spacer-base) * 5.04);
+    object-fit: contain;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .lineItem {
-    width: 20rem;
+  .shipItem {
+    width: 62%;
+    display: flex;
+    flex-direction: column;
+
+    &__title {
+      padding-bottom: var(--spacer-2xs);
+    }
+
+    &__props {
+      padding: 2px 0 2px 0;
+      font-size: var(--font-size--sm);
+
+      .title {
+        font-weight: bold;
+        font-size: var(--font-size--sm);
+      }
+    }
   }
 
   .rates {
-    width: 10rem;
+    width: 100%;
   }
+}
+
+.divider {
+  height: var(--spacer-base);
+  width: 98%;
+  display: flex;
+  align-items: center;
 }
 </style>

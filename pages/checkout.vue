@@ -400,8 +400,17 @@ export default {
       shippingMethodGetters.getShippingRates(shippingMethods.value)
     )
 
-    const saveShippingMethod = (value) => {
-      console.log("Save shipping method: ", value)
+    const saveShippingMethod = async (shippingRates) => {
+      const params = {
+        orderId: checkout.value?.id,
+        fulfillmentInfoInput: {
+          fulfillmentContact: checkout.value?.fulfillmentInfo?.fulfillmentContact,
+        },
+        shippingMethodCode: shippingRates.shippingMethodCode,
+        shippingMethodName: shippingRates.shippingMethodName,
+      }
+
+      await setShippingInfo(params)
     }
 
     // billing
@@ -517,7 +526,6 @@ export default {
         }
 
         case Steps.GO_TO_PAYMENT: {
-          await saveShippingDetails()
           break
         }
 
@@ -617,8 +625,7 @@ export default {
 #checkout {
   box-sizing: border-box;
   @include for-desktop {
-    padding: 0 var(--spacer-sm);
-    max-width: 1272px;
+    max-width: min(95vw, 81.75rem);
     margin: 0 auto;
   }
 }
@@ -687,6 +694,12 @@ export default {
 .form {
   &__checkbox {
     width: 100%;
+  }
+}
+
+::v-deep .sf-steps {
+  &__content {
+    padding: 0;
   }
 }
 
