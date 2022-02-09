@@ -194,4 +194,5 @@ export default {
   "Phone Number": "Phone number",
   "Save Billing Address": "Save billing address",
   "Save Billing Address Same As Shipping": "Save billing address same as shipping",
+  "Select Shipping Option": "Select Shipping Option",
 }
