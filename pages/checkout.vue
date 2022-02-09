@@ -396,8 +396,17 @@ export default {
       shippingMethodGetters.getShippingRates(shippingMethods.value)
     )
 
-    const saveShippingMethod = (value) => {
-      console.log("Save shipping method: ", value)
+    const saveShippingMethod = async (shippingRates) => {
+      const params = {
+        orderId: checkout.value?.id,
+        fulfillmentInfoInput: {
+          fulfillmentContact: checkout.value?.fulfillmentInfo?.fulfillmentContact,
+        },
+        shippingMethodCode: shippingRates.shippingMethodCode,
+        shippingMethodName: shippingRates.shippingMethodName,
+      }
+
+      await setShippingInfo(params)
     }
 
     // billing
