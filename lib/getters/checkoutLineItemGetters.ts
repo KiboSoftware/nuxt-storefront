@@ -11,6 +11,7 @@ const getProductName = (checkoutItem: CrOrderItem) => checkoutItem?.product?.nam
 const getProductImage = (checkoutItem: CrOrderItem) => checkoutItem?.product?.imageUrl
 const getProductPrice = (checkoutItem: CrOrderItem) => checkoutItem?.product?.price?.price
 const getProductOptions = (checkoutItem: CrOrderItem) => checkoutItem?.product?.options
+const getProductSku = (checkoutItem: CrOrderItem) => checkoutItem?.product?.sku
 
 export const checkoutLineItemGetters = {
   getId,
@@ -23,4 +24,5 @@ export const checkoutLineItemGetters = {
   getProductImage,
   getProductPrice,
   getProductOptions,
+  getProductSku,
 }
