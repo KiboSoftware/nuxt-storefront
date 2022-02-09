@@ -54,9 +54,60 @@
               :order="getOrder"
               order-title="Order details"
               :properties-names="['Subtotal', 'Shipping', 'Total price']"
-              :table-headers="['Size', 'Description', 'Quantity', 'Colour', 'Amount']"
+              :table-headers="['Item', 'Description', 'Size', 'Quantity', 'Colour', 'Amount']"
               @click:edit="currentStep = $event"
-            />
+            >
+              <template #table>
+                <kiboCheckoutItem shipping-type="Shipping to Home" :items="shipItems" />
+                <div v-if="isMultipleOrder" class="order-spacer"></div>
+                <kiboCheckoutItem
+                  v-if="pickupItems && pickupItems.length > 0"
+                  shipping-type="Pickup in Store"
+                  :items="pickupItems"
+                  :is-multiple-order="isMultipleOrder"
+                />
+              </template>
+              <template #summary>
+                <SfProperty
+                  name="Subtotal"
+                  :value="$n(getOrder.subtotal, 'currency')"
+                  class="
+                    sf-property--full-width
+                    sf-confirm-order__property sf-confirm-order__property-subtotal
+                  "
+                >
+                </SfProperty>
+                <SfProperty
+                  name="Shipping"
+                  :value="$n(getOrder.shippingTotal, 'currency')"
+                  class="sf-property--full-width sf-confirm-order__property"
+                >
+                </SfProperty>
+                <SfProperty
+                  name="Estimated Tax"
+                  :value="$n(getOrder.taxTotal, 'currency')"
+                  class="sf-property--full-width sf-confirm-order__property"
+                >
+                </SfProperty>
+                <SfDivider class="sf-confirm-order__divider" />
+                <SfProperty
+                  name="Total Price"
+                  :value="$n(getOrder.total, 'currency')"
+                  class="
+                    sf-property--full-width sf-property--large
+                    sf-confirm-order__property-total
+                  "
+                >
+                </SfProperty>
+                <SfCheckbox v-model="terms" name="terms" class="sf-confirm-order__totals-terms">
+                  <template #label>
+                    <div class="sf-checkbox__label">
+                      I agree to <SfLink href="#">Terms and conditions</SfLink>
+                    </div>
+                  </template>
+                </SfCheckbox>
+              </template>
+            </SfConfirmOrder>
           </SfStep>
         </SfSteps>
       </div>
@@ -96,7 +147,6 @@
                 </SfButton>
               </template>
             </KiboOrderSummary>
-
             <SfOrderReview
               v-else
               key="order-review"
@@ -106,11 +156,29 @@
               :review-title-level="3"
               button-text="Edit"
               :characteristics="characteristics"
-              @click:edit="currentStep = $event"
+              @click:personal-details-edit="currentStep = $event"
+              @click:shipping-details-edit="currentStep = $event"
+              @click:billing-details-edit="currentStep = $event"
+              @click:payment-details-edit="currentStep = $event"
+              @click:promo-code-apply="currentStep = $event"
             />
           </SfLoader>
         </transition>
       </div>
+    </div>
+    <div class="actions">
+      <SfButton
+        class="sf-button--full-width actions__button"
+        :class="{ 'is-disabled-btn': !terms && steps[currentStep] === 'Confirm and pay' }"
+        data-testid="next-button"
+        @click="updateStep"
+        >{{ steps[currentStep] }}</SfButton
+      >
+      <SfButton
+        class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
+        @click="currentStep--"
+        >Go back</SfButton
+      >
     </div>
   </div>
 </template>
@@ -123,8 +191,14 @@ import {
   SfConfirmOrder,
   SfOrderReview,
   SfLoader,
+  SfProperty,
+  SfDivider,
+  SfCheckbox,
+  SfLink,
+  sfInput,
 } from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
+import { mapMobileObserver } from "@storefront-ui/vue/src/utilities/mobile-observer"
 import {
   useCheckout,
   useCart,
@@ -137,7 +211,13 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
+import {
+  shopperContactGetters,
+  shippingMethodGetters,
+  checkoutGetters,
+  checkoutLineItemGetters,
+  productGetters,
+} from "@/lib/getters"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
@@ -149,6 +229,11 @@ export default {
     SfOrderReview,
     SfButton,
     SfLoader,
+    SfProperty,
+    SfDivider,
+    SfCheckbox,
+    SfLink,
+    sfInput,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -173,6 +258,7 @@ export default {
       userBillingAddresses,
     } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
+    const terms = ref(false)
     const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
@@ -376,6 +462,10 @@ export default {
       })
     }
 
+    const isMobile = computed(() => mapMobileObserver().isMobile.get())
+
+    const isMultipleOrder = computed(() => shipItems?.value?.length && pickupItems?.value?.length)
+
     // billing
     const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
     const updatedBillingAddress = ref({ ...billingDetails })
@@ -501,10 +591,15 @@ export default {
       }
     }
 
+    const gotoStep = (value) => {
+      currentStep.value = value
+    }
+
     return {
       countries,
       currentStep,
       steps,
+      personalDetails,
       payment,
       order,
       shippingMethods,
@@ -532,6 +627,7 @@ export default {
         },
       ],
       checkout,
+      gotoStep,
       updateStep,
       logIn,
       getOrder,
@@ -547,7 +643,6 @@ export default {
       appliedCoupons,
       areCouponsApplied,
 
-      personalDetails,
       updatePersonalDetails,
 
       shippingDetails,
@@ -572,6 +667,14 @@ export default {
       copyShippingAddress,
       enableCurrentStep,
       enableNextStep,
+      cart,
+      pickupItems,
+      shipItems,
+      isMobile,
+      checkoutLineItemGetters,
+      productGetters,
+      terms,
+      isMultipleOrder,
     }
   },
   watch: {
@@ -679,5 +782,108 @@ export default {
   display: flex;
   gap: var(--spacer-base);
   flex-direction: column;
+}
+
+.kibo-collectedProduct {
+  &__price {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+@include for-mobile {
+  ::v-deep .sf-table {
+    &__row {
+      --_table-column-width: 3;
+    }
+  }
+}
+
+.is-disabled-btn {
+  pointer-events: none;
+  opacity: 0.5;
+  background: #ccc;
+}
+
+.sf-table__data:nth-child(even),
+.sf-table__header:nth-child(even) {
+  order: 0;
+}
+
+.sf-order-review {
+  @include for-desktop {
+    border: 1px solid #eaeaea;
+    margin-top: calc(var(--spacer-base) * 1.25);
+  }
+
+  ::v-deep &__heading {
+    --heading-title-font-weight: var(--font-weight--bold);
+    --heading-padding: 0;
+    --heading-title-margin: 0 0 var(--spacer-xl) 0;
+    --heading-title-font-size: var(--font-size--4xl);
+
+    @include for-desktop {
+      --heading-title-font-weight: var(--font-weight--semibold);
+    }
+  }
+
+  &__property {
+    margin: var(--spacer-base) 0;
+
+    --property-name-font-weight: var(--font-weight--medium);
+    --property-value-font-weight: var(--font-weight--bold);
+
+    &:last-of-type {
+      margin: var(--spacer-base) 0 var(--spacer-xl);
+
+      --property-name-color: var(--c-text);
+    }
+  }
+
+  &__divider {
+    --divider-border-color: var(--c-white);
+    --divider-margin: var(--spacer-xl) 0 0 0;
+  }
+
+  &__promo-code {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    &-input {
+      --input-background: var(--c-white);
+      --input-label-font-size: var(--font-size--base);
+
+      flex: 1;
+    }
+
+    .promoCode {
+      border: 1px solid #cdcdcd;
+    }
+
+    &-button {
+      --button-height: 1.875rem;
+    }
+  }
+
+  &__characteristics {
+    &-item {
+      margin: var(--spacer-base) 0;
+
+      &:last-of-type {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.sf-heading {
+  &__title {
+    --heading-title-font-weight: var(--font-weight--medium);
+  }
+}
+
+.order-spacer {
+  height: 20px;
 }
 </style>
