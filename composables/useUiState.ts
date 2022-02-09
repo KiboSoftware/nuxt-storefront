@@ -1,8 +1,4 @@
-import VueCompositionAPI, { reactive, computed } from "@vue/composition-api"
-import Vue from "vue"
-
-// We need to register it again because of Vue instance instantiation issues
-Vue.use(VueCompositionAPI)
+import { reactive, computed } from "@vue/composition-api"
 
 const state = reactive({
   isWishlistSidebarOpen: false,
