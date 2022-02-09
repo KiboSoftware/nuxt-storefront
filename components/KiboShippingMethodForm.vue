@@ -52,6 +52,9 @@
             </div>
           </div>
         </div>
+        <div class="divider">
+          <hr class="sf-divider" />
+        </div>
       </div>
     </div>
     <div class="changeStore">
@@ -214,5 +217,12 @@ export default {
       margin: 0;
     }
   }
+}
+
+.divider {
+  height: var(--spacer-base);
+  width: 98%;
+  display: flex;
+  align-items: center;
 }
 </style>
