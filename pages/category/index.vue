@@ -400,9 +400,10 @@ export default {
 }
 
 .sf-heading {
-  &__title {
-    @include for-mobile {
-      font-size: var(--h3-font-size) !important;
+  > h1 {
+    font-size: calc(var(--font-size--base) * 1.125);
+    @include for-desktop {
+      font-size: var(--h1-font-size);
     }
   }
 }
@@ -410,15 +411,11 @@ export default {
 .navbar {
   position: relative;
   display: flex;
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
   flex-wrap: wrap;
+  border: none;
   @include for-desktop {
+    border: 1px solid var(--_c-white-secondary);
     border-width: 1px 0 1px 0;
-  }
-
-  @include for-mobile {
-    border: none;
   }
 
   &.section {
@@ -435,12 +432,11 @@ export default {
   &__aside {
     flex: 1;
     padding: 0;
-    @include for-mobile {
-      justify-content: space-between;
-      width: 100%;
-    }
+    justify-content: space-between;
+    width: 100%;
     @include for-desktop {
       flex: none;
+      width: auto;
     }
   }
 
@@ -518,13 +514,12 @@ export default {
     margin: 0;
     min-width: 11.875rem;
     flex: 1;
+    justify-content: space-between;
+    width: 100%;
     @include for-desktop {
       flex: none;
       margin: 0 0 0 auto;
-    }
-    @include for-mobile {
-      justify-content: space-between;
-      width: 100%;
+      width: auto;
     }
   }
 

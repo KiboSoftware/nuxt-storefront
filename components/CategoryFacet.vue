@@ -144,51 +144,6 @@ export default defineComponent({
 }
 
 .navbar {
-  position: relative;
-  display: flex;
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
-  height: 4.813rem;
-  flex-wrap: wrap;
-  @include for-desktop {
-    border-width: 1px 0 1px 0;
-  }
-
-  &.section {
-    padding: var(--spacer-sm);
-    @include for-desktop {
-      padding: 0;
-    }
-  }
-
-  &__aside,
-  &__main {
-    display: flex;
-    align-items: center;
-    padding: var(--spacer-sm) 0;
-  }
-
-  &__aside {
-    padding: 0;
-    flex: 1;
-    @include for-desktop {
-      flex: none;
-    }
-  }
-
-  &__main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 0;
-    @include for-desktop {
-      padding: var(--spacer-xs) var(--spacer-xl);
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
   &__plus-icon {
     margin: 0 calc(var(--spacer-2xs) * 0.5) calc(var(--spacer-2xs) * 0.5) 0;
     order: 0;
@@ -239,50 +194,6 @@ export default defineComponent({
     --component-select-selected-padding: 0 var(--spacer-lg) 0 var(--spacer-2xs);
     --component-select-margin: 0;
     --component-select-error-message-height: 0;
-  }
-
-  &__sort {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    min-width: 11.875rem;
-    flex: 1;
-    @include for-desktop {
-      flex: none;
-      margin: 0 0 0 auto;
-    }
-  }
-
-  &__view {
-    display: flex;
-    order: -1;
-    align-items: center;
-    margin: 0;
-    @include for-desktop {
-      margin: 0 0 0 var(--spacer-2xl);
-      order: 0;
-    }
-
-    &__icon {
-      cursor: pointer;
-      margin: 0 var(--spacer-base) 0 var(--spacer-sm);
-      height: var(--spacer-base);
-      width: var(--spacer-base);
-      @include for-desktop {
-        margin: 0 var(--spacer-base) 0 0;
-      }
-
-      &:last-child {
-        margin: 0;
-      }
-    }
-
-    &-label {
-      margin: 0 var(--spacer-sm) 0 0;
-      font: var(--font-weight--normal) var(--font-size--base) / 1.6 var(--font-family--primary);
-      text-decoration: none;
-      color: var(--c-link);
-    }
   }
 }
 </style>

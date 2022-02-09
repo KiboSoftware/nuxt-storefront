@@ -61,7 +61,7 @@ export default defineComponent({
   justify-content: space-between;
 
   &__title {
-    font-size: 20px;
+    font-size: var(--font-size--xl);
     font-weight: bold;
   }
 }

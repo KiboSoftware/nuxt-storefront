@@ -71,10 +71,10 @@ export default defineComponent({
   }
 
   &__header {
-    font-size: var(--font-size--sm);
+    font-size: var(--font-size--lg);
     font-weight: bold;
-    @include for-mobile {
-      font-size: var(--font-size--lg);
+    @include for-desktop {
+      font-size: var(--font-size--sm);
     }
   }
 

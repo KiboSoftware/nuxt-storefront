@@ -114,41 +114,6 @@ export default defineComponent({
 }
 
 .navbar {
-  position: relative;
-  display: flex;
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
-  @include for-desktop {
-    border-width: 1px 0 1px 0;
-  }
-
-  &.section {
-    padding: var(--spacer-sm);
-    @include for-desktop {
-      padding: 0;
-    }
-  }
-
-  &__aside,
-  &__main {
-    display: flex;
-    align-items: center;
-    padding: var(--spacer-sm) 0;
-  }
-
-  &__aside {
-    padding: 0;
-  }
-
-  &__main {
-    flex: 1;
-    display: flex;
-    padding: 0;
-    @include for-desktop {
-      padding: var(--spacer-xs) var(--spacer-xl);
-    }
-  }
-
   &__plus-icon {
     margin: 0 0.5rem 0 -0.375rem;
     order: 0;
@@ -253,15 +218,15 @@ export default defineComponent({
   --filter-count-color: #2b2b2b;
   --filter-label-font-size: var(--font-size--sm);
   --filter-count-font-size: var(--font-size--sm);
-  --filter-count-margin: 0 0.5rem 0 auto;
+  --filter-count-margin: 0 0 0 auto;
+  --filter-label-margin: 0 0 0 var(--spacer-xs);
 
-  padding: 0.375rem;
+  padding: 0.375rem 0.375rem 0.375rem 0;
 
-  @include for-mobile {
-    --filter-label-margin: 0 0 0 var(--spacer-xs);
-    --filter-count-margin: 0 0 0 auto;
+  @include for-desktop {
+    padding: 0.375rem;
 
-    padding-left: 0;
+    --filter-count-margin: 0 0.5rem 0 auto;
   }
 }
 </style>
