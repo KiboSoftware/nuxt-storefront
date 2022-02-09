@@ -105,8 +105,9 @@ export const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLoc
     required: option.isRequired,
     shortName: option.shortName,
     disabled: isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option.value),
-    cartItem: item,
+    fulfillmentMethod: item?.fulfillmentMethod,
     fulfillmentLocation: cartItemFulfillmentLocation,
+    fulfillmentTypesSupported: item?.product?.fulfillmentTypesSupported,
   }))
 
   return result

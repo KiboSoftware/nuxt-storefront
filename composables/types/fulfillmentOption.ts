@@ -7,4 +7,5 @@ export type FulFillmentOption = {
   required: boolean
   shortName: string
   disabled: boolean
+  fulfillmentLocation: string
 }

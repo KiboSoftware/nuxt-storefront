@@ -36,7 +36,8 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
-import { FulFillmentOption } from "@/composables/types/fulfillmentOption"
+import type { FulFillmentOption } from "@/composables/types/fulfillmentOption"
+import type { Fulfillment } from "@/components/types/fulfillment"
 
 export default defineComponent({
   name: "KiboFulfillmentOptions",
@@ -64,7 +65,7 @@ export default defineComponent({
       (option) => option.shortName === "Pickup"
     ).label
 
-    const selectFulfillment = (fulfillmentOption: FulFillmentOption) => {
+    const selectFulfillment = (fulfillmentOption: FulFillmentOption | Fulfillment) => {
       const shouldOpenModal = fulfillmentOption.shortName === "Pickup" && !fulfillmentOption.details
       context.emit("radioChange", fulfillmentOption.shortName, shouldOpenModal)
     }

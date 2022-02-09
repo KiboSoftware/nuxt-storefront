@@ -1,5 +1,3 @@
-import type { CartItem } from "@/server/types/GraphQL"
-
 // fulFillment
 export type Fulfillment = {
   name?: string
@@ -10,6 +8,8 @@ export type Fulfillment = {
   code?: string
   shortName?: string
   disabled?: boolean
-  cartItem?: CartItem
   fulFillmentLocation?: string
+  fulfillmentMethod?: string
+  fulfillmentLocation?: string
+  fulfillmentTypesSupported: string[]
 }

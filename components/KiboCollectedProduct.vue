@@ -169,19 +169,16 @@ export default defineComponent({
       return !fulfillmentTypesSupported?.includes(option)
     }
 
-    const getFulfillmentDetails = (option) => {
+    const getFulfillmentDetails = (option: Fulfillment) => {
       const details = {
         DirectShip: option.details,
         InStorePickup:
-          option.cartItem?.fulfillmentMethod === "Pickup" && option.fulfillmentLocation
+          option?.fulfillmentMethod === "Pickup" && option.fulfillmentLocation
             ? `Available at ${option.fulfillmentLocation}`
             : "",
       }
 
-      return isDisabledFulfillmentOption(
-        option.cartItem.product?.fulfillmentTypesSupported,
-        option.value
-      )
+      return isDisabledFulfillmentOption(option?.fulfillmentTypesSupported, option.value)
         ? "Not Available"
         : "" || details[option.value]
     }

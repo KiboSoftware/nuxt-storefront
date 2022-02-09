@@ -128,9 +128,8 @@ export default defineComponent({
         .filter((item) => {
           return item.fulfillmentMethod === "Pickup"
         })
-        .map((item) => item.fulfillmentLocationCode)
-      const filter = locationCodes?.map((code) => `${filterOperator} ${code}`).join(" or ")
-      await searchStoreLocations({ filter })
+        .map((item) => `${filterOperator} ${item.fulfillmentLocationCode}`.join(" or "))
+      await searchStoreLocations({ locationCodes })
     }, null)
 
     const selectedLocation = computed(() => {
