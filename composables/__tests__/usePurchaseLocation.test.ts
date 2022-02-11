@@ -1,5 +1,5 @@
 import * as cookieHelper from "../helpers/cookieHelper"
-import { usePurchaseLocation } from "./../storeFinder/usePurchaseLocation"
+import { usePurchaseLocation } from "@/composables"
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
