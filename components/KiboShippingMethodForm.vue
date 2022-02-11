@@ -1,14 +1,16 @@
 <template>
   <div class="form">
     <div data-testid="shipping-method">
-      <h3 class="sf-heading__title h3">{{ $t("Ship To Home") }}</h3>
+      <div v-for="(item, index) in items" :key="index" class="item">
+        <h3 v-if="item.values && item.values.length" class="sf-heading__title h3">
+          {{ item.type === "shipItems" && item.values.length > 0 ? $t("Shiping To Home") : null }}
+          {{ item.type === "pickupItems" && item.values.length > 0 ? $t("Pickup In Store") : null }}
+        </h3>
 
-      <div class="rates">
-        <div>
+        <div v-if="item.type === 'shipItems'" class="rates">
           <SfSelect
             :value="selectedShippingMethodCode"
             :placeholder="$t('Select Shipping Option')"
-            class="form__element form__element--half form__element--half-even form__select sf-select--underlined"
             :valid="true"
             data-testid="rates"
             @input="updateField($event)"
@@ -18,46 +20,45 @@
               :key="rates.shippingMethodCode"
               :value="rates.shippingMethodCode"
             >
-              {{ rates.shippingMethodName }}
+              {{ rates.shippingMethodName }} ${{ rates.price }}
             </SfSelectOption>
           </SfSelect>
         </div>
-      </div>
 
-      <div v-for="item in shipItems" :key="item.id">
-        <div class="shippingWrapper">
-          <div class="shipItem_image">
-            <SfImage
-              class="sf-gallery__thumb"
-              :src="checkoutLineItemGetters.getProductImage(item)"
-              :alt="checkoutLineItemGetters.getProductName(item)"
-              :width="100"
-              :height="100"
-            />
-          </div>
+        <div v-for="product in item.values" :key="product.id" class="productRow">
+          <SfImage
+            class="sf-gallery__thumb"
+            :src="checkoutLineItemGetters.getProductImage(product)"
+            :alt="checkoutLineItemGetters.getProductName(product)"
+          />
 
-          <div class="shipItem">
-            <div class="shipItem__title">
-              {{ checkoutLineItemGetters.getProductName(item) }}
+          <div class="content">
+            <div class="content__productName">
+              {{ checkoutLineItemGetters.getProductName(product) }}
             </div>
+
             <div
-              v-for="option in checkoutLineItemGetters.getProductOptions(item)"
+              v-for="option in checkoutLineItemGetters.getProductOptions(product)"
               :key="option.attributeFQN"
-              class="shipItem__props"
+              class="content__props"
             >
               <span class="title"> {{ option.name }}: </span> {{ option.value }} <br />
             </div>
-            <div class="shipItem__props">
+
+            <div class="content__props">
               <span class="title"> Price: </span> ${{
-                checkoutLineItemGetters.getProductPrice(item)
+                checkoutLineItemGetters.getProductPrice(product)
               }}
             </div>
           </div>
         </div>
-        <div class="divider">
-          <hr class="sf-divider" />
-        </div>
       </div>
+    </div>
+    <div class="changeStore">
+      <span class="changeStore__location">Pickup in Store: </span><br />
+      <p class="changeStore__link" @click="handleStoreLocatorClick">
+        {{ cartItemPurchaseLocation ? "Change Store" : "Select Store" }}
+      </p>
     </div>
   </div>
 </template>
@@ -77,15 +78,11 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    shipItems: {
-      type: Array,
-      default: () => [],
+    cartItemPurchaseLocation: {
+      type: String,
+      default: "",
     },
-    pickupItems: {
-      type: Array,
-      default: () => [],
-    },
-    deliveryItems: {
+    items: {
       type: Array,
       default: () => [],
     },
@@ -112,11 +109,16 @@ export default {
       context.emit("saveShippingMethod", { shippingMethodCode, shippingMethodName })
     }
 
+    const handleStoreLocatorClick = () => {
+      context.emit("handleStoreLocatorClick")
+    }
+
     return {
       updateField,
       checkoutLineItemGetters,
       shippingMethod,
       selectedShippingMethodCode,
+      handleStoreLocatorClick,
     }
   },
 }
@@ -125,52 +127,92 @@ export default {
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
 
-.rates {
-  margin: var(--spacer-base) 0;
-}
+.form {
+  border-top: 1px solid #eaeaea;
 
-.shippingWrapper {
-  display: flex;
-  justify-content: center;
-
-  .shipItem_image {
-    width: 38%;
-    height: calc(var(--spacer-base) * 5.04);
-    object-fit: contain;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  @include for-desktop {
+    width: calc(var(--spacer-base) * 17.54);
   }
 
-  .shipItem {
-    width: 62%;
+  .sf-heading__title {
+    font-weight: bold;
+    padding: var(--spacer-sm) 0;
+  }
+
+  ::v-deep select:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+
+    option {
+      color: black;
+    }
+  }
+
+  .item {
     display: flex;
     flex-direction: column;
 
-    &__title {
-      padding-bottom: var(--spacer-2xs);
+    @include for-desktop {
+      width: calc(var(--spacer-base) * 17.54);
     }
 
-    &__props {
-      padding: 2px 0 2px 0;
-      font-size: var(--font-size--sm);
+    .productRow {
+      display: flex;
+      flex-direction: row;
+      padding: var(--spacer-base) 0;
+      border-bottom: 1px solid #eaeaea;
 
-      .title {
-        font-weight: bold;
-        font-size: var(--font-size--sm);
+      ::v-deep .sf-image--wrapper {
+        --image-width: calc(var(--spacer-base) * 5.04);
+        --image-height: calc(var(--spacer-base) * 5.04);
+
+        @include for-desktop {
+          --image-width: calc(var(--spacer-base) * 6.7);
+          --image-height: calc(var(--spacer-base) * 6.7);
+        }
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        padding-left: var(--spacer-base);
+
+        &__productName {
+          padding-bottom: var(--spacer-2xs);
+        }
+
+        &__props {
+          padding: 2px 0 2px 0;
+          font-size: var(--font-size--sm);
+
+          .title {
+            font-weight: bold;
+            font-size: var(--font-size--sm);
+          }
+        }
       }
     }
+
+    .productRow:last-child {
+      border: none;
+    }
   }
 
-  .rates {
-    width: 100%;
-  }
-}
+  .changeStore {
+    margin-bottom: calc(var(--spacer-sm) * 1.25);
 
-.divider {
-  height: var(--spacer-base);
-  width: 98%;
-  display: flex;
-  align-items: center;
+    &__location {
+      font-weight: bold;
+      font-size: var(--font-size--xs);
+    }
+
+    &__link {
+      font-size: var(--font-size--xs);
+      text-decoration: underline;
+      cursor: pointer;
+      margin: 0;
+    }
+  }
 }
 </style>

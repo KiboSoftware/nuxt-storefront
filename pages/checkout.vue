@@ -55,11 +55,11 @@
             >
               <template #shipping-methods-form>
                 <KiboShippingMethodForm
-                  :ship-items="shipItems"
-                  :pickup-items="pickupItems"
-                  :delivery-items="deliveryItems"
+                  :items="items"
+                  :cart-item-purchase-location="purchaseLocation.name"
                   :shipping-rates="shippingRates"
                   @saveShippingMethod="saveShippingMethod"
+                  @handleStoreLocatorClick="handleStoreLocatorClick"
                 />
               </template>
             </KiboShipping>
@@ -158,10 +158,12 @@ import {
   usePaymentMethods,
   useUser,
   useShippingMethods,
+  usePurchaseLocation,
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
 import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "~~/lib/getters"
+const { toggleStoreLocatorModal } = useUiState()
 
 export default {
   name: "Checkout",
@@ -189,6 +191,8 @@ export default {
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
+    const { load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
+
     const showCreateAccount = ref(false)
     const password = ref(null)
     const confirmPassword = ref(null)
@@ -395,11 +399,15 @@ export default {
     // shippingMethods
     const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
     const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
-    const deliveryItems = computed(() => checkoutGetters.getDeliveryItems(checkout.value))
+
+    const items = [
+      { type: "shipItems", values: shipItems.value },
+      { type: "pickupItems", values: pickupItems.value },
+    ]
+
     const shippingRates = computed(() =>
       shippingMethodGetters.getShippingRates(shippingMethods.value)
     )
-
     const saveShippingMethod = async (shippingRates) => {
       const params = {
         orderId: checkout.value?.id,
@@ -411,6 +419,10 @@ export default {
       }
 
       await setShippingInfo(params)
+    }
+
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
     }
 
     // billing
@@ -513,6 +525,7 @@ export default {
 
       populateShippingDetails()
       populatePersonalDetails()
+      loadPurchaseLocation()
     }, null)
 
     // others
@@ -592,11 +605,11 @@ export default {
       updateShippingDetails,
       saveShippingDetails,
 
-      shipItems,
-      deliveryItems,
-      pickupItems,
+      items,
       shippingRates,
       saveShippingMethod,
+      handleStoreLocatorClick,
+      purchaseLocation,
 
       billingDetails,
       updateBillingDetails,
@@ -637,6 +650,10 @@ export default {
 
     display: flex;
     gap: 2.67%; //35px;
+  }
+
+  ::v-deep .sf-heading__title.h2 {
+    font-size: 24px;
   }
 
   &__main {

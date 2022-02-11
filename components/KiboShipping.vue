@@ -144,4 +144,8 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
+
+::v-deep .sf-button {
+  margin: 10px 0;
+}
 </style>
