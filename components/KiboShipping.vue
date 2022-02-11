@@ -7,69 +7,69 @@
     />
     <div class="form">
       <SfInput
-        :value="shippingAddress.firstName"
         :label="$t('First Name')"
         name="firstName"
         class="form__element form__element--half"
         required
+        :value="shippingAddress.firstName"
         @input="updateField('firstName', $event)"
       />
       <SfInput
-        :value="shippingAddress.lastName"
         :label="$t('Last Name')"
         name="lastName"
         class="form__element form__element--half form__element--half-even"
         required
-        @input="updateField('lastName', $event)"
+        :value="shippingAddress.lastNameOrSurname"
+        @input="updateField('lastNameOrSurname', $event)"
       />
       <SfInput
-        :value="shippingAddress.address1"
         :label="$t('Street Address')"
         name="streetName"
         class="form__element form__element--half"
         required
+        :value="shippingAddress.address && shippingAddress.address.address1"
         @input="updateField('address1', $event)"
       />
       <SfInput
-        :value="shippingAddress.address2"
         :label="$t('Apt')"
         name="apartment"
         class="form__element form__element--half form__element--half-even"
         required
+        :value="shippingAddress.address && shippingAddress.address.address2"
         @input="updateField('address2', $event)"
       />
       <SfInput
-        :value="shippingAddress.city"
         :label="$t('City')"
         name="city"
         class="form__element form__element--half"
         required
-        @input="updateField('city', $event)"
+        :value="shippingAddress.address && shippingAddress.address.cityOrTown"
+        @input="updateField('cityOrTown', $event)"
       />
       <SfInput
-        :value="shippingAddress.state"
         :label="$t('State')"
         name="state"
         class="form__element form__element--half form__element--half-even"
         required
-        @input="updateField('state', $event)"
+        :value="shippingAddress.address && shippingAddress.address.stateOrProvince"
+        @input="updateField('stateOrProvince', $event)"
       />
       <SfInput
-        :value="shippingAddress.zipCode"
         :label="$t('Zip Code')"
         name="zipCode"
         class="form__element form__element--half"
         required
-        @input="updateField('zipCode', $event)"
+        :value="shippingAddress.address && shippingAddress.address.postalOrZipCode"
+        @input="updateField('postalOrZipCode', $event)"
       />
       <SfSelect
-        :value="shippingAddress.country"
         :placeholder="`Select ${$t('Country')}`"
         class="form__element form__element--half form__element--half-even form__select sf-select--underlined"
         :label="$t('Country')"
         :valid="true"
         data-testid="country"
-        @input="updateField('country', $event)"
+        :value="shippingAddress.address && shippingAddress.address.countryCode"
+        @input="updateField('countryCode', $event)"
       >
         <SfSelectOption
           v-for="countryOption in countries"
@@ -80,12 +80,12 @@
         </SfSelectOption>
       </SfSelect>
       <SfInput
-        :value="shippingAddress.phoneNumber"
         :label="$t('Phone Number')"
         name="phone"
         class="form__element"
         required
-        @input="updateField('phoneNumber', $event)"
+        :value="shippingAddress.phoneNumbers && shippingAddress.phoneNumbers.home"
+        @input="updateField('phoneNumbers', $event)"
       />
 
       <SfButton @click="saveShippingAddress($event)">
@@ -123,19 +123,41 @@ export default {
     },
   },
   setup(props, context) {
-    const shippingAddress = computed(() => props.value)
-
+    const shippingAddress = ref({ ...props.value })
     const updateField = (fieldName, fieldValue) => {
-      shippingAddress.value[fieldName] = fieldValue
+      const address = [
+        "address1",
+        "address2",
+        "cityOrTown",
+        "stateOrProvince",
+        "postalOrZipCode",
+        "countryCode",
+      ]
+
+      if (fieldName === "phoneNumbers") {
+        shippingAddress.value.phoneNumbers = {
+          ...shippingAddress.value.phoneNumbers,
+          home: fieldValue,
+        }
+      } else if (address.includes(fieldName)) {
+        shippingAddress.value.address = {
+          ...shippingAddress.value.address,
+          [fieldName]: fieldValue,
+        }
+      } else {
+        shippingAddress.value[fieldName] = fieldValue
+      }
     }
 
     const saveShippingAddress = () => {
-      context.emit("saveShippingAddress", shippingAddress.value)
+      context.emit("saveShippingAddress", {
+        ...shippingAddress.value,
+      })
     }
 
     return {
-      shippingAddress,
       updateField,
+      shippingAddress,
       saveShippingAddress,
     }
   },
