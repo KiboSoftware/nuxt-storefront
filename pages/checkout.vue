@@ -383,8 +383,6 @@ export default {
       }
 
       await setShippingInfo(params)
-      populateShippingDetails()
-
       await loadShippingMethods(checkout.value?.id)
     }
 
@@ -404,7 +402,10 @@ export default {
       const params = {
         orderId: checkout.value?.id,
         fulfillmentInfoInput: {
-          fulfillmentContact: checkout.value?.fulfillmentInfo?.fulfillmentContact,
+          fulfillmentContact: {
+            ...checkout.value?.fulfillmentInfo?.fulfillmentContact,
+            email: personalDetails.value?.email,
+          },
         },
         shippingMethodCode: shippingRates.shippingMethodCode,
         shippingMethodName: shippingRates.shippingMethodName,
@@ -418,47 +419,19 @@ export default {
     }
 
     // billing
-    const billingDetails = computed(() =>
-      shopperContactGetters.getBillingDetails(checkout.value?.billingInfo?.billingContact)
-    )
-
+    const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
+    const updatedBillingAddress = ref({ ...billingDetails })
     const updateBillingDetails = (newBillingDetails) => {
-      Object.keys(billingDetails.value).forEach((key) => {
-        billingDetails.value[key] = newBillingDetails[key]
-      })
+      updatedBillingAddress.value = { ...newBillingDetails }
     }
 
     const saveBillingDetails = async () => {
       const params = {
         orderId: checkout.value?.id,
         billingInfoInput: {
-          billingContact: {
-            email: personalDetails.value?.email,
-            firstName: billingDetails.value?.firstName,
-            middleNameOrInitial: "",
-            lastNameOrSurname: billingDetails.value?.lastName,
-            companyOrOrganization: "",
-            address: {
-              address1: billingDetails.value?.address1,
-              address2: billingDetails.value?.address2,
-              address3: "",
-              address4: "",
-              cityOrTown: billingDetails.value?.city,
-              stateOrProvince: billingDetails.value?.state,
-              postalOrZipCode: billingDetails.value?.zipCode,
-              countryCode: billingDetails.value?.country,
-              addressType: "",
-              isValidated: false,
-            },
-            phoneNumbers: {
-              home: billingDetails.value?.phoneNumber,
-              mobile: "",
-              work: "",
-            },
-          },
+          billingContact: { ...updatedBillingAddress.value, email: personalDetails.value?.email },
         },
       }
-
       await setBillingInfo(params)
     }
 
@@ -541,7 +514,6 @@ export default {
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
 
-      populateShippingDetails()
       populatePersonalDetails()
       loadPurchaseLocation()
     }, null)
