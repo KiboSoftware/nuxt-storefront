@@ -158,9 +158,7 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
+<style lang="scss">
 #detailed-cart {
   box-sizing: border-box;
   @include for-desktop {

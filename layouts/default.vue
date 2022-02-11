@@ -13,13 +13,6 @@
 </template>
 
 <style lang="scss">
-* {
-  font-family: "Roboto", sans-serif;
-  font-size: 1rem;
-  line-height: 1.25rem;
-  font-weight: 400;
-}
-
 .wrapper {
   width: 100%;
   margin: 0 auto;

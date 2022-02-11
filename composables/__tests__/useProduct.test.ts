@@ -1,10 +1,9 @@
 import { useProduct } from "@/composables/useProduct"
-import { getProductQuery } from "~~/lib/gql/queries/product/getProduct"
-import { configureProductMutation } from "~~/lib/gql/mutations/product/configureProductMutation"
+import { getProductQuery } from "@/lib/gql/queries/product/getProduct"
+import { configureProductMutation } from "@/lib/gql/mutations/product/configureProductMutation"
 
 const mockGetProductQuery = getProductQuery
 const mockConfigureProductMutation = configureProductMutation
-
 // getProduct
 const getProductApiResponse = {
   data: {
@@ -20,13 +19,15 @@ const getProductApiResponse = {
   networkStatus: 7,
   stale: false,
 }
-
 const getProductResponse = getProductApiResponse.data.product
-
 // configureProduct
 const configureProductApiResponse = {
   data: {
     configureProduct: {
+      createDate: "",
+      personalizationScore: 1,
+      score: 1,
+      updateDate: "",
       options: [{ attributeFQN: "tenant~color" }, { attributeFQN: "tenant~size" }],
     },
   },
@@ -34,17 +35,18 @@ const configureProductApiResponse = {
   networkStatus: 7,
   stale: false,
 }
-
 const configureProductResponse = {
+  createDate: "",
+  personalizationScore: 1,
+  score: 1,
+  updateDate: "",
   options: [{ attributeFQN: "tenant~color" }, { attributeFQN: "tenant~size" }],
   content: { productImages: undefined },
 }
-
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
   }),
-
   useNuxtApp: jest.fn().mockReturnValue({
     nuxt2Context: {
       $gqlFetch: jest.fn((params) => {
@@ -61,10 +63,8 @@ jest.mock("#app", () => ({
     },
   }),
 }))
-
 describe("[composable] useProduct", () => {
   const productCode = "MS-JKT-012"
-
   // getProduct
   test("load: should load product", async () => {
     const { product, load, loading, error } = useProduct(productCode)
@@ -73,10 +73,10 @@ describe("[composable] useProduct", () => {
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()
   })
-
   // configureProduct
   test("load: should configure product", async () => {
-    const { product, configure, loading, error } = useProduct(productCode)
+    const { product, load, configure, loading, error } = useProduct(productCode)
+    await load(productCode)
     await configure(
       [{ attributeFQN: "Tenant~color", value: "Black", shopperEnteredValue: undefined }],
       productCode

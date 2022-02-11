@@ -15,7 +15,7 @@ export interface getFacetsFromURLResponse {
 }
 export interface uiHelpersReturnType {
   getCatLink?: (category: GraphQL.PrCategory) => string
-  getFacetsFromURL: (isSearchPage: boolean) => getFacetsFromURLResponse
+  getFacetsFromURL: (isSearchPage?: boolean) => getFacetsFromURLResponse
   setTermForUrl: (query: string) => void
   getProductLink: (productCode: string) => string
   changeFilters: (filters) => void

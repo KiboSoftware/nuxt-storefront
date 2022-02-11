@@ -136,7 +136,6 @@
             >
               <SfIcon class="sf-header__icon">
                 <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
-                <i class="far fa-user-circle"></i>
               </SfIcon>
               <div class="kibo-header__icon">
                 <span class="kibo-header__icon-name"> My Account</span>
@@ -269,6 +268,7 @@ import {
   useUser,
   useSearchSuggestions,
   useCategoryTree,
+  useProductSearch,
 } from "@/composables"
 
 import {

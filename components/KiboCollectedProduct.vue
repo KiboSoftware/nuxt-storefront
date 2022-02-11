@@ -189,7 +189,9 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+@import "@/assets/styles/components/custom/KiboCollectedProduct.scss";
+
 .sf-image {
   &__image {
     object-fit: contain;
