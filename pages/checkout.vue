@@ -391,11 +391,15 @@ export default {
     // shippingMethods
     const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
     const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
-    const deliveryItems = computed(() => checkoutGetters.getDeliveryItems(checkout.value))
+
+    const items = [
+      { type: "shipItems", values: shipItems.value },
+      { type: "pickupItems", values: pickupItems.value },
+    ]
+
     const shippingRates = computed(() =>
       shippingMethodGetters.getShippingRates(shippingMethods.value)
     )
-
     const saveShippingMethod = async (shippingRates) => {
       const params = {
         orderId: checkout.value?.id,
@@ -407,6 +411,10 @@ export default {
       }
 
       await setShippingInfo(params)
+    }
+
+    const handleStoreLocatorClick = () => {
+      toggleStoreLocatorModal()
     }
 
     // billing
