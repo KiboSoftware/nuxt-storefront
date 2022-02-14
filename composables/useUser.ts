@@ -6,6 +6,8 @@ import {
   createAccountLoginMutation,
   loginMutation,
   createAccountMutation,
+  updateCustomerDataMutation,
+  updatePasswordMutation,
 } from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
@@ -154,6 +156,50 @@ export const useUser = () => {
     }
   }
 
+  // updatedUserData should consist the user object clone along with updated values
+  const updateCustomerPersonalData = async (updatedUserData) => {
+    const variables = {
+      accountId: user.value.id,
+      customerAccountInput: updatedUserData,
+    }
+    try {
+      loading.value = true
+      const response = await fetcher({
+        query: updateCustomerDataMutation,
+        variables,
+      })
+      user.value = response.data?.user
+    } catch (err) {
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const changePassword = async ({ oldPassword, newPassword }) => {
+    const variables = {
+      confirmationInfoInput: {
+        accountId: user.value.id,
+        unlockAccount: true,
+        userId: user.value.userId,
+        passwordInfoInput: {
+          oldPassword,
+          newPassword,
+        },
+      },
+    }
+    try {
+      loading.value = true
+      const response = await fetcher({
+        query: updatePasswordMutation,
+        variables,
+      })
+      user.value = response.data?.user
+    } catch (err) {
+    } finally {
+      loading.value = false
+    }
+  }
+
   // return
   return {
     user,
@@ -162,6 +208,8 @@ export const useUser = () => {
     logout,
     createAccountAndLogin,
     isAuthenticated,
+    updateCustomerPersonalData,
+    changePassword,
     loading: computed(() => loading.value),
     error: computed(() => error),
   }
