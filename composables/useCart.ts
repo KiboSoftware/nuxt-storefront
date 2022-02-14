@@ -1,4 +1,3 @@
-import { CartItemInput } from "./../server/types/GraphQL"
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/lib/gql/queries"
 import {
@@ -112,26 +111,6 @@ export const useCart = () => {
     } finally {
       loading.value = false
       await load()
-    }
-  }
-
-  const updateCartItem = async (cartItemId: string, cartItemInput: CartItemInput) => {
-    const variables = {
-      cartItemId,
-      cartItemInput,
-    }
-    try {
-      loading.value = true
-      await fetcher({
-        query: updateCartItemMutation,
-        variables,
-      })
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error(err)
-    } finally {
-      loading.value = false
-      cart.value = await getCart()
     }
   }
 
