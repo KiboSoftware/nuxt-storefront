@@ -4,47 +4,12 @@
       <div class="checkout__main">
         <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
           <SfStep name="Details">
-            <SfPersonalDetails
+            <KiboPersonalDetails
               :value="personalDetails"
               @input="updatePersonalDetails"
               @log-in="logIn"
             >
-              <template #create-account>
-                <SfCheckbox
-                  v-model="showCreateAccount"
-                  name="createAccount"
-                  label="I want to create an account"
-                  class="form__checkbox"
-                  data-testid="create-account-checkbox"
-                  @change="$emit('create-account', createAccount)"
-                />
-                <transition :name="transition">
-                  <div v-if="showCreateAccount" class="password">
-                    <SfInput
-                      v-model="password"
-                      :has-show-password="true"
-                      type="password"
-                      label="Create Password"
-                      class="form__element"
-                      required
-                      error-message="Required"
-                      data-testid="create-password-input"
-                    />
-
-                    <SfInput
-                      v-model="confirmPassword"
-                      :has-show-password="true"
-                      type="password"
-                      label="Confirm Password"
-                      class="form__element"
-                      required
-                      error-message="Required"
-                      data-testid="confirm-password-input"
-                    />
-                  </div>
-                </transition>
-              </template>
-            </SfPersonalDetails>
+            </KiboPersonalDetails>
           </SfStep>
           <SfStep name="Shipping">
             <KiboShipping
@@ -168,13 +133,10 @@ export default {
   name: "Checkout",
   components: {
     SfSteps,
-    SfPersonalDetails,
     SfPayment,
     SfConfirmOrder,
     SfOrderReview,
     SfButton,
-    SfCheckbox,
-    SfInput,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -194,7 +156,6 @@ export default {
 
     const showCreateAccount = ref(false)
     const password = ref(null)
-    const confirmPassword = ref(null)
     const transition = "sf-fade"
 
     enum Steps {
@@ -607,7 +568,6 @@ export default {
       showCreateAccount,
       createAccount,
       password,
-      confirmPassword,
       transition,
       getPaymentMethodData,
     }
