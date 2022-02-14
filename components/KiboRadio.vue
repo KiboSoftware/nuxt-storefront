@@ -42,7 +42,7 @@
     </label>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { focus } from "@storefront-ui/vue/src/utilities/directives"
 export default {
   name: "KiboRadio",
@@ -83,21 +83,22 @@ export default {
       default: "",
     },
   },
-  computed: {
-    isChecked() {
-      return this.value === this.selected
-    },
-  },
-  methods: {
-    changeHandler() {
-      this.$emit("change", this.value)
-    },
-    inputHandler() {
-      this.$emit("input", this.value)
-    },
+  setup(props, context) {
+    const changeHandler = () => {
+      context.emit("change", props.value)
+    }
+    const inputHandler = () => {
+      context.emit("input", props.value)
+    }
+    const isChecked = computed(() => {
+      return props.value === props.selected
+    })
+
+    return {
+      isChecked,
+      changeHandler,
+      inputHandler,
+    }
   },
 }
 </script>
-<style lang="scss">
-@import "~@storefront-ui/shared/styles/components/molecules/SfRadio.scss";
-</style>

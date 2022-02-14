@@ -72,9 +72,9 @@ import {
   SfRadio,
 } from "@storefront-ui/vue"
 import { defineComponent, computed } from "@vue/composition-api"
-import { Fulfillment } from "./types/fulfillment"
+import { Fulfillment } from "@/components/types/fulfillment"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import { useCart } from "@/composables"
+import { useCart, usePurchaseLocation } from "@/composables"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import { useNuxtApp } from "#app"
 
@@ -162,45 +162,40 @@ export default defineComponent({
   },
   setup(props, context) {
     const { cart, updateCartItemQuantity, removeCartItem, updateCartItem } = useCart()
+    const { purchaseLocation } = usePurchaseLocation()
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
-    const isDisabledFulfillmentOption = (fulfillmentTypesSupported, option) => {
-      return !fulfillmentTypesSupported?.includes(option)
+    const getInStorePickupDetails = (option) => {
+      if (option?.fulfillmentMethod === "Pickup") {
+        return `${context.root.$t("Available at")} ${option.fulfillmentLocation}`
+      }
+      return purchaseLocation.value.name
+        ? `${context.root.$t("Available at")} ${purchaseLocation.value.name}`
+        : ""
     }
 
     const getFulfillmentDetails = (option: Fulfillment) => {
       const details = {
         DirectShip: option.details,
-        InStorePickup:
-          option?.fulfillmentMethod === "Pickup" && option.fulfillmentLocation
-            ? `Available at ${option.fulfillmentLocation}`
-            : "",
+        InStorePickup: getInStorePickupDetails(option),
       }
 
-      return isDisabledFulfillmentOption(option?.fulfillmentTypesSupported, option.value)
-        ? "Not Available"
-        : "" || details[option.value]
+      return option.disabled ? context.root.$t("Not available") : "" || details[option.value]
     }
 
-    const fulfillmentOptions = computed(() => {
-      return props?.supportedFulfillmentTypes.map((type: Fulfillment) => {
-        type.details = getFulfillmentDetails(type)
-        return type
-      })
-    })
+    const fulfillmentOptions = computed(() =>
+      props?.supportedFulfillmentTypes.map((type: Fulfillment) => ({
+        ...type,
+        details: getFulfillmentDetails(type),
+      }))
+    )
 
-    const removeHandler = () => {
-      context.emit("click:remove")
-    }
+    const removeHandler = () => context.emit("click:remove")
 
-    const componentIs = computed(() => {
-      return props.link ? "SfLink" : "div"
-    })
+    const componentIs = computed(() => (props.link ? "SfLink" : "div"))
 
-    const quantity = computed(() => {
-      return typeof props.qty === "string" ? Number(props.qty) : props.qty
-    })
+    const quantity = computed(() => (typeof props.qty === "string" ? Number(props.qty) : props.qty))
 
     const handleQuantitySelectorInput = async ($event) => {
       context.emit("input", $event)
@@ -217,10 +212,15 @@ export default defineComponent({
       shouldOpenModal?: boolean
     ) => {
       const itemToBeUpdated = { ...cart.value.items.find((item) => item.id === props.cartItemId) }
+
+      if (!Object.keys(itemToBeUpdated).length) return
+
       if (selectedFulfillmentValue === "Ship") {
         itemToBeUpdated.fulfillmentMethod = selectedFulfillmentValue
         itemToBeUpdated.purchaseLocation = null
+        itemToBeUpdated.fulfillmentLocationCode = null
         await updateCartItem(props.cartItemId, itemToBeUpdated)
+        return
       }
 
       if (shouldOpenModal) {
@@ -237,6 +237,9 @@ export default defineComponent({
           },
         })
       } else {
+        itemToBeUpdated.fulfillmentMethod = "Pickup"
+        itemToBeUpdated.fulfillmentLocationCode = purchaseLocation.value.code
+        itemToBeUpdated.purchaseLocation = purchaseLocation.value.code
         await updateCartItem(props.cartItemId, itemToBeUpdated)
       }
     }

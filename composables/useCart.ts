@@ -1,4 +1,3 @@
-import { CartItemInput } from "./../server/types/GraphQL"
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/lib/gql/queries"
 import {
@@ -7,7 +6,7 @@ import {
   updateCartItemQuantityMutation,
   updateCartItemMutation,
 } from "@/lib/gql/mutations"
-import type { Cart, Maybe } from "@/server/types/GraphQL"
+import type { Cart, Maybe, CartItemInput } from "@/server/types/GraphQL"
 
 export const useCart = () => {
   const cart = useState<Maybe<Cart>>(`use-cart-result`, () => {
@@ -51,7 +50,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
     }
   }
 
@@ -72,7 +71,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
     }
   }
 
@@ -91,7 +90,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
     }
   }
 
@@ -111,7 +110,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
     }
   }
 

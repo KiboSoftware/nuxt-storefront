@@ -4,8 +4,8 @@
       <div class="location-search">
         <SfSearchBar
           v-model="zipCodeInput"
-          placeholder="Enter Zip Code"
-          class="Search-bar"
+          :placeholder="$t('Enter Zip Code')"
+          class="search-bar"
           aria-label="Search"
         />
         <button
@@ -184,7 +184,7 @@ export default {
   margin-left: 2%;
 }
 
-.Search-bar {
+.search-bar {
   flex: 1;
 }
 

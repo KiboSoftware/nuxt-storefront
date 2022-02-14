@@ -26,7 +26,7 @@
           #description
         >
           <p class="sf-radio__details" @click="handleStoreLocatorClick">
-            {{ fulfillmentOption.fulfillmentLocation ? $t("Change Store") : $t("Select Store") }}
+            {{ fulfillmentOption.details ? $t("Change Store") : $t("Select Store") }}
           </p>
         </template>
       </KiboRadio>
@@ -69,7 +69,8 @@ export default defineComponent({
       const shouldOpenModal = fulfillmentOption.shortName === "Pickup" && !fulfillmentOption.details
       context.emit("radioChange", fulfillmentOption.shortName, shouldOpenModal)
     }
-    const handleStoreLocatorClick = () => {
+    const handleStoreLocatorClick = (e) => {
+      e.preventDefault()
       context.emit("changeStore", "Pickup", true)
     }
 
