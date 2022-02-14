@@ -288,7 +288,6 @@ export default defineComponent({
   setup(_, context) {
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
-    console.log(context, app)
 
     const { categories: allCategories } = useCategoryTree()
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
