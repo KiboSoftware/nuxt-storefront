@@ -293,7 +293,7 @@ export default defineComponent({
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
     const { result, search, loading } = useSearchSuggestions()
     const modal = nuxt.nuxt2Context.$modal
-    const { user, load: loadUser } = useUser()
+    const { user } = useUser()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const { cart } = useCart()
 
@@ -437,7 +437,6 @@ export default defineComponent({
 
     return {
       user,
-      loadUser,
       accountIcon,
       isMobile,
       removeSearchResults,
