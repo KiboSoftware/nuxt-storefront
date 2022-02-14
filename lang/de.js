@@ -167,4 +167,5 @@ export default {
   "Card number": "Kartennummer",
   "Exp. Date MM/YY": "Verfallsdatum MM/JJ",
   "Security Code": "Sicherheitscode",
+  "Save payment method": "Zahlungsmethode speichern",
 }

@@ -26,3 +26,5 @@ export * from "./useShippingMethods"
 
 export * from "./useDropzoneContent"
 export * from "./useCustomerCreditCards"
+export * from "./usePaymentTypes"
+export * from "./usePaymentMethods "

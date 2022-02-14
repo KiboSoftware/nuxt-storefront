@@ -179,4 +179,5 @@ export default {
   "Card number": "Card number",
   "Exp. Date MM/YY": "Exp. Date MM/YY",
   "Security Code": "Security Code",
+  "Save payment method": "Save payment method",
 }

@@ -56,11 +56,8 @@
           </SfStep>
           <SfStep name="Payment">
             <KiboPayment
-              :payment-methods="paymentMethods"
               :shipping="shipping"
               :countries="countries"
-              :months="months"
-              :years="years"
               @input="getPaymentMethodData"
             />
           </SfStep>
@@ -129,10 +126,9 @@ import {
   SfInput,
 } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
-import { useCheckout, useCart, useUiState, useCustomerCreditCards, useUser } from "@/composables"
-import { creditCardPaymentGetters } from "@/lib/getters"
+import { useCheckout, useCart, useUiState, usePaymentMethods, useUser } from "@/composables"
 import { computed, ref, useNuxtApp } from "#app"
-import { buildPaymentMethodInput } from "@/composables/helpers"
+import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
 
 export default {
   name: "Checkout",
@@ -146,26 +142,22 @@ export default {
     SfCheckbox,
     SfInput,
   },
-  setup() {
+  setup(_prop, context) {
     const nuxt = useNuxtApp()
     const countries = nuxt.nuxt2Context.$config.countries
-    const paymentType = nuxt.nuxt2Context.$config.paymentAction.paymentType
-    const currencyCode = nuxt.nuxt2Context.$config.paymentAction.currencyCode
-    const paymentWorkflow = nuxt.nuxt2Context.$config.paymentAction.paymentWorkflow
+    const { locale } = context.root.$i18n
+    const currencyCode = context.root.$i18n.getNumberFormat(locale)?.currency?.currency
 
     const currentStep = ref(0)
     const { cart } = useCart()
     const { checkout, loadFromCart, setPersonalInfo, setShippingInfo } = useCheckout()
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
-    const { tokenizeCard, addPaymentMethodByTokenizeCard } = useCustomerCreditCards()
+    const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
     const showCreateAccount = ref(false)
     const password = ref(null)
     const confirmPassword = ref(null)
     const transition = "sf-fade"
-
-    const months = []
-    const years = []
 
     enum Steps {
       GO_TO_SHIPPING = "Go to Shipping",
@@ -232,13 +224,6 @@ export default {
         },
       ],
     }
-
-    const paymentMethods = [
-      {
-        label: "Credit / Debit Card",
-        value: "creditCard",
-      },
-    ]
 
     const shipping = {
       firstName: "",
@@ -316,13 +301,7 @@ export default {
     ]
 
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
-    let cardDetails = ref({
-      cardNumber: "",
-      expiryDate: "",
-      securityCode: "",
-      cardKeep: false,
-      cardType: "",
-    })
+    let paymentDetails = ref(defaultPaymentDetails())
 
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
@@ -414,35 +393,31 @@ export default {
     }
 
     const getPaymentMethodData = (updatedPaymentDetails) => {
-      cardDetails = {
+      paymentDetails = {
         ...updatedPaymentDetails,
       }
     }
 
     const addPaymentMethod = async () => {
-      const creditCardData = {
-        cardNumber: cardDetails.value.cardNumber,
-        cardType: cardDetails.value.cardType,
-        // cardholderName: creditCardPaymentGetters.getNameOnCard(cardDetails.value),
-        cvv: cardDetails.value.securityCode,
-        expireMonth: creditCardPaymentGetters.getExpireMonth(cardDetails?.value),
-        expireYear: creditCardPaymentGetters.getExpireMonth(cardDetails?.value),
+      let paymentAction
+      if (paymentDetails.value.paymentType.toLowerCase() === "creditcard") {
+        const tokenizedData = await tokenizeCard(paymentDetails.value.card)
+        if (tokenizedData) {
+          paymentAction = buildPaymentMethodInput(
+            currencyCode,
+            checkout,
+            paymentDetails.value,
+            tokenizedData
+          )
+        }
+      } else if (paymentDetails.value.paymentType.toLowerCase() === "checkbymail") {
+        paymentAction = {
+          paymentType: paymentDetails.value.paymentType,
+          check: { checkNumber: "VSF123123" },
+        }
       }
-
-      const tokenizedData = await tokenizeCard(creditCardData)
-
-      if (tokenizedData) {
-        const paymentAction = buildPaymentMethodInput(
-          paymentType,
-          currencyCode,
-          paymentWorkflow,
-          checkout,
-          creditCardData,
-          tokenizedData
-        )
-
+      if (checkout?.value?.id && paymentAction)
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
-      }
     }
 
     const savePaymentDetails = async () => {
@@ -490,13 +465,10 @@ export default {
 
     return {
       countries,
-      months,
-      years,
       currentStep,
       steps,
       payment,
       order,
-      paymentMethods,
       shippingMethods,
       buttonNames: [
         { name: "Go to Shipping" },

@@ -1,7 +1,22 @@
 const getCardNumberMask = (tokenizedData): string => tokenizedData?.numberPart || ""
 const getId = (tokenizedData) => tokenizedData?.id || ""
 
-const getType = (creditCardData) => creditCardData?.cardType
+const getPaymentType = (selectedType: string) => {
+  let paymentType
+  switch (selectedType.toLowerCase()) {
+    case "creditcard":
+      paymentType = "CreditCard"
+      break
+
+    case "checkbymail":
+      paymentType = "Check"
+      break
+
+    default:
+      break
+  }
+  return paymentType
+}
 
 const getExpireMonth = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[0]) || 0
 
@@ -15,7 +30,7 @@ export const creditCardPaymentGetters = {
   getCardNumberMask,
   getId,
   getAppliedTotal,
-  getType,
+  getPaymentType,
   getExpireMonth,
   getExpireYear,
   getNameOnCard,
