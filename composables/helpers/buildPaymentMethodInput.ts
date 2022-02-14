@@ -1,5 +1,5 @@
 import type { BillingInfo, PaymentActionInput } from "@/server/types/GraphQL"
-import { creditCardPaymentGetters } from "@/lib/getters/creditCardPaymentGetters"
+import { creditCardPaymentGetters, checkoutGetters } from "@/lib/getters"
 
 export const buildPaymentMethodInput = (
   currencyCode,
@@ -27,7 +27,7 @@ export const buildPaymentMethodInput = (
 
   const paymentAction = {
     currencyCode,
-    amount: creditCardPaymentGetters.getAppliedTotal(checkout?.value),
+    amount: checkoutGetters.getTotal(checkout?.value),
     newBillingInfo: {
       ...billingInfo,
       paymentWorkflow: creditCardData.card.paymentWorkflow,

@@ -1,8 +1,8 @@
 import { computed } from "@vue/composition-api"
-import { tokenizeCreditCardPayment } from "./helpers"
 import { useNuxtApp, useState } from "#app"
 import { PaymentActionInput } from "@/server/types/GraphQL"
 import { addPaymentMethod } from "@/lib/gql/mutations"
+import { tokenizeCreditCardPayment } from "@/lib/utils"
 
 export const usePaymentMethods = () => {
   const nuxt = useNuxtApp()

@@ -1,7 +1,8 @@
 const getOrderNumber = (checkout) => checkout?.orderNumber
 const getEmail = (checkout) => checkout?.email
 const getId = (checkout) => checkout?.id
-const getTotal = (checkout) => "$" + `${checkout?.total ? checkout?.total.toFixed(2) : 0}`
+const getTotalToDisplay = (checkout) => "$" + `${checkout?.total ? checkout?.total.toFixed(2) : 0}`
+const getTotal = (checkout): number => (checkout?.total ? checkout?.total.toFixed(2) : 0)
 const getDiscountedTotal = (checkout) => checkout?.orderDiscounts
 const getShippingTotal = (checkout) => checkout?.shippingTotal
 const getTaxTotal = (checkout) => checkout?.taxTotal
@@ -28,6 +29,7 @@ export const checkoutGetters = {
   getOrderNumber,
   getEmail,
   getId,
+  getTotalToDisplay,
   getTotal,
   getDiscountedTotal,
   getShippingTotal,

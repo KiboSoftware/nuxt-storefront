@@ -125,7 +125,7 @@ export default {
     const totalItems = computed(() => checkoutGetters.getLineItemTotal(order))
     const shippingMethod = computed(() => checkoutGetters.getShippingMethod(order))
     const subtotal = computed(() => checkoutGetters.getSubtotal(order))
-    const total = computed(() => checkoutGetters.getTotal(order))
+    const total = computed(() => checkoutGetters.getTotalToDisplay(order))
 
     return {
       promoCode: "",
