@@ -3,10 +3,10 @@
     <LazyHydrate v-if="!isProductZoomed" when-idle>
       <div>
         <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
-        <div v-if="true" class="product">
+        <div v-if="loading" class="product">
           <KiboPDPSkeletonLoading />
         </div>
-        <div v-if="false" class="product">
+        <div v-if="!loading" class="product">
           <div>
             <div class="product__gallery">
               <SfIcon
