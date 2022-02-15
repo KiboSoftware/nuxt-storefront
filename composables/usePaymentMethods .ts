@@ -20,11 +20,10 @@ export const usePaymentMethods = () => {
         paymentAction,
       }
 
-      const response = await fetcher({
+      await fetcher({
         query: addPaymentMethod,
         variables,
       })
-      console.log(response)
       // await load(cards?.value?.items?.)
     } catch (err) {
       // eslint-disable-next-line no-console

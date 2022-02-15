@@ -142,7 +142,7 @@ export default {
     SfCheckbox,
     SfInput,
   },
-  setup(_prop, context) {
+  setup(_, context) {
     const nuxt = useNuxtApp()
     const countries = nuxt.nuxt2Context.$config.countries
     const { locale } = context.root.$i18n

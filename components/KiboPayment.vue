@@ -103,7 +103,7 @@ export default defineComponent({
     SfIcon,
     SfButton,
   },
-  setup(_props, _context) {
+  setup(_, _context) {
     const { loadPaymentTypes } = usePaymentTypes()
     const paymentMethods = loadPaymentTypes()
     const isCreditCardSelected = ref(false)
@@ -150,7 +150,7 @@ export default defineComponent({
 <style lang="scss">
 .sf-payment {
   .sf-heading {
-    border-bottom-color: #f7f7f7;
+    border-bottom-color: var(--_c-white-primary);
 
     &__title.h2 {
       --heading-title-font-size: var(--font-size--xl);
@@ -158,7 +158,7 @@ export default defineComponent({
   }
 
   .payment-methods {
-    background-color: #f7f7f7 !important;
+    background-color: var(--_c-white-primary) !important;
     border-bottom: none !important;
     padding: var(--spacer-2xs) 0 !important;
 
@@ -187,7 +187,7 @@ export default defineComponent({
         position: absolute;
         top: 0.8rem;
         right: 0;
-        height: 2rem;
+        height: var(--spacer-lg);
         padding-right: var(--spacer-xs);
         cursor: auto;
       }

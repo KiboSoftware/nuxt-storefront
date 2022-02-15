@@ -41,11 +41,10 @@ export const useCustomerCreditCards = () => {
         cardInput,
       }
 
-      const response = await fetcher({
+      await fetcher({
         query: updateCustomerAccountCard,
         variables,
       })
-      console.log(response)
       // await load(cards?.value?.items?.)
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -63,11 +62,10 @@ export const useCustomerCreditCards = () => {
         cardId,
       }
 
-      const response = await fetcher({
+      await fetcher({
         query: deleteCustomerAccountCard,
         variables,
       })
-      console.log(response)
       // await load(cards?.value?.items?.)
     } catch (err) {
       // eslint-disable-next-line no-console
