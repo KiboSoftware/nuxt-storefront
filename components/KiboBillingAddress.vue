@@ -99,7 +99,8 @@
     </div>
   </div>
 </template>
-<script>
+
+<script lang="ts">
 import { SfInput, SfSelect, SfCheckbox } from "@storefront-ui/vue"
 import { watch, ref } from "@nuxtjs/composition-api"
 export default {
@@ -179,6 +180,7 @@ export default {
   },
 }
 </script>
+
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfPayment.scss";
 </style>
