@@ -161,4 +161,11 @@ export default {
   ShopAll: "Alles shoppen",
   Advertisment: "Werbung",
   Cart: "Cart",
+  "Show Per Page": "Pro Seite anzeigen",
+  Back: "Back",
+  "My Account": "Mein Konto",
+  "Card number": "Kartennummer",
+  "Exp. Date MM/YY": "Verfallsdatum MM/JJ",
+  "Security Code": "Sicherheitscode",
+  "Save payment method": "Zahlungsmethode speichern",
 }

@@ -127,7 +127,7 @@
 <script lang="ts">
 import { SfModal, SfBar, SfImage, SfPrice, SfButton, SfIcon } from "@storefront-ui/vue"
 import { computed } from "@nuxtjs/composition-api"
-import { useUiState, useCart } from "@/composables"
+import { useCart, useUiState } from "@/composables"
 import { cartGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 

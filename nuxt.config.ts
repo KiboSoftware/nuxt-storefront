@@ -38,6 +38,8 @@ export default defineNuxtConfig({
         "faSortUp",
         "faTrashAlt",
         "faSearchPlus",
+        "faCreditCard",
+        "faQuestionCircle",
       ],
       regular: ["faUserCircle"],
     },
@@ -143,6 +145,8 @@ export default defineNuxtConfig({
       ],
     },
     countries: ["US", "AT", "DE", "NL"],
+    pciHost: process.env.KIBO_PCI_HOST || "payment.dev10.dev.kibocommerce.com",
+    apiHost: process.env.KIBO_API_HOST || "https://t17828-s22116.dev10.kubedevext.kibo-dev.com",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

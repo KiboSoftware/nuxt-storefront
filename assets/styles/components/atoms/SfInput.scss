@@ -1,8 +1,8 @@
 .sf-input {
-  --input-height: 3.438rem;
-
   &__wrapper,
+
   input {
+    order: 1;
     border-radius: 0;
     width: 100%;
     height: 100%;
@@ -18,19 +18,21 @@
   }
 
   &__password-button {
-    --input-icon-top: 30%;
+    --input-icon-top: 60%;
     --input-password-icon-background: var(--_c-gray-middle);
   }
 
   &__label {
+    order: 0;
     position: relative;
+    margin: 0;
 
     --input-label-color: var(--_c-gray-primary);
-    --input-label-top: -110%;
     --input-label-font-size: var(--font-size--xs);
 
     @include font(
       --input-label-font,
+
       var(--font-weight--normal),
       var(--font-size--lg),
       1,
@@ -40,6 +42,13 @@
 
   &__wrapper {
     border: none;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  &__error-message {
+    min-height: calc(var(--font-size--xs) * 1.7);
   }
 
   input[type="date"] ~ *,
@@ -52,7 +61,7 @@
   input {
     --input-color: var(--_c-dark-primary);
     @include border(--input-border, 1px, solid, var(--_c-gray-middle));
-
+    
     border-radius: var(--spacer-2xs);
     height: calc(var(--spacer-base) * 1.4);
     text-indent: var(--input-text-indent, calc(var(--spacer-base) * 0.417));
@@ -61,8 +70,9 @@
       font-size: var(--font-size--sm);
       line-height: 1;
     }
-    
+
     padding: 0;
+
     @include font(
       --input-font,
       var(--font-weight--normal),
@@ -80,7 +90,7 @@
 
       & ~ * {
         --input-label-color: var(--_c-gray-primary);
-        --input-label-top: -110%;
+        --input-label-top: 50%;
       }
     }
   }

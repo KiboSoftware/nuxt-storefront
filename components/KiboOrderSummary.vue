@@ -25,7 +25,7 @@
         />
         <SfProperty
           :name="propertiesNames[1]"
-          :value="subtotal"
+          :value="$n(subtotal, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
         <SfProperty
@@ -36,7 +36,7 @@
         <SfDivider class="sf-order-summary__divider" />
         <SfProperty
           :name="propertiesNames[3]"
-          :value="total"
+          :value="$n(total, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
       </slot>
