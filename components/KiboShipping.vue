@@ -101,7 +101,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SfHeading, SfInput, SfButton, SfSelect } from "@storefront-ui/vue"
 
 export default {

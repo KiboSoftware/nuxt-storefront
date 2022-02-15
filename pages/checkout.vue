@@ -476,7 +476,6 @@ export default {
       await loadFromCart(cart.value?.id)
 
       populatePersonalDetails()
-      loadPurchaseLocation()
     }, null)
 
     // others
