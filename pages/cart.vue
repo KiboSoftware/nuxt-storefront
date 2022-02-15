@@ -108,7 +108,7 @@ export default defineComponent({
     SfButton,
     SfHeading,
   },
-  setup() {
+  setup(_, context) {
     const { getProductLink } = useUiHelpers()
     const { purchaseLocation } = usePurchaseLocation()
     const router = useRouter()
@@ -158,13 +158,10 @@ export default defineComponent({
     const cartItemFulfillmentLocation = (cartItem) =>
       cartGetters.getFulfillmentLocation(cartItem, locations.value)
 
-    const cartItemPrice = (cartItem) => {
-      return cartGetters.getItemPrice(cartItem)
-    }
+    const cartItemPrice = (cartItem) => cartGetters.getItemPrice(cartItem)
 
-    const cartItemFulfillmentTypes = (cartItem) => {
-      return cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
-    }
+    const cartItemFulfillmentTypes = (cartItem) =>
+      cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
 
     const checkout = () => {
       router.push({ path: "/checkout" })
@@ -177,29 +174,19 @@ export default defineComponent({
     const getCartItemSelectedFulfillmentOption = (cartItem) =>
       cartGetters.getSelectedFullfillmentOption(cartItem)
 
-    const applyPromocode = async () => {
-      await applyCoupon(couponApplied.value)
-    }
+    const applyPromocode = async (couponApplied) => await applyCoupon(couponApplied)
 
-    const isValidCoupon = computed(() => {
-      return !cart.value?.invalidCoupons[0]?.couponCode
-    })
+    const isValidCoupon = computed(() => !cart.value?.invalidCoupons[0]?.couponCode)
 
-    const invalidCouponErrorText = computed(() => {
-      return `${cart.value?.invalidCoupons[0]?.couponCode} is an invalid code`
-    })
+    const invalidCouponErrorText = computed(
+      () => `${cart.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
+    )
 
-    const appliedCoupons = computed(() => {
-      return cart.value?.couponCodes
-    })
+    const appliedCoupons = computed(() => cart.value?.couponCodes)
 
-    const areCouponsApplied = computed(() => {
-      return cart.value?.couponCodes.length
-    })
+    const areCouponsApplied = computed(() => cart.value?.couponCodes.length > 0)
 
-    const productAppliedCoupons = (cartItem) => {
-      return cartGetters.getProductAppliedCoupons(cartItem)
-    }
+    const productAppliedCoupons = (cartItem) => cartGetters.getProductAppliedCoupons(cartItem)
 
     return {
       breadcrumbs,

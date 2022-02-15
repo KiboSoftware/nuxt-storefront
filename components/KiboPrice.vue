@@ -51,9 +51,7 @@
     </div>
   </div>
 </template>
-<script>
-// import { defineComponent } from "@vue/composition-api"
-
+<script lang="ts">
 export default defineComponent({
   name: "KiboPrice",
   props: {

@@ -231,4 +231,8 @@ export default {
   "Password doesn't match": "Password doesn't match",
   Pickup: "Pickup",
   "Shipment Details": "Shipment Details",
+  "Enter Promo Code": "Enter Promo Code",
+  "is an invalid code": "is an invalid code",
+  "promo code applied": "promo code applied",
+  Qty: "Qty:",
 }

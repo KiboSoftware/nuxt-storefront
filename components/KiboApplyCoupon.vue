@@ -4,7 +4,7 @@
       <SfInput
         v-model="couponApplied"
         name="promo"
-        placeholder="Enter Promo Code"
+        :placeholder="$t('Enter Promo Code')"
         class="promo__input"
         type="text"
         :valid="isValidCoupon"

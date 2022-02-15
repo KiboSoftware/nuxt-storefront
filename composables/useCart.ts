@@ -124,6 +124,9 @@ export const useCart = () => {
       })
       cart.value = response.data.updateCartCoupon
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
       loading.value = false
     }
   }
@@ -137,6 +140,9 @@ export const useCart = () => {
       })
       cart.value = response.data.deleteCartCoupon
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
       loading.value = false
     }
   }

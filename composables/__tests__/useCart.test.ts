@@ -4,6 +4,8 @@ import {
   addToCartMutation,
   deleteCartItemMutation,
   updateCartItemMutation,
+  updateCartCouponMutation,
+  deleteCartCouponMutation,
 } from "@/lib/gql/mutations"
 import { getCartQuery } from "@/lib/gql/queries"
 import { CartItemInput } from "@/server/types/GraphQL"
@@ -13,6 +15,8 @@ const mockedGetCartQuery = getCartQuery
 const mockedUpdateCartItemQuantityMutation = updateCartItemQuantityMutation
 const mockedDeleteCartItemMutation = deleteCartItemMutation
 const mockedUpdateCartItemMutation = updateCartItemMutation
+const mockedApplyCouponMutation = updateCartCouponMutation
+const mockedRemoveCouponMutation = deleteCartCouponMutation
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
@@ -25,7 +29,9 @@ jest.mock("#app", () => ({
         if (query === mockedGetCartQuery) {
           return {
             data: {
-              currentCart: "mocked-current-cart",
+              currentCart: {
+                id: "mocked-current-cart-id",
+              },
             },
           }
         }
@@ -33,7 +39,7 @@ jest.mock("#app", () => ({
           expect(variables).toStrictEqual({
             productToAdd: {
               product: {
-                productCode: "mocked-current-cart",
+                productCode: "mocked-product",
                 variationProductCode: "",
                 options: undefined,
               },
@@ -69,6 +75,27 @@ jest.mock("#app", () => ({
               id: "mock-cart-item-input-id",
             },
           })
+        if (query === mockedApplyCouponMutation) {
+          expect(variables).toStrictEqual({
+            cartId: "mocked-current-cart-id",
+            couponCode: "mocked-coupon",
+          })
+          return {
+            data: {
+              updateCartCoupon: "mocked-updated-cart-with-applied-coupons",
+            },
+          }
+        }
+        if (query === mockedRemoveCouponMutation) {
+          expect(variables).toStrictEqual({
+            cartId: "mocked-current-cart-id",
+            couponCode: "mocked-coupon",
+          })
+          return {
+            data: {
+              deleteCartCoupon: "mocked-updated-cart-after-removing-coupons",
+            },
+          }
         }
       }),
     },
@@ -79,7 +106,9 @@ describe("[composable] useCart", () => {
   test("load: should load current cart", async () => {
     const { cart, load, error, loading } = useCart()
     await load()
-    expect(cart.value).toBe("mocked-current-cart")
+    expect(cart.value).toStrictEqual({
+      id: "mocked-current-cart-id",
+    })
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })
@@ -88,7 +117,7 @@ describe("[composable] useCart", () => {
     const { cart, addItemsToCart, newestCartItemId, error, loading } = useCart()
     const addToCartVariables = {
       product: {
-        productCode: "mocked-current-cart",
+        productCode: "mocked-product",
         variationProductCode: "",
         options: undefined,
       },
@@ -99,7 +128,9 @@ describe("[composable] useCart", () => {
 
     await addItemsToCart(addToCartVariables)
     expect(newestCartItemId.value).toBe("mocked-newest-cartitem-id")
-    expect(cart.value).toBe("mocked-current-cart")
+    expect(cart.value).toStrictEqual({
+      id: "mocked-current-cart-id",
+    })
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })
@@ -131,6 +162,26 @@ describe("[composable] useCart", () => {
     } as CartItemInput
     await updateCartItem(cartItemId, cartItemInput)
     expect(cart.value).toBe("mocked-current-cart")
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeNull()
+  })
+
+  test("apply coupon: should apply coupon", async () => {
+    const { cart, load, applyCoupon, loading, error } = useCart()
+    const couponCode = "mocked-coupon"
+    await load()
+    await applyCoupon(couponCode)
+    expect(cart.value).toBe("mocked-updated-cart-with-applied-coupons")
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeNull()
+  })
+
+  test("remove coupon: should remove coupon", async () => {
+    const { cart, load, removeCoupon, loading, error } = useCart()
+    const couponCode = "mocked-coupon"
+    await load()
+    await removeCoupon(couponCode)
+    expect(cart.value).toBe("mocked-updated-cart-after-removing-coupons")
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })

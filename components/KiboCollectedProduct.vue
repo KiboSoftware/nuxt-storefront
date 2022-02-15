@@ -12,7 +12,6 @@
         </component>
       </div>
       <div class="kibo-collectedProduct__price-wrapper">
-        <p>{{ typeof specialPrice }}</p>
         <KiboPrice
           v-if="regularPrice"
           :regular="$n(regularPrice, 'currency')"
@@ -22,11 +21,12 @@
           :coupons="couponsApplied"
         />
         <ins v-if="specialPrice" class="kibo-promo-success">
-          {{ `${couponsApplied ? "'" + couponsApplied.join(" , ") + "'" : ""}` }} promo code applied
+          {{ `${couponsApplied ? "'" + couponsApplied.join(" , ") + "'" : ""}` }}
+          {{ $t("promo code applied") }}
         </ins>
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
-        <p>Qty:</p>
+        <p>{{ $t("Qty") }}</p>
         <SfQuantitySelector
           :qty="quantity"
           :min="1"
