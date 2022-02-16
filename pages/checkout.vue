@@ -123,6 +123,8 @@ import {
   useUser,
   useShippingMethods,
   usePurchaseLocation,
+  useUserAddresses,
+  useUser,
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
@@ -148,12 +150,14 @@ export default {
     const { cart } = useCart()
     const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo } =
       useCheckout()
+    const { load: loadUserAddresses, addresses } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
     const { toggleLoginModal } = useUiState()
     const { createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
     const { load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
 
+    const currentStep = ref(0)
     const showCreateAccount = ref(false)
     const password = ref(null)
     const transition = "sf-fade"
@@ -474,8 +478,11 @@ export default {
     // useAsync
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
-
       populatePersonalDetails()
+
+      if (user.value?.id) {
+        await loadUserAddresses(user.value?.id)
+      }
     }, null)
 
     // others
@@ -555,6 +562,7 @@ export default {
       saveShippingDetails,
       updatedShippingAddress,
       updateShippingDetails,
+      addresses,
 
       items,
       shippingRates,
