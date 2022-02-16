@@ -1,25 +1,27 @@
 import { computed } from "@vue/composition-api"
-import { getShippingRatesQuery } from "@/lib/gql/queries"
-import type { Maybe, ShippingRate } from "@/server/types/GraphQL"
+import { getUserAddressesQuery } from "@/lib/gql/queries"
+import type { Maybe, CustomerContactCollection } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
-export const useShippingMethods = () => {
+export const useUserAddresses = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const shippingMethods = useState<Maybe<Array<ShippingRate>>>(
-    `use-shipping-methods-result`,
+  const addresses = useState<Maybe<Array<CustomerContactCollection>>>(
+    `use-user-address-result`,
     () => null
   )
-  const loading = useState<Boolean>(`use-shipping-methods-loading`, () => false)
+
+  const loading = useState<Boolean>(`use-user-address-loading`, () => false)
   const error = useState(`use-shipping-methods-error`, () => null)
-  const load = async (checkoutId: String) => {
+
+  const load = async (accountId: number) => {
     loading.value = true
     try {
       const response = await fetcher({
-        query: getShippingRatesQuery,
-        variables: { checkoutId },
+        query: getUserAddressesQuery,
+        variables: { accountId },
       })
-      shippingMethods.value = response?.data?.orderShipmentMethods
+      addresses.value = response?.data?.customerAccountContacts?.items
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
@@ -27,8 +29,9 @@ export const useShippingMethods = () => {
       loading.value = false
     }
   }
+
   return {
-    shippingMethods,
+    addresses,
     load,
     error: computed(() => error.value),
     loading: computed(() => loading.value),
