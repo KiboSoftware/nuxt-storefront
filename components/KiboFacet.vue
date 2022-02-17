@@ -17,22 +17,22 @@
       </template>
     </SfSearchBar>
     <SfFilter
-      v-for="option in facetOptions"
+      v-for="(option, index) in facetAllOptions"
       :key="`${facetValueGetters.getFilter(option)}`"
       :label="facetValueGetters.getName(option)"
       :count="`(${facetValueGetters.getCount(option)})`"
       :selected="facetValueGetters.getIsApplied(option)"
       @change="selectFilter(facetValueGetters.getFilter(option))"
+      v-show="isViewMoreClicked || index < 6"
     />
-    <div v-if="!isViewMoreClicked && facetOptions.length > 5 && facetAllOptions.length > 6">
+    <div v-if="!isViewMoreClicked && facetAllOptions.length > 6">
       <SfButton
-        font-size="13px"
         class="sf-button--text navbar__button navbar__button--plus list__item"
         aria-label="View More"
         @click="handleViewMoreClick()"
       >
         <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="navbar__plus-icon" />
-        View More
+        {{ $t("View More") }}
       </SfButton>
     </div>
   </div>
@@ -41,7 +41,6 @@
 import { defineComponent } from "@vue/composition-api"
 import { SfButton, SfIcon, SfSearchBar, SfFilter } from "@storefront-ui/vue"
 import { facetGetters, facetValueGetters } from "@/lib/getters"
-import { FacetValue } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "KiboFacet",
@@ -64,22 +63,13 @@ export default defineComponent({
       isViewMoreClicked.value = true
     }
     // All the facets options recieved through props
-    const facetAllOptions = ref(facetGetters.getFacetValues(props.facet))
-
-    const facetOptions = computed({
-      get() {
-        return !isViewMoreClicked.value ? facetAllOptions.value.slice(0, 6) : facetAllOptions.value
-      },
-      set(newValue: FacetValue[]) {
-        facetAllOptions.value = newValue
-      },
+    const facetAllOptions = computed(() => {
+      return term.value
+        ? facetGetters
+            .getFacetValues(props.facet)
+            .filter((each) => each.value.toLowerCase().includes(term.value.toLowerCase()))
+        : facetGetters.getFacetValues(props.facet)
     })
-    watch(
-      () => props.facet,
-      (facetValue) => {
-        facetAllOptions.value = facetGetters.getFacetValues(facetValue)
-      }
-    )
 
     const findFilter = (paramValue) => {
       if (!paramValue.target) {
@@ -87,9 +77,6 @@ export default defineComponent({
       } else {
         term.value = paramValue.target.value
       }
-      facetOptions.value = facetGetters
-        .getFacetValues(props.facet)
-        .filter((each) => each.value.toLowerCase().includes(term.value.toLowerCase()))
     }
     const selectFilter = (param) => {
       context.emit("selectFilter", param)
@@ -101,7 +88,6 @@ export default defineComponent({
       selectFilter,
       isViewMoreClicked,
       handleViewMoreClick,
-      facetOptions,
       findFilter,
       term,
       facetAllOptions,
@@ -115,44 +101,9 @@ export default defineComponent({
 }
 
 .navbar {
-  position: relative;
-  display: flex;
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
-  @include for-desktop {
-    border-width: 1px 0 1px 0;
-  }
-
-  &.section {
-    padding: var(--spacer-sm);
-    @include for-desktop {
-      padding: 0;
-    }
-  }
-
-  &__aside,
-  &__main {
-    display: flex;
-    align-items: center;
-    padding: var(--spacer-sm) 0;
-  }
-
-  &__aside {
-    padding: 0;
-  }
-
-  &__main {
-    flex: 1;
-    display: flex;
-    padding: 0;
-    @include for-desktop {
-      padding: var(--spacer-xs) var(--spacer-xl);
-    }
-  }
-
   &__plus-icon {
-    margin: 0 0.125rem 0.125rem 0;
-    order: 1;
+    margin: 0 0.5rem 0 -0.375rem;
+    order: 0;
     @include for-desktop {
       margin: 0 var(--spacer-xs) 0 0;
       order: 0;
@@ -254,8 +205,15 @@ export default defineComponent({
   --filter-count-color: #2b2b2b;
   --filter-label-font-size: var(--font-size--sm);
   --filter-count-font-size: var(--font-size--sm);
-  --filter-count-margin: 0 0.5rem 0 auto;
+  --filter-count-margin: 0 0 0 auto;
+  --filter-label-margin: 0 0 0 var(--spacer-xs);
 
-  padding: 0.375rem;
+  padding: 0.375rem 0.375rem 0.375rem 0;
+
+  @include for-desktop {
+    padding: 0.375rem;
+
+    --filter-count-margin: 0 0.5rem 0 auto;
+  }
 }
 </style>

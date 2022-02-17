@@ -37,6 +37,12 @@ const getSortOptions = (searchData: FacetResultsData, sortOptions) => {
   return { options, selected }
 }
 
+const getSelectedFacets = (facets: Facet[]) => {
+  if (!facets) return []
+  const selectedFacets = facets?.map((f) => f?.values?.filter((value) => value.isApplied))
+  return selectedFacets.flat()
+}
+
 const getPagination = (searchData: FacetResultsData) => {
   if (!searchData) {
     return {
@@ -64,4 +70,5 @@ export const facetGetters = {
   getFacetValues,
   getSortOptions,
   getPagination,
+  getSelectedFacets,
 }

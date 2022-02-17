@@ -87,9 +87,11 @@ export default {
   border-radius: var(--spacer-2xs);
   width: calc(var(--spacer-xl) * 3.7);
   height: calc(var(--spacer-sm) * 2.125);
+  margin: 1rem 0;
   @include for-desktop {
     width: calc(var(--spacer-3xl) * 1.1875);
     height: calc(var(--spacer-lg) * 1.0625);
+    margin: 0;
   }
 }
 

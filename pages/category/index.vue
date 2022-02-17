@@ -4,7 +4,13 @@
     <div class="navbar section">
       <div class="navbar__main">
         <div class="navbar__aside" v-if="!productSearchLoading">
-          <SfHeading :level="1" :title="pageHeader" class="category-name sf-heading__title" />
+          <SfHeading
+            :level="1"
+            :title="pageHeader"
+            class="category-name sf-heading__title desktop-only"
+          />
+          <SfHeading :title="pageHeader" class="category-name sf-heading__title smartphone-only" />
+          <div class="total-products total-products__upper-total">{{ totalProducts }} Results</div>
         </div>
         <div class="navbar__aside" v-if="productSearchLoading">
           <KiboSkeletonLoading
@@ -16,7 +22,7 @@
             skeleton-class="plp-total-products-count sk-loading"
           />
         </div>
-        <div class="navbar__sort" v-if="!productSearchLoading">
+        <div v-if="!showMobileFilters && !productSearchLoading" class="navbar__sort">
           <span class="navbar__label">{{ $t("Sort by") }}</span>
           <SfSelect
             :required="false"
@@ -35,8 +41,12 @@
               {{ option.value }}
             </SfSelectOption>
           </SfSelect>
+          <SfButton class="sf-button--small smartphone-only filter-button" @click="filterByToggle">
+            {{ $t("Filter By") }}
+            <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
+          </SfButton>
         </div>
-        <div class="navbar__sort" v-if="productSearchLoading">
+        <div class="navbar__sort" v-if="!showMobileFilters && productSearchLoading">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
           <KiboSkeletonLoading skeleton-class="plp-select" />
           <KiboSkeletonLoading skeleton-class="plp-select smartphone-only" />
@@ -66,7 +76,26 @@
         </div>
       </div>
     </div>
-    <div class="main section">
+    <div v-if="showMobileFilters" class="smartphone-only">
+      <KiboMobilePLPFilterBy
+        title="Filter By"
+        :kiboFacets="facets"
+        :appliedFilters="appliedFilters"
+        :totalProducts="totalProducts"
+        @removeFilter="selectFilter"
+        @clearFilters="clearAllFilters"
+        @close="filterByToggle"
+        @changeFilter="selectFilter"
+      />
+    </div>
+    <div
+      v-if="!showMobileFilters && !productSearchLoading && appliedFilters.length"
+      class="smartphone-only"
+    >
+      <KiboFilterTiles :appliedFilters="appliedFilters" @removeSelectedFilter="selectFilter" />
+      <div class="sf-link" @click="clearAllFilters">{{ $t("Clear All") }}</div>
+    </div>
+    <div v-if="!showMobileFilters" class="main section">
       <div class="sidebar desktop-only">
         <transition-group>
           <CategoryFacet
@@ -76,34 +105,7 @@
             :breadcrumbs="breadcrumbs"
           />
           <div key="filters">
-            <SfAccordion :show-chevron="true" open="all" :multiple="false">
-              <div v-for="(facet, i) in facets" :key="i">
-                <SfAccordionItem
-                  :key="`filter-title-${facetGetters.getFacetField(facet)}`"
-                  :header="facetGetters.getFacetName(facet)"
-                  class="filters"
-                >
-                  <template #header="{ header, isOpen, accordionClick }">
-                    <SfButton
-                      :aria-pressed="isOpen.toString()"
-                      :aria-expanded="isOpen.toString()"
-                      :class="{ 'is-open': false }"
-                      class="sf-button--pure sf-accordion-item__header"
-                      @click="accordionClick"
-                    >
-                      {{ header }}
-                      <slot name="additional-info" />
-                      <SfChevron
-                        tabindex="0"
-                        class="sf-accordion-item__chevron"
-                        :class="{ 'sf-chevron--top': isOpen }"
-                      />
-                    </SfButton>
-                  </template>
-                  <KiboFacet :facet="facet" @selectFilter="selectFilter" />
-                </SfAccordionItem>
-              </div>
-            </SfAccordion>
+            <KiboFacetAccordion :kiboFacets="facets" @selectFilter="selectFilter" />
           </div>
         </transition-group>
       </div>
@@ -206,8 +208,7 @@ import {
   SfSelect,
   SfBreadcrumbs,
   SfProductCardHorizontal,
-  SfAccordion,
-  SfChevron,
+  SfProperty,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
 import { useUiHelpers, useFacet, useProductSearch } from "@/composables"
@@ -225,8 +226,7 @@ export default {
     SfSelect,
     SfBreadcrumbs,
     SfProductCardHorizontal,
-    SfAccordion,
-    SfChevron,
+    SfProperty,
   },
   setup(_, context) {
     const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink } =
@@ -244,6 +244,8 @@ export default {
     })
     const isSearchPage = ref(false)
     const route = useRoute()
+
+    const showMobileFilters = ref(false)
 
     // Determining if search page using categoryCode present in URL or not
     if (!route.value.params?.categoryCode) {
@@ -266,6 +268,9 @@ export default {
     const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
     const facets = computed(() =>
       productSearchGetters.getFacets(productSearchResult?.value, ["Value", "RangeQuery"])
+    )
+    const totalProducts = computed(() =>
+      productSearchGetters.getTotalProducts(productSearchResult?.value)
     )
     const getCategoryFacet = computed(() => {
       const { categoryCode } = facetsFromUrl.value
@@ -294,7 +299,7 @@ export default {
           }"`
         : getCategoryFacet.value.header
     })
-
+    const appliedFilters = computed(() => facetGetters.getSelectedFacets(facets.value) || [])
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
       const filters = qs.filters?.split(",") || []
@@ -306,7 +311,6 @@ export default {
       }
       changeFilters(filters.join(","))
     }
-
     watch(
       () => context.root.$route,
       async () => {
@@ -331,6 +335,14 @@ export default {
       setCategoryLink(isSearchPage.value, item)
     }
 
+    const clearAllFilters = () => {
+      changeFilters("")
+    }
+
+    const filterByToggle = () => {
+      showMobileFilters.value = !showMobileFilters.value
+    }
+
     return {
       breadcrumbs,
       loading,
@@ -352,6 +364,11 @@ export default {
       pageHeader,
       handleCategoryClick,
       isSearchPage,
+      totalProducts,
+      showMobileFilters,
+      appliedFilters,
+      clearAllFilters,
+      filterByToggle,
     }
   },
 }
@@ -374,11 +391,10 @@ export default {
 .navbar {
   position: relative;
   display: flex;
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
-  height: 4.813rem;
   flex-wrap: wrap;
+  border: none;
   @include for-desktop {
+    border: 1px solid var(--_c-white-secondary);
     border-width: 1px 0 1px 0;
   }
 
@@ -394,14 +410,13 @@ export default {
   }
 
   &__aside {
-    padding: 0;
     flex: 1;
-    @include for-mobile {
-      justify-content: space-between;
-      width: 100%;
-    }
+    padding: 0;
+    justify-content: space-between;
+    width: 100%;
     @include for-desktop {
       flex: none;
+      width: auto;
     }
   }
 
@@ -430,6 +445,7 @@ export default {
   &__button {
     display: flex;
     align-items: center;
+    font-size: var(--font-size--sm);
 
     --button-text-decoration: none;
 
@@ -478,13 +494,12 @@ export default {
     margin: 0;
     min-width: 11.875rem;
     flex: 1;
+    justify-content: space-between;
+    width: 100%;
     @include for-desktop {
       flex: none;
       margin: 0 0 0 auto;
-    }
-    @include for-mobile {
-      justify-content: space-between;
-      width: 100%;
+      width: auto;
     }
   }
 
@@ -665,33 +680,9 @@ export default {
   }
 }
 
-.category-title {
-  color: #2b2b2b;
-  font-size: var(--font-size--lg);
-  font-family: var(--font-family--primary);
-  line-height: calc(var(--spacer-sm) * 1.375);
-  text-align: left;
-  margin: 0 0 var(--spacer-sm) 0;
-}
-
-.sf-filter {
-  --filter-label-color: #2b2b2b;
-  --filter-count-color: #2b2b2b;
-  --filter-label-font-size: var(--font-size--sm);
-  --filter-count-font-size: var(--font-size--sm);
-  --filter-count-margin: 0 var(--spacer-xs) 0 auto;
-
-  padding: calc(var(--spacer-2xs) * 1.5);
-}
-
-.category-drill-down,
-.filters {
-  border: 1px solid var(--c-light);
-  border-width: 0 0 1px 0;
-}
-
 .category-name {
   margin: 0;
+  font-size: var(--font-size--lg);
   @include for-desktop {
     margin: 0 0 0 -1.563rem;
   }
@@ -704,17 +695,8 @@ export default {
   }
 }
 
-.sf-accordion-item {
-  --accordion-item-header-padding: calc(var(--spacer-base) * 1.25) 0;
-
-  &__chevron {
-    margin-left: auto;
-  }
-
-  &__header {
-    font-size: var(--font-size--sm);
-    font-weight: bold;
-  }
+.option {
+  min-width: 160px;
 }
 
 .sf-select {
@@ -722,10 +704,17 @@ export default {
 
   @include for-mobile {
     --select-width: calc(var(--spacer-base) * 6.25);
+    --select-dropdown-border-color: var(--_c-dark-primary);
   }
 
   @include for-desktop {
     --select-width: calc(var(--spacer-base) * 7.91);
+  }
+
+  ::v-deep &__dropdown {
+    @include for-mobile {
+      font-size: var(--font-size--sm);
+    }
   }
 }
 
@@ -744,6 +733,20 @@ export default {
   }
   @include for-desktop {
     display: none;
+  }
+}
+
+.filter-button {
+  background-color: #fff;
+  padding: 1rem 3.125rem 1rem 0.688rem;
+  border: 1px solid var(--c-black);
+  color: var(--_c-dark-primary);
+  font-size: var(--font-size--sm);
+  width: 150px;
+  margin: 0 0 var(--spacer-2xs) 0;
+
+  &__plus-icon {
+    margin: 0 -2.625rem 0 auto;
   }
 }
 </style>
