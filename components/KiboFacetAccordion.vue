@@ -61,10 +61,8 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 .sf-accordion-item {
-  --accordion-item-header-padding: calc(var(--spacer-base) * 1.25) 0;
+  --accordion-item-header-padding: var(--spacer-base) 0;
 
   &__chevron {
     margin-left: auto;
@@ -73,9 +71,6 @@ export default defineComponent({
   &__header {
     font-size: var(--font-size--lg);
     font-weight: bold;
-    @include for-desktop {
-      font-size: var(--font-size--sm);
-    }
   }
 
   @include for-mobile {
@@ -84,6 +79,13 @@ export default defineComponent({
     --accordion-item-header-border-width: 0;
     --accordion-item-content-border-width: 0;
     --accordion-item-content-padding: var(--spacer-2xs) 0;
+  }
+}
+
+.filters {
+  @include for-desktop {
+    border: 1px solid var(--_c-white-secondary);
+    border-width: 0 0 1px 0;
   }
 }
 

@@ -2,7 +2,12 @@
   <div key="category-drill-down" class="category-drill-down">
     <div class="category-title">{{ categoriesFromSearch.header }}</div>
     <SfList class="list">
-      <SfListItem v-for="(item, j) in categoryFacets" :key="j" class="list__item">
+      <SfListItem
+        v-for="(item, j) in allCatgeoryFacets"
+        :key="j"
+        class="list__item"
+        v-show="isViewMoreClicked || j < 5"
+      >
         <SfMenuItem
           :label="item.label"
           :count="`(${item.count})`"
@@ -10,14 +15,14 @@
           @click="handleCategoryClick(item)"
         />
       </SfListItem>
-      <div v-if="!isViewMoreClicked && categoryFacets.length > 4">
+      <div v-if="!isViewMoreClicked && allCatgeoryFacets.length > 5">
         <SfButton
           class="sf-button--text navbar__button navbar__button--plus list__item"
           aria-label="View More"
           @click="handleViewMoreClick()"
         >
           <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="navbar__plus-icon" />
-          View More
+          {{ $t("View More") }}
         </SfButton>
       </div>
       <SfLink
@@ -34,7 +39,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfList, SfIcon, SfMenuItem, SfButton, SfLink } from "@storefront-ui/vue"
-import { FacetValue } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "CategoryFacet",
@@ -64,17 +68,10 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const { isSearchPage, categoriesFromSearch } = props
+    const { isSearchPage } = props
     const { goBackToPreviousRoute, setCategoryLink } = useUiHelpers()
     const isViewMoreClicked = ref(false)
-    const allCatgeoryFacets = ref(categoriesFromSearch.children || [])
-
-    watch(
-      () => props.categoriesFromSearch,
-      (childrenValue) => {
-        allCatgeoryFacets.value = childrenValue?.children || []
-      }
-    )
+    const allCatgeoryFacets = computed(() => props.categoriesFromSearch.children || [])
 
     const handleViewMoreClick = () => {
       isViewMoreClicked.value = true
@@ -84,23 +81,12 @@ export default defineComponent({
       setCategoryLink(isSearchPage, item)
     }
 
-    const categoryFacets = computed({
-      get() {
-        return !isViewMoreClicked.value
-          ? allCatgeoryFacets.value?.slice(0, 5)
-          : allCatgeoryFacets?.value
-      },
-      set(newValue: FacetValue[]) {
-        allCatgeoryFacets.value = newValue
-      },
-    })
-
     return {
       isViewMoreClicked,
-      categoryFacets,
       handleViewMoreClick,
       goBackToPreviousRoute,
       handleCategoryClick,
+      allCatgeoryFacets,
     }
   },
 })
@@ -166,7 +152,7 @@ export default defineComponent({
 
     &--plus {
       font-family: var(--font-family--primary);
-      font-size: var(--font-size--sm) !important;
+      font-size: var(--font-size--sm);
       margin: 0 0;
       height: calc(var(--spacer-xs) * 1.75);
       padding: var(--spacer-sm) calc(var(--spacer-2xs) * 1.5);

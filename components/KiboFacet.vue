@@ -17,21 +17,22 @@
       </template>
     </SfSearchBar>
     <SfFilter
-      v-for="option in facetOptions"
+      v-for="(option, index) in facetAllOptions"
       :key="`${facetValueGetters.getFilter(option)}`"
       :label="facetValueGetters.getName(option)"
       :count="`(${facetValueGetters.getCount(option)})`"
       :selected="facetValueGetters.getIsApplied(option)"
       @change="selectFilter(facetValueGetters.getFilter(option))"
+      v-show="isViewMoreClicked || index < 6"
     />
-    <div v-if="!isViewMoreClicked && facetOptions.length > 5 && facetAllOptions.length > 6">
+    <div v-if="!isViewMoreClicked && facetAllOptions.length > 6">
       <SfButton
         class="sf-button--text navbar__button navbar__button--plus list__item"
         aria-label="View More"
         @click="handleViewMoreClick()"
       >
         <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="navbar__plus-icon" />
-        View More
+        {{ $t("View More") }}
       </SfButton>
     </div>
   </div>
@@ -40,7 +41,6 @@
 import { defineComponent } from "@vue/composition-api"
 import { SfButton, SfIcon, SfSearchBar, SfFilter } from "@storefront-ui/vue"
 import { facetGetters, facetValueGetters } from "@/lib/getters"
-import { FacetValue } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "KiboFacet",
@@ -63,22 +63,13 @@ export default defineComponent({
       isViewMoreClicked.value = true
     }
     // All the facets options recieved through props
-    const facetAllOptions = ref(facetGetters.getFacetValues(props.facet))
-
-    const facetOptions = computed({
-      get() {
-        return !isViewMoreClicked.value ? facetAllOptions.value.slice(0, 6) : facetAllOptions.value
-      },
-      set(newValue: FacetValue[]) {
-        facetAllOptions.value = newValue
-      },
+    const facetAllOptions = computed(() => {
+      return term.value
+        ? facetGetters
+            .getFacetValues(props.facet)
+            .filter((each) => each.value.toLowerCase().includes(term.value.toLowerCase()))
+        : facetGetters.getFacetValues(props.facet)
     })
-    watch(
-      () => props.facet,
-      (facetValue) => {
-        facetAllOptions.value = facetGetters.getFacetValues(facetValue)
-      }
-    )
 
     const findFilter = (paramValue) => {
       if (!paramValue.target) {
@@ -86,9 +77,6 @@ export default defineComponent({
       } else {
         term.value = paramValue.target.value
       }
-      facetOptions.value = facetGetters
-        .getFacetValues(props.facet)
-        .filter((each) => each.value.toLowerCase().includes(term.value.toLowerCase()))
     }
     const selectFilter = (param) => {
       context.emit("selectFilter", param)
@@ -100,7 +88,6 @@ export default defineComponent({
       selectFilter,
       isViewMoreClicked,
       handleViewMoreClick,
-      facetOptions,
       findFilter,
       term,
       facetAllOptions,
@@ -136,7 +123,7 @@ export default defineComponent({
 
     &--plus {
       font-family: var(--font-family--primary);
-      font-size: var(--font-size--sm) !important;
+      font-size: var(--font-size--sm);
       margin: 0 0;
       height: 0.875rem;
       padding: 1rem 0.375rem;

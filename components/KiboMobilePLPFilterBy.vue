@@ -17,7 +17,7 @@
           :disabled="!appliedFilters.length"
           :class="`${!appliedFilters.length ? 'clear__is-disabled--button' : ''}`"
         >
-          Clear All
+          {{ $t("Clear All") }}
         </SfButton>
         <SfButton
           class="sf-button--small smartphone-only view"
@@ -25,7 +25,7 @@
           @click="close"
           :disabled="!appliedFilters.length"
         >
-          View Results
+          {{ $t("View Results") }}
         </SfButton>
       </div>
       <div v-if="totalProducts" class="total-products total-products__lower-total">
@@ -86,8 +86,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 .total-products {
   display: flex;
   justify-content: center;
@@ -130,7 +128,7 @@ export default defineComponent({
   font-size: var(--font-size--sm);
 
   &__is-disabled--button {
-    --button-background: var(--_c-light-green-secondary);
+    --button-background: #c0e3df;
 
     color: #fefefe;
   }
@@ -138,6 +136,7 @@ export default defineComponent({
 
 .clear {
   font-size: var(--font-size--sm);
+  color: var(--c-black);
 
   &__is-disabled--button {
     --button-color: var(--c-text-disabled);

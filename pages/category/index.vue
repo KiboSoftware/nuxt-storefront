@@ -4,7 +4,12 @@
     <div class="navbar section">
       <div class="navbar__main">
         <div class="navbar__aside" v-if="!productSearchLoading">
-          <SfHeading :level="1" :title="pageHeader" class="category-name sf-heading__title" />
+          <SfHeading
+            :level="1"
+            :title="pageHeader"
+            class="category-name sf-heading__title desktop-only"
+          />
+          <SfHeading :title="pageHeader" class="category-name sf-heading__title smartphone-only" />
           <div class="total-products total-products__upper-total">{{ totalProducts }} Results</div>
         </div>
         <div class="navbar__aside" v-if="productSearchLoading">
@@ -37,11 +42,11 @@
             </SfSelectOption>
           </SfSelect>
           <SfButton class="sf-button--small smartphone-only filter-button" @click="filterByToggle">
-            Filter By
+            {{ $t("Filter By") }}
             <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
           </SfButton>
         </div>
-        <div class="navbar__sort" v-if="productSearchLoading">
+        <div class="navbar__sort" v-if="!showMobileFilters && productSearchLoading">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
           <KiboSkeletonLoading skeleton-class="plp-select" />
           <KiboSkeletonLoading skeleton-class="plp-select smartphone-only" />
@@ -75,7 +80,7 @@
       <KiboMobilePLPFilterBy
         title="Filter By"
         :kiboFacets="facets"
-        :appliedFilters="appliedFilters.value"
+        :appliedFilters="appliedFilters"
         :totalProducts="totalProducts"
         @removeFilter="selectFilter"
         @clearFilters="clearAllFilters"
@@ -83,12 +88,12 @@
         @changeFilter="selectFilter"
       />
     </div>
-    <div v-if="!showMobileFilters && appliedFilters.value.length" class="smartphone-only">
-      <KiboFilterTiles
-        :appliedFilters="appliedFilters.value"
-        @removeSelectedFilter="selectFilter"
-      />
-      <div class="sf-link" @click="clearAllFilters">Clear All</div>
+    <div
+      v-if="!showMobileFilters && !productSearchLoading && appliedFilters.length"
+      class="smartphone-only"
+    >
+      <KiboFilterTiles :appliedFilters="appliedFilters" @removeSelectedFilter="selectFilter" />
+      <div class="sf-link" @click="clearAllFilters">{{ $t("Clear All") }}</div>
     </div>
     <div v-if="!showMobileFilters" class="main section">
       <div class="sidebar desktop-only">
@@ -294,7 +299,7 @@ export default {
           }"`
         : getCategoryFacet.value.header
     })
-    const appliedFilters = ref({})
+    const appliedFilters = computed(() => facetGetters.getSelectedFacets(facets.value) || [])
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
       const filters = qs.filters?.split(",") || []
@@ -306,14 +311,6 @@ export default {
       }
       changeFilters(filters.join(","))
     }
-    appliedFilters.value = computed(() =>
-      facetGetters.getSelectedFacets(facets.value).map((facet) => {
-        return {
-          label: facet.label,
-          value: facet.filterValue,
-        }
-      })
-    )
     watch(
       () => context.root.$route,
       async () => {
@@ -323,14 +320,6 @@ export default {
           ...getFacetsFromURL(isSearchPage.value),
           itemsPerPage: showPerPage.value,
         })
-        appliedFilters.value = computed(() =>
-          facetGetters.getSelectedFacets(facets.value).map((facet) => {
-            return {
-              label: facet.label,
-              value: facet.filterValue,
-            }
-          })
-        )
       }
     )
 
@@ -395,15 +384,6 @@ export default {
   &.section {
     @include for-desktop {
       padding: 0;
-    }
-  }
-}
-
-.sf-heading {
-  > h1 {
-    font-size: calc(var(--font-size--base) * 1.125);
-    @include for-desktop {
-      font-size: var(--h1-font-size);
     }
   }
 }

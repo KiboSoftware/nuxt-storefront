@@ -4,7 +4,7 @@
       <div v-for="(filter, ind) in appliedFilters" :key="ind" class="applied-filters__values tiles">
         <span class="applied-filters__filter-name">{{ filter.label }}</span>
         <span class="applied-filters__values--padding-left">
-          <SfIcon icon="cross" size="0.7rem" @click="removeSelectedFilter(filter.value)" />
+          <SfIcon icon="cross" size="0.7rem" @click="removeSelectedFilter(filter.filterValue)" />
         </span>
       </div>
     </div>
@@ -36,8 +36,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 .applied-filters {
   display: flex;
   flex: 1;

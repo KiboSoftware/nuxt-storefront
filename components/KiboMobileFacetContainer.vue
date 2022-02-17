@@ -53,8 +53,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-@import "~@storefront-ui/vue/styles";
-
 .filter-by {
   padding: calc(var(--spacer-2xs) * 8) 0 calc(var(--spacer-2xs) * 5) 0;
   display: flex;
