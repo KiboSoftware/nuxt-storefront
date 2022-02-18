@@ -354,7 +354,9 @@ export default {
             currencyCode,
             checkout,
             paymentDetails.value,
-            tokenizedData
+            tokenizedData,
+            updatedBillingAddress.value,
+            isBillingAddressAsShipping.value
           )
         }
       } else if (paymentDetails.value.paymentType.toLowerCase() === "checkbymail") {

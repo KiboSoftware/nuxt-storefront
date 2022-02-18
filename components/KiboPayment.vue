@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div>
+  <div class="payment-container">
+    <div class="payment-types-radio">
       <SfRadio
         v-for="item in paymentMethods"
         :key="item.id"
@@ -17,8 +17,8 @@
       </SfRadio>
     </div>
 
-    <div>
-      <div v-if="isCreditCardSelected" class="credit-card-form">
+    <div class="credit-card-form">
+      <div v-if="isCreditCardSelected">
         <div class="credit-card-form__element custom-form-element sf-input">
           <div class="sf-input__wrapper">
             <input
@@ -143,19 +143,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "~@storefront-ui/shared/styles/components/templates/SfPayment.scss";
+
 .sf-payment {
   .sf-heading {
-    border-bottom-color: var(--_c-white-primary);
+    border-bottom: none !important;
 
     &__title.h2 {
       --heading-title-font-size: var(--font-size--xl);
     }
   }
+}
 
-  .payment-methods {
-    background-color: var(--_c-white-primary) !important;
-    border-bottom: none !important;
-    padding: var(--spacer-2xs) 0 !important;
+.payment-container {
+  .payment-types-radio {
+    display: flex;
+    background-color: var(--_c-white-primary);
+    margin-bottom: var(--spacer-lg);
+  }
+
+  .payment-method {
+    background-color: var(--_c-white-primary);
+    border-bottom: none;
+
+    @include for-desktop {
+      padding: var(--spacer-xs) 0;
+    }
 
     .sf-radio {
       &__label {
