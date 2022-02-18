@@ -36,6 +36,7 @@
                   :shipping="updatedShippingAddress"
                   :countries="countries"
                   @billingAddressData="updateBillingDetails"
+                  @sameAsShipping="copyShippingAddress"
                 />
               </template>
               <template #payment-form>
@@ -328,6 +329,11 @@ export default {
       await setBillingInfo(params)
     }
 
+    const isBillingAddressAsShipping = ref(false)
+    const copyShippingAddress = (isShippingAddress) => {
+      isBillingAddressAsShipping.value = isShippingAddress
+    }
+
     // accountCreation
     const createAccount = (value) => {
       if (!value) password.value = ""
@@ -479,6 +485,7 @@ export default {
       password,
       transition,
       getPaymentMethodData,
+      copyShippingAddress,
     }
   },
   watch: {

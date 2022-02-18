@@ -6,7 +6,7 @@
         :label="$t('Save Billing Address Same As Shipping')"
         name="copyShippingAddress"
         class="form__element form__checkbox"
-        @change="$emit('same-as-shipping')"
+        @change="$emit('sameAsShipping', sameAsShipping)"
       />
       <KiboAddressForm
         :key="keyRefCopyAddress"
