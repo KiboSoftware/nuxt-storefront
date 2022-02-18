@@ -7,11 +7,11 @@
           icon="cross"
           size="0.938rem"
           color="#7C7C7C"
-          @click="close"
           class="filter-by-cross-icon"
+          @click="close"
         />
       </div>
-      <KiboFilterTiles :appliedFilters="appliedFilters" @removeSelectedFilter="removeFilter" />
+      <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="removeFilter" />
       <hr class="filter-hr" />
     </div>
     <slot name="content"> </slot>
@@ -20,7 +20,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfIcon } from "@storefront-ui/vue"
-
 export default defineComponent({
   name: "KiboMobileFacetContainer",
   components: {
@@ -69,7 +68,7 @@ export default defineComponent({
 }
 
 .filter-hr {
-  margin: 0 -7.8% 0;
+  margin: 0 auto;
   height: 1px;
   border-width: 0;
   color: var(--_c-gray-middle);

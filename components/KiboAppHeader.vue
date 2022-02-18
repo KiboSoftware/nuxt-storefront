@@ -253,6 +253,7 @@ import {
   onMounted,
   nextTick,
 } from "@vue/composition-api"
+import { useNuxtApp } from "#app"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
 import {
   mapMobileObserver,
@@ -397,6 +398,7 @@ export default defineComponent({
     }
 
     const handleAccountClick = () => {
+      if (isMobile.value) toggleHamburger()
       if (isAuthenticated.value) {
         return app.router.push("/my-account")
       }
@@ -700,6 +702,10 @@ export default defineComponent({
   &__icon {
     height: 1 rem;
     padding-left: 0.625rem;
+  }
+
+  &__button {
+    width: 6%;
   }
 }
 
