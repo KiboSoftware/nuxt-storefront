@@ -1,8 +1,6 @@
 <template>
-  <SfPayment @input="payment = $event">
-    <!-- billing address -->
-
-    <template #payment-methods>
+  <div>
+    <div>
       <SfRadio
         v-for="item in paymentMethods"
         :key="item.id"
@@ -13,15 +11,13 @@
         class="form__radio payment-method"
         @input="selectedPaymentMethod($event)"
       >
-        <template #label>
-          <div class="sf-radio__label">
-            {{ item.name }}
-          </div>
-        </template>
+        <div class="sf-radio__label">
+          {{ item.name }}
+        </div>
       </SfRadio>
-    </template>
+    </div>
 
-    <template #credit-card-form>
+    <div>
       <div v-if="isCreditCardSelected" class="credit-card-form">
         <div class="credit-card-form__element custom-form-element sf-input">
           <div class="sf-input__wrapper">
@@ -81,12 +77,12 @@
           @change="validateInput()"
         />
       </div>
-    </template>
-  </SfPayment>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfPayment, SfRadio, SfInput, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
+import { SfRadio, SfInput, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
 import { usePaymentTypes } from "@/composables"
@@ -96,7 +92,6 @@ import { defaultPaymentDetails } from "@/composables/helpers"
 export default defineComponent({
   name: "KiboPayment",
   components: {
-    SfPayment,
     SfRadio,
     SfInput,
     SfCheckbox,

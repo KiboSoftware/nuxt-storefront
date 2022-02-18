@@ -29,23 +29,20 @@
             </KiboShipping>
           </SfStep>
           <SfStep name="Payment">
-            <KiboPayment
-              :shipping="shipping"
-              :countries="countries"
-              @input="getPaymentMethodData"
-            />
-            <SfPayment
-              :payment-methods="paymentMethods"
-              :months="months"
-              :years="years"
-              @input="payment = $event"
-            >
+            <SfPayment @input="payment = $event">
               <template #billing-form>
                 <KiboBillingAddress
                   :value="billingDetails"
                   :shipping="updatedShippingAddress"
                   :countries="countries"
                   @billingAddressData="updateBillingDetails"
+                />
+              </template>
+              <template #payment-form>
+                <KiboPayment
+                  :shipping="updatedShippingAddress"
+                  :countries="countries"
+                  @input="getPaymentMethodData"
                 />
               </template>
             </SfPayment>
@@ -104,16 +101,7 @@
 </template>
 
 <script lang="ts">
-import {
-  SfSteps,
-  SfButton,
-  SfPersonalDetails,
-  SfPayment,
-  SfConfirmOrder,
-  SfOrderReview,
-  SfCheckbox,
-  SfInput,
-} from "@storefront-ui/vue"
+import { SfSteps, SfButton, SfPayment, SfConfirmOrder, SfOrderReview } from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
 import {
   useCheckout,
@@ -124,12 +112,10 @@ import {
   useShippingMethods,
   usePurchaseLocation,
   useUserAddresses,
-  useUser,
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
 import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "~~/lib/getters"
-const { toggleStoreLocatorModal } = useUiState()
 
 export default {
   name: "Checkout",
@@ -152,12 +138,11 @@ export default {
       useCheckout()
     const { load: loadUserAddresses, addresses } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
-    const { toggleLoginModal } = useUiState()
-    const { createAccountAndLogin } = useUser()
+    const { toggleStoreLocatorModal, toggleLoginModal } = useUiState()
+    const { user, createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
-    const { load: loadPurchaseLocation, purchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation } = usePurchaseLocation()
 
-    const currentStep = ref(0)
     const showCreateAccount = ref(false)
     const password = ref(null)
     const transition = "sf-fade"
@@ -228,29 +213,6 @@ export default {
       ],
     }
 
-    const paymentMethods = [
-      {
-        label: "Visa Debit",
-        value: "debit",
-      },
-      {
-        label: "MasterCard",
-        value: "mastercard",
-      },
-      {
-        label: "Visa Electron",
-        value: "electron",
-      },
-      {
-        label: "Cash on delivery",
-        value: "cash",
-      },
-      {
-        label: "Check",
-        value: "check",
-      },
-    ]
-
     const getOrder = computed(() => {
       return checkout?.value
     })
@@ -312,12 +274,6 @@ export default {
       await loadShippingMethods(checkout.value?.id)
     }
 
-    const populateShippingDetails = () => {
-      shippingDetails.value = shopperContactGetters.getShippingDetails(
-        checkout.value?.fulfillmentInfo
-      )
-    }
-
     const updateShippingDetails = (newShippingDetails) => {
       shippingDetails.value = { ...newShippingDetails }
     }
@@ -349,60 +305,6 @@ export default {
 
       await setShippingInfo(params)
       await loadShippingMethods(checkout.value?.id)
-    }
-
-    // shippingMethods
-    const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
-    const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
-
-    const items = [
-      { type: "shipItems", values: shipItems.value },
-      { type: "pickupItems", values: pickupItems.value },
-    ]
-
-    const shippingRates = computed(() =>
-      shippingMethodGetters.getShippingRates(shippingMethods.value)
-    )
-    const saveShippingMethod = async (shippingRates) => {
-      const params = {
-        orderId: checkout.value?.id,
-        fulfillmentInfoInput: {
-          fulfillmentContact: {
-            ...checkout.value?.fulfillmentInfo?.fulfillmentContact,
-            email: personalDetails.value?.email,
-          },
-        },
-        shippingMethodCode: shippingRates.shippingMethodCode,
-        shippingMethodName: shippingRates.shippingMethodName,
-      }
-
-      await setShippingInfo(params)
-    }
-
-    const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
-    }
-
-    // billing
-    const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
-    const updatedBillingAddress = ref({ ...billingDetails })
-    const updateBillingDetails = (newBillingDetails) => {
-      updatedBillingAddress.value = { ...newBillingDetails }
-    }
-
-    const saveBillingDetails = async () => {
-      const params = {
-        orderId: checkout.value?.id,
-        billingInfoInput: {
-          billingContact: { ...updatedBillingAddress.value, email: personalDetails.value?.email },
-        },
-      }
-      await setBillingInfo(params)
-    }
-
-    // accountCreation
-    const createAccount = (value) => {
-      if (!value) password.value = ""
     }
 
     const handleStoreLocatorClick = () => {
