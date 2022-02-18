@@ -214,21 +214,5 @@ export default {
       margin: 0;
     }
   }
-
-  .changeStore {
-    margin-bottom: calc(var(--spacer-sm) * 1.25);
-
-    &__location {
-      font-weight: bold;
-      font-size: var(--font-size--xs);
-    }
-
-    &__link {
-      font-size: var(--font-size--xs);
-      text-decoration: underline;
-      cursor: pointer;
-      margin: 0;
-    }
-  }
 }
 </style>
