@@ -1,10 +1,5 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
-
 import { getUserAddressesQuery } from "@/lib/gql/queries"
-import { useUserAddresses } from "@/composables/useUserAddresses"
-
-Vue.use(VueCompositionApi)
+import { useUserAddresses } from "@/composables"
 
 const mockGetUserAddressesQuery = getUserAddressesQuery
 
@@ -85,7 +80,7 @@ describe("[composable] useUserAddresses", () => {
 
     await load(accountId)
     expect(addresses.value).toEqual(userAddressesResponse.customerAccountContacts.items)
-    expect(loading.value).toBeFalsy()
-    expect(error.value).toBeFalsy()
+    expect(loading).toBeFalsy()
+    expect(error).toBeFalsy()
   })
 })

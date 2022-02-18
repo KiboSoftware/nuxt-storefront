@@ -1,5 +1,5 @@
 <template>
-  <div :class="`${skeletonClass}`" />
+  <div :class="skeletonClass" />
 </template>
 <script>
 export default {
@@ -14,7 +14,7 @@ export default {
 </script>
 <style lang="scss">
 .sk-loading {
-  background: #d8d8d8;
+  background: var(--_c-gray-middle);
   position: relative;
   overflow: hidden;
 
@@ -82,8 +82,8 @@ export default {
 }
 
 .plp-select {
-  border: 1px solid #2b2b2b;
-  background-color: #fff;
+  border: 1px solid var(--c-black);
+  background-color: var(--c-white);
   border-radius: var(--spacer-2xs);
   width: calc(var(--spacer-xl) * 3.7);
   height: calc(var(--spacer-sm) * 2.125);
@@ -116,7 +116,7 @@ export default {
 .pdp-size {
   width: calc(var(--spacer-base) * 2.375);
   height: calc(var(--spacer-sm) * 2.3125);
-  border: 1px solid #2b2b2b;
+  border: 1px solid var(--c-black);
 }
 
 .pdp-color-label {
@@ -204,7 +204,7 @@ export default {
 .qty-selector {
   width: calc(var(--spacer-sm) * 2.3125);
   height: calc(var(--spacer-sm) * 2.3125);
-  border: 1px solid #2b2b2b;
+  border: 1px solid var(--c-black);
   margin: 0 1rem;
 }
 

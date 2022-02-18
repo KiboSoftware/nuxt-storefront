@@ -3,7 +3,7 @@
     <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
     <div class="navbar section">
       <div class="navbar__main">
-        <div class="navbar__aside" v-if="!productSearchLoading">
+        <div v-if="!productSearchLoading" class="navbar__aside">
           <SfHeading
             :level="1"
             :title="pageHeader"
@@ -12,7 +12,7 @@
           <SfHeading :title="pageHeader" class="category-name sf-heading__title smartphone-only" />
           <div class="total-products total-products__upper-total">{{ totalProducts }} Results</div>
         </div>
-        <div class="navbar__aside" v-if="productSearchLoading">
+        <div v-if="productSearchLoading" class="navbar__aside">
           <KiboSkeletonLoading
             class="category-name"
             skeleton-class="plp-category-name sk-loading"
@@ -46,7 +46,7 @@
             <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
           </SfButton>
         </div>
-        <div class="navbar__sort" v-if="!showMobileFilters && productSearchLoading">
+        <div v-if="!showMobileFilters && productSearchLoading" class="navbar__sort">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
           <KiboSkeletonLoading skeleton-class="plp-select" />
           <KiboSkeletonLoading skeleton-class="plp-select smartphone-only" />
@@ -79,9 +79,9 @@
     <div v-if="showMobileFilters" class="smartphone-only">
       <KiboMobilePLPFilterBy
         title="Filter By"
-        :kiboFacets="facets"
-        :appliedFilters="appliedFilters"
-        :totalProducts="totalProducts"
+        :kibo-facets="facets"
+        :applied-filters="appliedFilters"
+        :total-products="totalProducts"
         @removeFilter="selectFilter"
         @clearFilters="clearAllFilters"
         @close="filterByToggle"
@@ -92,7 +92,7 @@
       v-if="!showMobileFilters && !productSearchLoading && appliedFilters.length"
       class="smartphone-only"
     >
-      <KiboFilterTiles :appliedFilters="appliedFilters" @removeSelectedFilter="selectFilter" />
+      <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="selectFilter" />
       <div class="sf-link" @click="clearAllFilters">{{ $t("Clear All") }}</div>
     </div>
     <div v-if="!showMobileFilters" class="main section">
@@ -105,7 +105,7 @@
             :breadcrumbs="breadcrumbs"
           />
           <div key="filters">
-            <KiboFacetAccordion :kiboFacets="facets" @selectFilter="selectFilter" />
+            <KiboFacetAccordion :kibo-facets="facets" @selectFilter="selectFilter" />
           </div>
         </transition-group>
       </div>
@@ -140,14 +140,15 @@
             :title="productGetters.getName(product)"
             :image="productGetters.getCoverImage(product)"
             :show-add-to-cart-button="true"
-            :regular-price="`$${productGetters.getPrice(product).regular}`"
+            :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
             :score-rating="3"
             :max-rating="5"
             wishlist-icon=""
             is-in-wishlist-icon=""
             :is-in-wishlist="false"
             :special-price="
-              productGetters.getPrice(product).special && productGetters.getPrice(product).special
+              productGetters.getPrice(product).special &&
+              $n(productGetters.getPrice(product).special, 'currency')
             "
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
             class="products__product-card"
@@ -161,9 +162,10 @@
             :title="productGetters.getName(product)"
             :description="productGetters.getDescription(product)"
             :image="productGetters.getCoverImage(product)"
-            :regular-price="`$${productGetters.getPrice(product).regular}`"
+            :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
             :special-price="
-              productGetters.getPrice(product).special && productGetters.getPrice(product).special
+              productGetters.getPrice(product).special &&
+              $n(productGetters.getPrice(product).special, 'currency')
             "
             :max-rating="5"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
@@ -175,15 +177,13 @@
             </template>
             <template #actions>
               <SfButton
-                class="sf-button--text desktop-only"
-                style="margin: 0 0 1rem auto; display: block"
+                class="sf-button--text desktop-only add-to-wishlist"
                 @click="$emit('click:add-to-wishlist')"
               >
                 {{ $t("Save for later") }}
               </SfButton>
               <SfButton
-                class="sf-button--text desktop-only"
-                style="margin: 0 0 0 auto; display: block"
+                class="sf-button--text desktop-only add-to-compare"
                 @click="$emit('click:add-to-compare')"
               >
                 {{ $t("Add to compare") }}
@@ -748,5 +748,15 @@ export default {
   &__plus-icon {
     margin: 0 -2.625rem 0 auto;
   }
+}
+
+.add-to-wishlist {
+  margin: 0 0 1rem auto;
+  display: block;
+}
+
+.add-to-compare {
+  margin: 0 0 0 auto;
+  display: block;
 }
 </style>

@@ -46,7 +46,7 @@
             </div>
 
             <div class="content__props">
-              <span class="title"> Price: </span> ${{
+              <span class="title">$t('Price'): </span> ${{
                 checkoutLineItemGetters.getProductPrice(product)
               }}
             </div>
@@ -55,9 +55,9 @@
       </div>
     </div>
     <div class="changeStore">
-      <span class="changeStore__location">Pickup in Store: </span><br />
+      <span class="changeStore__location">$t('Pickup in Store'): </span><br />
       <p class="changeStore__link" @click="handleStoreLocatorClick">
-        {{ cartItemPurchaseLocation ? "Change Store" : "Select Store" }}
+        {{ cartItemPurchaseLocation ? $t("Change Store") : $t("Select Store") }}
       </p>
     </div>
   </div>
@@ -128,7 +128,7 @@ export default {
 @import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
 
 .form {
-  border-top: 1px solid #eaeaea;
+  border-top: 1px solid var(--_c-white-secondary);
 
   @include for-desktop {
     width: calc(var(--spacer-base) * 17.54);
@@ -161,7 +161,7 @@ export default {
       display: flex;
       flex-direction: row;
       padding: var(--spacer-base) 0;
-      border-bottom: 1px solid #eaeaea;
+      border-bottom: 1px solid var(--_c-white-secondary);
 
       ::v-deep .sf-image--wrapper {
         --image-width: calc(var(--spacer-base) * 5.04);
@@ -175,7 +175,6 @@ export default {
 
       .content {
         display: flex;
-        flex-direction: column;
         padding-left: var(--spacer-base);
 
         &__productName {

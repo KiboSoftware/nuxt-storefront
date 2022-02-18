@@ -1,4 +1,3 @@
-import { computed } from "@vue/composition-api"
 import { getUserAddressesQuery } from "@/lib/gql/queries"
 import type { Maybe, CustomerContactCollection } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
@@ -33,7 +32,7 @@ export const useUserAddresses = () => {
   return {
     addresses,
     load,
-    error: computed(() => error.value),
-    loading: computed(() => loading.value),
+    error: error.value,
+    loading: loading.value,
   }
 }

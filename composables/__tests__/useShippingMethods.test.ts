@@ -1,10 +1,5 @@
-import Vue from "vue"
-import VueCompositionApi from "@vue/composition-api"
-
 import { getShippingRatesQuery } from "@/lib/gql/queries"
 import { useShippingMethods } from "@/composables/useShippingMethods"
-
-Vue.use(VueCompositionApi)
 
 const mockGetShippingRatesQuery = getShippingRatesQuery
 
