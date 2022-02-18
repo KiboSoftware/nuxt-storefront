@@ -59,7 +59,7 @@ export const useUiState = () => {
     state.isHamburgerOpen = !state.isHamburgerOpen
   }
   const isConfirmModalOpen = computed(() => state.isConfirmModalOpen)
-  const toggleConfirmModalOpen = () => {
+  const toggleConfirmModal = () => {
     state.isConfirmModalOpen = !state.isConfirmModalOpen
   }
 
@@ -82,6 +82,6 @@ export const useUiState = () => {
     toggleHamburger,
     isAddToCartConfirmationOpen,
     toggleAddToCartConfirmationModal,
-    toggleConfirmModalOpen,
+    toggleConfirmModal,
   }
 }

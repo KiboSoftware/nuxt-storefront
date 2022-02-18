@@ -11,7 +11,7 @@
       <div class="modal-content">
         <div class="action-buttons" v-bind="{ actionHandler }">
           <button
-            class="action-buttons__cancel"
+            class="action-buttons__cancel action-buttons__font"
             :aria-disabled="false"
             :link="null"
             @click="$emit('click:close')"
@@ -19,7 +19,7 @@
             {{ $t("Cancel") }}
           </button>
           <button
-            class="action-buttons__delete"
+            class="action-buttons__delete action-buttons__font"
             :aria-disabled="false"
             :link="null"
             @click="actionHandler"
@@ -82,12 +82,12 @@ export default {
     --modal-height: fit-content;
 
     ::v-deep &__container {
-      z-index: 9999;
-      top: calc(var(--spacer-base) + var(--spacer-lg));
+      z-index: 2;
+      top: var(--spacer-base);
       margin: 0 auto;
-      background-color: #fff;
+      background-color: var(--_c-light-secondary);
       border-radius: 2px;
-      box-shadow: 0 0 15px 2px rgba(43, 43, 43, 0.25);
+      box-shadow: 0 0 var(--spacer-sm) 2px rgba(43, 43, 43, 0.25);
       padding: 5px;
     }
 
@@ -102,21 +102,30 @@ export default {
 .action-buttons {
   display: flex;
   justify-content: space-evenly;
-  padding: 10px;
-  gap: 5px;
+  padding: calc(var(--spacer-2xs) * 2.5);
+  gap: calc(var(--spacer-xl) / 8);
 
   &__cancel {
     background-color: #fafafa;
-    border: 1px solid #cdcdcd;
-    border-radius: 4px;
-    height: 42px;
+    border: 1px solid var(--_c-gray-middle);
+    color: var(--c-black);
   }
 
   &__delete {
-    background-color: #2ea195;
-    border-radius: 4px;
-    height: 42px;
+    border: none;
+    background-color: var(--_c-green-primary);
+    color: var(--_c-light-secondary);
   }
+
+  &__font {
+    border-radius: var(--spacer-2xs);
+    height: calc(var(--spacer-2xs) * 10.5);
+    font-family: var(--font-family--primary);
+    font-size: var(--font-size--lg);
+    line-height: calc(var(--spacer-2xs) * 5.5);
+    text-align: center;
+  }
+
   @include for-mobile {
     flex-direction: column;
 

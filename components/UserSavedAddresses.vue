@@ -19,7 +19,7 @@
       label="Are you sure you want to delete this address ?"
       :is-open="isConfirmModalOpen"
       :action-handler="removeAddress"
-      @click:close="toggleConfirmModalOpen"
+      @click:close="toggleConfirmModal"
     />
     <SfButton class="action-button" @click="changeAddress()">
       <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
@@ -47,7 +47,7 @@ export default defineComponent({
     UserSavedAddress,
   },
   setup() {
-    const { isConfirmModalOpen, toggleConfirmModalOpen } = useUiState()
+    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
 
     const addresses = [
       {
@@ -105,11 +105,11 @@ export default defineComponent({
     }
 
     const removeAddress = () => {
-      toggleConfirmModalOpen()
+      toggleConfirmModal()
     }
     const removeAddressDialog = (address) => {
       activeAddress.value = address
-      toggleConfirmModalOpen()
+      toggleConfirmModal()
     }
     const editAddressDialog = (address) => {
       activeAddress.value = address
@@ -140,23 +140,24 @@ export default defineComponent({
       removeAddressDialog,
       editAddressDialog,
       isConfirmModalOpen,
-      toggleConfirmModalOpen,
+      toggleConfirmModal,
     }
   },
 })
 </script>
 <style lang="scss" scoped>
 div {
-  color: #2b2b2b;
+  color: var(--c-black);
   font-family: var(--font-family--primary);
-  font-size: 16px;
-  line-height: 19px;
+  font-size: var(--font-size--base);
+  line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
   text-align: left;
   border: none;
 }
 
 ::v-deep .sf-button {
-  background: black;
+  height: calc(var(--spacer-2xs) * 10.5);
+  background: var(--c-black);
   @include for-mobile {
     width: 100%;
   }
@@ -184,5 +185,9 @@ div {
 
 .shipping-list {
   margin-bottom: var(--spacer-base);
+}
+
+.plus-circle-icon {
+  margin-right: calc(var(--spacer-sm) + var(--spacer-2xs));
 }
 </style>

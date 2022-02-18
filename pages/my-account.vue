@@ -58,7 +58,12 @@
       </SfButton>
     </div>
     <div v-show="activePage != 'Back'">
-      <KiboOrderHistory :orders="account.orders" @goNext="gotoOrderHistory" @goPrevious="goBack" />
+      <KiboOrderHistory
+        :orders="account.orders"
+        :active-page="activePage"
+        @goNext="gotoOrderHistory"
+        @goPrevious="goBack"
+      />
     </div>
     <div v-show="activePage === 'Back'">
       <div class="vertical-space"></div>
@@ -89,7 +94,7 @@ export default defineComponent({
     const currTab = ref("")
     const barTitle = ref("Back")
     const steps = ref([])
-    const { isConfirmModalOpen, toggleConfirmModalOpen } = useUiState()
+    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
 
     const account = reactive({
       firstName: "John",
@@ -205,7 +210,7 @@ export default defineComponent({
       barTitle,
       gotoOrderHistory,
       isConfirmModalOpen,
-      toggleConfirmModalOpen,
+      toggleConfirmModal,
     }
   },
 })
@@ -220,6 +225,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 #my-account {
   box-sizing: border-box;
+  margin: var(--spacer-xs) auto;
 
   @include for-desktop {
     max-width: 1272px;

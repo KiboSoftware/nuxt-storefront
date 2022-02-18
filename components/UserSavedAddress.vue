@@ -1,19 +1,23 @@
 <template>
   <div class="address-container">
     <div class="address-container__left">
-      <div v-if="isDefaultAddress" class="is-primary">Primary</div>
+      <div v-if="isDefaultAddress()" class="is-primary">Primary</div>
       <p>{{ firstName }} {{ lastNameOrSurname }}</p>
       <p>{{ address1 }} {{ address2 }}</p>
       <p>{{ postalOrZipCode }}</p>
       <p>
         {{ cityOrTown }},
         {{ stateOrProvince }}
+        <span v-if="phoneNumbers.home">{{ phoneNumbers.home }}</span>
       </p>
-      <p v-if="phoneNumbers.home" class="phone">{{ countryCode }} {{ phoneNumbers.home }}</p>
     </div>
     <div v-if="showActions" class="address-container__right">
       <div class="address-container__edit" @click="$emit('click:edit-address', address)">Edit</div>
-      <div class="address-container__delete" @click="$emit('click:remove-address', address)">
+      <div
+        v-show="!isDefaultAddress()"
+        class="address-container__delete"
+        @click="$emit('click:remove-address', address)"
+      >
         <SfIcon size="1.25rem">
           <font-awesome-icon icon="trash" class="fa-solid" color="var(--_c-dark-green-secondary)" />
         </SfIcon>
@@ -44,7 +48,9 @@ export default defineComponent({
   },
 
   setup(props) {
-    const isDefaultAddress = () => false
+    const isDefaultAddress = () => {
+      return false
+    }
     return {
       firstName: props.address.firstName,
       lastNameOrSurname: props.address.lastNameOrSurname,
@@ -89,5 +95,6 @@ p {
 
 .is-primary {
   font-weight: bold;
+  margin-bottom: var(--spacer-2xs);
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="isDefaultCard" class="is-primary">Primary</div>
+    <div v-if="isDefaultCard()" class="is-primary">Primary</div>
     <div class="card-list">
       <div class="card-list__left">
         <div>Icon</div>
@@ -32,7 +32,9 @@ export default defineComponent({
   },
 
   setup() {
-    const isDefaultCard = () => false
+    const isDefaultCard = () => {
+      return false
+    }
     return {
       isDefaultCard,
     }
@@ -43,6 +45,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .is-primary {
   font-weight: bold;
+  margin-bottom: var(--spacer-2xs);
 }
 
 .card-list {

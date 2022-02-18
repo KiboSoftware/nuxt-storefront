@@ -51,25 +51,29 @@ export default defineComponent({
 .profile {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: var(--spacer-2xs);
 }
 
 .profile-list {
   display: flex;
   flex-direction: column;
-  color: #2b2b2b;
+  color: var(--c-black);
   font-family: var(--font-family--primary);
-  font-size: 16px;
-  line-height: 19px;
+  font-size: var(--font-size--base);
+  line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
   text-align: left;
-  gap: 8px;
+  gap: var(--spacer-xs);
 
   @include for-mobile {
-    margin: 10px 0;
+    margin: calc(var(--spacer-2xs) * 2.5) 0;
   }
 
   &__header {
-    font-weight: 500;
+    color: var(--c-black);
+    font-family: var(--font-family--primary);
+    font-size: var(--font-size--lg);
+    line-height: calc(var(--spacer-2xs) * 5.5);
+    text-align: left;
   }
 
   &__subheader {

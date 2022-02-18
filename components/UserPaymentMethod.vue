@@ -23,9 +23,9 @@
     </transition-group>
     <KiboConfirmationDialog
       label="Are you sure you want to delete this payment method ?"
-      :is-open="openRemovePaymentDialog"
+      :is-open="isConfirmModalOpen"
       :action-handler="removePayment"
-      @click:close="openRemovePaymentDialog = false"
+      @click:close="toggleConfirmModal"
     />
     <SfButton class="action-button" @click="changePayment()">
       <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
@@ -43,6 +43,7 @@
 import { SfButton, SfIcon } from "@storefront-ui/vue"
 import { defineComponent, ref, computed } from "@vue/composition-api"
 import UserSavedCard from "@/components/UserSavedCard"
+import { useUiState } from "@/composables"
 
 export default defineComponent({
   name: "UserPaymentMethod",
@@ -52,10 +53,10 @@ export default defineComponent({
     UserSavedCard,
   },
   setup() {
+    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
     const paymentMethods = ref([{ endingDigit: "2344", expiry: "12/2025" }])
     const edittingPayment = ref(false)
     const activePayment = ref(undefined)
-    const openRemovePaymentDialog = ref(false)
     const isNewPayment = computed(() => !activePayment.value)
 
     const changePayment = (paymentMethod = undefined) => {
@@ -64,11 +65,11 @@ export default defineComponent({
     }
 
     const removePayment = () => {
-      openRemovePaymentDialog.value = false
+      toggleConfirmModal()
     }
     const removePaymentDialog = (paymentMethod) => {
       activePayment.value = paymentMethod
-      openRemovePaymentDialog.value = true
+      toggleConfirmModal()
     }
     const editPaymentDialog = (paymentMethod) => {
       activePayment.value = paymentMethod
@@ -97,24 +98,26 @@ export default defineComponent({
       activePayment,
       isNewPayment,
       removePaymentDialog,
-      openRemovePaymentDialog,
       editPaymentDialog,
+      isConfirmModalOpen,
+      toggleConfirmModal,
     }
   },
 })
 </script>
 <style lang="scss" scoped>
 div {
-  color: #2b2b2b;
+  color: var(--c-black);
   font-family: var(--font-family--primary);
-  font-size: 16px;
-  line-height: 19px;
+  font-size: var(--font-size--base);
+  line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
   text-align: left;
   border: none;
 }
 
 ::v-deep .sf-button {
-  background: black;
+  height: calc(var(--spacer-2xs) * 10.5);
+  background: var(--_c-dark-primary);
   @include for-mobile {
     width: 100%;
   }
@@ -122,5 +125,9 @@ div {
 
 .payment-list {
   margin-bottom: var(--spacer-base);
+}
+
+.plus-circle-icon {
+  margin-right: calc(var(--spacer-sm) + var(--spacer-2xs));
 }
 </style>

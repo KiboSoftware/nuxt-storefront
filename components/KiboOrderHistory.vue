@@ -27,13 +27,16 @@
     <div v-show="activePage == 'Order History'" class="filters">
       <KiboMobileFacetContainer title="Filter By" @close="closeFilter">
         <template #content>
+          <div class="filters__header">Time Filter</div>
           <div class="filters__list">
             <SfFilter
               v-for="(option, index) in facetAllOptions"
               :key="index"
               :label="option.label"
-              :selected="true"
             />
+          </div>
+          <div>
+            <hr class="filter-hr" />
           </div>
           <div class="filters__action">
             <button class="filters__apply" :aria-disabled="false" :link="null" @click="applyFilter">
@@ -177,8 +180,8 @@ export default defineComponent({
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-inline: 30px;
-  margin-bottom: 5px;
+  margin-inline: calc(var(--spacer-2xs) * 7.5);
+  margin-bottom: calc(var(--spacer-xl) / 8);
 
   &__tiles {
     flex: 1.5;
@@ -195,22 +198,22 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border: 1px solid black;
+    border: 1px solid var(--_c-dark-primary);
     border-radius: 5%;
-    height: 32px;
-    padding-inline: 10px;
+    height: var(--spacer-lg);
+    padding-inline: calc(var(--spacer-2xs) * 2.5);
     cursor: pointer;
-    max-width: 120px;
+    max-width: calc(var(--spacer-xl) * 3);
   }
 
   &__btn-name {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: #2b2b2b;
+    color: var(--c-black);
     font-family: var(--font-family--primary);
-    font-size: 14px;
-    line-height: 17px;
+    font-size: var(--font-size--sm);
+    line-height: var(--spacer-sm);
     text-align: left;
   }
 }
@@ -219,24 +222,39 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin-left: 28px;
-  margin-bottom: 20px;
-  color: #2b2b2b;
+  margin-left: calc(var(--spacer-2xs) * 7);
+  margin-bottom: calc(var(--spacer-2xs) * 5);
+  color: var(--c-black);
   font-family: var(--font-family--primary);
-  font-size: 20px;
-  line-height: 24px;
+  font-size: calc((var(--font-size--xs) / 3) * 5);
+  line-height: var(--spacer-base);
   text-align: left;
   font-weight: bold;
 }
 
 .filters {
-  margin: 0 26px;
+  margin: 0 calc(var(--spacer-2xs) * 6.5);
 
   &__apply {
-    background-color: #2ea195;
-    border-radius: 4px;
+    border: none;
+    background-color: var(--_c-green-primary);
+    border-radius: var(--spacer-2xs);
+    color: var(--_c-light-secondary);
     width: 100%;
-    height: 32px;
+    height: var(--spacer-lg);
+  }
+
+  &__action {
+    margin-top: calc(var(--spacer-2xs) * 3.5);
+  }
+
+  &__header {
+    color: var(--c-black);
+    font-family: var(--font-family--primary);
+    font-size: var(--font-size--lg);
+    line-height: calc(var(--spacer-2xs) * 5.5);
+    text-align: left;
+    margin: calc(var(--spacer-2xs) * 3.5) auto;
   }
 }
 </style>
