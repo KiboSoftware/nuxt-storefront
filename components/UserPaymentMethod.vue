@@ -22,7 +22,7 @@
       </div>
     </transition-group>
     <KiboConfirmationDialog
-      label="Are you sure you want to delete this payment method ?"
+      :label="$t('Are you sure you want to delete this payment method ?')"
       :is-open="isConfirmModalOpen"
       :action-handler="removePayment"
       @click:close="toggleConfirmModal"
@@ -128,6 +128,6 @@ div {
 }
 
 .plus-circle-icon {
-  margin-right: calc(var(--spacer-sm) + var(--spacer-2xs));
+  margin-right: calc(var(--spacer-2xs) * 5);
 }
 </style>

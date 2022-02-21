@@ -1,18 +1,26 @@
 <template>
   <div>
-    <div v-show="activePage != 'Order History'" class="order-history-title">
-      {{ activePage === "My Account" ? "Order History" : "View Order Details" }}
+    <div v-show="activePage != $t('Order History')" class="order-history-title">
+      {{ activePage === $t("My Account") ? $t("Order History") : $t("View Order Details") }}
     </div>
-    <div v-show="activePage == 'My Account'" class="order-history">
+    <div v-show="activePage == $t('My Account')" class="order-history">
       <div class="history-filter">
         <div class="history-filter__tiles">
           <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="removeFilter" />
         </div>
         <div class="history-filter__action">
-          <div class="history-filter__btn" @click="openFilterDialog">
-            <div class="history-filter__btn-name history-filter__btn-text">Filter Orders</div>
+          <SfButton
+            class="sf-button--small smartphone-only filter-button"
+            @click="openFilterDialog"
+          >
+            {{ $t("Filter Orders") }}
+            <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
+          </SfButton>
+
+          <!-- <div class="history-filter__btn" @click="openFilterDialog">
+            <div class="history-filter__btn-name history-filter__btn-text">{{$t('Filter Orders')}}</div>
             <div class="history-filter__btn-name">+</div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div>
@@ -25,9 +33,9 @@
       </div>
     </div>
     <div v-show="activePage == 'Order History'" class="filters">
-      <KiboMobileFacetContainer title="Filter By" @close="closeFilter">
+      <KiboMobileFacetContainer :title="$t('Filter By')" @close="closeFilter">
         <template #content>
-          <div class="filters__header">Time Filter</div>
+          <div class="filters__header">{{ $t("Time Filter") }}</div>
           <div class="filters__list">
             <SfFilter
               v-for="(option, index) in facetAllOptions"
@@ -46,7 +54,7 @@
         </template>
       </KiboMobileFacetContainer>
     </div>
-    <div v-show="activePage == 'Order Details'" class="order-details">
+    <div v-show="activePage == $t('Order Details')" class="order-details">
       <KiboOrderItemDetails :order="selectedOrder" />
     </div>
   </div>
@@ -54,12 +62,14 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "@vue/composition-api"
-import { SfFilter } from "@storefront-ui/vue"
+import { SfFilter, SfIcon, SfButton } from "@storefront-ui/vue"
 
 export default defineComponent({
   name: "KiboOrderHistory",
   components: {
     SfFilter,
+    SfIcon,
+    SfButton,
   },
   props: {
     appliedFilters: {
@@ -75,6 +85,7 @@ export default defineComponent({
     const showOrderDetails = ref(false)
     const selectedOrder = ref({})
     const account = reactive({
+      // @TODO Hardcoded need to be removed
       firstName: "John",
       lastName: "Dog",
       email: "johndog@email.com",
@@ -193,29 +204,6 @@ export default defineComponent({
   &__action {
     flex: 1;
   }
-
-  &__btn {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    border: 1px solid var(--_c-dark-primary);
-    border-radius: 5%;
-    height: var(--spacer-lg);
-    padding-inline: calc(var(--spacer-2xs) * 2.5);
-    cursor: pointer;
-    max-width: calc(var(--spacer-xl) * 3);
-  }
-
-  &__btn-name {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    color: var(--c-black);
-    font-family: var(--font-family--primary);
-    font-size: var(--font-size--sm);
-    line-height: var(--spacer-sm);
-    text-align: left;
-  }
 }
 
 .order-history-title {
@@ -255,6 +243,20 @@ export default defineComponent({
     line-height: calc(var(--spacer-2xs) * 5.5);
     text-align: left;
     margin: calc(var(--spacer-2xs) * 3.5) auto;
+  }
+}
+
+.filter-button {
+  background-color: #fff;
+  padding: 1rem 3.125rem 1rem 0.688rem;
+  border: 1px solid var(--c-black);
+  color: var(--_c-dark-primary);
+  font-size: var(--font-size--sm);
+  width: 150px;
+  margin: 0 0 var(--spacer-2xs) 0;
+
+  &__plus-icon {
+    margin: 0 -2.625rem 0 auto;
   }
 }
 </style>

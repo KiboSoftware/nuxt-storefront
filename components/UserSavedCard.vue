@@ -6,11 +6,13 @@
         <div>Icon</div>
       </div>
       <div class="card-list__right">
-        <div>Ending :{{ paymentMethod.endingDigit }}</div>
-        <div>Exp : {{ paymentMethod.expiry }}</div>
+        <div>{{ $t("Ending") }} :{{ paymentMethod.endingDigit }}</div>
+        <div>{{ $t("Exp") }} : {{ paymentMethod.expiry }}</div>
       </div>
       <div v-if="showActions" class="card-list__actions">
-        <div class="card-list__edit" @click="$emit('click:edit-card', paymentMethod)">Edit</div>
+        <div class="card-list__edit" @click="$emit('click:edit-card', paymentMethod)">
+          {{ $t("Edit") }}
+        </div>
       </div>
     </div>
   </div>

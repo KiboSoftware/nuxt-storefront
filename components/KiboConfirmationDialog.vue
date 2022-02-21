@@ -1,5 +1,11 @@
 <template>
-  <SfModal class="sf-modal modal-confirm" :visible="isOpen" overlay :persistent="false">
+  <SfModal
+    class="sf-modal modal-confirm"
+    :visible="isOpen"
+    overlay
+    :persistent="false"
+    :cross="false"
+  >
     <template #modal-bar>
       <slot name="modal-bar" v-bind="{ label }">
         <div class="title">
@@ -52,25 +58,21 @@ export default {
       default: () => {},
     },
   },
-  setup() {
-    return {}
-  },
 }
 </script>
 <style lang="scss" scoped>
 .title {
-  color: #2b2b2b;
-  font-family: var(--font-family--secondary);
-  font-size: 15px;
+  color: var(--c-black);
+  font-size: var(--font-size--base);
   letter-spacing: 0.2px;
-  line-height: 18px;
-  width: 333px;
+  line-height: calc(var(--spacer-2xs) * 4.5);
+  max-width: calc(var(--spacer-2xl) * 4.25);
   text-align: left;
-  margin: 20px 10px;
+  margin: calc(var(--spacer-2xs) * 5) calc(var(--spacer-2xs) * 2.5);
 }
 
 .sf-modal {
-  --modal-width: calc(var(--spacer-4xl) + var(--spacer-3xl) + var(--spacer-2xl));
+  --modal-width: calc(var(--spacer-2xl) * 6);
   --modal-content-padding: 0;
 
   &__close {
@@ -86,22 +88,22 @@ export default {
       top: var(--spacer-base);
       margin: 0 auto;
       background-color: var(--_c-light-secondary);
-      border-radius: 2px;
-      box-shadow: 0 0 var(--spacer-sm) 2px rgba(43, 43, 43, 0.25);
-      padding: 5px;
+      border-radius: calc(var(--spacer-2xs) / 2);
+      box-shadow: 0 0 var(--spacer-sm) calc(var(--spacer-2xs) / 2) rgba(43, 43, 43, 0.25);
+      padding: calc(var(--spacer-xl) / 8);
     }
 
     ::v-deep .sf-bar {
       justify-content: flex-start;
       border-bottom: none;
-      flex: 100%;
     }
   }
 }
 
 .action-buttons {
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
+  justify-content: space-between;
   padding: calc(var(--spacer-2xs) * 2.5);
   gap: calc(var(--spacer-xl) / 8);
 
@@ -120,19 +122,9 @@ export default {
   &__font {
     border-radius: var(--spacer-2xs);
     height: calc(var(--spacer-2xs) * 10.5);
-    font-family: var(--font-family--primary);
     font-size: var(--font-size--lg);
     line-height: calc(var(--spacer-2xs) * 5.5);
     text-align: center;
-  }
-
-  @include for-mobile {
-    flex-direction: column;
-
-    .column .sf-button {
-      width: 100%;
-      margin-bottom: var(--spacer-sm);
-    }
   }
 
   .sf-primary {

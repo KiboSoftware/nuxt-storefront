@@ -1,31 +1,39 @@
 <template>
   <div class="profile">
     <div class="profile-list">
-      <div class="profile-list__header">Customer Name</div>
+      <div class="profile-list__header">{{ $t("Customer Name") }}</div>
       <div class="profile-list__subheader">
         <div>{{ user.firstName }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-name', user)">Edit</div>
+        <div class="profile-list__link" @click="$emit('click:edit-user-name', user)">
+          {{ $t("Edit") }}
+        </div>
       </div>
     </div>
     <div class="profile-list">
-      <div class="profile-list__header">Email</div>
+      <div class="profile-list__header">{{ $t("Email") }}</div>
       <div class="profile-list__subheader">
         <div>{{ user.emailAddress }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-email', user)">Edit</div>
+        <div class="profile-list__link" @click="$emit('click:edit-user-email', user)">
+          {{ $t("Edit") }}
+        </div>
       </div>
     </div>
     <div class="profile-list">
-      <div class="profile-list__header">Phone Number</div>
+      <div class="profile-list__header">{{ $t("Phone Number") }}</div>
       <div class="profile-list__subheader">
         <div>{{ user.phoneNumber }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-phone', user)">Edit</div>
+        <div class="profile-list__link" @click="$emit('click:edit-user-phone', user)">
+          {{ $t("Edit") }}
+        </div>
       </div>
     </div>
     <div class="profile-list">
-      <div class="profile-list__header">Password</div>
+      <div class="profile-list__header">{{ $t("Password") }}</div>
       <div class="profile-list__subheader">
         <div>{{ user.password }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-password', user)">Edit</div>
+        <div class="profile-list__link" @click="$emit('click:edit-user-password', user)">
+          {{ $t("Edit") }}
+        </div>
       </div>
     </div>
   </div>
@@ -41,10 +49,6 @@ export default defineComponent({
       default: () => {},
     },
   },
-
-  setup() {
-    return {}
-  },
 })
 </script>
 <style lang="scss" scoped>
@@ -58,7 +62,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   color: var(--c-black);
-  font-family: var(--font-family--primary);
   font-size: var(--font-size--base);
   line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
   text-align: left;

@@ -4,13 +4,21 @@
       <div>
         <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
       </div>
-      <div v-show="activePage === 'Back'" class="profile-img-container">
-        <img class="profile-img-container__pic" :src="logo" alt="avatar" />
+      <div v-show="activePage === $t('Back')" class="profile-img-container">
+        <img
+          v-if="account.profileImageUrl"
+          class="profile-img-container__pic"
+          :src="account.profileImageUrl"
+          alt="avatar"
+        />
+        <SfIcon v-else class="sf-header__icon" size="2.5rem">
+          <font-awesome-icon :icon="['fas', 'user-circle']" class="fa-icon" />
+        </SfIcon>
       </div>
       <div></div>
     </div>
-    <div v-show="activePage === 'Back'">
-      <div class="header-text-font">My Account</div>
+    <div v-show="activePage === $t('Back')">
+      <div class="header-text-font">{{ $t("My Account") }}</div>
       <SfAccordion
         open=""
         :multiple="false"
@@ -18,21 +26,21 @@
         show-chevron
         @click:open="changeActivePage"
       >
-        <SfAccordionItem class="kibo-sf-accordion-item" header="My profile">
+        <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('My profile')">
           <SfList>
             <SfListItem>
               <KiboMyProfile :user="account" />
             </SfListItem>
           </SfList>
         </SfAccordionItem>
-        <SfAccordionItem class="kibo-sf-accordion-item" header="Shipping Address">
+        <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Shipping Address')">
           <SfList>
             <SfListItem>
               <UserSavedAddresses />
             </SfListItem>
           </SfList>
         </SfAccordionItem>
-        <SfAccordionItem class="kibo-sf-accordion-item" header="Payment Method">
+        <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Payment Method')">
           <SfList>
             <SfListItem>
               <UserPaymentMethod />
@@ -41,23 +49,23 @@
         </SfAccordionItem>
       </SfAccordion>
       <div class="order-header-border">
-        <div class="header-text-font">Order Details</div>
+        <div class="header-text-font">{{ $t("Order Details") }}</div>
       </div>
     </div>
-    <div v-show="activePage === 'Back'" class="order-history">
+    <div v-show="activePage === $t('Back')" class="order-history">
       <SfButton
-        :class="{ 'is-open': false, 'header-text-weight': activePage != 'Back' }"
+        :class="{ 'is-open': false, 'header-text-weight': activePage != $t('Back') }"
         class="sf-button--pure sf-accordion-item__header"
         @click="gotoOrderHistory('My Account')"
       >
         Order History
         <SfChevron
           class="sf-chevron--right"
-          :class="{ 'sf-accordion-item__chevron': activePage !== 'Back' }"
+          :class="{ 'sf-accordion-item__chevron': activePage !== $t('Back') }"
         />
       </SfButton>
     </div>
-    <div v-show="activePage != 'Back'">
+    <div v-show="activePage != $t('Back')">
       <KiboOrderHistory
         :orders="account.orders"
         :active-page="activePage"
@@ -65,14 +73,14 @@
         @goPrevious="goBack"
       />
     </div>
-    <div v-show="activePage === 'Back'">
+    <div v-show="activePage === $t('Back')">
       <div class="vertical-space"></div>
-      <div class="profile-logout spacer" @click="logout">Log out</div>
+      <div class="profile-logout spacer" @click="logout">{{ $t("Log out") }}</div>
     </div>
   </div>
 </template>
 <script>
-import { SfAccordion, SfList, SfBar, SfChevron, SfButton } from "@storefront-ui/vue"
+import { SfAccordion, SfList, SfBar, SfChevron, SfButton, SfIcon } from "@storefront-ui/vue"
 import { defineComponent, reactive, ref } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
 import { useUser, useUiState } from "@/composables"
@@ -85,6 +93,7 @@ export default defineComponent({
     SfBar,
     SfChevron,
     SfButton,
+    SfIcon,
   },
   setup(_, context) {
     const { user, load: loadUser, logout } = useUser()
@@ -102,6 +111,8 @@ export default defineComponent({
       emailAddress: "johndog@email.com",
       password: "a*23Et",
       phoneNumber: "9887678684",
+      profileImageUrl:
+        "//d1slj7rdbjyb5l.cloudfront.net/17194-21127/cms/21127/files/e6289d12-b588-4775-aa5e-d14d7c6de164",
       shipping: [
         {
           firstName: "John",
@@ -265,10 +276,10 @@ div.kibo-sf-accordion-item {
     color: var(--_c-dark-primary);
     font-family: var(--font-family--primary);
     font-size: var(--font-size--base);
-    line-height: calc(var(--spacer-sm) + var(--spacer-2xs));
+    line-height: calc(var(--spacer-2xs) * 5);
     text-align: left;
     border: none;
-    height: calc(var(--spacer-xl) + var(--spacer-sm));
+    height: calc(var(--spacer-) * 7);
   }
 }
 
@@ -281,7 +292,7 @@ div.kibo-sf-accordion-item {
 
 .sf-bar {
   @include for-mobile {
-    margin-left: calc(var(--spacer-base) + var(--spacer-2xs));
+    margin-left: calc(var(--spacer-2xs) * 7);
   }
 
   ::v-deep &__title {
@@ -295,6 +306,7 @@ div.kibo-sf-accordion-item {
 
   &__pic {
     width: var(--spacer-xl);
+    height: var(--spacer-xl);
     border-radius: 50%;
   }
 }
@@ -310,9 +322,10 @@ div.kibo-sf-accordion-item {
   text-align: left;
   font-weight: bold;
   height: calc(var(--spacer-2xs) * 14.5);
+  margin-left: calc(var(--spacer-2xs) * 7);
 
-  @include for-mobile {
-    margin-left: calc(var(--spacer-base) + var(--spacer-2xs));
+  @include for-desktop {
+    margin-left: 0;
   }
 }
 
@@ -324,9 +337,9 @@ div.kibo-sf-accordion-item {
 
 .spacer {
   margin-top: calc(var(--spacer-2xs) * 2.5);
-
-  @include for-mobile {
-    margin-left: calc(var(--spacer-2xs) * 7);
+  margin-left: calc(var(--spacer-2xs) * 7);
+  @include for-desktop {
+    margin-left: 0;
   }
 }
 
@@ -346,11 +359,16 @@ div.kibo-sf-accordion-item {
 
 .header-text-weight {
   font-weight: bold;
-  font-size: calc(var(--font-size--base) + (var(--font-size--xs) / 3));
+  font-size: var(--font-size--xl);
   line-height: var(--spacer-base);
 }
 
 ::v-deep .sf-accordion-item__header.is-open {
   font-weight: 600;
+}
+
+.svg-inline--fa.fa-w-16 {
+  width: var(--spacer-xl);
+  height: var(--spacer-xl);
 }
 </style>

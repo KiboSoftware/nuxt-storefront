@@ -30,27 +30,27 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  setup() {},
 })
 </script>
 
 <style lang="scss" scoped>
 .order-item-container {
   border: none;
-  border-bottom: 1px solid #eaeaea;
+  border-bottom: 1px solid var(--_c-white-secondary);
 }
 
 .order-item {
   display: flex;
   flex-direction: row;
-  margin: 10px 0 10px 23px;
+  margin: calc(var(--spacer-2xs) * 2.5) 0 calc(var(--spacer-2xs) * 2.5)
+    calc(var(--spacer-xs) * 2.88);
 
   &__left {
     display: flex;
     flex-direction: column;
     flex: 6;
-    line-height: 19px;
-    gap: 5px;
+    line-height: calc(var(--space-xs) * 2.36);
+    gap: calc(var(--spacer-2xs) * 1.25);
   }
 
   &__right {
@@ -62,28 +62,26 @@ export default defineComponent({
   }
 
   &__info {
-    color: #2b2b2b;
-    font-family: var(--font-family--primary);
-    font-size: 16px;
-    line-height: 19px;
+    color: var(--c-black);
+    font-size: var(--space-sm);
+    line-height: calc(var(--space-xs) * 2.36);
     text-align: left;
     font-weight: bold;
   }
 
   &__description {
-    color: #7c7c7c;
-    font-family: var(--font-family--primary);
-    font-size: 16px;
-    line-height: 19px;
+    color: var(--_c-gray-primary);
+    font-size: var(--spacer-sm);
+    line-height: calc(var(--space-xs) * 2.36);
     text-align: left;
     white-space: nowrap;
-    max-width: 300px;
+    max-width: var(--spacer-4xl);
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   &__status {
-    color: #2ea195;
+    color: var(--_c-green-primary);
   }
 }
 </style>
