@@ -46,7 +46,7 @@
             </div>
 
             <div class="content__props">
-              <span class="title">$t('Price'): </span> ${{
+              <span class="title">{{ $t("Price") }}: </span> ${{
                 checkoutLineItemGetters.getProductPrice(product)
               }}
             </div>
@@ -55,7 +55,7 @@
       </div>
     </div>
     <div class="changeStore">
-      <span class="changeStore__location">$t('Pickup in Store'): </span><br />
+      <span class="changeStore__location">{{ $t("Pickup in Store") }}: </span><br />
       <p class="changeStore__link" @click="handleStoreLocatorClick">
         {{ cartItemPurchaseLocation ? $t("Change Store") : $t("Select Store") }}
       </p>
@@ -176,6 +176,7 @@ export default {
       .content {
         display: flex;
         padding-left: var(--spacer-base);
+        flex-direction: column;
 
         &__productName {
           padding-bottom: var(--spacer-2xs);

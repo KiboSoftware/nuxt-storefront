@@ -197,7 +197,6 @@ export default {
   "Save Billing Address Same As Shipping": "Save billing address same as shipping",
   "Select Shipping Option": "Select Shipping Option",
   Price: "Price",
-  "Pickup in Store": "Pickup in store",
   "Change Store": "Change Store",
   "Select Store": "Select Store",
 }

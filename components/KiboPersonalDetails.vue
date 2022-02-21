@@ -84,7 +84,7 @@
 
                 <SfInput
                   :has-show-password="true"
-                  type="value.password"
+                  type="password"
                   :label="createAccountInputLabel"
                   class="form__element"
                   required
