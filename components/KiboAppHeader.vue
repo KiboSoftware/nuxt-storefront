@@ -1,7 +1,6 @@
 <template>
   <div>
     <KiboHamburgerMenu
-      v-show="isHamburgerOpen"
       class="sf-sidebar--left smartphone-only"
       :heading-level="3"
       button
@@ -519,7 +518,7 @@ export default defineComponent({
   }
 
   &__account {
-    top: 0.313rem;
+    height: 3.438rem;
   }
 
   &__actions {
