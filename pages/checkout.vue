@@ -92,6 +92,7 @@
         @click="updateStep"
         >{{ steps[currentStep] }}</SfButton
       >
+      <!-- :disabled="!enableCurrentStep" // ToDo: Add disabled once all form validations are done in checkout tabs -->
       <SfButton
         class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
         @click="currentStep--"
@@ -147,6 +148,8 @@ export default {
     const showCreateAccount = ref(false)
     const password = ref(null)
     const transition = "sf-fade"
+    const enableCurrentStep = ref(false)
+    const enableNextStep = ref(false)
 
     enum Steps {
       GO_TO_SHIPPING = "Go to Shipping",
@@ -343,6 +346,7 @@ export default {
       paymentDetails = {
         ...updatedPaymentDetails,
       }
+      enableCurrentStep.value = paymentDetails.value.card.isCardDetailsFilled // TODO: Handle next step validation once other checkout validations are done
     }
 
     const addPaymentMethod = async () => {
@@ -367,6 +371,8 @@ export default {
       }
       if (checkout?.value?.id && paymentAction)
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
+        if (checkoutOrder.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
+      }
     }
     // paymentDetails
     const savePaymentDetails = async () => {
@@ -397,7 +403,7 @@ export default {
 
     // others
     const updateStep = async (selectedStep: number) => {
-      const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1
+      const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1 // // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
 
       switch (steps[currentStep.value]) {
         case Steps.GO_TO_SHIPPING: {
@@ -426,6 +432,7 @@ export default {
 
       // prevent to move nextStep by SfStep header
       if (nextStep < steps.length) {
+        // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
         currentStep.value = nextStep
       }
     }
@@ -488,6 +495,8 @@ export default {
       transition,
       getPaymentMethodData,
       copyShippingAddress,
+      enableCurrentStep,
+      enableNextStep,
     }
   },
   watch: {

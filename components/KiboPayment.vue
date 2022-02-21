@@ -109,24 +109,41 @@ export default defineComponent({
       isCreditCardSelected.value = fieldValue.toLowerCase() === "creditcard"
     }
 
-    const validateInput = () => {
-      if (creditCardFormData.value.card.expiryDate) {
-        creditCardFormData.value.card.expireMonth = creditCardPaymentGetters.getExpireMonth(
-          creditCardFormData.value.card
-        )
-        creditCardFormData.value.card.expireYear = creditCardPaymentGetters.getExpireYear(
-          creditCardFormData.value.card
-        )
+    const updatePaymentFields = (fieldName?: string) => {
+      const { isValid, message } = useUiValidation(
+        context.root,
+        fieldName,
+        creditCardFormData.value.card[fieldName]
+      )
+      error.value[fieldName] = isValid ? "" : message
+
+      if (
+        Object.values(error.value).every((value) => !value) &&
+        creditCardFormData.value.card.cardNumber &&
+        creditCardFormData.value.card.expiryDate &&
+        creditCardFormData.value.card.cvv
+      ) {
+        creditCardFormData.value.card.isCardDetailsFilled = true
+        if (creditCardFormData.value.card.expiryDate) {
+          creditCardFormData.value.card.expireMonth = creditCardPaymentGetters.getExpireMonth(
+            creditCardFormData.value.card
+          )
+          creditCardFormData.value.card.expireYear = creditCardPaymentGetters.getExpireYear(
+            creditCardFormData.value.card
+          )
+        }
+
+        if (creditCardFormData.value.card.cardNumber) {
+          const ccardType = creditCardType(creditCardFormData.value.card.cardNumber)
+          creditCardFormData.value.card.cardType = ccardType.length
+            ? ccardType[0].type.toUpperCase()
+            : ""
+        }
+      } else {
+        creditCardFormData.value.card.isCardDetailsFilled = false
       }
 
-      if (creditCardFormData.value.card.cardNumber) {
-        const ccardType = creditCardType(creditCardFormData.value.card.cardNumber)
-        creditCardFormData.value.card.cardType = ccardType.length
-          ? ccardType[0].type.toUpperCase()
-          : ""
-      }
-
-      _context.emit("input", {
+      context.emit("input", {
         ...creditCardFormData,
       })
     }
