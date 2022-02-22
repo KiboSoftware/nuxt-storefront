@@ -28,6 +28,7 @@ export const checkoutItemProductFragment = /* GraphQL */ `
 `
 export const checkoutLineItemFragment = /* GraphQL */ `
   fragment checkoutLineItemFragment on CrOrderItem {
+    fulfillmentMethod
     id
     total
     subtotal
@@ -57,22 +58,82 @@ export const baseCheckoutFragment = /* GraphQL */ `
       }
       couponCode
     }
+
+    billingInfo {
+      billingContact {
+        id
+        email
+        firstName
+        middleNameOrInitial
+        lastNameOrSurname
+        companyOrOrganization
+        phoneNumbers {
+          home
+          mobile
+          work
+        }
+        address {
+          address1
+          address2
+          address3
+          address4
+          cityOrTown
+          stateOrProvince
+          postalOrZipCode
+          countryCode
+          addressType
+          isValidated
+        }
+      }
+    }
+
+    fulfillmentInfo {
+      shippingMethodCode
+      shippingMethodName
+      fulfillmentContact {
+        email
+        firstName
+        middleNameOrInitial
+        lastNameOrSurname
+        companyOrOrganization
+        phoneNumbers {
+          home
+          mobile
+          work
+        }
+        address {
+          address1
+          address2
+          address3
+          address4
+          cityOrTown
+          stateOrProvince
+          postalOrZipCode
+          countryCode
+          addressType
+          isValidated
+        }
+      }
+    }
   }
 `
 export const billingContactFragment = /* GraphQL */ `
   fragment billingContactFragment on Contact {
     id
     firstName
+    middleNameOrInitial
     lastNameOrSurname
     email
     address {
       address1
       address2
       address3
+      addressType
       stateOrProvince
       postalOrZipCode
       cityOrTown
       countryCode
+      isValidated
     }
     phoneNumbers {
       home

@@ -1,6 +1,7 @@
-import { computed } from "@vue/composition-api"
+import { computed } from "@nuxtjs/composition-api"
 import { getShippingRatesQuery } from "@/lib/gql/queries"
 import type { Maybe, ShippingRate } from "@/server/types/GraphQL"
+import { useState, useNuxtApp } from "#app"
 
 export const useShippingMethods = () => {
   const nuxt = useNuxtApp()

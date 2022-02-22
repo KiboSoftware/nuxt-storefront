@@ -21,8 +21,11 @@ export * from "./useFacet"
 export * from "./useSearchSuggestions"
 export * from "./useProductSearch"
 export * from "./useCategoryTree"
+
+// Checkout
 export * from "./useCheckout"
 export * from "./useShippingMethods"
+export * from "./useUserAddresses"
 
 export * from "./useDropzoneContent"
 export * from "./useCustomerCreditCards"

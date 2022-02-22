@@ -1,8 +1,6 @@
 <template>
-  <SfPayment @input="payment = $event">
-    <!-- billing address -->
-
-    <template #payment-methods>
+  <div class="payment-container">
+    <div class="payment-types-radio">
       <SfRadio
         v-for="item in paymentMethods"
         :key="item.id"
@@ -13,16 +11,14 @@
         class="form__radio payment-method"
         @input="selectedPaymentMethod($event)"
       >
-        <template #label>
-          <div class="sf-radio__label">
-            {{ item.name }}
-          </div>
-        </template>
+        <div class="sf-radio__label">
+          {{ item.name }}
+        </div>
       </SfRadio>
-    </template>
+    </div>
 
-    <template #credit-card-form>
-      <div v-if="isCreditCardSelected" class="credit-card-form">
+    <div class="credit-card-form">
+      <div v-if="isCreditCardSelected">
         <div class="credit-card-form__element custom-form-element sf-input">
           <div class="sf-input__wrapper">
             <input
@@ -81,12 +77,12 @@
           @change="validateInput()"
         />
       </div>
-    </template>
-  </SfPayment>
+    </div>
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfPayment, SfRadio, SfInput, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
+import { SfRadio, SfInput, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
 import { usePaymentTypes } from "@/composables"
@@ -96,7 +92,6 @@ import { defaultPaymentDetails } from "@/composables/helpers"
 export default defineComponent({
   name: "KiboPayment",
   components: {
-    SfPayment,
     SfRadio,
     SfInput,
     SfCheckbox,
@@ -148,19 +143,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "~@storefront-ui/shared/styles/components/templates/SfPayment.scss";
+
 .sf-payment {
   .sf-heading {
-    border-bottom-color: var(--_c-white-primary);
+    border-bottom: none !important;
 
     &__title.h2 {
       --heading-title-font-size: var(--font-size--xl);
     }
   }
+}
 
-  .payment-methods {
-    background-color: var(--_c-white-primary) !important;
-    border-bottom: none !important;
-    padding: var(--spacer-2xs) 0 !important;
+.payment-container {
+  .payment-types-radio {
+    display: flex;
+    background-color: var(--_c-white-primary);
+    margin-bottom: var(--spacer-lg);
+  }
+
+  .payment-method {
+    background-color: var(--_c-white-primary);
+    border-bottom: none;
+
+    @include for-desktop {
+      padding: var(--spacer-xs) 0;
+    }
 
     .sf-radio {
       &__label {

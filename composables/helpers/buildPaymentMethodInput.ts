@@ -5,14 +5,16 @@ export const buildPaymentMethodInput = (
   currencyCode,
   checkout,
   creditCardData,
-  tokenizedData
+  tokenizedData,
+  billingAddress,
+  isBillingAddressAsShipping
 ): PaymentActionInput => {
   const ccPaymentServiceCardId = creditCardPaymentGetters.getId(tokenizedData)
   const ccNumberPart = creditCardPaymentGetters.getCardNumberMask(tokenizedData)
 
   const billingInfo: BillingInfo = {
     paymentType: creditCardPaymentGetters.getPaymentType(creditCardData.paymentType),
-    // Need to add billingContact
+    billingContact: billingAddress,
     card: {
       paymentServiceCardId: ccPaymentServiceCardId,
       isUsedRecurring: false,
@@ -31,8 +33,7 @@ export const buildPaymentMethodInput = (
     newBillingInfo: {
       ...billingInfo,
       paymentWorkflow: creditCardData.card.paymentWorkflow,
-      // Need to pass selected value
-      isSameBillingShippingAddress: false,
+      isSameBillingShippingAddress: isBillingAddressAsShipping,
     },
   }
 
