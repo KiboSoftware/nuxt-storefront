@@ -39,6 +39,7 @@
           name="address"
           :selected="true"
           class="form__radio payment-method"
+          @change="$emit('onSelect', address)"
         >
           <template #label>
             <div class="radio-button">

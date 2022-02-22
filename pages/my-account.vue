@@ -40,7 +40,11 @@
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Shipping Address')">
           <SfList>
             <SfListItem>
-              <UserSavedAddresses />
+              <UserSavedAddresses
+                :countries="countries"
+                :addresses="account.addresses"
+                @onSave="saveAddress"
+              />
             </SfListItem>
           </SfList>
         </SfAccordionItem>
@@ -103,6 +107,7 @@ export default defineComponent({
     const { user, load: loadUser, logout } = useUser()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
+    const countries = nuxt.nuxt2Context.$config.countries
     const activePage = ref("Back")
     const currTab = ref("")
     const barTitle = ref("Back")
@@ -171,6 +176,53 @@ export default defineComponent({
           status: "Delivered",
         },
       ],
+      addresses: [
+        {
+          // @TODO hardecoded need to be removed
+          accountId: 1366,
+          types: [
+            {
+              name: "Shipping",
+              isPrimary: true,
+            },
+            {
+              name: "Billing",
+              isPrimary: true,
+            },
+          ],
+          auditInfo: {
+            updateDate: 1638834415766,
+            createDate: 1638834415766,
+            updateBy: "tbd",
+            createBy: "tbd",
+          },
+          faxNumber: null,
+          label: null,
+          id: 1243,
+          email: "kevin.watts@kibocommerce.com",
+          firstName: "kevin",
+          middleNameOrInitial: null,
+          lastNameOrSurname: "watts",
+          companyOrOrganization: null,
+          phoneNumbers: {
+            home: "1231231234",
+            mobile: null,
+            work: null,
+          },
+          address: {
+            address1: "2717 south lamar",
+            address2: "b247",
+            address3: null,
+            address4: null,
+            cityOrTown: "austin",
+            stateOrProvince: "TX",
+            postalOrZipCode: "78704",
+            countryCode: "US",
+            addressType: "Residential",
+            isValidated: true,
+          },
+        },
+      ],
     })
 
     const goBack = () => {
@@ -193,6 +245,11 @@ export default defineComponent({
       steps.value.push(barTitle.value)
       if (activePage.value !== title) activePage.value = title
       barTitle.value = title
+    }
+
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+    const saveAddress = (address) => {
+      // add/save address here
     }
 
     return {
@@ -218,7 +275,6 @@ export default defineComponent({
           },
         },
       ],
-      countries: [],
       goBack,
       changeActivePage,
       logo,
@@ -226,6 +282,8 @@ export default defineComponent({
       gotoOrderHistory,
       isConfirmModalOpen,
       toggleConfirmModal,
+      countries,
+      saveAddress,
     }
   },
 })

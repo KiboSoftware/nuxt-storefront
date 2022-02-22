@@ -9,11 +9,10 @@
           <div class="shipping__address">
             <UserSavedAddress
               :address="address"
-              :show-actions="true"
               :is-readonly="isReadonly"
               @click:remove-address="removeAddressDialog(address)"
               @click:edit-address="updateAddress(address)"
-              @onselect="selectedAdress(address)"
+              @onSelect="onSelectedAdress(address)"
             />
           </div>
         </div>
@@ -25,7 +24,15 @@
       :action-handler="removeAddress"
       @click:close="toggleConfirmModal"
     />
-    <SfButton class="action-button" @click="addNewAddress()">
+    <KiboAddressForm
+      v-if="showAddressForm"
+      :key="activeAddress.id"
+      :value="activeAddress"
+      :countries="countries"
+      @addressData="setInputAddressData"
+    />
+
+    <SfButton v-if="!showAddressForm" class="action-button" @click="addNewAddress">
       <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
         <font-awesome-icon
           icon="plus-circle"
@@ -35,6 +42,14 @@
       </SfIcon>
       {{ $t("Add New Address") }}
     </SfButton>
+    <div v-if="showAddressForm" class="action-buttons">
+      <SfButton class="action-buttons__cancel" @click="closeAddressForm">
+        {{ $t("Cancel") }}
+      </SfButton>
+      <SfButton class="action-buttons__update" @click="saveAddress">
+        {{ $t("Save") }}
+      </SfButton>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -58,63 +73,25 @@ export default defineComponent({
     },
     addresses: {
       type: Array,
-      default: () => [
-        {
-          // @TODO hardecoded need to be removed
-          accountId: 1366,
-          types: [
-            {
-              name: "Shipping",
-              isPrimary: true,
-            },
-            {
-              name: "Billing",
-              isPrimary: true,
-            },
-          ],
-          auditInfo: {
-            updateDate: 1638834415766,
-            createDate: 1638834415766,
-            updateBy: "tbd",
-            createBy: "tbd",
-          },
-          faxNumber: null,
-          label: null,
-          id: 1243,
-          email: "kevin.watts@kibocommerce.com",
-          firstName: "kevin",
-          middleNameOrInitial: null,
-          lastNameOrSurname: "watts",
-          companyOrOrganization: null,
-          phoneNumbers: {
-            home: "1231231234",
-            mobile: null,
-            work: null,
-          },
-          address: {
-            address1: "2717 south lamar",
-            address2: "b247",
-            address3: null,
-            address4: null,
-            cityOrTown: "austin",
-            stateOrProvince: "TX",
-            postalOrZipCode: "78704",
-            countryCode: "US",
-            addressType: "Residential",
-            isValidated: true,
-          },
-        },
-      ],
+      default: () => [],
+    },
+    countries: {
+      type: Array,
+      default: () => [],
     },
   },
   setup(_, context) {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
 
     const activeAddress = ref(undefined)
+    const isNewAddress = ref(false)
+    const showAddressForm = ref(false)
 
     const addNewAddress = () => {
+      isNewAddress.value = true
+      showAddressForm.value = false
       activeAddress.value = {}
-      context.emit("onAdd", activeAddress)
+      showAddressForm.value = true
     }
 
     const removeAddress = () => {
@@ -126,23 +103,44 @@ export default defineComponent({
       toggleConfirmModal()
     }
     const updateAddress = (address) => {
+      isNewAddress.value = false
+      showAddressForm.value = false
       activeAddress.value = address
-      context.emit("onEdit", activeAddress)
+      showAddressForm.value = true
     }
-    const selectedAdress = (address) => {
+
+    const onSelectedAdress = (address) => {
       activeAddress.value = address
       context.emit("onSelect", activeAddress)
+    }
+    const closeAddressForm = () => {
+      showAddressForm.value = false
+      activeAddress.value = {}
+    }
+
+    const setInputAddressData = (address) => {
+      activeAddress.value = { ...address }
+    }
+
+    const saveAddress = async () => {
+      await context.emit("onSave", activeAddress)
+      closeAddressForm()
     }
 
     return {
       addNewAddress,
       updateAddress,
       removeAddress,
-      selectedAdress,
+      onSelectedAdress,
       activeAddress,
       removeAddressDialog,
       isConfirmModalOpen,
+      isNewAddress,
       toggleConfirmModal,
+      showAddressForm,
+      closeAddressForm,
+      saveAddress,
+      setInputAddressData,
     }
   },
 })
@@ -191,5 +189,24 @@ div {
 
 .plus-circle-icon {
   margin-right: calc(var(--spacer-2xs) * 5);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: calc(var(--spacer-xl) / 8);
+
+  &__cancel {
+    background-color: var(--_c-light-primary);
+    border: 1px solid var(--_c-gray-middle);
+    color: var(--c-black);
+  }
+
+  &__update {
+    border: none;
+    background-color: var(--_c-green-primary);
+    color: var(--_c-light-secondary);
+  }
 }
 </style>
