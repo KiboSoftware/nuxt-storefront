@@ -38,7 +38,7 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 export default defineComponent({
   name: "KiboMyProfile",
@@ -66,14 +66,10 @@ export default defineComponent({
   line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
   text-align: left;
   gap: var(--spacer-xs);
-
-  @include for-mobile {
-    margin: calc(var(--spacer-2xs) * 2.5) 0;
-  }
+  margin: calc(var(--spacer-2xs) * 2.5) 0;
 
   &__header {
     color: var(--c-black);
-    font-family: var(--font-family--primary);
     font-size: var(--font-size--lg);
     line-height: calc(var(--spacer-2xs) * 5.5);
     text-align: left;

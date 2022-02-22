@@ -9,10 +9,7 @@
           <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="removeFilter" />
         </div>
         <div class="history-filter__action">
-          <SfButton
-            class="sf-button--small smartphone-only filter-button"
-            @click="openFilterDialog"
-          >
+          <SfButton class="sf-button--small filter-button" @click="openFilterDialog">
             {{ $t("Filter Orders") }}
             <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
           </SfButton>
@@ -86,34 +83,6 @@ export default defineComponent({
     const selectedOrder = ref({})
     const account = reactive({
       // @TODO Hardcoded need to be removed
-      firstName: "John",
-      lastName: "Dog",
-      email: "johndog@email.com",
-      password: "a*23Et",
-      shipping: [
-        {
-          firstName: "John",
-          lastName: "Dog",
-          streetName: "Sezame Street",
-          apartment: "24/193A",
-          city: "Wroclaw",
-          state: "Lower Silesia",
-          zipCode: "53-540",
-          country: "Poland",
-          phoneNumber: "(00)560 123 456",
-        },
-        {
-          firstName: "John",
-          lastName: "Dog",
-          streetName: "Sezame Street",
-          apartment: "20/193A",
-          city: "Wroclaw",
-          state: "Lower Silesia",
-          zipCode: "53-603",
-          country: "Poland",
-          phoneNumber: "(00)560 123 456",
-        },
-      ],
       orders: [
         {
           orderNumber: "#45",
@@ -146,7 +115,7 @@ export default defineComponent({
       ],
     })
 
-    const facetAllOptions = ref([{ label: "AAA" }, { label: "BBB" }])
+    const facetAllOptions = ref([{ label: "AAA" }, { label: "BBB" }]) // @TODO hardcoded need to be removed
 
     const removeFilter = (param) => {
       context.emit("removeFilter", param)
@@ -189,7 +158,6 @@ export default defineComponent({
 
 .history-filter {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   margin-inline: calc(var(--spacer-2xs) * 7.5);
   margin-bottom: calc(var(--spacer-xl) / 8);
@@ -197,7 +165,6 @@ export default defineComponent({
   &__tiles {
     flex: 1.5;
     display: flex;
-    flex-direction: row;
     justify-content: left;
   }
 
@@ -210,10 +177,8 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin-left: calc(var(--spacer-2xs) * 7);
-  margin-bottom: calc(var(--spacer-2xs) * 5);
+  margin: calc(var(--spacer-2xs) * 3) 0 calc(var(--spacer-2xs) * 5) calc(var(--spacer-2xs) * 7);
   color: var(--c-black);
-  font-family: var(--font-family--primary);
   font-size: calc((var(--font-size--xs) / 3) * 5);
   line-height: var(--spacer-base);
   text-align: left;
@@ -238,7 +203,6 @@ export default defineComponent({
 
   &__header {
     color: var(--c-black);
-    font-family: var(--font-family--primary);
     font-size: var(--font-size--lg);
     line-height: calc(var(--spacer-2xs) * 5.5);
     text-align: left;

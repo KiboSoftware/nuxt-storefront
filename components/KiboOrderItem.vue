@@ -3,10 +3,10 @@
     <div class="order-item-container">
       <div class="order-item">
         <div class="order-item__left">
-          <div class="order-item__info">{{ order.submittedDate }}</div>
-          <div class="order-item__description">{{ order.products }}</div>
-          <div class="order-item__info">{{ order.total }}</div>
-          <div class="order-item__status">{{ order.status }}</div>
+          <div class="order-item__info">{{ submittedDate }}</div>
+          <div class="order-item__description">{{ productNames }}</div>
+          <div class="order-item__info">{{ orderTotal }}</div>
+          <div class="order-item__status">{{ orderStatus }}</div>
         </div>
         <div class="order-item__right">
           <SfChevron class="sf-chevron--right" />
@@ -15,9 +15,10 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { SfChevron } from "@storefront-ui/vue"
 import { defineComponent } from "@vue/composition-api"
+import { orderGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "KiboOrderItem",
@@ -30,6 +31,26 @@ export default defineComponent({
       default: () => ({}),
     },
   },
+  setup(props) {
+    const submittedDate = computed(() => {
+      return orderGetters.getSubmittedDate(props.order)
+    })
+    const productNames = computed(() => {
+      return orderGetters.getProductNames(props.order)
+    })
+    const orderTotal = computed(() => {
+      return orderGetters.getOrderTotal(props.order)
+    })
+    const orderStatus = computed(() => {
+      return orderGetters.getOrderStatus(props.order)
+    })
+    return {
+      submittedDate,
+      productNames,
+      orderTotal,
+      orderStatus,
+    }
+  },
 })
 </script>
 
@@ -41,7 +62,6 @@ export default defineComponent({
 
 .order-item {
   display: flex;
-  flex-direction: row;
   margin: calc(var(--spacer-2xs) * 2.5) 0 calc(var(--spacer-2xs) * 2.5)
     calc(var(--spacer-xs) * 2.88);
 

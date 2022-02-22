@@ -6,9 +6,9 @@
     <div class="order">
       <div class="order-header-container order-item-box">
         <div class="order-header">
-          <div>Your Order : #198623396</div>
-          <div>Order Date : December 1, 2021, 1:43 PM CT</div>
-          <div>Order Total: $258.72</div>
+          <div>{{ $t("Your Order") }} :</div>
+          <div>{{ $t("Order Date") }} :</div>
+          <div>{{ $t("Order Total") }}:</div>
         </div>
       </div>
       <hr class="details-hr-normal" />
@@ -40,7 +40,7 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 
 export default defineComponent({

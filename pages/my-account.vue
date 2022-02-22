@@ -3,22 +3,26 @@
     <div>
       <div>
         <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
-      </div>
-      <div v-show="activePage === $t('Back')" class="profile-img-container">
-        <img
-          v-if="account.profileImageUrl"
-          class="profile-img-container__pic"
-          :src="account.profileImageUrl"
-          alt="avatar"
-        />
-        <SfIcon v-else class="sf-header__icon" size="2.5rem">
-          <font-awesome-icon :icon="['fas', 'user-circle']" class="fa-icon" />
-        </SfIcon>
+        <hr class="myaccount-hr desktop-only" />
       </div>
       <div></div>
     </div>
     <div v-show="activePage === $t('Back')">
-      <div class="header-text-font">{{ $t("My Account") }}</div>
+      <div class="profile-header">
+        <div class="profile-img-container">
+          <img
+            v-if="account.profileImageUrl"
+            class="profile-img-container__pic"
+            :src="account.profileImageUrl"
+            alt="avatar"
+          />
+          <SfIcon v-else class="sf-header__icon" size="2.5rem">
+            <font-awesome-icon :icon="['fas', 'user-circle']" class="fa-icon" />
+          </SfIcon>
+        </div>
+        <div class="header-text-font">{{ $t("My Account") }}</div>
+      </div>
+
       <SfAccordion
         open=""
         :multiple="false"
@@ -54,7 +58,7 @@
     </div>
     <div v-show="activePage === $t('Back')" class="order-history">
       <SfButton
-        :class="{ 'is-open': false, 'header-text-weight': activePage != $t('Back') }"
+        :class="{ 'is-open': false, 'header-text-weight': activePage !== $t('Back') }"
         class="sf-button--pure sf-accordion-item__header"
         @click="gotoOrderHistory('My Account')"
       >
@@ -65,7 +69,7 @@
         />
       </SfButton>
     </div>
-    <div v-show="activePage != $t('Back')">
+    <div v-show="activePage !== $t('Back')">
       <KiboOrderHistory
         :orders="account.orders"
         :active-page="activePage"
@@ -262,8 +266,10 @@ div.kibo-sf-accordion-item {
 }
 
 .sf-accordion-item {
-  @include for-mobile {
-    padding: 0 calc(var(--spacer-2xs) * 3.5);
+  padding: 0 calc(var(--spacer-2xs) * 3.5);
+
+  @include for-desktop {
+    padding: 0;
   }
 
   ::v-deep &__content {
@@ -274,12 +280,16 @@ div.kibo-sf-accordion-item {
   ::v-deep &__header {
     justify-content: space-between;
     color: var(--_c-dark-primary);
-    font-family: var(--font-family--primary);
     font-size: var(--font-size--base);
     line-height: calc(var(--spacer-2xs) * 5);
     text-align: left;
     border: none;
-    height: calc(var(--spacer-) * 7);
+
+    @include for-desktop {
+      height: calc(var(--spacer-xl) * 1.5);
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 }
 
@@ -316,8 +326,7 @@ div.kibo-sf-accordion-item {
   flex-direction: column;
   justify-content: center;
   color: var(--_c-dark-primary);
-  font-family: var(--font-family--primary);
-  font-size: calc(var(--font-size--base) + (var(--font-size--xs) / 3));
+  font-size: var(--font-size--xl);
   line-height: var(--spacer-base);
   text-align: left;
   font-weight: bold;
@@ -325,6 +334,8 @@ div.kibo-sf-accordion-item {
   margin-left: calc(var(--spacer-2xs) * 7);
 
   @include for-desktop {
+    font-size: var(--font-size--4xl);
+    line-height: calc(var(--spacer-xs) * 4.25);
     margin-left: 0;
   }
 }
@@ -353,8 +364,10 @@ div.kibo-sf-accordion-item {
 }
 
 .order-history {
-  margin-left: calc(var(--spacer-2xs) * 3.5);
-  margin-right: calc(var(--spacer-2xs) * 3.5);
+  margin: 0 calc(var(--spacer-2xs) * 3.5) 0 calc(var(--spacer-2xs) * 3.5);
+  @include for-desktop {
+    margin: 0;
+  }
 }
 
 .header-text-weight {
@@ -370,5 +383,21 @@ div.kibo-sf-accordion-item {
 .svg-inline--fa.fa-w-16 {
   width: var(--spacer-xl);
   height: var(--spacer-xl);
+}
+
+.myaccount-hr {
+  margin: 0 auto;
+  height: 1px;
+  border-width: 0;
+  color: var(--_c-gray-middle);
+  background-color: var(--_c-gray-middle);
+}
+
+.profile-header {
+  @include for-desktop {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
 }
 </style>

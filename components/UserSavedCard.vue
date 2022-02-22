@@ -18,7 +18,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 export default defineComponent({
   name: "UserSavedCard",
@@ -52,7 +52,6 @@ export default defineComponent({
 
 .card-list {
   display: flex;
-  flex-direction: row;
 
   &__left {
     flex: 1;
@@ -63,6 +62,8 @@ export default defineComponent({
   }
 
   &__actions {
+    display: flex;
+    justify-content: space-around;
     flex: 1;
   }
 

@@ -37,7 +37,7 @@
     </SfButton>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { SfButton, SfIcon } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
 import UserSavedAddress from "@/components/UserSavedAddress"
@@ -150,9 +150,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 div {
   color: var(--c-black);
-  font-family: var(--font-family--primary);
   font-size: var(--font-size--base);
-  line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
+  line-height: calc(var(--spacer-xs) * 2.36);
   text-align: left;
   border: none;
 }
@@ -160,8 +159,9 @@ div {
 ::v-deep .sf-button {
   height: calc(var(--spacer-2xs) * 10.5);
   background: var(--c-black);
-  @include for-mobile {
-    width: 100%;
+  width: 100%;
+  @include for-desktop {
+    width: 70%;
   }
 }
 

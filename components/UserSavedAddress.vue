@@ -59,7 +59,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SfIcon, SfRadio } from "@storefront-ui/vue"
 
 import { defineComponent } from "@vue/composition-api"
@@ -86,10 +86,10 @@ export default defineComponent({
       return false
     }
     return {
-      firstName: props.address.firstName,
-      lastNameOrSurname: props.address.lastNameOrSurname,
-      phoneNumbers: props.address.phoneNumbers,
-      ...props.address.address,
+      firstName: props.address?.firstName,
+      lastNameOrSurname: props.address?.lastNameOrSurname,
+      phoneNumbers: props.address?.phoneNumbers,
+      ...props.address?.address,
       isDefaultAddress,
     }
   },
@@ -107,7 +107,6 @@ p {
 
 .address-container {
   display: flex;
-  flex-direction: row;
 
   &__left {
     flex: 90%;

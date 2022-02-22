@@ -54,7 +54,7 @@ export default defineComponent({
   },
   setup() {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
-    const paymentMethods = ref([{ endingDigit: "2344", expiry: "12/2025" }])
+    const paymentMethods = ref([{ endingDigit: "2344", expiry: "12/2025" }]) // @TODO Hardcoded need to be removed
     const edittingPayment = ref(false)
     const activePayment = ref(undefined)
     const isNewPayment = computed(() => !activePayment.value)
@@ -110,7 +110,7 @@ div {
   color: var(--c-black);
   font-family: var(--font-family--primary);
   font-size: var(--font-size--base);
-  line-height: calc(var(--spacer-sm) + (var(--spacer-base) / 8));
+  line-height: calc(var(--spacer-xs) * 2.36);
   text-align: left;
   border: none;
 }

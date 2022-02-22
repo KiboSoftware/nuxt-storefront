@@ -108,7 +108,7 @@ export default {
   gap: calc(var(--spacer-xl) / 8);
 
   &__cancel {
-    background-color: #fafafa;
+    background-color: var(--_c-light-primary);
     border: 1px solid var(--_c-gray-middle);
     color: var(--c-black);
   }
