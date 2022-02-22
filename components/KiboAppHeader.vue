@@ -1,7 +1,6 @@
 <template>
   <div>
     <KiboHamburgerMenu
-      v-show="isHamburgerOpen"
       class="sf-sidebar--left smartphone-only"
       :heading-level="3"
       button
@@ -91,7 +90,7 @@
                   @click="closeOrFocusSearchBar"
                 >
                   <span class="sf-search-bar__icon">
-                    <SfIcon color="var(--c-text)" size="18px" icon="cross" />
+                    <SfIcon color="var(--c-text)" size="12px" icon="cross" />
                   </span>
                 </SfButton>
                 <SfButton
@@ -100,7 +99,7 @@
                   @click="isSearchOpen ? (isSearchOpen = false) : (isSearchOpen = true)"
                 >
                   <span class="sf-search-bar__icon">
-                    <SfIcon color="var(--c-text)" size="18px" icon="search" />
+                    <SfIcon color="var(--c-text)" size="14px" icon="search" />
                   </span>
                 </SfButton>
               </template>
@@ -279,7 +278,6 @@ import {
   categoryGetters,
 } from "@/lib/getters"
 
-import { useNuxtApp } from "#app"
 import * as logo from "@/assets/images/kibo_logo.png"
 
 export default defineComponent({
@@ -520,7 +518,7 @@ export default defineComponent({
   }
 
   &__account {
-    top: 0.313rem;
+    height: 3.438rem;
   }
 
   &__actions {
@@ -633,6 +631,7 @@ export default defineComponent({
     position: absolute;
     top: var(--spacer-sm);
     left: 0;
+    z-index: 1;
   }
 
   ::v-deep .sf-menu-item {
@@ -662,7 +661,7 @@ export default defineComponent({
   top: 2.9rem;
   position: absolute;
   z-index: 20;
-  max-width: 41.35rem;
+  max-width: 41rem;
 }
 
 .icon-name-sidebar {
@@ -689,7 +688,7 @@ export default defineComponent({
 
 .sf-search-bar {
   &__icon {
-    height: 1.25rem;
+    height: 1 rem;
     padding-left: 0.625rem;
   }
 }

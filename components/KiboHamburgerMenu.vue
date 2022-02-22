@@ -3,7 +3,11 @@
     <div class="sf-sidebar">
       <SfOverlay :visible="visible" />
       <transition name="sf-fade">
-        <aside ref="asideContentCustom" class="sf-sidebar__aside">
+        <aside
+          ref="asideContentCustom"
+          class="sf-sidebar__aside"
+          :class="{ 'is-active-hamburger': isHamburgerOpen }"
+        >
           <div class="sf-sidebar__content">
             <!--@slot Use this slot to add SfSidebar content.-->
 
@@ -19,11 +23,11 @@
 
             <div class="line-2"></div>
 
-            <div v-show="title == 'Back'" class="account-header">
+            <div v-show="title == $t('Back')" class="account-header">
               <slot name="content-top" />
             </div>
 
-            <div v-show="title == 'Back'" class="line-2"></div>
+            <div v-show="title == $t('Back')" class="line-2"></div>
 
             <div>
               <!--@slot Use this slot to replace SfHeading component.-->
@@ -38,7 +42,11 @@
             <div class="category-content">
               <SfList>
                 <SfListItem v-for="(category, key) in megaMenuCategories" :key="key">
-                  <SfMenuItem :label="$t(category.content.name)" @click="goNext(category)" />
+                  <SfMenuItem
+                    :label="category.content.name"
+                    :icon="showOrHideIcon(category)"
+                    @click="goNext(category)"
+                  />
                 </SfListItem>
               </SfList>
             </div>
@@ -59,9 +67,9 @@
 import { onMounted, defineComponent, computed, ref } from "@vue/composition-api"
 import { SfOverlay, SfList, SfMenuItem, SfBar, SfIcon } from "@storefront-ui/vue"
 import { focusTrap, clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
+import { useNuxtApp } from "#app"
 import { useCategoryTree, useUiHelpers, useUiState } from "@/composables"
 import { categoryGetters } from "@/lib/getters"
-import { useNuxtApp } from "#app"
 
 export default defineComponent({
   components: {
@@ -91,13 +99,14 @@ export default defineComponent({
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { categories: allCategories, load: loadCategories } = useCategoryTree()
-    const { toggleHamburger } = useUiState()
-
+    const { toggleHamburger, isHamburgerOpen } = useUiState()
+    const backKey = context.root.$t("Back")
+    const allDepartment = context.root.$t("All Departments")
     const categories = computed(() => {
       return categoryGetters.getMegaMenuCategory(allCategories.value)
     })
-    const title = ref("Back")
-    const subTitle = ref("All Departments")
+    const title = ref(backKey)
+    const subTitle = ref(allDepartment)
     const oldTitle = ref("")
     const parentCategoryCodes = ref([])
     const megaMenuCategories = ref(categories.value || [])
@@ -114,6 +123,7 @@ export default defineComponent({
         }
       } else {
         toggleHamburger()
+        resetHamburger()
         const linkPath = getCatLink(item)
         return app.router.push({ path: linkPath })
       }
@@ -130,10 +140,19 @@ export default defineComponent({
         megaMenuCategories.value = data
         subTitle.value = title.value
         title.value = lastCategoryCode.name
-      } else if (title.value === "Back") {
+      } else if (title.value === backKey) {
         toggleHamburger()
         return false
       }
+    }
+    const resetHamburger = () => {
+      title.value = backKey
+      subTitle.value = allDepartment
+      megaMenuCategories.value = categories.value
+      parentCategoryCodes.value = []
+    }
+    const showOrHideIcon = (item) => {
+      return item.childrenCategories.length ? "chevron_right" : ""
     }
 
     onMounted(async () => {
@@ -151,6 +170,9 @@ export default defineComponent({
       oldTitle,
       back,
       toggleHamburger,
+      resetHamburger,
+      showOrHideIcon,
+      isHamburgerOpen,
     }
   },
 })
@@ -160,8 +182,10 @@ export default defineComponent({
   &__aside {
     position: absolute;
     height: calc(100% - 3.56em);
-    width: 90%;
+    max-width: 90%;
+    width: 0;
     top: 3.56rem;
+    transition: width 1s cubic-bezier(0.22, 0.61, 0.36, 1);
   }
 
   &__bottom {
@@ -193,16 +217,13 @@ export default defineComponent({
 
   .sf-list {
     &__item {
+      display: flex;
       height: 3.375rem;
       margin: 0;
       padding: 0 8% 0 8%;
       border-bottom: 0.063rem solid;
       border-bottom-color: var(--_c-white-secondary);
     }
-  }
-
-  .sf-menu-item {
-    top: 5px;
   }
 }
 
@@ -247,6 +268,7 @@ export default defineComponent({
 .title-bar {
   justify-content: flex-start;
   background-color: var(--_c-light-secondary);
+  height: 3.875rem;
 }
 
 .sf-bar {
@@ -272,5 +294,9 @@ export default defineComponent({
   overflow-y: auto;
   transform: var(--mega-menu-content-transform);
   transition: transform 150ms ease-in-out;
+}
+
+.is-active-hamburger {
+  width: 100%;
 }
 </style>
