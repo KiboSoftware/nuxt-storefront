@@ -82,7 +82,7 @@ jest.mock("#app", () => ({
   }),
 }))
 
-describe("[composable] useUser", () => {
+describe("[composable] useCheckout", () => {
   const {
     load,
     loadFromCart,

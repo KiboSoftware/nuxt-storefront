@@ -92,7 +92,7 @@ export const useCheckout = () => {
     }
   }
 
-  const submit = async () => {}
+  // const submit = async () => {}
 
   return {
     checkout,
@@ -102,7 +102,7 @@ export const useCheckout = () => {
     loadFromCart,
     setShippingInfo,
     setPersonalInfo,
-    // setBillingInfo,
+    setBillingInfo,
     // submit,
   }
 }

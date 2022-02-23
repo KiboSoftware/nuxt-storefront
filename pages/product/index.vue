@@ -190,11 +190,11 @@
 
               <KiboFulfillmentOptions
                 class="product__fullfillment"
-                :fulfillment-options="fulfillmentOptions"
+                :fulfillment-options="productFulfillmentOptions"
                 :cart-item-purchase-location="purchaseLocation.name"
                 :selected-option="selectedFulfillmentValue"
-                @click="handleStoreLocatorClick"
-                @change="selectFulfillmentOption"
+                @click="handleFulfillmentOption"
+                @change="handleFulfillmentOption"
               />
 
               <SfDivider class="divider-second desktop-only" />
