@@ -3,6 +3,7 @@
     <KiboHamburgerMenu
       class="sf-sidebar--left smartphone-only"
       overlay
+      :visible="isHamburgerOpen"
       @closeHamburgerMenu="toggleHamburger"
     >
       <template #content-top>
