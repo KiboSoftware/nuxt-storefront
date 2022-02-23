@@ -5,10 +5,9 @@ import { defineNuxtPlugin } from "#app"
 export default defineNuxtPlugin((nuxtApp: any) => {
   const modal = {
     subscription: new Vue(),
-    show({ component, title, props }) {
+    show({ component, props }) {
       this.subscription.$emit("open", {
         component,
-        title,
         props,
       })
     },
