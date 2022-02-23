@@ -55,7 +55,6 @@
 <script lang="ts">
 import { SfButton, SfIcon } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
-import UserSavedAddress from "@/components/UserSavedAddress"
 import { useUiState } from "@/composables"
 
 export default defineComponent({
@@ -63,7 +62,6 @@ export default defineComponent({
   components: {
     SfButton,
     SfIcon,
-    UserSavedAddress,
   },
 
   props: {

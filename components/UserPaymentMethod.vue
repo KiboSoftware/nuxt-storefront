@@ -54,7 +54,7 @@ export default defineComponent({
   },
   setup() {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
-    const paymentMethods = ref([{ endingDigit: "2344", expiry: "12/2025" }]) // @TODO Hardcoded need to be removed
+    const paymentMethods = ref([]) // @TODO need to fetch from API
     const edittingPayment = ref(false)
     const activePayment = ref(undefined)
     const isNewPayment = computed(() => !activePayment.value)

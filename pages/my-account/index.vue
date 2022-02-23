@@ -2,12 +2,12 @@
   <div id="my-account">
     <div>
       <div>
-        <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
+        <SfBar :title="$t('Back')" :back="true" class="title-bar" @click:back="goBack" />
         <hr class="myaccount-hr desktop-only" />
       </div>
       <div></div>
     </div>
-    <div v-show="activePage === $t('Back')">
+    <div>
       <div class="profile-header">
         <div class="profile-img-container">
           <img
@@ -60,39 +60,29 @@
         <div class="header-text-font">{{ $t("Order Details") }}</div>
       </div>
     </div>
-    <div v-show="activePage === $t('Back')" class="order-history">
+    <div class="order-history">
       <SfButton
-        :class="{ 'is-open': false, 'header-text-weight': activePage !== $t('Back') }"
+        :class="{ 'is-open': false }"
         class="sf-button--pure sf-accordion-item__header"
-        @click="gotoOrderHistory('My Account')"
+        @click="gotoOrderHistory()"
       >
-        Order History
-        <SfChevron
-          class="sf-chevron--right"
-          :class="{ 'sf-accordion-item__chevron': activePage !== $t('Back') }"
-        />
+        {{ $t("Order History") }}
+        <SfChevron class="sf-chevron--right" />
       </SfButton>
     </div>
-    <div v-show="activePage !== $t('Back')">
-      <KiboOrderHistory
-        :orders="account.orders"
-        :active-page="activePage"
-        @goNext="gotoOrderHistory"
-        @goPrevious="goBack"
-      />
-    </div>
-    <div v-show="activePage === $t('Back')">
+    <div>
       <div class="vertical-space"></div>
-      <div class="profile-logout spacer" @click="logout">{{ $t("Log out") }}</div>
+      <div class="profile-logout spacer" @click="changeActivePage('Log out')">
+        {{ $t("Log out") }}
+      </div>
     </div>
   </div>
 </template>
 <script>
 import { SfAccordion, SfList, SfBar, SfChevron, SfButton, SfIcon } from "@storefront-ui/vue"
-import { defineComponent, reactive, ref } from "@vue/composition-api"
+import { defineComponent, ref } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
 import { useUser, useUiState } from "@/composables"
-import * as logo from "@/assets/images/kibo_logo.png"
 export default defineComponent({
   name: "MyAccount",
   components: {
@@ -103,135 +93,17 @@ export default defineComponent({
     SfButton,
     SfIcon,
   },
-  setup(_, context) {
-    const { user, load: loadUser, logout } = useUser()
+  setup() {
+    const { user, logout } = useUser()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const countries = nuxt.nuxt2Context.$config.countries
-    const activePage = ref("Back")
-    const currTab = ref("")
-    const barTitle = ref("Back")
-    const steps = ref([])
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
 
-    const account = reactive({
-      firstName: "John",
-      lastName: "Dog",
-      emailAddress: "johndog@email.com",
-      password: "a*23Et",
-      phoneNumber: "9887678684",
-      profileImageUrl:
-        "//d1slj7rdbjyb5l.cloudfront.net/17194-21127/cms/21127/files/e6289d12-b588-4775-aa5e-d14d7c6de164",
-      shipping: [
-        {
-          firstName: "John",
-          lastName: "Dog",
-          streetName: "Sezame Street",
-          apartment: "24/193A",
-          city: "Wroclaw",
-          state: "Lower Silesia",
-          zipCode: "53-540",
-          country: "Poland",
-          phoneNumber: "(00)560 123 456",
-        },
-        {
-          firstName: "John",
-          lastName: "Dog",
-          streetName: "Sezame Street",
-          apartment: "20/193A",
-          city: "Wroclaw",
-          state: "Lower Silesia",
-          zipCode: "53-603",
-          country: "Poland",
-          phoneNumber: "(00)560 123 456",
-        },
-      ],
-      orders: [
-        {
-          orderNumber: "#45",
-          submittedDate: "23th June, 2021",
-          products: "Men's Performance Socks,Women's Teedsasdfa",
-          total: "$412.00",
-          status: "Finalised",
-        },
-        {
-          orderNumber: "#46",
-          submittedDate: "24th June, 2021",
-          products: "AAAAABB",
-          total: "$402.00",
-          status: "Processing",
-        },
-        {
-          orderNumber: "#47",
-          submittedDate: "25th June, 2021",
-          products: "CCCFFF SDD",
-          total: "$512.00",
-          status: "Finalised",
-        },
-        {
-          orderNumber: "#48",
-          submittedDate: "28th June, 2021",
-          products: "RRRRRRRRRRRR GGGGGG",
-          total: "$612.00",
-          status: "Delivered",
-        },
-      ],
-      addresses: [
-        {
-          // @TODO hardecoded need to be removed
-          accountId: 1366,
-          types: [
-            {
-              name: "Shipping",
-              isPrimary: true,
-            },
-            {
-              name: "Billing",
-              isPrimary: true,
-            },
-          ],
-          auditInfo: {
-            updateDate: 1638834415766,
-            createDate: 1638834415766,
-            updateBy: "tbd",
-            createBy: "tbd",
-          },
-          faxNumber: null,
-          label: null,
-          id: 1243,
-          email: "kevin.watts@kibocommerce.com",
-          firstName: "kevin",
-          middleNameOrInitial: null,
-          lastNameOrSurname: "watts",
-          companyOrOrganization: null,
-          phoneNumbers: {
-            home: "1231231234",
-            mobile: null,
-            work: null,
-          },
-          address: {
-            address1: "2717 south lamar",
-            address2: "b247",
-            address3: null,
-            address4: null,
-            cityOrTown: "austin",
-            stateOrProvince: "TX",
-            postalOrZipCode: "78704",
-            countryCode: "US",
-            addressType: "Residential",
-            isValidated: true,
-          },
-        },
-      ],
-    })
+    const account = ref({}) // @TODO fetch account data from API
 
     const goBack = () => {
-      if (steps.value.length) {
-        barTitle.value = steps.value.pop()
-        activePage.value = barTitle.value
-      } else {
-        context.root.$router.go(-1)
-      }
+      app.router.push({ path: "/" })
     }
     const changeActivePage = async (title) => {
       if (title === "Log out") {
@@ -241,10 +113,8 @@ export default defineComponent({
       }
     }
 
-    const gotoOrderHistory = (title) => {
-      steps.value.push(barTitle.value)
-      if (activePage.value !== title) activePage.value = title
-      barTitle.value = title
+    const gotoOrderHistory = () => {
+      app.router.push({ path: "my-account/order-history" })
     }
 
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
@@ -255,30 +125,9 @@ export default defineComponent({
     return {
       logout,
       user,
-      loadUser,
       account,
-      activePage,
-      currTab,
-      historyTab: "",
-      steps,
-      breadcrumbs: [
-        {
-          text: "Home",
-          route: {
-            link: "#",
-          },
-        },
-        {
-          text: "My Account",
-          route: {
-            link: "#",
-          },
-        },
-      ],
       goBack,
       changeActivePage,
-      logo,
-      barTitle,
       gotoOrderHistory,
       isConfirmModalOpen,
       toggleConfirmModal,
@@ -428,16 +277,6 @@ div.kibo-sf-accordion-item {
   }
 }
 
-.header-text-weight {
-  font-weight: bold;
-  font-size: var(--font-size--xl);
-  line-height: var(--spacer-base);
-}
-
-::v-deep .sf-accordion-item__header.is-open {
-  font-weight: 600;
-}
-
 .svg-inline--fa.fa-w-16 {
   width: var(--spacer-xl);
   height: var(--spacer-xl);
@@ -457,5 +296,9 @@ div.kibo-sf-accordion-item {
     align-items: center;
     gap: 9px;
   }
+}
+
+::v-deep .sf-accordion-item__header.is-open {
+  font-weight: 600;
 }
 </style>
