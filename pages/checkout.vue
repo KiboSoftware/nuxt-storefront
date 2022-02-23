@@ -136,8 +136,14 @@ export default {
 
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo } =
-      useCheckout()
+    const {
+      checkout,
+      loadFromCart,
+      load: loadCheckout,
+      setPersonalInfo,
+      setShippingInfo,
+      setBillingInfo,
+    } = useCheckout()
     const { load: loadUserAddresses, addresses } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
     const { toggleStoreLocatorModal, toggleLoginModal } = useUiState()
@@ -371,7 +377,8 @@ export default {
       }
       if (checkout?.value?.id && paymentAction)
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
-        if (checkoutOrder.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
+        await loadCheckout(checkout?.value?.id)
+        if (checkout.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
       }
     }
     // paymentDetails

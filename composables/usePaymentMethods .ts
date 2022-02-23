@@ -24,7 +24,6 @@ export const usePaymentMethods = () => {
         query: addPaymentMethod,
         variables,
       })
-      // await load(cards?.value?.items?.)
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)

@@ -82,7 +82,7 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfRadio, SfInput, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
+import { SfRadio, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
 import { usePaymentTypes } from "@/composables"
@@ -103,6 +103,8 @@ export default defineComponent({
     const paymentMethods = loadPaymentTypes()
     const isCreditCardSelected = ref(false)
     const creditCardFormData = ref(defaultPaymentDetails())
+    const error = ref({ cardNumber: "", expiryDate: "", cvv: "" })
+    const isValidForm = ref({ cardNumber: false, expiryDate: false, cvv: false })
 
     const selectedPaymentMethod = (fieldValue: string) => {
       creditCardFormData.value.paymentType = fieldValue
@@ -115,15 +117,15 @@ export default defineComponent({
         fieldName,
         creditCardFormData.value.card[fieldName]
       )
-      error.value[fieldName] = isValid ? "" : message
 
-      if (
-        Object.values(error.value).every((value) => !value) &&
-        creditCardFormData.value.card.cardNumber &&
-        creditCardFormData.value.card.expiryDate &&
-        creditCardFormData.value.card.cvv
-      ) {
-        creditCardFormData.value.card.isCardDetailsFilled = true
+      error.value[fieldName] = isValid ? "" : message
+      isValidForm.value[fieldName] = isValid
+
+      creditCardFormData.value.card.isCardDetailsFilled = Object.values(isValidForm.value).every(
+        (value) => value
+      )
+
+      if (creditCardFormData.value.card.isCardDetailsFilled) {
         if (creditCardFormData.value.card.expiryDate) {
           creditCardFormData.value.card.expireMonth = creditCardPaymentGetters.getExpireMonth(
             creditCardFormData.value.card
@@ -139,8 +141,6 @@ export default defineComponent({
             ? ccardType[0].type.toUpperCase()
             : ""
         }
-      } else {
-        creditCardFormData.value.card.isCardDetailsFilled = false
       }
 
       context.emit("input", {
@@ -153,7 +153,8 @@ export default defineComponent({
       selectedPaymentMethod,
       creditCardFormData,
       isCreditCardSelected,
-      validateInput,
+      updatePaymentFields,
+      error,
     }
   },
 })
@@ -197,6 +198,7 @@ export default defineComponent({
   .credit-card-form {
     &__element {
       margin: 0 0 var(--spacer-base) 0;
+      display: block;
 
       &:last-of-type {
         margin: 0;
