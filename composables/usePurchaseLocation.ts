@@ -1,4 +1,8 @@
-import { removeClientCookie, storeClientCookie } from "@/composables/helpers/cookieHelper"
+import {
+  removeClientCookie,
+  storeClientCookie,
+  decodeParseCookieValue,
+} from "@/composables/helpers/cookieHelper"
 import { useState, useNuxtApp } from "#app"
 import { getSpLocations } from "@/lib/gql/queries"
 import { Location } from "@/server/types/GraphQL"
@@ -19,8 +23,8 @@ export const usePurchaseLocation = () => {
         loading.value = true
         const response = await fetcher({
           query: getSpLocations,
-          variable: {
-            filter: `code eq ${locationCookieValue}`,
+          variables: {
+            filter: `code eq ${decodeParseCookieValue(locationCookieValue)}`,
           },
         })
         purchaseLocation.value = response.data.spLocations.items[0]

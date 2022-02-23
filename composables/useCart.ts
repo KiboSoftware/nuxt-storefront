@@ -3,9 +3,10 @@ import { getCartQuery } from "@/lib/gql/queries"
 import {
   addToCartMutation,
   deleteCartItemMutation,
-  updateCartQuantityMutation,
+  updateCartItemQuantityMutation,
+  updateCartItemMutation,
 } from "@/lib/gql/mutations"
-import type { Cart, Maybe } from "@/server/types/GraphQL"
+import type { Cart, Maybe, CartItemInput } from "@/server/types/GraphQL"
 
 export const useCart = () => {
   const cart = useState<Maybe<Cart>>(`use-cart-result`, () => {
@@ -17,7 +18,7 @@ export const useCart = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
 
-  const getCart = async (): Promise<Object> => {
+  const getCart = async (): Promise<Cart> => {
     const cartResponse = await fetcher({
       query: getCartQuery,
     })
@@ -49,7 +50,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
     }
   }
 
@@ -62,7 +63,7 @@ export const useCart = () => {
     try {
       loading.value = true
       await fetcher({
-        query: updateCartQuantityMutation,
+        query: updateCartItemQuantityMutation,
         variables,
       })
     } catch (err) {
@@ -70,7 +71,7 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
     }
   }
 
@@ -89,7 +90,27 @@ export const useCart = () => {
       console.error(err)
     } finally {
       loading.value = false
-      cart.value = await getCart()
+      await load()
+    }
+  }
+
+  const updateCartItem = async (cartItemId: string, cartItemInput: CartItemInput) => {
+    const variables = {
+      cartItemId,
+      cartItemInput,
+    }
+    try {
+      loading.value = true
+      await fetcher({
+        query: updateCartItemMutation,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+      await load()
     }
   }
 
@@ -102,5 +123,6 @@ export const useCart = () => {
     cart,
     error,
     newestCartItemId,
+    updateCartItem,
   }
 }

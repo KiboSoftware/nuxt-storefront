@@ -1,18 +1,23 @@
 import * as cookieHelper from "@/composables/helpers/cookieHelper"
 import { usePurchaseLocation } from "@/composables"
 
+const decodeParseCookieValueSpy = jest.spyOn(cookieHelper, "decodeParseCookieValue")
+decodeParseCookieValueSpy.mockReturnValue("decoded_cookie")
+
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
   }),
   useNuxtApp: jest.fn().mockReturnValue({
     nuxt2Context: {
-      $gqlFetch: jest.fn().mockReturnValue({
-        data: {
-          spLocations: {
-            items: [{ code: "purchase_location_value" }],
+      $gqlFetch: jest.fn(() => {
+        return {
+          data: {
+            spLocations: {
+              items: [{ code: "purchase_location_value" }],
+            },
           },
-        },
+        }
       }),
       app: {
         $cookies: {

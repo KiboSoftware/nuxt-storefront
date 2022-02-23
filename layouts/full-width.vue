@@ -3,7 +3,7 @@
     <KiboAppData />
     <KiboAppHeader />
     <LoginModal />
-    <StoreLocatorModal />
+    <ModalRoot />
     <AddToCartConfirmationModal />
     <div>
       <Nuxt />

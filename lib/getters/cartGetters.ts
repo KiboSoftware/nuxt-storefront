@@ -1,4 +1,5 @@
-import { Cart, CartItem, Maybe, CrProductOption, Location } from "@/server/types/GraphQL"
+import { Cart, CartItem, Maybe, CrProductOption } from "@/server/types/GraphQL"
+import { useNuxtApp } from "#app"
 
 export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
 
@@ -87,24 +88,43 @@ export const getDiscounts = (cart: Cart) => {
   }))
 }
 
-export const getCartFulfillmentOptions = (item: CartItem, purchaseLocation: Location) =>
-  item?.product.fulfillmentTypesSupported.map((option) => ({
-    name: "fulfillment",
-    value: option,
-    label: option === "DirectShip" ? "Ship to Home" : "Pickup in Store",
-    details:
-      option === "DirectShip"
-        ? "Available to Ship"
-        : purchaseLocation?.name
-        ? `Available at: ${purchaseLocation.name}`
-        : "",
-    required: "false",
+const isDisabledFulfillmentOption = (fulfillmentTypesSupported, option) => {
+  return !fulfillmentTypesSupported?.includes(option)
+}
+
+export const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLocation: string) => {
+  const nuxt = useNuxtApp()
+  const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
+
+  const result = fullfillmentOptions.map((option) => ({
+    value: option.value,
+    name: option.name,
+    code: option.code,
+    label: option.label,
+    details: option.details,
+    required: option.isRequired,
+    shortName: option.shortName,
+    disabled: isDisabledFulfillmentOption(item.product?.fulfillmentTypesSupported, option.value),
+    fulfillmentMethod: item?.fulfillmentMethod,
+    fulfillmentLocation: cartItemFulfillmentLocation,
+    fulfillmentTypesSupported: item?.product?.fulfillmentTypesSupported,
   }))
+
+  return result
+}
 
 export const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
   cart?.items?.find((item) => item.id === cartItemId)
 
 export const getCartItemOptions = (item: CartItem) => item?.product?.options
+
+const getSelectedFullfillmentOption = (item: CartItem) => {
+  return item?.fulfillmentMethod
+}
+
+const getFulfillmentLocation = (item: CartItem, locations): string => {
+  return locations.find((location) => location.code === item?.fulfillmentLocationCode)?.name
+}
 
 export const cartGetters = {
   getTotals,
@@ -124,4 +144,6 @@ export const cartGetters = {
   getCartFulfillmentOptions,
   getCartItem,
   getCartTotalQuantity,
+  getSelectedFullfillmentOption,
+  getFulfillmentLocation,
 }

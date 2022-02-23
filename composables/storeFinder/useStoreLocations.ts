@@ -1,29 +1,22 @@
-import { GeoCoords } from "@/composables/types"
 import { getSpLocations } from "@/lib/gql/queries/spLocations"
 import { useState, useNuxtApp } from "#app"
 import { Location } from "@/server/types/GraphQL"
 
-export const useStoreLocations = () => {
+export const useStoreLocations = (referenceKey: string) => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const locations = useState(`use-storeLocations`, (): Location[] => {
+  const locations = useState(`storeLocations-${referenceKey}`, (): Location[] => {
     return [] as Location[]
   })
-  const loading = useState(`use-storeLocations-loading`, () => false)
-  const error = useState(`use-storeLocations-error`, () => null)
+  const loading = useState(`storeLocations-loading-${referenceKey}`, () => false)
+  const error = useState(`storeLocations-error-${referenceKey}`, () => null)
 
-  const search = async (param: GeoCoords | string) => {
+  const search = async (param: { filter: string }) => {
     try {
       loading.value = true
       const response = await fetcher({
         query: getSpLocations,
-        ...(typeof param === "string"
-          ? {
-              variables: { filter: `geo near(${param},160934)` },
-            }
-          : {
-              variables: { filter: `geo near(${param?.latitude},${param?.longitude},160934)` },
-            }),
+        variables: param,
       })
       locations.value = response.data.spLocations.items
     } catch (error) {

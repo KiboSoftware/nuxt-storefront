@@ -40,7 +40,7 @@ export default {
   "Clear all": "Clear all",
   Empty: "Looks like you haven’t added any items to the bag yet. Start shopping to fill it in.",
   "Help & FAQs": "Help & FAQs",
-  Download: "Download our application.",
+  "Download our application": "Download our application.",
   "Find out more": "Find out more",
   "Log In": "Log In",
   "Forgot Password?": "Forgot Password?",
@@ -198,5 +198,7 @@ export default {
   "Select Shipping Option": "Select Shipping Option",
   Price: "Price",
   "Change Store": "Change Store",
-  "Select Store": "Select Store",
+  "Not available": "Not available",
+  "Available at": "Available at",
+  "Enter Zip Code": "Enter Zip Code",
 }

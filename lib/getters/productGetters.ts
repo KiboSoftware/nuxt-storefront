@@ -91,6 +91,7 @@ export const getProductFulfillmentOptions = (product: Product, purchaseLocation:
         : purchaseLocation?.name
         ? `${option.details}: ${purchaseLocation.name}`
         : "",
+    fulfillmentLocation: purchaseLocation?.name,
     required: option.isRequired,
     shortName: option.shortName,
     disabled:

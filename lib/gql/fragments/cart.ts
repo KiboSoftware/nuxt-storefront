@@ -1,6 +1,9 @@
 export const cartItemDetails = /* GraphQL */`
 fragment cartItemDetails on CartItem {
   id
+  fulfillmentMethod
+  purchaseLocation
+  fulfillmentLocationCode
   productDiscounts{
     discountQuantity
   }

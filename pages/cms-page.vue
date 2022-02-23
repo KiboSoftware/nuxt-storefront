@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import KiboWidgetFactory from "@/components/cms/KiboWidgetFactory.vue"
 import { useRoute } from "@nuxtjs/composition-api"
+import KiboWidgetFactory from "@/components/cms/KiboWidgetFactory.vue"
 export default {
   components: { KiboWidgetFactory },
   setup() {

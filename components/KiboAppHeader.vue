@@ -259,6 +259,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import debounce from "lodash.debounce"
+import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import {
   usePurchaseLocation,
   useCart,
@@ -297,8 +298,9 @@ export default defineComponent({
     const { categories: allCategories } = useCategoryTree()
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
     const { result, search, loading } = useSearchSuggestions()
+    const modal = nuxt.nuxt2Context.$modal
     const { user, load: loadUser } = useUser()
-    const { purchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const { cart } = useCart()
 
     const searchValue = ref("")
@@ -314,8 +316,7 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal, toggleStoreLocatorModal, isHamburgerOpen, toggleHamburger } =
-      useUiState()
+    const { toggleLoginModal, isHamburgerOpen, toggleHamburger } = useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
 
@@ -360,7 +361,7 @@ export default defineComponent({
         const searchStr = term.value
         isSearchOpen.value = false
         app.router.push({ path: "/search", query: { phrase: searchStr } })
-        await productSearch({ ...getFacetsFromURL(), phrase: searchStr })
+        await productSearch({ ...getFacetsFromURL(false), phrase: searchStr })
       }
     }
 
@@ -385,7 +386,7 @@ export default defineComponent({
     watch(
       () => context.root.$route,
       async () => {
-        const facetsFromUrl = getFacetsFromURL()
+        const facetsFromUrl = getFacetsFromURL(false)
         term.value = facetsFromUrl.phrase
         await productSearch({ ...facetsFromUrl, phrase: term.value })
       }
@@ -406,7 +407,16 @@ export default defineComponent({
     }
 
     const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
+      modal.show({
+        component: StoreLocatorModal,
+        props: {
+          title: context?.root?.$t("Select Store"),
+          handleSetStore: async (selectedStore: string) => {
+            set(selectedStore)
+            await loadPurchaseLocation()
+          },
+        },
+      })
     }
 
     onMounted(() => {

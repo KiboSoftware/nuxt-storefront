@@ -19,7 +19,7 @@ export default defineNuxtConfig({
   },
   // Global CSS: https://go.nuxtjs.dev/config-css
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [`./plugins/gql-fetch.ts`],
+  plugins: [`./plugins/gql-fetch.ts`, "./plugins/modal.ts"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

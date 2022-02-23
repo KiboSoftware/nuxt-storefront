@@ -56,7 +56,8 @@
                   cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
                 "
                 :options="cartItem.product.options"
-                :supported-fulfillment-types="cartItemFulfillmentTypes(cartItem)"
+                :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
+                :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
                 :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
@@ -89,7 +90,8 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
-import { usePurchaseLocation, useCart, useUiState, useUiHelpers } from "@/composables"
+import { usePurchaseLocation, useCart, useUiHelpers, useStoreLocations } from "@/composables"
+
 import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
 
 export default defineComponent({
@@ -103,10 +105,10 @@ export default defineComponent({
   },
   setup() {
     const { getProductLink } = useUiHelpers()
-    const { toggleStoreLocatorModal } = useUiState()
     const { purchaseLocation } = usePurchaseLocation()
     const { cart, load: loadCart } = useCart()
     const router = useRouter()
+    const { locations, search: searchStoreLocations } = useStoreLocations("selected-stores")
 
     const breadcrumbs = [
       {
@@ -121,11 +123,14 @@ export default defineComponent({
 
     useAsync(async () => {
       await loadCart()
+      const filterOperator = `code eq`
+      const locationCodes = cart.value?.items
+        .filter((item) => {
+          return item.fulfillmentMethod === "Pickup"
+        })
+        .map((item) => `${filterOperator} ${item.fulfillmentLocationCode}`.join(" or "))
+      await searchStoreLocations({ locationCodes })
     }, null)
-
-    const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
-    }
 
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
@@ -136,24 +141,31 @@ export default defineComponent({
     const cartItems = computed(() => cartGetters.getItems(cart.value))
     const cartOrder = computed(() => cartGetters.getTotals(cart.value))
 
-    const cartItemFulfillmentTypes = (cartItem) => {
-      return cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
+    const cartItemFulfillmentLocation = (cartItem) => {
+      return cartGetters.getFulfillmentLocation(cartItem, locations.value)
     }
 
     const checkout = () => {
       router.push({ path: "/checkout" })
     }
 
+    const cartItemFulfillmentOptions = (cartItem) => {
+      return cartGetters.getCartFulfillmentOptions(cartItem, cartItemFulfillmentLocation(cartItem))
+    }
+
+    const getCartItemSelectedFulfillmentOption = (cartItem) =>
+      cartGetters.getSelectedFullfillmentOption(cartItem)
+
     return {
       breadcrumbs,
       selectedLocation,
       cartItems,
       cartOrder,
-      handleStoreLocatorClick,
-      cartItemFulfillmentTypes,
+      cartItemFulfillmentOptions,
       getProductLink,
       productGetters,
       checkout,
+      getCartItemSelectedFulfillmentOption,
     }
   },
 })
