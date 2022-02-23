@@ -75,7 +75,7 @@ jest.mock("#app", () => ({
   }),
 }))
 
-xdescribe("[composable] useCart", () => {
+describe("[composable] useCart", () => {
   test("load: should load current cart", async () => {
     const { cart, load, error, loading } = useCart()
     await load()
