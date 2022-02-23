@@ -26,8 +26,8 @@
               type="number"
               name="cardNumber"
               class="custom-form-element__input"
-              :required="false"
-              @blur="validateInput()"
+              :class="{ invalid: error.cardNumber }"
+              @blur="updatePaymentFields('cardNumber')"
             />
             <SfButton class="custom-form-element__button sf-button--pure">
               <span class="custom-form-element__icon">
@@ -38,16 +38,22 @@
             </SfButton>
             <label for="cardNumber" class="sf-input__label">{{ $t("Card number") }}</label>
           </div>
-          <div class="sf-input__error-message"><div class="display-none"></div></div>
+          <div class="sf-input__error-message">{{ error.cardNumber }}</div>
         </div>
-        <SfInput
-          v-model="creditCardFormData.card.expiryDate"
-          :label="$t('Exp. Date MM/YY')"
-          name="expiryDate"
-          class="credit-card-form__element"
-          :required="true"
-          @blur="validateInput()"
-        />
+        <div class="credit-card-form__element custom-form-element sf-input">
+          <div class="sf-input__wrapper">
+            <input
+              v-model="creditCardFormData.card.expiryDate"
+              type="text"
+              name="expiryDate"
+              :class="{ invalid: error.expiryDate }"
+              class="custom-form-element__input"
+              @blur="updatePaymentFields('expiryDate')"
+            />
+            <label for="expiryDate" class="sf-input__label">{{ $t("Exp. Date MM/YYYY") }}</label>
+          </div>
+          <div class="sf-input__error-message">{{ error.expiryDate }}</div>
+        </div>
         <div class="credit-card-form__element custom-form-element sf-input">
           <div class="sf-input__wrapper">
             <input
@@ -55,8 +61,8 @@
               type="password"
               name="cvv"
               class="custom-form-element__input"
-              :required="true"
-              @blur="validateInput()"
+              :class="{ invalid: error.cvv }"
+              @blur="updatePaymentFields('cvv')"
             />
             <SfButton class="custom-form-element__button sf-button--pure">
               <span class="custom-form-element__icon">
@@ -67,14 +73,13 @@
             </SfButton>
             <label for="cvv" class="sf-input__label">{{ $t("Security Code") }}</label>
           </div>
-          <div class="sf-input__error-message"><div class="display-none"></div></div>
+          <div class="sf-input__error-message">{{ error.cvv }}</div>
         </div>
         <SfCheckbox
           v-model="creditCardFormData.card.isCardInfoSaved"
-          name="keepcard"
+          name="isCardInfoSaved"
           :label="$t('Save payment method')"
           class="credit-card-form__checkbox"
-          @change="validateInput()"
         />
       </div>
     </div>
@@ -85,7 +90,7 @@ import { defineComponent } from "@vue/composition-api"
 import { SfRadio, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
-import { usePaymentTypes } from "@/composables"
+import { usePaymentTypes, useUiValidation } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
 import { defaultPaymentDetails } from "@/composables/helpers"
 
@@ -93,12 +98,11 @@ export default defineComponent({
   name: "KiboPayment",
   components: {
     SfRadio,
-    SfInput,
     SfCheckbox,
     SfIcon,
     SfButton,
   },
-  setup(_, _context) {
+  setup(_, context) {
     const { loadPaymentTypes } = usePaymentTypes()
     const paymentMethods = loadPaymentTypes()
     const isCreditCardSelected = ref(false)

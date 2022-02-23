@@ -1,6 +1,6 @@
 import { computed } from "@vue/composition-api"
 import { useNuxtApp, useState } from "#app"
-import { PaymentActionInput } from "@/server/types/GraphQL"
+import { Maybe, Order, PaymentActionInput } from "@/server/types/GraphQL"
 import { addPaymentMethod } from "@/lib/gql/mutations"
 import { tokenizeCreditCardPayment } from "@/lib/utils"
 
@@ -9,6 +9,7 @@ export const usePaymentMethods = () => {
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const pciHost = nuxt.nuxt2Context.$config.pciHost
   const apiHost = nuxt.nuxt2Context.$config.apiHost
+  const checkoutOrder = useState<Maybe<Order>>(`use-order-result`, () => null)
   const loading = useState<Boolean>(`use-payment-methods-loading`, () => false)
   const error = useState(`use-payment-methods-error`, () => null)
 
@@ -44,6 +45,7 @@ export const usePaymentMethods = () => {
   }
 
   return {
+    checkoutOrder,
     tokenizeCard,
     addPaymentMethodByTokenizeCard,
     error: computed(() => error.value),

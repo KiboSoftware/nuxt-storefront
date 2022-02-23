@@ -170,6 +170,11 @@ export default {
       Steps.CONFIRM_AND_PAY,
     ]
 
+    enum CardTypesSupported {
+      creditcard = "creditcard",
+      checkbymail = "checkbymail",
+    }
+
     const payment = {
       sameAsShipping: false,
       firstName: "",
@@ -357,7 +362,7 @@ export default {
 
     const addPaymentMethod = async () => {
       let paymentAction
-      if (paymentDetails.value.paymentType.toLowerCase() === "creditcard") {
+      if (paymentDetails.value.paymentType.toLowerCase() === CardTypesSupported.creditcard) {
         const tokenizedData = await tokenizeCard(paymentDetails.value.card)
         if (tokenizedData) {
           paymentAction = buildPaymentMethodInput(
@@ -369,13 +374,15 @@ export default {
             isBillingAddressAsShipping.value
           )
         }
-      } else if (paymentDetails.value.paymentType.toLowerCase() === "checkbymail") {
+      } else if (
+        paymentDetails.value.paymentType.toLowerCase() === CardTypesSupported.checkbymail
+      ) {
         paymentAction = {
           paymentType: paymentDetails.value.paymentType,
           check: { checkNumber: "VSF123123" },
         }
       }
-      if (checkout?.value?.id && paymentAction)
+      if (checkout?.value?.id && paymentAction) {
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
         await loadCheckout(checkout?.value?.id)
         if (checkout.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done

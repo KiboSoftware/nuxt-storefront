@@ -52,6 +52,7 @@ export const defaultPaymentDetails = () => {
       expireYear: 0,
       isCardInfoSaved: false,
       paymentWorkflow: "Mozu",
+      isCardDetailsFilled: false,
     },
   }
 }
