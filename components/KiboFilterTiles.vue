@@ -13,7 +13,6 @@
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
 import { SfIcon } from "@storefront-ui/vue"
-
 export default defineComponent({
   name: "KiboFilterTiles",
   components: {

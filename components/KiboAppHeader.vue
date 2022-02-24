@@ -2,9 +2,8 @@
   <div>
     <KiboHamburgerMenu
       class="sf-sidebar--left smartphone-only"
-      :heading-level="3"
-      button
       overlay
+      :visible="isHamburgerOpen"
       @closeHamburgerMenu="toggleHamburger"
     >
       <template #content-top>
@@ -53,7 +52,7 @@
           <div class="kibo-top-bar__logo">
             <div class="kibo-top-bar__kibo-img">
               <SfLink link="/">
-                <SfImage v-if="logo" :src="logo" :alt="title" width="78px" height="78px" />
+                <SfImage v-if="logo" :src="logo" :alt="title" width="78" height="78" />
                 <h1 v-else class="sf-header__title">{{ title }}</h1>
               </SfLink>
             </div>
@@ -199,13 +198,7 @@
           </div>
           <div class="kibo-mobile__header-column">
             <SfLink link="/">
-              <SfImage
-                :src="logo"
-                :alt="title"
-                width="2.063rem"
-                height="2.063rem"
-                class="kibo-mobile__logo"
-              />
+              <SfImage :src="logo" :alt="title" width="33" height="33" class="kibo-mobile__logo" />
             </SfLink>
           </div>
           <div class="kibo-mobile__header-column">
@@ -259,6 +252,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import debounce from "lodash.debounce"
+import { useNuxtApp } from "#app"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import {
   usePurchaseLocation,
@@ -397,6 +391,7 @@ export default defineComponent({
     }
 
     const handleAccountClick = () => {
+      if (isMobile.value) toggleHamburger()
       if (isAuthenticated.value) {
         return app.router.push("/my-account")
       }
@@ -700,6 +695,10 @@ export default defineComponent({
   &__icon {
     height: 1 rem;
     padding-left: 0.625rem;
+  }
+
+  &__button {
+    width: 6%;
   }
 }
 

@@ -40,6 +40,8 @@ export default defineNuxtConfig({
         "faSearchPlus",
         "faCreditCard",
         "faQuestionCircle",
+        "faPlusCircle",
+        "faTrash",
       ],
       regular: ["faUserCircle"],
     },
