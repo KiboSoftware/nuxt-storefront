@@ -23,7 +23,7 @@
         <SfInput
           v-model="promoCode"
           name="promoCode"
-          placeholder="Enter Promo Code"
+          :placeholder="$t('Enter Promo Code')"
           class="sf-input--filled promo-code-input"
           type="text"
         />
@@ -83,7 +83,7 @@ export default {
     const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(order) || 0)
 
     const propertiesNames = [
-      context?.root?.$t("Cart Subtotal", { numberOfItems: 4 }),
+      context?.root?.$t("Cart Subtotal", { numberOfItems: numberOfItems.value }),
       context?.root?.$t("Standard Shipping"),
       context?.root?.$t("Estimated Tax"),
       context?.root?.$t("Estimated Order Total"),
