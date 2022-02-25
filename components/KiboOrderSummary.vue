@@ -1,106 +1,68 @@
 <template>
   <div class="sf-order-summary">
-    <slot name="heading" v-bind="{ orderTitle, orderTitleLevel }">
-      <SfHeading
-        :title="orderTitle"
-        :level="orderTitleLevel"
-        class="sf-heading--left sf-heading--no-underline sf-order-summary__heading"
-      />
-    </slot>
-    <div class="highlighted highlighted--total">
-      <slot
-        name="summary"
-        v-bind="{
-          totalItems,
-          subtotal,
-          total,
-          shippingMethod,
-          propertiesNames,
-        }"
-      >
+    <div class="sf-order-summary__heading">{{ orderTitle }}</div>
+    <div class="sf-order-summary__content">
+      <div class="props">
         <SfProperty
           :name="propertiesNames[0]"
-          :value="totalItems"
+          :value="$n(cartSubTotal, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
         <SfProperty
           :name="propertiesNames[1]"
-          :value="$n(subtotal, 'currency')"
+          :value="$n(standardShipping, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
         <SfProperty
           :name="propertiesNames[2]"
-          :value="shippingMethod"
+          :value="$n(estimatedTax, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
-        <SfDivider class="sf-order-summary__divider" />
-        <SfProperty
-          :name="propertiesNames[3]"
-          :value="$n(total, 'currency')"
-          class="sf-property--full-width sf-property--large sf-order-summary__property"
-        />
-      </slot>
-    </div>
-    <div class="highlighted sf-order-summary__promo-code">
-      <slot name="promo" v-bind="{ promoCode }">
+      </div>
+      <div class="promo-code">
         <SfInput
           v-model="promoCode"
           name="promoCode"
-          label="Enter promo code"
-          class="sf-input--filled sf-order-summary__promo-code-input"
+          placeholder="Enter Promo Code"
+          class="sf-input--filled promo-code-input"
+          type="text"
         />
+
         <SfButton
-          class="sf-order-summary__promo-code-button"
+          class="promo-code-button"
           data-testid="apply-button"
           @click="$emit('click:apply-code')"
         >
           Apply
         </SfButton>
-      </slot>
-    </div>
-    <div class="sf-order-summary__characteristics">
-      <slot name="characteristics" v-bind="{ characteristics }">
-        <SfCharacteristic
-          v-for="characteristic in characteristics"
-          :key="characteristic.title"
-          :title="characteristic.title"
-          :description="characteristic.description"
-          :icon="characteristic.icon"
-          size-icon="32px"
-          color-icon="green-primary"
-          class="sf-order-summary__characteristics-item"
-        >
-        </SfCharacteristic>
-      </slot>
+      </div>
+      <div class="estimated-order-total">
+        <SfProperty
+          :name="propertiesNames[3]"
+          :value="$n(estimatedOrderTotal, 'currency')"
+          class="sf-property--full-width sf-property--large sf-order-summary__property"
+        />
+      </div>
+      <div class="action-details"><slot name="actions"> </slot></div>
     </div>
   </div>
 </template>
 
-<script>
-import {
-  SfHeading,
-  SfButton,
-  SfDivider,
-  SfProperty,
-  SfCharacteristic,
-  SfInput,
-} from "@storefront-ui/vue"
+<script lang="ts">
+import { SfButton, SfProperty, SfInput } from "@storefront-ui/vue"
 import { checkoutGetters } from "@/lib/getters"
 
 export default {
   name: "SfOrderSummary",
   components: {
-    SfHeading,
     SfButton,
-    SfDivider,
     SfProperty,
-    SfCharacteristic,
     SfInput,
   },
   props: {
     orderTitle: {
       type: String,
-      default: "Order review",
+      default: "Order Summary",
     },
     orderTitleLevel: {
       type: Number,
@@ -110,29 +72,31 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    propertiesNames: {
-      type: Array,
-      default: () => ["Products", "Subtotal", "Shipping", "Total price"],
-    },
-    characteristics: {
-      type: Array,
-      default: () => [],
-    },
   },
-  setup(props) {
+  setup(props, context) {
     const { order } = props
 
-    const totalItems = computed(() => checkoutGetters.getLineItemTotal(order))
-    const shippingMethod = computed(() => checkoutGetters.getShippingMethod(order))
-    const subtotal = computed(() => checkoutGetters.getSubtotal(order))
-    const total = computed(() => checkoutGetters.getTotal(order))
+    const numberOfItems = computed(() => checkoutGetters.getLineItemTotal(order) || 0)
+    const cartSubTotal = computed(() => checkoutGetters.getSubtotal(order) || 0)
+    const standardShipping = computed(() => checkoutGetters.getShippingTotal(order) || 0)
+    const estimatedTax = computed(() => checkoutGetters.getTaxTotal(order) || 0)
+    const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(order) || 0)
+
+    const propertiesNames = [
+      context?.root?.$t("Cart Subtotal", { numberOfItems: 4 }),
+      context?.root?.$t("Standard Shipping"),
+      context?.root?.$t("Estimated Tax"),
+      context?.root?.$t("Estimated Order Total"),
+    ]
 
     return {
       promoCode: "",
-      totalItems,
-      shippingMethod,
-      subtotal,
-      total,
+      numberOfItems,
+      cartSubTotal,
+      standardShipping,
+      estimatedTax,
+      estimatedOrderTotal,
+      propertiesNames,
     }
   },
 }
@@ -140,68 +104,80 @@ export default {
 
 <style lang="scss" scoped>
 .sf-order-summary {
+  background-color: var(--_c-white-primary);
+  width: 100%;
+
   @include for-desktop {
-    border: 1px solid #eaeaea;
-    margin-top: calc(var(--spacer-base) * 1.25);
+    border: 1px solid var(--_c-white-secondary);
+    margin-top: calc(var(--spacer-base) * 1.5);
+    width: calc(var(--spacer-base) * 17.83);
   }
 
   &__heading {
-    --heading-title-font-weight: var(--font-weight--bold);
-    --heading-padding: 0;
-    --heading-title-margin: 0 0 var(--spacer-xl) 0;
-    --heading-title-font-size: var(--font-size--4xl);
+    height: calc(var(--spacer-base) * 2.41);
+    padding-left: var(--spacer-base);
+    font-size: calc(var(--spacer-base) * 0.83);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--_c-gray-middle);
 
     @include for-desktop {
-      --heading-title-font-weight: var(--font-weight--semibold);
+      font-size: var(--font-size--3xl);
     }
   }
 
-  &__property {
-    margin: var(--spacer-base) 0;
+  &__content {
+    margin: calc(var(--spacer-base) * 0.33) var(--spacer-base);
 
-    --property-name-font-weight: var(--font-weight--medium);
-    --property-value-font-weight: var(--font-weight--bold);
-
-    &:last-of-type {
-      margin: var(--spacer-base) 0 var(--spacer-xl);
-
-      --property-name-color: var(--c-text);
-    }
-  }
-
-  &__divider {
-    --divider-border-color: var(--c-white);
-    --divider-margin: var(--spacer-xl) 0 0 0;
-  }
-
-  &__promo-code {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-
-    &-input {
-      --input-background: var(--c-white);
-      --input-label-font-size: var(--font-size--base);
-
-      flex: 1;
+    .sf-property__name,
+    .sf-property__value {
+      font-size: var(--h5-font-size);
+      padding: 5px 0;
     }
 
-    .promoCode {
-      border: 1px solid #cdcdcd;
+    .props {
+      padding-top: calc(var(--spacer-base) * 0.41);
+      height: calc(var(--spacer-base) * 4.79);
+      border-bottom: 1px solid var(--_c-gray-middle);
     }
 
-    &-button {
-      --button-height: 1.875rem;
-    }
-  }
+    .promo-code {
+      display: flex;
+      height: calc(var(--spacer-base) * 3.75);
+      align-items: center;
+      justify-content: space-between;
 
-  &__characteristics {
-    &-item {
-      margin: var(--spacer-base) 0;
-
-      &:last-of-type {
-        margin: 0;
+      .promo-code-input {
+        padding-top: calc(var(--spacer-base) * 0.83);
       }
+
+      ::v-deep .sf-input input {
+        background-color: var(--c-white);
+        width: calc(var(--spacer-base) * 10.83);
+        border: 1px solid var(--_c-gray-middle);
+      }
+
+      .promo-code-button {
+        width: calc(var(--spacer-base) * 4);
+        height: calc(var(--spacer-base) * 1.41);
+      }
+    }
+
+    .estimated-order-total {
+      .sf-property__name,
+      .sf-property__value {
+        font-size: var(--h5-font-size);
+        font-weight: bold;
+        padding: 5px 0;
+      }
+    }
+
+    .action-details {
+      padding: var(--spacer-sm) 0;
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--spacer-base) * 0.66);
     }
   }
 }

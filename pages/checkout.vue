@@ -13,7 +13,8 @@
           </SfStep>
           <SfStep name="Shipping">
             <KiboShipping
-              :value="shippingDetails"
+              :shipping-address="shippingDetails"
+              :user-shipping-addresses="userShippingAddresses"
               :countries="countries"
               @saveShippingAddress="saveShippingDetails"
             >
@@ -63,14 +64,30 @@
         <transition name="sf-fade">
           <KiboOrderSummary
             v-if="currentStep <= 2"
-            key="order-summary"
-            class="checkout__aside-order"
+            :key="keyRefKiboOrderSummery"
             :order="getOrder"
-            order-title="Order review"
+            :order-title="$t('Order Summary')"
             :order-title-level="3"
-            :properties-names="['Products', 'Subtotal', 'Shipping', 'Total price']"
-            :characteristics="characteristics"
-          />
+          >
+            <template #actions>
+              <SfButton
+                class="sf-button--full-width actions__button"
+                data-testid="apply-button"
+                @click="updateStep"
+              >
+                {{ steps[currentStep] }}
+              </SfButton>
+              <SfButton
+                v-if="currentStep !== 0"
+                class="sf-button--full-width actions__button color-light"
+                data-testid="apply-button"
+                @click="currentStep--"
+              >
+                {{ $t("Go Back") }}
+              </SfButton>
+            </template>
+          </KiboOrderSummary>
+
           <SfOrderReview
             v-else
             key="order-review"
@@ -84,20 +101,6 @@
           />
         </transition>
       </div>
-    </div>
-    <div class="actions">
-      <SfButton
-        class="sf-button--full-width actions__button"
-        data-testid="next-button"
-        @click="updateStep"
-        >{{ steps[currentStep] }}</SfButton
-      >
-      <!-- :disabled="!enableCurrentStep" // ToDo: Add disabled once all form validations are done in checkout tabs -->
-      <SfButton
-        class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
-        @click="currentStep--"
-        >Go back</SfButton
-      >
     </div>
   </div>
 </template>
@@ -134,17 +137,16 @@ export default {
     const { locale } = context.root.$i18n
     const currencyCode = context.root.$i18n.getNumberFormat(locale)?.currency?.currency
 
+    const keyRefKiboOrderSummery = ref("initialKey")
     const currentStep = ref(0)
     const { cart } = useCart()
+    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo } =
+      useCheckout()
     const {
-      checkout,
-      loadFromCart,
-      load: loadCheckout,
-      setPersonalInfo,
-      setShippingInfo,
-      setBillingInfo,
-    } = useCheckout()
-    const { load: loadUserAddresses, addresses } = useUserAddresses()
+      load: loadUserAddresses,
+      userShippingAddresses,
+      userBillingAddresses,
+    } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
     const { toggleStoreLocatorModal, toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
@@ -158,10 +160,10 @@ export default {
     const enableNextStep = ref(false)
 
     enum Steps {
-      GO_TO_SHIPPING = "Go to Shipping",
-      GO_TO_PAYMENT = "Go to Payment",
-      PAY_FOR_ORDER = "Pay for Order",
-      CONFIRM_AND_PAY = "Confirm and pay",
+      GO_TO_SHIPPING = context?.root?.$t("Go to Shipping"),
+      GO_TO_PAYMENT = context?.root?.$t("Go to Payment"),
+      PAY_FOR_ORDER = context?.root?.$t("Pay for Order"),
+      CONFIRM_AND_PAY = context?.root?.$t("Confirm and pay"),
     }
     const steps = [
       Steps.GO_TO_SHIPPING,
@@ -408,6 +410,7 @@ export default {
     // useAsync
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
+      keyRefKiboOrderSummery.value = "newKey"
       populatePersonalDetails()
 
       if (user.value?.id) {
@@ -485,6 +488,7 @@ export default {
       updateStep,
       logIn,
       getOrder,
+      keyRefKiboOrderSummery,
 
       personalDetails,
       updatePersonalDetails,
@@ -493,7 +497,8 @@ export default {
       saveShippingDetails,
       updatedShippingAddress,
       updateShippingDetails,
-      addresses,
+      userShippingAddresses,
+      userBillingAddresses,
 
       items,
       shippingRates,

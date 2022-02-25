@@ -3,8 +3,8 @@
     <div v-if="!addresses.length" class="no-shipping-address">
       {{ $t("No saved addresses yet!") }}
     </div>
-    <transition-group tag="div" name="fade" class="shipping-list">
-      <div v-for="address in addresses" :key="address.id" class="shipping">
+    <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
+      <div v-for="address in userAddressesSorted" :key="address.id" class="shipping">
         <div class="shipping__content">
           <div class="shipping__address">
             <UserSavedAddress
@@ -12,7 +12,7 @@
               :is-readonly="isReadonly"
               @click:remove-address="removeAddressDialog(address)"
               @click:edit-address="updateAddress(address)"
-              @onSelect="onSelectedAdress(address)"
+              @onSelect="selectAddress"
             />
           </div>
         </div>
@@ -69,6 +69,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    defaultAddress: {
+      type: Object,
+      default: () => {},
+    },
     addresses: {
       type: Array,
       default: () => [],
@@ -78,17 +82,24 @@ export default defineComponent({
       default: () => [],
     },
   },
-  setup(_, context) {
+  setup(props, context) {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
 
-    const activeAddress = ref(undefined)
+    const activeAddress = ref(props.defaultAddress)
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
 
+    // Sort addresses to display Primary addresses first
+    const userAddresses = [...props.addresses]
+    const userAddressesSorted = computed(() =>
+      userAddresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary)
+    )
+
     const addNewAddress = () => {
       isNewAddress.value = true
-      showAddressForm.value = false
-      activeAddress.value = {}
+
+      if (!activeAddress.value) activeAddress.value = {}
+
       showAddressForm.value = true
     }
 
@@ -107,13 +118,11 @@ export default defineComponent({
       showAddressForm.value = true
     }
 
-    const onSelectedAdress = (address) => {
+    const selectAddress = (address) => {
       activeAddress.value = address
-      context.emit("onSelect", activeAddress)
     }
     const closeAddressForm = () => {
       showAddressForm.value = false
-      activeAddress.value = {}
     }
 
     const setInputAddressData = (address) => {
@@ -121,15 +130,16 @@ export default defineComponent({
     }
 
     const saveAddress = async () => {
-      await context.emit("onSave", activeAddress)
+      await context.emit("onSave", { ...activeAddress.value })
       closeAddressForm()
     }
 
     return {
+      userAddressesSorted,
       addNewAddress,
       updateAddress,
       removeAddress,
-      onSelectedAdress,
+      selectAddress,
       activeAddress,
       removeAddressDialog,
       isConfirmModalOpen,
@@ -156,8 +166,11 @@ div {
   height: calc(var(--spacer-2xs) * 10.5);
   background: var(--c-black);
   width: 100%;
+  max-width: calc(var(--spacer-base) * 15.66);
+
   @include for-desktop {
     width: 70%;
+    max-width: calc(var(--spacer-base) * 17.54);
   }
 }
 
