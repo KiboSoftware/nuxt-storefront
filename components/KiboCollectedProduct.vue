@@ -20,10 +20,6 @@
           :small="true"
           :coupons="couponsApplied"
         />
-        <ins v-if="specialPrice" class="kibo-promo-success">
-          {{ `${couponsApplied ? "'" + couponsApplied.join(" , ") + "'" : ""}` }}
-          {{ $t("promo code applied") }}
-        </ins>
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
         <p>{{ $t("Qty") }}</p>
@@ -164,6 +160,7 @@ export default defineComponent({
     selectedOption: {
       type: String,
       default: "",
+    },
     couponsApplied: {
       type: Array,
       default: null,
@@ -262,7 +259,7 @@ export default defineComponent({
       quantity,
       fulfillmentOptions,
     }
-  }
+  },
 })
 </script>
 <style lang="scss">
@@ -273,13 +270,5 @@ export default defineComponent({
     object-fit: contain;
     background: var(--c-white);
   }
-}
-
-.kibo-promo-success {
-  font-size: var(--font-size--xs);
-  text-decoration: none;
-  color: var(--c-danger);
-  font-style: italic;
-  text-align: right;
 }
 </style>

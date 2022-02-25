@@ -75,6 +75,7 @@ jest.mock("#app", () => ({
               id: "mock-cart-item-input-id",
             },
           })
+        }
         if (query === mockedApplyCouponMutation) {
           expect(variables).toStrictEqual({
             cartId: "mocked-current-cart-id",
@@ -140,7 +141,9 @@ describe("[composable] useCart", () => {
     const cartItemId = "mocked-cart-item-id"
     const quantity = 1
     await updateCartItemQuantity(cartItemId, quantity)
-    expect(cart.value).toBe("mocked-current-cart")
+    expect(cart.value).toStrictEqual({
+      id: "mocked-current-cart-id",
+    })
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })
@@ -149,7 +152,9 @@ describe("[composable] useCart", () => {
     const { cart, removeCartItem, loading, error } = useCart()
     const cartItemId = "mocked-cart-item-id"
     await removeCartItem(cartItemId)
-    expect(cart.value).toBe("mocked-current-cart")
+    expect(cart.value).toStrictEqual({
+      id: "mocked-current-cart-id",
+    })
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })
@@ -161,7 +166,9 @@ describe("[composable] useCart", () => {
       id: "mock-cart-item-input-id",
     } as CartItemInput
     await updateCartItem(cartItemId, cartItemInput)
-    expect(cart.value).toBe("mocked-current-cart")
+    expect(cart.value).toStrictEqual({
+      id: "mocked-current-cart-id",
+    })
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeNull()
   })

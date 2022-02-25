@@ -427,7 +427,7 @@ export default defineComponent({
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
-        : "Select My Store"
+        : context.root.$t("Select My Store")
     })
 
     const totalItemsInCart = computed(() => {

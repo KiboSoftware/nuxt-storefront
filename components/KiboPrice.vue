@@ -1,58 +1,43 @@
-<template functional>
+<template>
   <div>
-    <div
-      :class="[data.class, data.staticClass, 'kibo-price']"
-      :style="[data.style, data.staticStyle]"
-      v-bind="data.attrs"
-      v-on="listeners"
-    >
+    <div class="kibo-price">
       <!--@slot Custom regular price -->
-      <slot name="regular" v-bind="{ props }">
+      <slot name="regular">
         <span
           :class="
-            !props.regular || props.special
+            !regular || special
               ? 'display-none'
-              : props.small
+              : small
               ? `kibo-price__regular--small`
               : `kibo-price__regular`
           "
         >
-          {{ props.regular }}
+          {{ regular }}
         </span>
       </slot>
       <!--@slot Custom old price (value from regular)-->
-      <slot name="old" v-bind="{ props }">
+      <slot name="old">
         <del
-          :class="
-            !props.special
-              ? 'display-none'
-              : props.small
-              ? `kibo-price__old--small`
-              : `kibo-price__old`
-          "
+          :class="!special ? 'display-none' : small ? `kibo-price__old--small` : `kibo-price__old`"
         >
-          {{ props.regular }}
+          {{ regular }}
         </del>
       </slot>
       <!--@slot Custom special price -->
-      <slot name="special" v-bind="{ props }">
+      <slot name="special">
         <ins
           :class="
-            !props.special
-              ? 'display-none'
-              : props.small
-              ? `kibo-price__special--small`
-              : `kibo-price__special`
+            !special ? 'display-none' : small ? `kibo-price__special--small` : `kibo-price__special`
           "
         >
-          {{ props.special }}
+          {{ special }}
         </ins>
       </slot>
     </div>
   </div>
 </template>
 <script lang="ts">
-export default defineComponent({
+export default {
   name: "KiboPrice",
   props: {
     regular: {
@@ -72,5 +57,9 @@ export default defineComponent({
       default: null,
     },
   },
-})
+}
 </script>
+
+<style lang="scss">
+@import "@/assets/styles/components/custom/KiboPrice.scss";
+</style>

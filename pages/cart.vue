@@ -2,18 +2,18 @@
   <div id="detailed-cart">
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart__title-wrapper">
-      <h3 class="sf-heading__title h2">
+      <h1 class="sf-heading__title h2">
         {{ $t("Shopping Cart") }} ({{ cartItems.length }}
         {{ `${cartItems.length === 1 ? $t("Item") : $t("Items")}` }})
-      </h3>
+      </h1>
     </div>
     <div class="detailed-cart">
       <div v-if="cartItems.length" class="detailed-cart__aside">
         <div class="sf-property--full-width sf-property">
           <span class="sf-property__name-noBold">{{ $t("Order Subtotal") }}</span>
           <KiboPrice
-            v-if="$n(cartOrder.subtotal, 'currency')"
-            :regular="$n(cartOrder.subtotal, 'currency')"
+            v-if="$n(cartOrderSummary.subtotal, 'currency')"
+            :regular="$n(cartOrderSummary.subtotal, 'currency')"
             class="kibo-collectedProduct__price sf-property__price"
           />
         </div>
@@ -28,9 +28,9 @@
         <div class="sf-property--full-width sf-property price-container">
           <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
           <KiboPrice
-            v-if="cartOrder.total"
-            :regular="$n(cartOrder.total, 'currency')"
-            :special="cartOrder.special && $n(cartOrder.special, 'currency')"
+            v-if="cartOrderSummary.total"
+            :regular="$n(cartOrderSummary.total, 'currency')"
+            :special="cartOrderSummary.special && $n(cartOrderSummary.special, 'currency')"
             class="kibo-collectedProduct__price sf-property__price"
           />
         </div>
@@ -140,11 +140,12 @@ export default defineComponent({
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
-        : "Select My Store"
+        : context.root.$t("Select My Store")
     })
 
     const cartItems = computed(() => cartGetters.getItems(cart.value))
-    const cartOrder = computed(() => {
+
+    const cartOrderSummary = computed(() => {
       const { total, subtotal, discountedSubtotal, discountedTotal } = cartGetters.getTotals(
         cart.value
       )
@@ -192,14 +193,12 @@ export default defineComponent({
       breadcrumbs,
       selectedLocation,
       cartItems,
-      cartOrder,
+      cartOrderSummary,
       cartItemFulfillmentOptions,
-      couponApplied,
       isValidCoupon,
       invalidCouponErrorText,
       appliedCoupons,
       areCouponsApplied,
-      handleStoreLocatorClick,
       cartItemFulfillmentTypes,
       getProductLink,
       productGetters,
