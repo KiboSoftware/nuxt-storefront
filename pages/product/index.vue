@@ -650,7 +650,7 @@ export default defineComponent({
 
   button {
     border-bottom: 1px solid #cdcdcd;
-    padding: 0 calc(var(--spacer-sm) * 1.31);
+    padding: var(--spacer-xs) calc(var(--spacer-sm) * 1.31);
     font-weight: bold;
     justify-content: space-between;
   }

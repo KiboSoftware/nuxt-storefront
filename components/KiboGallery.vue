@@ -275,6 +275,8 @@ export default {
 }
 </script>
 <style lang="scss">
+@import "~@storefront-ui/shared/styles/components/molecules/SfGallery.scss";
+
 .sf-gallery {
   &__thumbs {
     display: none; // Hide thumbnails for mobile
@@ -308,8 +310,8 @@ export default {
     .icon {
       background-color: #dcdcdc;
       border-radius: 100%;
-      width: 10px;
-      height: 10px;
+      width: var(--spacer-sm);
+      height: var(--spacer-sm);
       cursor: pointer;
 
       &--selected {
@@ -320,19 +322,19 @@ export default {
 
   &__stage {
     width: calc(var(--spacer-base) * 9.625);
-    height: calc(var(--spacer-base) * 4.58);
+    height: calc(var(--spacer-base) * 7.58);
     margin: 0 auto;
     @include for-desktop {
-      max-width: 31.625rem;
-      width: 31.625rem;
-      height: 31.625rem;
+      max-width: 30.625rem;
+      width: 100%;
+      height: fit-content;
       border: 1px solid #979797;
     }
   }
 
   .glide {
     &__slides {
-      height: calc(var(--spacer-base) * 4.58);
+      height: calc(var(--spacer-3xl) * 1.2);
 
       @include for-desktop {
         height: 31.625rem;
@@ -350,13 +352,13 @@ export default {
     object-fit: contain;
     @include for-mobile {
       width: calc(var(--spacer-base) * 9.625);
-      height: calc(var(--spacer-base) * 4.58);
+      height: calc(var(--spacer-base) * 7.58);
     }
   }
 
   .sf-image--placeholder {
-    height: calc(var(--spacer-base) * 4.58);
-    width: calc(var(--spacer-base) * 4.58);
+    height: calc(var(--spacer-base) * 7.58);
+    width: calc(var(--spacer-base) * 9.625);
 
     @include for-desktop {
       height: calc(var(--spacer-base) * 21.08);

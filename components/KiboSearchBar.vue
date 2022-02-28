@@ -68,6 +68,8 @@ export default defineComponent({
   &__input {
     text-indent: 2%;
     outline: none;
+    background: var(--c-white);
+    border-radius: var(--spacer-2xs) / 2;
   }
 }
 </style>

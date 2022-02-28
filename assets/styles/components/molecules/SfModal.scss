@@ -1,20 +1,15 @@
 .sf-modal {
+  --modal-content-padding: 0;
+
+
   &__bar {
     background-color: var(--c-white);
     border-bottom: 1px solid var(--_c-white-secondary);
   }
 
   &__close {
-    .sf-icon svg,
-    .sf-icon img {
-      width: var(--font-size--base);
-      height: var(--font-size--base);
-
-      --icon-color: var(--_c-white-secondary);
-
-      stroke: var(--_c-white-secondary);
-      stroke-width: calc(var(--spacer-2xs) * 0.75);
-    }
+    margin-right: var(--spacer-xs);
+    top: var(--modal-close-top, var(--spacer-2xs));
   }
 
   .sf-bar {
@@ -29,11 +24,11 @@
       font-weight: var(--font-weight--bold);
       font-family: var(--font-family--primary);
     }
-  }
 
-  .sf-icon svg path {
-    stroke: var(--_c-white-secondary);
-
-    --icon-color: var(--_c-gray-middle);
+    &__icon {
+      @include for-desktop {
+        display: none;
+      }
+    }
   }
 }

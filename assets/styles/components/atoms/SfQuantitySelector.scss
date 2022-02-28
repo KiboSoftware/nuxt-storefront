@@ -6,6 +6,7 @@
   &__button {
     --button-height: 1.375rem;
     --button-width: 1.375rem;
+    --button-padding: var(--spacer-2xs) var(--spacer-xs) 0;
     --button-background: var(--c-white);
     --button-color: var(--_c-dark-primary);
 
