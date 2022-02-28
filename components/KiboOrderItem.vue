@@ -5,7 +5,7 @@
         <div class="order-item__left">
           <div class="order-item__info">{{ submittedDate }}</div>
           <div class="order-item__description">{{ productNames }}</div>
-          <div class="order-item__info">{{ orderTotal }}</div>
+          <div class="order-item__info">{{ $n(orderTotal, "currency") }}</div>
           <div class="order-item__status">{{ orderStatus }}</div>
         </div>
         <div class="order-item__right">

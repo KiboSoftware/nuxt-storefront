@@ -75,9 +75,11 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { SfBar, SfButton, SfIcon, SfFilter } from "@storefront-ui/vue"
-import { defineComponent, reactive, ref } from "@vue/composition-api"
+import { defineComponent, ref } from "@vue/composition-api"
+import { useAsync, computed } from "@nuxtjs/composition-api"
+import { useUserOrder } from "@/composables"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -102,8 +104,10 @@ export default defineComponent({
     const isOpenOrderItem = ref(false)
     const selectedOrder = ref({})
     const facetAllOptions = ref([]) // @TODO need to be fetch from API
+    const { result: userOrderResult, search: userOrders } = useUserOrder(`user-order`)
 
-    const orders = reactive([]) // @TODO fetch all orders from API
+    const orders = computed(() => userOrderResult?.value?.items)
+
     const removeFilter = () => {
       appliedFilters.value = []
     }
@@ -139,6 +143,10 @@ export default defineComponent({
         app.router.push({ path: "/" })
       }
     }
+
+    useAsync(async () => {
+      await userOrders({ filters: "" })
+    }, null)
 
     return {
       orders,
