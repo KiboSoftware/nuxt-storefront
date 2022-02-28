@@ -92,6 +92,7 @@
         @click="updateStep"
         >{{ steps[currentStep] }}</SfButton
       >
+      <!-- :disabled="!enableCurrentStep" // ToDo: Add disabled once all form validations are done in checkout tabs -->
       <SfButton
         class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
         @click="currentStep--"
@@ -135,8 +136,14 @@ export default {
 
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo } =
-      useCheckout()
+    const {
+      checkout,
+      loadFromCart,
+      load: loadCheckout,
+      setPersonalInfo,
+      setShippingInfo,
+      setBillingInfo,
+    } = useCheckout()
     const { load: loadUserAddresses, addresses } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
     const { toggleStoreLocatorModal, toggleLoginModal } = useUiState()
@@ -147,6 +154,8 @@ export default {
     const showCreateAccount = ref(false)
     const password = ref(null)
     const transition = "sf-fade"
+    const enableCurrentStep = ref(false)
+    const enableNextStep = ref(false)
 
     enum Steps {
       GO_TO_SHIPPING = "Go to Shipping",
@@ -160,6 +169,11 @@ export default {
       Steps.PAY_FOR_ORDER,
       Steps.CONFIRM_AND_PAY,
     ]
+
+    enum CardTypesSupported {
+      creditcard = "creditcard",
+      checkbymail = "checkbymail",
+    }
 
     const payment = {
       sameAsShipping: false,
@@ -343,11 +357,12 @@ export default {
       paymentDetails = {
         ...updatedPaymentDetails,
       }
+      enableCurrentStep.value = paymentDetails.value.card.isCardDetailsFilled // TODO: Handle next step validation once other checkout validations are done
     }
 
     const addPaymentMethod = async () => {
       let paymentAction
-      if (paymentDetails.value.paymentType.toLowerCase() === "creditcard") {
+      if (paymentDetails.value.paymentType.toLowerCase() === CardTypesSupported.creditcard) {
         const tokenizedData = await tokenizeCard(paymentDetails.value.card)
         if (tokenizedData) {
           paymentAction = buildPaymentMethodInput(
@@ -359,14 +374,19 @@ export default {
             isBillingAddressAsShipping.value
           )
         }
-      } else if (paymentDetails.value.paymentType.toLowerCase() === "checkbymail") {
+      } else if (
+        paymentDetails.value.paymentType.toLowerCase() === CardTypesSupported.checkbymail
+      ) {
         paymentAction = {
           paymentType: paymentDetails.value.paymentType,
           check: { checkNumber: "VSF123123" },
         }
       }
-      if (checkout?.value?.id && paymentAction)
+      if (checkout?.value?.id && paymentAction) {
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
+        await loadCheckout(checkout?.value?.id)
+        if (checkout.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
+      }
     }
     // paymentDetails
     const savePaymentDetails = async () => {
@@ -397,7 +417,7 @@ export default {
 
     // others
     const updateStep = async (selectedStep: number) => {
-      const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1
+      const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1 // // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
 
       switch (steps[currentStep.value]) {
         case Steps.GO_TO_SHIPPING: {
@@ -426,6 +446,7 @@ export default {
 
       // prevent to move nextStep by SfStep header
       if (nextStep < steps.length) {
+        // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
         currentStep.value = nextStep
       }
     }
@@ -488,6 +509,8 @@ export default {
       transition,
       getPaymentMethodData,
       copyShippingAddress,
+      enableCurrentStep,
+      enableNextStep,
     }
   },
   watch: {

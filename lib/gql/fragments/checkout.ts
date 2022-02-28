@@ -40,6 +40,22 @@ export const checkoutLineItemFragment = /* GraphQL */ `
   }
   ${checkoutItemProductFragment}
 `
+
+export const checkoutPaymentFragment = /* GraphQL */ `
+  fragment checkoutPaymentFragment on Payment {
+    id
+    amountCollected
+    amountCredited
+    amountRequested
+    availableActions
+    orderId
+    paymentServiceTransactionId
+    paymentType
+    paymentWorkflow
+    status
+  }
+`
+
 export const baseCheckoutFragment = /* GraphQL */ `
   fragment baseCheckoutFragment on Order {
     id

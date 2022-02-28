@@ -3,6 +3,7 @@ import {
   baseCheckoutFragment,
   checkoutLineItemFragment,
   fullfillmentInfoFragment,
+  checkoutPaymentFragment,
 } from "../../fragments"
 
 const addPaymentMethod = /* GraphQL */ `
@@ -15,12 +16,16 @@ const addPaymentMethod = /* GraphQL */ `
       fulfillmentInfo {
         ...fullfillmentInfoFragment
       }
+      payments {
+        ...checkoutPaymentFragment
+      }
     }
   }
 
   ${baseCheckoutFragment}
   ${checkoutLineItemFragment}
   ${fullfillmentInfoFragment}
+  ${checkoutPaymentFragment}
 `
 
 const updateCustomerAccountCard = /* GraphQL */ `

@@ -11,6 +11,10 @@
     appearance: none;
   }
 
+  input.invalid {
+    --input-border-color: var(--c-danger);
+}
+
   border: none;
 
   &__bar {
@@ -49,6 +53,7 @@
 
   &__error-message {
     min-height: calc(var(--font-size--xs) * 1.7);
+    padding-top: calc(var(--font-size--xxs) / 2);
   }
 
   input[type="date"] ~ *,
