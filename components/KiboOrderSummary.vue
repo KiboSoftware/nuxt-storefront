@@ -76,11 +76,11 @@ export default {
   setup(props, context) {
     const { order } = props
 
-    const numberOfItems = computed(() => checkoutGetters.getLineItemTotal(order) || 0)
-    const cartSubTotal = computed(() => checkoutGetters.getSubtotal(order) || 0)
-    const standardShipping = computed(() => checkoutGetters.getShippingTotal(order) || 0)
-    const estimatedTax = computed(() => checkoutGetters.getTaxTotal(order) || 0)
-    const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(order) || 0)
+    const numberOfItems = computed(() => checkoutGetters.getLineItemTotal(order))
+    const cartSubTotal = computed(() => checkoutGetters.getSubtotal(order))
+    const standardShipping = computed(() => checkoutGetters.getShippingTotal(order))
+    const estimatedTax = computed(() => checkoutGetters.getTaxTotal(order))
+    const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(order))
 
     const propertiesNames = [
       context?.root?.$t("Cart Subtotal", { numberOfItems: numberOfItems.value }),

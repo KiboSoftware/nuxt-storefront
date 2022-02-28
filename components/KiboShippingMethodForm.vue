@@ -55,10 +55,11 @@
       </div>
     </div>
     <div class="changeStore">
-      <span class="changeStore__location">{{ $t("Pickup in Store") }}: </span><br />
-      <p class="changeStore__link" @click="handleStoreLocatorClick">
+      <span class="changeStore__title">{{ $t("Pickup in Store") }}: </span><br />
+      <span clas="changeStore_location"> {{ cartItemPurchaseLocation }} </span>
+      <span class="changeStore__link" @click="handleStoreLocatorClick">
         {{ cartItemPurchaseLocation ? $t("Change Store") : $t("Select Store") }}
-      </p>
+      </span>
     </div>
   </div>
 </template>
@@ -201,14 +202,13 @@ export default {
 
   .changeStore {
     margin-bottom: calc(var(--spacer-sm) * 1.25);
+    font-size: var(--font-size--xs);
 
-    &__location {
+    &__title {
       font-weight: bold;
-      font-size: var(--font-size--xs);
     }
 
     &__link {
-      font-size: var(--font-size--xs);
       text-decoration: underline;
       cursor: pointer;
       margin: 0;

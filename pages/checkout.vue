@@ -120,7 +120,8 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "~~/lib/getters"
+import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
+import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
   name: "Checkout",
@@ -148,11 +149,12 @@ export default {
       userBillingAddresses,
     } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
-    const { toggleStoreLocatorModal, toggleLoginModal } = useUiState()
+    const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
-    const { purchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
 
+    const modal = nuxt.nuxt2Context.$modal
     const showCreateAccount = ref(false)
     const password = ref(null)
     const transition = "sf-fade"
@@ -325,7 +327,16 @@ export default {
     }
 
     const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
+      modal.show({
+        component: StoreLocatorModal,
+        props: {
+          title: context?.root?.$t("Select Store"),
+          handleSetStore: async (selectedStore: string) => {
+            set(selectedStore)
+            await loadPurchaseLocation()
+          },
+        },
+      })
     }
 
     // billing
