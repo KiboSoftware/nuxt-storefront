@@ -36,6 +36,14 @@ const updateCustomerAccountCard = /* GraphQL */ `
   }
   ${paymentCardItems}
 `
+const addCustomerAccountCard = /* GraphQL */ `
+  mutation createCustomerAccountCard($accountId: Int!, $cardInput: CardInput) {
+    createCustomerAccountCard(accountId: $accountId, cardInput: $cardInput) {
+      ...customerAccountCardItems
+    }
+  }
+  ${paymentCardItems}
+`
 
 const deleteCustomerAccountCard = /* GraphQL */ `
   mutation deleteCustomerAccountCard($accountId: Int!, $cardId: String!) {
@@ -43,4 +51,9 @@ const deleteCustomerAccountCard = /* GraphQL */ `
   }
 `
 
-export { addPaymentMethod, updateCustomerAccountCard, deleteCustomerAccountCard }
+export {
+  addPaymentMethod,
+  updateCustomerAccountCard,
+  deleteCustomerAccountCard,
+  addCustomerAccountCard,
+}

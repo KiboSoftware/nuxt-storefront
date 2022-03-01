@@ -1,5 +1,5 @@
 export const paymentCardItems = /* GraphQL */ `
-  fragment customerAccountCardItems on CardItem {
+  fragment customerAccountCardItems on Card {
     id
     nameOnCard
     cardType

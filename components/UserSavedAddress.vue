@@ -3,13 +3,13 @@
     <div v-if="!isReadonly" class="address-container">
       <div class="address-container__left">
         <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-        <p>{{ firstName }} {{ lastNameOrSurname }}</p>
+        <p>{{ firstName }} {{ lastName }}</p>
         <p>{{ address1 }} {{ address2 }}</p>
-        <p>{{ postalOrZipCode }}</p>
+        <p>{{ zipCode }}</p>
         <p>
-          {{ cityOrTown }},
-          {{ stateOrProvince }}
-          <span v-if="phoneNumbers.home">{{ phoneNumbers.home }}</span>
+          {{ city }},
+          {{ state }}
+          <span v-if="phoneNumber">{{ phoneNumber }}</span>
         </p>
       </div>
       <div class="address-container__right">
@@ -46,12 +46,12 @@
           <template #label>
             <div class="radio-button">
               <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-              <p>{{ firstName }} {{ lastNameOrSurname }}</p>
+              <p>{{ firstName }} {{ lastName }}</p>
               <p>{{ address1 }} {{ address2 }}</p>
-              <p>{{ postalOrZipCode }}</p>
+              <p>{{ zipCode }}</p>
               <p>
-                {{ cityOrTown }},
-                {{ stateOrProvince }}
+                {{ city }},
+                {{ state }}
                 <span v-if="phoneNumber">{{ phoneNumber }}</span>
               </p>
             </div>
@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import { SfIcon, SfRadio } from "@storefront-ui/vue"
-import { defineComponent } from "@vue/composition-api"
+import { defineComponent, computed } from "@vue/composition-api"
 import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
@@ -79,7 +79,7 @@ export default defineComponent({
   props: {
     address: {
       type: Object,
-      required: true,
+      default: () => {},
     },
     isReadonly: {
       type: Boolean,
@@ -129,9 +129,12 @@ p {
 
 .address-container {
   display: flex;
+  border-bottom: 1px solid var(--_c-white-secondary);
+  padding-bottom: calc(var(--spacer-2xs) * 5);
 
   &__left {
     flex: 90%;
+    line-height: calc(var(--spacer-2xs) * 5.5);
 
     .title {
       margin: 16px 0;

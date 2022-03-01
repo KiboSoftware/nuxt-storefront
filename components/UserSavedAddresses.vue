@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!addresses.length" class="no-shipping-address">
+    <div v-if="!userAddressesSorted" class="no-shipping-address">
       {{ $t("No saved addresses yet!") }}
     </div>
     <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
@@ -8,6 +8,7 @@
         <div class="shipping__content">
           <div class="shipping__address">
             <UserSavedAddress
+              :key="index"
               :address="address"
               :is-readonly="isReadonly"
               @click:remove-address="removeAddressDialog(address)"
@@ -31,7 +32,15 @@
       :countries="countries"
       @addressData="setInputAddressData"
     />
-
+    <div>
+      <SfCheckbox
+        v-if="showDefaultCheckbox && showAddressForm"
+        v-model="isDefaultAddress"
+        name="is-default"
+        label="Save as default"
+        class="form__checkbox"
+      />
+    </div>
     <SfButton v-if="!showAddressForm" class="action-button" @click="addNewAddress">
       <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
         <font-awesome-icon
@@ -53,19 +62,24 @@
   </div>
 </template>
 <script lang="ts">
-import { SfButton, SfIcon } from "@storefront-ui/vue"
-import { defineComponent, ref } from "@vue/composition-api"
+import { SfButton, SfIcon, SfCheckbox } from "@storefront-ui/vue"
+import { defineComponent, ref, computed } from "@vue/composition-api"
 import { useUiState } from "@/composables"
+import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserSavedAddresses",
   components: {
     SfButton,
     SfIcon,
+    SfCheckbox,
   },
-
   props: {
     isReadonly: {
+      type: Boolean,
+      default: false,
+    },
+    showDefaultCheckbox: {
       type: Boolean,
       default: false,
     },
@@ -84,28 +98,23 @@ export default defineComponent({
   },
   setup(props, context) {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
-
-    const activeAddress = ref(props.defaultAddress)
+    const activeAddress = ref({})
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
+    const isDefaultAddress = ref(false)
 
     // Sort addresses to display Primary addresses first
-    const userAddresses = [...props.addresses]
-    const userAddressesSorted = computed(() =>
-      userAddresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary)
-    )
-
+    const userAddressesSorted = computed(() => {
+      return shopperContactGetters.getSortedAddress([...props.addresses])
+    })
     const addNewAddress = () => {
       isNewAddress.value = true
-
       if (!activeAddress.value) activeAddress.value = {}
-
       showAddressForm.value = true
     }
-
     const removeAddress = () => {
       toggleConfirmModal()
-      context.emit("onDelete", activeAddress)
+      context.emit("onDelete", { ...activeAddress.value })
     }
     const removeAddressDialog = (address) => {
       activeAddress.value = address
@@ -116,6 +125,7 @@ export default defineComponent({
       showAddressForm.value = false
       activeAddress.value = address
       showAddressForm.value = true
+      isDefaultAddress.value = address?.types[0]?.isPrimary || false
     }
 
     const selectAddress = (address) => {
@@ -125,16 +135,16 @@ export default defineComponent({
     const closeAddressForm = () => {
       showAddressForm.value = false
     }
-
     const setInputAddressData = (address) => {
       activeAddress.value = { ...address }
     }
-
-    const saveAddress = () => {
-      context.emit("onSave", { ...activeAddress.value })
+    const saveAddress = async () => {
+      await context.emit("onSave", {
+        address: { ...activeAddress.value },
+        setAsDefault: isDefaultAddress.value,
+      })
       closeAddressForm()
     }
-
     return {
       userAddressesSorted,
       addNewAddress,
@@ -150,6 +160,7 @@ export default defineComponent({
       closeAddressForm,
       saveAddress,
       setInputAddressData,
+      isDefaultAddress,
     }
   },
 })
@@ -163,12 +174,11 @@ div {
   border: none;
 }
 
-::v-deep .sf-button {
+.action-button {
   height: calc(var(--spacer-2xs) * 10.5);
   background: var(--c-black);
   width: 100%;
   max-width: calc(var(--spacer-base) * 15.66);
-
   @include for-desktop {
     width: 70%;
     max-width: calc(var(--spacer-base) * 17.54);
@@ -197,6 +207,9 @@ div {
 
 .shipping-list {
   margin-bottom: var(--spacer-base);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacer-2xs) * 5);
 }
 
 .plus-circle-icon {
@@ -220,5 +233,9 @@ div {
     background-color: var(--_c-green-primary);
     color: var(--_c-light-secondary);
   }
+}
+
+.form__checkbox {
+  margin-bottom: calc(var(--spacer-2xs) * 2);
 }
 </style>

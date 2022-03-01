@@ -1,12 +1,29 @@
-import { getUserAddressesQuery } from "@/lib/gql/queries"
-import type { Maybe, CustomerContact } from "@/server/types/GraphQL"
+import { computed } from "@vue/composition-api"
 import { useState, useNuxtApp } from "#app"
+import { getUserAddressesQuery } from "@/lib/gql/queries"
+import {
+  addUserAddressMutation,
+  updateUserAddressMutation,
+  deleteUserAddressMutation,
+} from "@/lib/gql/mutations"
+import type { Maybe, CustomerContactCollection,CustomerContact } from "@/server/types/GraphQL"
+import type {
+  AddUserAddressParams,
+  UpdateUserAddressParams,
+  DeleteUserAddressParams,
+} from "@/server/types/Api"
 
 export const useUserAddresses = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const userShippingAddresses = useState<Maybe<Array<CustomerContact>>>(`use-user-shipping-addresses`, () => null)
-  const userBillingAddresses = useState<Maybe<Array<CustomerContact>>>(`use-user-billing-addresses`, () => null)
+  const userShippingAddresses = useState<Maybe<Array<CustomerContactCollection>>>(
+    `use-user-shipping-addresses`,
+    () => []
+  )
+  const userBillingAddresses = useState<Maybe<Array<CustomerContactCollection>>>(
+    `use-user-billing-addresses`,
+    () => []
+  )
 
   const loading = useState<Boolean>(`use-user-address-loading`, () => false)
   const error = useState(`use-shipping-methods-error`, () => null)
@@ -18,7 +35,6 @@ export const useUserAddresses = () => {
         query: getUserAddressesQuery,
         variables: { accountId },
       })
-
       const items = response?.data?.customerAccountContacts?.items
 
       enum Types {
@@ -39,12 +55,59 @@ export const useUserAddresses = () => {
       loading.value = false
     }
   }
+  const addUserAddress = async (params: AddUserAddressParams) => {
+    loading.value = true
+    try {
+      await fetcher({
+        query: addUserAddressMutation,
+        variables: params,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateUserAddress = async (params: UpdateUserAddressParams) => {
+    loading.value = true
+    try {
+      await fetcher({
+        query: updateUserAddressMutation,
+        variables: params,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteUserAddress = async (params: DeleteUserAddressParams) => {
+    loading.value = true
+    try {
+      await fetcher({
+        query: deleteUserAddressMutation,
+        variables: params,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
 
   return {
     userShippingAddresses,
     userBillingAddresses,
     load,
+    addUserAddress,
+    updateUserAddress,
+    deleteUserAddress,
     error: error.value,
-    loading: loading.value,
+    loading: computed(() => loading.value),
   }
 }

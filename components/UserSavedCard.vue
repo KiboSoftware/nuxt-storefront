@@ -1,25 +1,62 @@
 <template>
   <div>
-    <div v-if="isDefaultCard()" class="is-primary">Primary</div>
-    <div class="card-list">
+    <div v-if="!isReadonly" class="card-list">
       <div class="card-list__left">
+        <div v-if="isDefaultCard()" class="is-primary">Primary</div>
         <div>Icon</div>
       </div>
       <div class="card-list__right">
-        <div>{{ $t("Ending") }} :{{ paymentMethod.endingDigit }}</div>
-        <div>{{ $t("Exp") }} : {{ paymentMethod.expiry }}</div>
+        <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
+        <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
+        <div class="billing">
+          <UserSavedAddress
+            :key="billingAddress.id"
+            :address="billingAddress"
+            :is-readonly="true"
+          />
+        </div>
       </div>
-      <div v-if="showActions" class="card-list__actions">
-        <div class="card-list__edit" @click="$emit('click:edit-card', paymentMethod)">
+      <div class="card-list__actions">
+        <div class="card-list__edit" @click="$emit('click:edit-card', card)">
           {{ $t("Edit") }}
         </div>
+      </div>
+    </div>
+    <div v-else class="card-list">
+      <div class="card-list__left">
+        <SfRadio
+          :key="card.endingDigit"
+          :label="card.endingDigit"
+          name="payment-method"
+          :selected="true"
+          class="form__radio payment-method"
+          @change="$emit('onSelect', card)"
+        >
+          <template #label>
+            <div class="radio-button">
+              <div v-if="isDefaultCard()" class="is-primary">Primary</div>
+              <div>Icon</div>
+              <div class="card-list__right">
+                <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
+                <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
+              </div>
+            </div>
+            <div class="billing">
+              <UserSavedAddress
+                :key="billingAddress.id"
+                :address="billingAddress"
+                :is-readonly="true"
+              />
+            </div>
+          </template>
+        </SfRadio>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "@vue/composition-api"
+import { defineComponent, computed } from "@vue/composition-api"
 export default defineComponent({
   name: "UserSavedCard",
   props: {
@@ -27,18 +64,22 @@ export default defineComponent({
       type: Object,
       default: () => {},
     },
-    showActions: {
+    isReadonly: {
       type: Boolean,
       default: false,
     },
   },
 
-  setup() {
+  setup(props) {
     const isDefaultCard = () => {
-      return false
+      return props.paymentMethod?.card?.isDefaultPaymentMethod || false
     }
+    const card = computed(() => props.paymentMethod.card)
+    const billingAddress = computed(() => props.paymentMethod.billingAddress)
     return {
       isDefaultCard,
+      card,
+      billingAddress,
     }
   },
 })
