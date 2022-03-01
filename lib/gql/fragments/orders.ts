@@ -26,6 +26,35 @@ export const orderItemProductFragment = /* GraphQL */ `
     }
   }
 `
+
+export const contactForOrdersFragment = /* GraphQL */ `
+  fragment contactForOrdersFragment on Contact {
+    id
+    firstName
+    middleNameOrInitial
+    lastNameOrSurname
+    email
+    companyOrOrganization
+    address {
+      address1
+      address2
+      address3
+      address4
+      addressType
+      stateOrProvince
+      postalOrZipCode
+      cityOrTown
+      countryCode
+      isValidated
+    }
+    phoneNumbers {
+      home
+      mobile
+      work
+    }
+  }
+`
+
 export const orderItemFragment = /* GraphQL */ `
   fragment orderItemFragment on CrOrderItem {
     fulfillmentMethod
@@ -63,29 +92,7 @@ export const baseOrderFragment = /* GraphQL */ `
 
     billingInfo {
       billingContact {
-        id
-        email
-        firstName
-        middleNameOrInitial
-        lastNameOrSurname
-        companyOrOrganization
-        phoneNumbers {
-          home
-          mobile
-          work
-        }
-        address {
-          address1
-          address2
-          address3
-          address4
-          cityOrTown
-          stateOrProvince
-          postalOrZipCode
-          countryCode
-          addressType
-          isValidated
-        }
+        ...contactForOrdersFragment
       }
     }
 
@@ -93,80 +100,9 @@ export const baseOrderFragment = /* GraphQL */ `
       shippingMethodCode
       shippingMethodName
       fulfillmentContact {
-        email
-        firstName
-        middleNameOrInitial
-        lastNameOrSurname
-        companyOrOrganization
-        phoneNumbers {
-          home
-          mobile
-          work
-        }
-        address {
-          address1
-          address2
-          address3
-          address4
-          cityOrTown
-          stateOrProvince
-          postalOrZipCode
-          countryCode
-          addressType
-          isValidated
-        }
+        ...contactForOrdersFragment
       }
     }
   }
-`
-export const billingContactForOrdersFragment = /* GraphQL */ `
-  fragment billingContactForOrdersFragment on Contact {
-    id
-    firstName
-    middleNameOrInitial
-    lastNameOrSurname
-    email
-    address {
-      address1
-      address2
-      address3
-      addressType
-      stateOrProvince
-      postalOrZipCode
-      cityOrTown
-      countryCode
-      isValidated
-    }
-    phoneNumbers {
-      home
-    }
-  }
-`
-
-export const fullfillmentInfoForOrdersFragment = /* GraphQL */ `
-  fragment fullfillmentInfoForOrdersFragment on FulfillmentInfo {
-    shippingMethodCode
-    shippingMethodName
-    fulfillmentContact {
-      address {
-        address1
-        address2
-        addressType
-        cityOrTown
-        countryCode
-        isValidated
-        postalOrZipCode
-        stateOrProvince
-      }
-      companyOrOrganization
-      email
-      firstName
-      id
-      lastNameOrSurname
-      middleNameOrInitial
-      phoneNumbers {
-        home
-      }
-    }
-  }
+  ${contactForOrdersFragment}
 `

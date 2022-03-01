@@ -1,4 +1,4 @@
-export const buildSearchOrdersVars = (params: {
+export const buildOrdersFilterInput = (params: {
   filters?: Array<string> | string
   startIndex?: number
   pageSize?: number

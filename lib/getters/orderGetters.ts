@@ -1,6 +1,6 @@
 const getSubmittedDate = (order) => order?.submittedDate
 const getProductNames = (order) => {
-  const productNames = order?.items.map((product) => product.product.name)
+  const productNames = order?.items.map((item) => item.product.name)
   return productNames.join(",")
 }
 const getOrderTotal = (order) => order?.total

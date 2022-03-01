@@ -104,7 +104,7 @@ export default defineComponent({
     const isOpenOrderItem = ref(false)
     const selectedOrder = ref({})
     const facetAllOptions = ref([]) // @TODO need to be fetch from API
-    const { result: userOrderResult, search: userOrders } = useUserOrder(`user-order`)
+    const { result: userOrderResult, getOrders } = useUserOrder(`user-order`)
 
     const orders = computed(() => userOrderResult?.value?.items)
 
@@ -145,7 +145,7 @@ export default defineComponent({
     }
 
     useAsync(async () => {
-      await userOrders({ filters: "" })
+      await getOrders({ filters: "" })
     }, null)
 
     return {

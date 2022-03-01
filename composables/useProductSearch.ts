@@ -1,5 +1,5 @@
 import { computed } from "@vue/composition-api"
-import { buildProductSearchVars } from "./helpers/buildProductSearchVars"
+import { buildProductSearchInput } from "./helpers/buildProductSearchInput"
 import { searchProductsQuery } from "@/lib/gql/queries"
 import { useState, useNuxtApp } from "#app"
 import type { Maybe, ProductSearchResult } from "@/server/types/GraphQL"
@@ -8,7 +8,10 @@ export const useProductSearch = (referenceKey: string) => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
 
-  const result = useState<Maybe<ProductSearchResult>>(`use-productSearch-result-${referenceKey}`, () => null)
+  const result = useState<Maybe<ProductSearchResult>>(
+    `use-productSearch-result-${referenceKey}`,
+    () => null
+  )
   const loading = useState<Boolean>(`use-productSearch-loading-${referenceKey}`, () => false)
   const error = useState(`use-productSearch-error-${referenceKey}`, () => null)
 
@@ -24,7 +27,7 @@ export const useProductSearch = (referenceKey: string) => {
     try {
       loading.value = true
       const { categoryCode, filters, filter, page, itemsPerPage, phrase, sort } = params
-      const variables = buildProductSearchVars({
+      const variables = buildProductSearchInput({
         categoryCode,
         filters,
         filter,

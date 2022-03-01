@@ -1,5 +1,5 @@
 import { computed } from "@vue/composition-api"
-import { buildSearchOrdersVars } from "./helpers/buildSearchOrdersVars"
+import { buildOrdersFilterInput } from "./helpers/buildOrdersFilterInput"
 import { getOrdersQuery } from "@/lib/gql/queries"
 import { useState, useNuxtApp } from "#app"
 import type { Maybe, OrderCollection } from "@/server/types/GraphQL"
@@ -15,7 +15,7 @@ export const useUserOrder = (referenceKey: string) => {
   const loading = useState<Boolean>(`use-userOrders-loading-${referenceKey}`, () => false)
   const error = useState(`use-userOrders-error-${referenceKey}`, () => null)
 
-  const search = async (params: {
+  const getOrders = async (params: {
     filters?: Array<string> | string
     startIndex?: number
     pageSize?: number
@@ -23,14 +23,14 @@ export const useUserOrder = (referenceKey: string) => {
     try {
       loading.value = true
       const { filters } = params
-      const variables = buildSearchOrdersVars({
+      const variables = buildOrdersFilterInput({
         filters,
       })
-      const ordersSearchResponse = await fetcher({
+      const ordersResponse = await fetcher({
         query: getOrdersQuery,
         variables,
       })
-      result.value = ordersSearchResponse?.data?.orders
+      result.value = ordersResponse?.data?.orders
     } catch (error) {
       console.error(error)
     } finally {
@@ -38,7 +38,7 @@ export const useUserOrder = (referenceKey: string) => {
     }
   }
   return {
-    search,
+    getOrders,
     result,
     loading,
     error: computed(() => error.value),
