@@ -20,22 +20,6 @@ const searchOrderResponse = {
               quantity: 5,
               total: 1000,
             },
-            {
-              product: {
-                productCode: "MS-JKT-004",
-                name: "Condor Triclimate 3-in-1 Jacket",
-              },
-              quantity: 2,
-              total: 400,
-            },
-            {
-              product: {
-                productCode: "MS-CAM-004",
-                name: "GoPro Hero3 Mount",
-              },
-              quantity: 1,
-              total: 125,
-            },
           ],
         },
       ],
