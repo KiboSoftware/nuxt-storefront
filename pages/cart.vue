@@ -176,7 +176,6 @@ export default defineComponent({
   @include for-desktop {
     max-width: 1272px;
     margin: 0 auto;
-    padding: 0 var(--spacer-sm);
   }
 }
 
@@ -245,6 +244,10 @@ export default defineComponent({
   }
   @include for-desktop {
     --collected-product-padding: var(--spacer-lg) 0;
+  }
+
+  .sf-image {
+    object-fit: contain;
   }
 }
 

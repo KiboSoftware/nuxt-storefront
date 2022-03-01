@@ -1,7 +1,13 @@
 <template>
-  <SfModal id="login" :visible="isLoginModalOpen" @close="closeModal">
+  <SfModal id="login" :visible="isLoginModalOpen" cross @close="closeModal">
     <template #modal-bar>
-      <SfBar class="sf-modal__bar bar-heading" :title="$t(barTitle)" @click:close="closeModal" />
+      <SfBar
+        class="sf-modal__bar bar-heading"
+        :title="$t(barTitle)"
+        :close="true"
+        :back="false"
+        @click:close="closeModal"
+      />
     </template>
     <transition name="sf-fade" mode="out-in">
       <div v-if="isLogin" key="log-in" class="modal-content" data-testid="login-modal">
@@ -243,6 +249,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 2rem;
 }
 
 .form {

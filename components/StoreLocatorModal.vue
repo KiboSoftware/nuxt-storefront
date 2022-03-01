@@ -168,11 +168,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.sf-modal {
-  --modal-width: 39.375rem;
-  --modal-content-padding: 0;
-}
-
 .location-search {
   display: flex;
   justify-content: space-between;

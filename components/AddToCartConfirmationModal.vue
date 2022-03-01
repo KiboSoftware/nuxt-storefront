@@ -214,7 +214,7 @@ $cart-button-width: calc(var(--spacer-3xl) + var(--spacer-base));
 }
 
 .sf-modal {
-  --modal-width: calc(var(--spacer-4xl) + var(--spacer-3xl) + var(--spacer-2xl));
+  --modal-width: calc(var(--spacer-4xl) * 1.8);
   --modal-content-padding: 0;
 
   &__close {
@@ -223,11 +223,6 @@ $cart-button-width: calc(var(--spacer-3xl) + var(--spacer-base));
 
   @include for-mobile {
     --modal-width: 100%;
-    --modal-height: fit-content;
-
-    ::v-deep &__container {
-      top: calc(var(--spacer-base) + var(--spacer-lg));
-    }
 
     ::v-deep .sf-bar {
       justify-content: flex-start;

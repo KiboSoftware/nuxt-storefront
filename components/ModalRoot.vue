@@ -1,7 +1,13 @@
 <template>
-  <SfModal class="sf-modal" :visible="!!componentRef" @close="handleClose">
+  <SfModal class="sf-modal" :visible="!!componentRef" cross @close="handleClose">
     <template #modal-bar>
-      <SfBar class="sf-modal__bar bar-heading" :title="titleRef" @click:close="handleClose" />
+      <SfBar
+        class="sf-modal__bar bar-heading"
+        :title="titleRef"
+        :close="true"
+        :back="false"
+        @click:close="handleClose"
+      />
     </template>
     <component :is="componentRef" :properties="properties" @onClose="handleClose" />
   </SfModal>
@@ -41,13 +47,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .sf-modal {
-  --modal-width: 39.375rem;
   --modal-content-padding: 0;
 }
 
 .bar-heading {
   color: var(--_c-dark-primary);
-  justify-content: flex-start;
-  padding-left: var(--spacer-lg);
 }
 </style>

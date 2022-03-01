@@ -503,8 +503,6 @@ export default defineComponent({
   }
 
   &__icons {
-    margin: 0;
-    padding-top: 10px;
     display: flex;
     flex: 2.5;
     justify-content: space-between;
@@ -513,7 +511,7 @@ export default defineComponent({
 
   &__search {
     top: 0;
-    margin-top: 14px;
+    margin-top: var(--spacer-sm);
     height: 2.125rem;
   }
 
@@ -554,6 +552,8 @@ export default defineComponent({
 
 .cart-badge {
   position: absolute;
+  background: var(--_c-green-primary);
+  color: var(--c-white);
 }
 
 .kibo-header {
@@ -561,6 +561,7 @@ export default defineComponent({
   height: 4.2rem;
   width: 100%;
   align-items: center;
+  background: var(--_c-white-secondary);
 
   &__container {
     display: flex;

@@ -289,10 +289,6 @@ export default {
     width: 46%;
   }
 
-  &__button.sf-button {
-    margin-right: var(--spacer-base);
-  }
-
   @include for-desktop {
     &__button {
       width: 10.75rem;
@@ -346,6 +342,7 @@ export default {
 .kibo-add-to-wishlist-one-click-container {
   display: flex;
   justify-content: space-between;
+  gap: 8%;
 }
 
 .kibo-action-container {

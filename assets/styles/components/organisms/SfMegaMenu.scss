@@ -1,6 +1,6 @@
 @include for-desktop {
   .sf-mega-menu {
-    box-shadow: 0 calc(var(--spacer-xs) * 0.25) var(--spacer-2xs) 0 var(--_c-gray-shadow);
+    border-bottom: 1px solid var(--_c-gray-middle);
     height: calc(var(--spacer-xl) * 1.44);
 
     &__menu {
@@ -24,7 +24,7 @@
 
     .sf-mega-menu-column__header.sf-menu-item {
       .sf-menu-item__label {
-        font-size: var(--font-size--lg);
+        font-size: var(--font-size--base);
       }
     }
 
