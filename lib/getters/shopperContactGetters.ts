@@ -31,12 +31,12 @@ const getAddressDetails = (shopper: CustomerContact) => {
   return {
     id: getId(shopper) || "",
     firstName: getFirstName(shopper) || "",
-    lastNameOrSurname: getLastName(shopper) || "",
+    lastName: getLastName(shopper) || "",
     address1: getAddressLine1(shopper) || "",
     address2: getAddressLine2(shopper) || "",
-    cityOrTown: getCityOrTown(shopper) || "",
-    stateOrProvince: getStateOrProvince(shopper) || "",
-    postalOrZipCode: getPostalOrZipCode(shopper) || "",
+    city: getCityOrTown(shopper) || "",
+    state: getStateOrProvince(shopper) || "",
+    zipCode: getPostalOrZipCode(shopper) || "",
     country: getCountryCode(shopper) || "",
     phoneNumber: getPhoneHome(shopper) || "",
   }
