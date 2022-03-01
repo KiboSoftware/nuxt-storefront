@@ -1,19 +1,19 @@
 <template>
   <div class="profile">
-    <p class="edit-header">Edit {{ editableField.label }}</p>
+    <p class="edit-header">{{ $t(Edit) }} {{ editableField.label }}</p>
     <form class="form" @submit.prevent="updateField()">
       <div v-if="editableField.id === 'name'">
         <SfInput
           v-model="userValues.firstName"
           :name="editableField.id"
-          label="First Name"
+          :label="$t('First Name')"
           class="form__element"
           type="text"
         />
         <SfInput
           v-model="userValues.lastName"
           :name="editableField.id"
-          label="Last Name"
+          :label="$t('Last Name')"
           class="form__element"
           type="text"
         />
