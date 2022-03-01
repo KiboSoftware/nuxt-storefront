@@ -33,7 +33,7 @@
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('My profile')">
           <SfList>
             <SfListItem>
-              <KiboMyProfile :user="account" />
+              <KiboMyProfile />
             </SfListItem>
           </SfList>
         </SfAccordionItem>
@@ -83,6 +83,7 @@ import { SfAccordion, SfList, SfBar, SfChevron, SfButton, SfIcon } from "@storef
 import { defineComponent, ref } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
 import { useUser, useUiState } from "@/composables"
+
 export default defineComponent({
   name: "MyAccount",
   components: {

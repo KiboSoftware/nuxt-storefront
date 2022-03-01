@@ -220,4 +220,11 @@ export default {
   "Go Back": "Go Back",
   "Your default shipping address": "Your default shipping address",
   "Previously saved shipping addresses": "Previously saved shipping addresses",
+  "Customer Name": "Customer Name",
+  Email: "Email",
+  "Password Requirements": "Password Requirements",
+  "Password length check": "at least eight characters long",
+  "Password number check": "at least one number",
+  "Password capital letter check": "at least one capital letter",
+  "Password special character check": "at least one special character such as !@#$%^&*",
 }

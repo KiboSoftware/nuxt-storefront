@@ -1,5 +1,4 @@
 import { computed, reactive } from "@vue/composition-api"
-import type { User } from "./types"
 import { storeClientCookie, removeClientCookie } from "./helpers/cookieHelper"
 import { getCurrentUser } from "@/lib/gql/queries"
 import {
@@ -9,7 +8,7 @@ import {
   updateCustomerDataMutation,
   updatePasswordMutation,
 } from "@/lib/gql/mutations"
-import type { Maybe, CustomerUserAuthInfoInput } from "@/server/types/GraphQL"
+import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
@@ -17,7 +16,7 @@ export const useUser = () => {
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const authCookieName = nuxt.nuxt2Context.$config.userCookieKey
 
-  const user = useState<Maybe<User>>(`use-user-user`, () => null)
+  const user = useState<Maybe<CustomerAccount>>(`use-user-user`, () => null)
   const isAuthenticated = useState<Boolean>(`use-user-isAuthenticated`, () => false)
   const loading = useState<Boolean>(`use-user-loading`, () => false)
   const error = reactive({
@@ -168,7 +167,7 @@ export const useUser = () => {
         query: updateCustomerDataMutation,
         variables,
       })
-      user.value = response.data?.user
+      user.value = response.data?.updateCustomerAccount
     } catch (err) {
     } finally {
       loading.value = false
@@ -177,23 +176,20 @@ export const useUser = () => {
 
   const changePassword = async ({ oldPassword, newPassword }) => {
     const variables = {
-      confirmationInfoInput: {
-        accountId: user.value.id,
-        unlockAccount: true,
-        userId: user.value.userId,
-        passwordInfoInput: {
-          oldPassword,
-          newPassword,
-        },
+      accountId: user.value.id,
+      unlockAccount: true,
+      userId: user.value.userId,
+      passwordInfoInput: {
+        oldPassword,
+        newPassword,
       },
     }
     try {
       loading.value = true
-      const response = await fetcher({
+      await fetcher({
         query: updatePasswordMutation,
         variables,
       })
-      user.value = response.data?.user
     } catch (err) {
     } finally {
       loading.value = false
