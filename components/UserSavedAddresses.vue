@@ -118,9 +118,9 @@ export default defineComponent({
       showAddressForm.value = true
     }
 
-    const selectAddress = async (address) => {
+    const selectAddress = (address) => {
       activeAddress.value = address
-      await context.emit("onSave", { ...activeAddress.value })
+      context.emit("onSave", { ...activeAddress.value })
     }
     const closeAddressForm = () => {
       showAddressForm.value = false
@@ -130,8 +130,8 @@ export default defineComponent({
       activeAddress.value = { ...address }
     }
 
-    const saveAddress = async () => {
-      await context.emit("onSave", { ...activeAddress.value })
+    const saveAddress = () => {
+      context.emit("onSave", { ...activeAddress.value })
       closeAddressForm()
     }
 

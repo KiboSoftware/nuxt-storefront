@@ -4,17 +4,17 @@
     <div class="sf-order-summary__content">
       <div class="props">
         <SfProperty
-          :name="propertiesNames[0]"
+          :name="properties.cartSubTotal"
           :value="$n(cartSubTotal, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
         <SfProperty
-          :name="propertiesNames[1]"
+          :name="properties.standardShipping"
           :value="$n(standardShipping, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
         <SfProperty
-          :name="propertiesNames[2]"
+          :name="properties.estimatedTax"
           :value="$n(estimatedTax, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
@@ -38,7 +38,7 @@
       </div>
       <div class="estimated-order-total">
         <SfProperty
-          :name="propertiesNames[3]"
+          :name="properties.estimatedOrderTotal"
           :value="$n(estimatedOrderTotal, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         />
@@ -82,12 +82,12 @@ export default {
     const estimatedTax = computed(() => checkoutGetters.getTaxTotal(order))
     const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(order))
 
-    const propertiesNames = [
-      context?.root?.$t("Cart Subtotal", { numberOfItems: numberOfItems.value }),
-      context?.root?.$t("Standard Shipping"),
-      context?.root?.$t("Estimated Tax"),
-      context?.root?.$t("Estimated Order Total"),
-    ]
+    const properties = {
+      cartSubTotal: context?.root?.$t("Cart Subtotal", { numberOfItems: numberOfItems.value }),
+      standardShipping: context?.root?.$t("Standard Shipping"),
+      estimatedTax: context?.root?.$t("Estimated Tax"),
+      estimatedOrderTotal: context?.root?.$t("Estimated Order Total"),
+    }
 
     return {
       promoCode: "",
@@ -96,7 +96,7 @@ export default {
       standardShipping,
       estimatedTax,
       estimatedOrderTotal,
-      propertiesNames,
+      properties,
     }
   },
 }

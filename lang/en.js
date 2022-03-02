@@ -182,7 +182,7 @@ export default {
   "Save payment method": "Save payment method",
   "Save Shipping Address": "Save shipping address",
   Info: "info",
-  "Shiping To Home": "Shiping to Home",
+  "Shipping To Home": "Shipping to Home",
   "Pickup In Store": "Pickup In Store",
   "First Name": "First name",
   "Last Name": "Last name",
@@ -219,4 +219,6 @@ export default {
   "Pay for Order": "Pay for Order",
   "Confirm and pay": "Confirm and pay",
   "Go Back": "Go Back",
+  "Your default shipping address": "Your default shipping address",
+  "Previously saved shipping addresses": "Previously saved shipping addresses",
 }

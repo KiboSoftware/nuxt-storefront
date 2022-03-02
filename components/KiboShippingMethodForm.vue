@@ -3,7 +3,7 @@
     <div data-testid="shipping-method">
       <div v-for="(item, index) in items" :key="index" class="item">
         <h3 v-if="item.values && item.values.length" class="sf-heading__title h3">
-          {{ item.type === "shipItems" && item.values.length > 0 ? $t("Shiping To Home") : null }}
+          {{ item.type === "shipItems" && item.values.length > 0 ? $t("Shipping To Home") : null }}
           {{ item.type === "pickupItems" && item.values.length > 0 ? $t("Pickup In Store") : null }}
         </h3>
 

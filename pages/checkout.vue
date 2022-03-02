@@ -62,43 +62,44 @@
       </div>
       <div class="checkout__aside">
         <transition name="sf-fade">
-          <KiboOrderSummary
-            v-if="currentStep <= 2"
-            :key="keyRefKiboOrderSummery"
-            :order="getOrder"
-            :order-title="$t('Order Summary')"
-            :order-title-level="3"
-          >
-            <template #actions>
-              <SfButton
-                class="sf-button--full-width actions__button"
-                data-testid="apply-button"
-                @click="updateStep"
-              >
-                {{ steps[currentStep] }}
-              </SfButton>
-              <SfButton
-                v-if="currentStep !== 0"
-                class="sf-button--full-width actions__button color-light"
-                data-testid="apply-button"
-                @click="currentStep--"
-              >
-                {{ $t("Go Back") }}
-              </SfButton>
-            </template>
-          </KiboOrderSummary>
+          <SfLoader :loading="loading">
+            <KiboOrderSummary
+              v-if="currentStep <= 2"
+              :order="getOrder"
+              :order-title="$t('Order Summary')"
+              :order-title-level="3"
+            >
+              <template #actions>
+                <SfButton
+                  class="sf-button--full-width actions__button"
+                  data-testid="apply-button"
+                  @click="updateStep"
+                >
+                  {{ steps[currentStep] }}
+                </SfButton>
+                <SfButton
+                  v-if="currentStep !== 0"
+                  class="sf-button--full-width actions__button color-light"
+                  data-testid="apply-button"
+                  @click="currentStep--"
+                >
+                  {{ $t("Go Back") }}
+                </SfButton>
+              </template>
+            </KiboOrderSummary>
 
-          <SfOrderReview
-            v-else
-            key="order-review"
-            class="checkout__aside-order"
-            :order="getOrder"
-            review-title="Order review"
-            :review-title-level="3"
-            button-text="Edit"
-            :characteristics="characteristics"
-            @click:edit="currentStep = $event"
-          />
+            <SfOrderReview
+              v-else
+              key="order-review"
+              class="checkout__aside-order"
+              :order="getOrder"
+              review-title="Order review"
+              :review-title-level="3"
+              button-text="Edit"
+              :characteristics="characteristics"
+              @click:edit="currentStep = $event"
+            />
+          </SfLoader>
         </transition>
       </div>
     </div>
@@ -106,7 +107,14 @@
 </template>
 
 <script lang="ts">
-import { SfSteps, SfButton, SfPayment, SfConfirmOrder, SfOrderReview } from "@storefront-ui/vue"
+import {
+  SfSteps,
+  SfButton,
+  SfPayment,
+  SfConfirmOrder,
+  SfOrderReview,
+  SfLoader,
+} from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
 import {
   useCheckout,
@@ -121,7 +129,6 @@ import {
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
 import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
-import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
   name: "Checkout",
@@ -131,6 +138,7 @@ export default {
     SfConfirmOrder,
     SfOrderReview,
     SfButton,
+    SfLoader,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -138,10 +146,9 @@ export default {
     const { locale } = context.root.$i18n
     const currencyCode = context.root.$i18n.getNumberFormat(locale)?.currency?.currency
 
-    const keyRefKiboOrderSummery = ref("initialKey")
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo } =
+    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo, loading } =
       useCheckout()
     const {
       load: loadUserAddresses,
@@ -233,7 +240,7 @@ export default {
     }
 
     const getOrder = computed(() => {
-      return checkout?.value
+      return { ...checkout?.value }
     })
 
     const logIn = () => {
@@ -421,7 +428,6 @@ export default {
     // useAsync
     useAsync(async () => {
       await loadFromCart(cart.value?.id)
-      keyRefKiboOrderSummery.value = "newKey"
       populatePersonalDetails()
 
       if (user.value?.id) {
@@ -499,7 +505,7 @@ export default {
       updateStep,
       logIn,
       getOrder,
-      keyRefKiboOrderSummery,
+      loading,
 
       personalDetails,
       updatePersonalDetails,

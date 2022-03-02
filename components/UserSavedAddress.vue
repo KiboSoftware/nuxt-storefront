@@ -33,6 +33,7 @@
     </div>
     <div v-else class="address-container">
       <div class="address-container__left">
+        <div v-if="isDefaultAddress()" class="title">{{ $t("Your default shipping address") }}</div>
         <SfRadio
           :key="id"
           :value="id"
@@ -45,17 +46,20 @@
           <template #label>
             <div class="radio-button">
               <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-              <p>{{ firstName }} {{ lastName }}</p>
+              <p>{{ firstName }} {{ lastNameOrSurname }}</p>
               <p>{{ address1 }} {{ address2 }}</p>
-              <p>{{ zipCode }}</p>
+              <p>{{ postalOrZipCode }}</p>
               <p>
-                {{ city }},
-                {{ state }}
+                {{ cityOrTown }},
+                {{ stateOrProvince }}
                 <span v-if="phoneNumber">{{ phoneNumber }}</span>
               </p>
             </div>
           </template>
         </SfRadio>
+        <div v-if="isDefaultAddress()" class="title">
+          {{ $t("Previously saved shipping addresses") }}
+        </div>
       </div>
     </div>
   </div>
@@ -128,6 +132,11 @@ p {
 
   &__left {
     flex: 90%;
+
+    .title {
+      margin: 16px 0;
+      font-weight: bold;
+    }
   }
 
   &__right {
