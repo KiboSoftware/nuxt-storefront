@@ -3,6 +3,8 @@ import {
   loginMutation,
   createAccountMutation,
   createAccountLoginMutation,
+  updateCustomerDataMutation,
+  updatePasswordMutation,
 } from "@/lib/gql/mutations"
 import { getCurrentUser } from "@/lib/gql/queries"
 
@@ -12,6 +14,8 @@ const mockCurrentUser = getCurrentUser
 const mockLoginMutation = loginMutation
 const mockCreateAccountMutation = createAccountMutation
 const mockCreateAccountLoginMutation = createAccountLoginMutation
+const mockUpdateCustomerDataMutation = updateCustomerDataMutation
+const mockUpdatePasswordMutation = updatePasswordMutation
 
 const currentUser = {
   emailAddress: "test@email.com",
@@ -20,6 +24,14 @@ const currentUser = {
   id: 1074,
   userId: "4d36c4d44fde45959rwerafsdce2faa7b",
   isAnonymous: false,
+}
+const updatedUser = {
+  emailAddress: "test@email.com",
+  id: 1074,
+  userId: "4d36c4d44fde45959rwerafsdce2faa7b",
+  isAnonymous: false,
+  firstName: "Mary",
+  lastName: "Jane",
 }
 
 const loginResponse = {
@@ -79,6 +91,10 @@ jest.mock("#app", () => ({
           return { data: createAccountResponse }
         } else if (params.query === mockCreateAccountLoginMutation) {
           return { data: createAccountLoginResponse }
+        } else if (params.query === mockUpdateCustomerDataMutation) {
+          return { data: { updateCustomerAccount: updatedUser } }
+        } else if (params.query === mockUpdatePasswordMutation) {
+          return { data: { user: true } }
         }
       }),
       app: {
@@ -94,8 +110,18 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] useUser", () => {
-  const { user, login, createAccountAndLogin, load, logout, isAuthenticated, loading, error } =
-    useUser()
+  const {
+    user,
+    login,
+    createAccountAndLogin,
+    load,
+    logout,
+    isAuthenticated,
+    loading,
+    error,
+    updateCustomerPersonalData,
+    changePassword,
+  } = useUser()
   test("useUser : should login using mutation ", async () => {
     const storeClientCookieSpy = jest.spyOn(cookieHelper, "storeClientCookie")
     await login({ username: "sssss", password: "abcd@only" })
@@ -134,5 +160,27 @@ describe("[composable] useUser", () => {
     expect(loading.value).toBeFalsy()
     expect(error.value).toStrictEqual({ login: null, register: null })
     expect(isAuthenticated.value).toBeFalsy()
+  })
+
+  test("useUser: should update customer personal data", async () => {
+    await load()
+    expect(user.value).toStrictEqual(currentUser)
+    const updatedUserData = {
+      ...currentUser,
+      firstName: "Mary",
+      lastName: "Jane",
+    }
+    await updateCustomerPersonalData(updatedUserData)
+    expect(user.value).toStrictEqual(updatedUser)
+  })
+
+  test("useUser: should update customer password", async () => {
+    const passwordInput = {
+      oldPassword: "oldPassword",
+      newPassword: "newPassword",
+    }
+    await changePassword(passwordInput)
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toStrictEqual({ login: null, register: null })
   })
 })

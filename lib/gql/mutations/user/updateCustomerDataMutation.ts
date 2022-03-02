@@ -1,10 +1,13 @@
 export const updateCustomerDataMutation = /* GraphQL */ `
   mutation updateCustomerData($accountId: Int!, $customerAccountInput: CustomerAccountInput) {
     updateCustomerAccount(accountId: $accountId, customerAccountInput: $customerAccountInput) {
-      emailAddress
+      id
+      userId
       firstName
       lastName
-      id
+      emailAddress
+      userName
+      isAnonymous
     }
   }
 `

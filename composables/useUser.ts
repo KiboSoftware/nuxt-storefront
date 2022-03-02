@@ -84,7 +84,7 @@ export const useUser = () => {
     try {
       loading.value = true
       error.login = null
-      await removeClientCookie(authCookieName)
+      removeClientCookie(authCookieName)
       await load()
     } catch (err) {
     } finally {
