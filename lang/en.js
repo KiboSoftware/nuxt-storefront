@@ -213,7 +213,6 @@ export default {
   "Cart Subtotal": "Cart Subtotal ({numberOfItems} items)",
   "Standard Shipping": "Standard Shipping",
   "Estimated Tax": "Estimated Tax",
-  "Estimated Order Total": "Estimated Order Total",
   "Go to Shipping": "Go to Shipping",
   "Go to Payment": "Go to Payment",
   "Pay for Order": "Pay for Order",
