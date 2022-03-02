@@ -33,13 +33,15 @@
     </div>
     <div v-else class="address-container">
       <div class="address-container__left">
+        <div v-if="isDefaultAddress()" class="title">{{ $t("Your default shipping address") }}</div>
         <SfRadio
-          :key="address.address1"
-          :label="address.address1"
+          :key="id"
+          :value="id"
+          :label="address1"
           name="address"
-          :selected="true"
-          class="form__radio payment-method"
-          @change="$emit('onSelect', address)"
+          class="sf-radio"
+          selected=""
+          @input="onSelect"
         >
           <template #label>
             <div class="radio-button">
@@ -50,11 +52,14 @@
               <p>
                 {{ cityOrTown }},
                 {{ stateOrProvince }}
-                <span v-if="phoneNumbers.home">{{ phoneNumbers.home }}</span>
+                <span v-if="phoneNumber">{{ phoneNumber }}</span>
               </p>
             </div>
           </template>
         </SfRadio>
+        <div v-if="isDefaultAddress()" class="title">
+          {{ $t("Previously saved shipping addresses") }}
+        </div>
       </div>
     </div>
   </div>
@@ -62,8 +67,8 @@
 
 <script lang="ts">
 import { SfIcon, SfRadio } from "@storefront-ui/vue"
-
 import { defineComponent } from "@vue/composition-api"
+import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserSavedAddress",
@@ -82,16 +87,32 @@ export default defineComponent({
     },
   },
 
-  setup(props) {
+  setup(props, context) {
+    const address = computed(() => shopperContactGetters.getAddressDetails(props.address))
+
     const isDefaultAddress = () => {
-      return false
+      return props.address?.types[0]?.isPrimary || false
     }
+
+    const onSelect = () => {
+      const { id, email, firstName, lastNameOrSurname, phoneNumbers, address } = props.address
+
+      const selectedAddress = {
+        id,
+        email,
+        firstName,
+        lastNameOrSurname,
+        phoneNumbers: { ...phoneNumbers },
+        address: { ...address },
+      }
+
+      context.emit("onSelect", selectedAddress)
+    }
+
     return {
-      firstName: props.address?.firstName,
-      lastNameOrSurname: props.address?.lastNameOrSurname,
-      phoneNumbers: props.address?.phoneNumbers,
-      ...props.address?.address,
+      ...address.value,
       isDefaultAddress,
+      onSelect,
     }
   },
 })
@@ -111,6 +132,11 @@ p {
 
   &__left {
     flex: 90%;
+
+    .title {
+      margin: 16px 0;
+      font-weight: bold;
+    }
   }
 
   &__right {

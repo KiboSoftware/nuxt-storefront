@@ -5,69 +5,77 @@
       :level="2"
       class="sf-heading--left sf-heading--no-underline title"
     />
-    <div class="form">
-      <KiboAddressForm
-        :value="shippingAddress"
+    <div class="user-addresses">
+      <UserSavedAddresses
         :countries="countries"
-        @addressData="updateShippingDetails"
+        :default-address="shippingAddress"
+        :addresses="userShippingAddresses"
+        :is-readonly="isReadonly"
+        @onSave="saveShippingAddress"
       />
-      <SfButton @click="saveShippingAddress($event)">
-        {{ $t("Save Shipping Address") }}
-      </SfButton>
     </div>
-    <SfHeading
-      :title="$t('Shipping method')"
-      :level="2"
-      class="sf-heading--left sf-heading--no-underline title"
-    />
+
+    <div class="shipping-method-title">
+      <SfHeading
+        :title="$t('Shipping method')"
+        :level="2"
+        class="sf-heading--left sf-heading--no-underline"
+      />
+    </div>
+
     <slot name="shipping-methods-form"> </slot>
   </div>
 </template>
 
 <script lang="ts">
-import { SfHeading, SfButton } from "@storefront-ui/vue"
+import { SfHeading } from "@storefront-ui/vue"
 
 export default {
   name: "KiboShipping",
   components: {
     SfHeading,
-    SfButton,
   },
   props: {
-    value: {
+    shippingAddress: {
       type: Object,
       default: () => ({}),
+    },
+    userShippingAddresses: {
+      type: Array,
+      default: () => [],
     },
     countries: {
       type: Array,
       default: () => [],
     },
   },
-  setup(props, context) {
-    const shippingAddress = ref({ ...props.value })
-    const updateShippingDetails = (newShippingDetails) => {
-      shippingAddress.value = { ...newShippingDetails }
-    }
+  setup(_, context) {
+    const isReadonly = true
 
-    const saveShippingAddress = () => {
+    const saveShippingAddress = (updatedAddress) => {
       context.emit("saveShippingAddress", {
-        ...shippingAddress.value,
+        ...updatedAddress,
       })
     }
 
     return {
-      shippingAddress,
+      isReadonly,
       saveShippingAddress,
-      updateShippingDetails,
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@storefront-ui/shared/styles/components/templates/SfShipping.scss";
+.sf-shipping {
+  padding: calc(var(--spacer-base) * 1.66) 0;
 
-::v-deep .sf-button {
-  margin: 10px 0;
+  .user-addresses {
+    padding: calc(var(--spacer-base) * 0.83) 0;
+  }
+
+  .shipping-method-title {
+    padding: calc(var(--spacer-base) * 0.41) 0 calc(var(--spacer-base) * 0.83) 0;
+  }
 }
 </style>

@@ -2,9 +2,9 @@ const getOrderNumber = (checkout) => checkout?.orderNumber
 const getEmail = (checkout) => checkout?.email
 const getId = (checkout) => checkout?.id
 const getTotal = (checkout): number => (checkout?.total ? +checkout?.total.toFixed(2) : 0)
-const getDiscountedTotal = (checkout) => checkout?.orderDiscounts
-const getShippingTotal = (checkout) => checkout?.shippingTotal
-const getTaxTotal = (checkout) => checkout?.taxTotal
+const getDiscountedTotal = (checkout) => checkout?.orderDiscounts || 0
+const getShippingTotal = (checkout) => checkout?.shippingTotal || 0
+const getTaxTotal = (checkout) => checkout?.taxTotal || 0
 const getSubtotal = (checkout): number => (checkout?.subtotal ? checkout?.subtotal?.toFixed(2) : 0)
 const getLineItemTotal = (checkout) => {
   return checkout?.items

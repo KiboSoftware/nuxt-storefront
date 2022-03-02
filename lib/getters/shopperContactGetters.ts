@@ -1,5 +1,6 @@
 import { CustomerContact } from "@/server/types/GraphQL"
 
+const getId = (shopper: CustomerContact) => shopper?.id?.toString()
 const getFirstName = (shopper: CustomerContact) => shopper?.firstName
 const getLastName = (shopper: CustomerContact) => shopper?.lastNameOrSurname
 const getMiddleName = (shopper: CustomerContact) => shopper?.middleNameOrInitial
@@ -27,43 +28,17 @@ const getPersonalDetails = (shopper: CustomerContact, personalDetails) => {
 }
 
 const getAddressDetails = (shopper: CustomerContact) => {
-  if (!shopper)
-    return {
-      firstName: "",
-      lastName: "",
-      address1: "",
-      address2: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-    }
-
-  const {
-    firstName,
-    lastNameOrSurname: lastName,
-    address: {
-      cityOrTown: city,
-      stateOrProvince: state,
-      postalOrZipCode: zipCode,
-      address1,
-      address2,
-      countryCode: country,
-    },
-    phoneNumbers: { home: phoneNumber },
-  } = shopper
-
   return {
-    firstName,
-    lastName,
-    address1,
-    address2,
-    city,
-    state,
-    zipCode,
-    country,
-    phoneNumber,
+    id: getId(shopper) || "",
+    firstName: getFirstName(shopper) || "",
+    lastNameOrSurname: getLastName(shopper) || "",
+    address1: getAddressLine1(shopper) || "",
+    address2: getAddressLine2(shopper) || "",
+    cityOrTown: getCityOrTown(shopper) || "",
+    stateOrProvince: getStateOrProvince(shopper) || "",
+    postalOrZipCode: getPostalOrZipCode(shopper) || "",
+    country: getCountryCode(shopper) || "",
+    phoneNumber: getPhoneHome(shopper) || "",
   }
 }
 
@@ -86,6 +61,7 @@ const getBillingDetails = (shopper: CustomerContact) => {
 }
 
 export const shopperContactGetters = {
+  getId,
   getFirstName,
   getLastName,
   getMiddleName,
@@ -103,6 +79,7 @@ export const shopperContactGetters = {
   getPhoneWork,
 
   getPersonalDetails,
+  getAddressDetails,
   getShippingDetails,
   getBillingDetails,
 }

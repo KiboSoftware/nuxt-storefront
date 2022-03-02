@@ -13,14 +13,14 @@
 
   &__checkmark {
     box-sizing: border-box;
-    width: 0.875rem;
-    height: 0.875rem;
-    border: 1px solid var(--_c-gray-middle);
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--_c-gray-middle);
     border-radius: 100%;
     transition: none;
 
     &.is-active {
-      border: 5px solid var(--_c-green-primary);
+      border: 3px solid var(--_c-green-primary);
     }
     @include for-desktop {
       &:active,

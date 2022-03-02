@@ -13,7 +13,8 @@
           </SfStep>
           <SfStep name="Shipping">
             <KiboShipping
-              :value="shippingDetails"
+              :shipping-address="shippingDetails"
+              :user-shipping-addresses="userShippingAddresses"
               :countries="countries"
               @saveShippingAddress="saveShippingDetails"
             >
@@ -61,49 +62,59 @@
       </div>
       <div class="checkout__aside">
         <transition name="sf-fade">
-          <KiboOrderSummary
-            v-if="currentStep <= 2"
-            key="order-summary"
-            class="checkout__aside-order"
-            :order="getOrder"
-            order-title="Order review"
-            :order-title-level="3"
-            :properties-names="['Products', 'Subtotal', 'Shipping', 'Total price']"
-            :characteristics="characteristics"
-          />
-          <SfOrderReview
-            v-else
-            key="order-review"
-            class="checkout__aside-order"
-            :order="getOrder"
-            review-title="Order review"
-            :review-title-level="3"
-            button-text="Edit"
-            :characteristics="characteristics"
-            @click:edit="currentStep = $event"
-          />
+          <SfLoader :loading="loading">
+            <KiboOrderSummary
+              v-if="currentStep <= 2"
+              :order="getOrder"
+              :order-title="$t('Order Summary')"
+              :order-title-level="3"
+            >
+              <template #actions>
+                <SfButton
+                  class="sf-button--full-width actions__button"
+                  data-testid="apply-button"
+                  @click="updateStep"
+                >
+                  {{ steps[currentStep] }}
+                </SfButton>
+                <SfButton
+                  v-if="currentStep !== 0"
+                  class="sf-button--full-width actions__button color-light"
+                  data-testid="apply-button"
+                  @click="currentStep--"
+                >
+                  {{ $t("Go Back") }}
+                </SfButton>
+              </template>
+            </KiboOrderSummary>
+
+            <SfOrderReview
+              v-else
+              key="order-review"
+              class="checkout__aside-order"
+              :order="getOrder"
+              review-title="Order review"
+              :review-title-level="3"
+              button-text="Edit"
+              :characteristics="characteristics"
+              @click:edit="currentStep = $event"
+            />
+          </SfLoader>
         </transition>
       </div>
-    </div>
-    <div class="actions">
-      <SfButton
-        class="sf-button--full-width actions__button"
-        data-testid="next-button"
-        @click="updateStep"
-        >{{ steps[currentStep] }}</SfButton
-      >
-      <!-- :disabled="!enableCurrentStep" // ToDo: Add disabled once all form validations are done in checkout tabs -->
-      <SfButton
-        class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
-        @click="currentStep--"
-        >Go back</SfButton
-      >
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { SfSteps, SfButton, SfPayment, SfConfirmOrder, SfOrderReview } from "@storefront-ui/vue"
+import {
+  SfSteps,
+  SfButton,
+  SfPayment,
+  SfConfirmOrder,
+  SfOrderReview,
+  SfLoader,
+} from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
 import {
   useCheckout,
@@ -117,7 +128,8 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "~~/lib/getters"
+import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
+import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
   name: "Checkout",
@@ -127,6 +139,7 @@ export default {
     SfConfirmOrder,
     SfOrderReview,
     SfButton,
+    SfLoader,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -136,21 +149,20 @@ export default {
 
     const currentStep = ref(0)
     const { cart } = useCart()
+    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo, loading } =
+      useCheckout()
     const {
-      checkout,
-      loadFromCart,
-      load: loadCheckout,
-      setPersonalInfo,
-      setShippingInfo,
-      setBillingInfo,
-    } = useCheckout()
-    const { load: loadUserAddresses, addresses } = useUserAddresses()
+      load: loadUserAddresses,
+      userShippingAddresses,
+      userBillingAddresses,
+    } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
-    const { toggleStoreLocatorModal, toggleLoginModal } = useUiState()
+    const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
-    const { purchaseLocation } = usePurchaseLocation()
+    const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
 
+    const modal = nuxt.nuxt2Context.$modal
     const showCreateAccount = ref(false)
     const password = ref(null)
     const transition = "sf-fade"
@@ -158,10 +170,10 @@ export default {
     const enableNextStep = ref(false)
 
     enum Steps {
-      GO_TO_SHIPPING = "Go to Shipping",
-      GO_TO_PAYMENT = "Go to Payment",
-      PAY_FOR_ORDER = "Pay for Order",
-      CONFIRM_AND_PAY = "Confirm and pay",
+      GO_TO_SHIPPING = context?.root?.$t("Go to Shipping"),
+      GO_TO_PAYMENT = context?.root?.$t("Go to Payment"),
+      PAY_FOR_ORDER = context?.root?.$t("Pay for Order"),
+      CONFIRM_AND_PAY = context?.root?.$t("Confirm and pay"),
     }
     const steps = [
       Steps.GO_TO_SHIPPING,
@@ -229,7 +241,7 @@ export default {
     }
 
     const getOrder = computed(() => {
-      return checkout?.value
+      return { ...checkout?.value }
     })
 
     const logIn = () => {
@@ -323,7 +335,16 @@ export default {
     }
 
     const handleStoreLocatorClick = () => {
-      toggleStoreLocatorModal()
+      modal.show({
+        component: StoreLocatorModal,
+        props: {
+          title: context?.root?.$t("Select Store"),
+          handleSetStore: async (selectedStore: string) => {
+            set(selectedStore)
+            await loadPurchaseLocation()
+          },
+        },
+      })
     }
 
     // billing
@@ -485,6 +506,7 @@ export default {
       updateStep,
       logIn,
       getOrder,
+      loading,
 
       personalDetails,
       updatePersonalDetails,
@@ -493,7 +515,8 @@ export default {
       saveShippingDetails,
       updatedShippingAddress,
       updateShippingDetails,
-      addresses,
+      userShippingAddresses,
+      userBillingAddresses,
 
       items,
       shippingRates,
