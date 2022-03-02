@@ -8,7 +8,7 @@ function getFacetValueFilter(categoryCode, filters = []) {
   return facetValueFilter + filters.join(",")
 }
 
-export const buildProductSearchVars = ({
+export const buildProductSearchInput = ({
   categoryCode = "",
   pageSize = 20,
   filters = [],

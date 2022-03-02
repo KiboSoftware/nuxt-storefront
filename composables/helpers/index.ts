@@ -1,5 +1,5 @@
 export * from "./buildBreadcrumbs"
-export * from "./buildProductSearchVars"
+export * from "./buildProductSearchInput"
 export * from "./cookieHelper"
 export * from "./mergeProduct"
 export * from "./selectCategoryFromTree"
