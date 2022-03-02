@@ -129,6 +129,7 @@ import {
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
 import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
+import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
   name: "Checkout",
