@@ -11,7 +11,7 @@
               :key="index"
               :address="address"
               :is-readonly="isReadonly"
-              @click:remove-address="removeAddressDialog(address)"
+              @click:remove-address="showDeleteConfirmationDialog(address)"
               @click:edit-address="updateAddress(address)"
               @onSelect="selectAddress"
             />
@@ -22,7 +22,7 @@
     <KiboConfirmationDialog
       :label="$t('Are you sure you want to delete this address ?')"
       :is-open="isConfirmModalOpen"
-      :action-handler="removeAddress"
+      :action-handler="deleteAddress"
       @click:close="toggleConfirmModal"
     />
     <KiboAddressForm
@@ -37,7 +37,7 @@
         v-if="showDefaultCheckbox && showAddressForm"
         v-model="isDefaultAddress"
         name="is-default"
-        label="Save as default"
+        :label="$t('Save as default')"
         class="form__checkbox"
       />
     </div>
@@ -52,10 +52,14 @@
       {{ $t("Add New Address") }}
     </SfButton>
     <div v-if="showAddressForm" class="action-buttons">
-      <SfButton class="action-buttons__cancel" @click="closeAddressForm">
+      <SfButton class="action-buttons color-light" @click="closeAddressForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton class="action-buttons__update" @click="saveAddress">
+      <SfButton
+        class="action-buttons color-primary"
+        :disabled="!isValidFormData"
+        @click="saveAddress"
+      >
         {{ $t("Save") }}
       </SfButton>
     </div>
@@ -98,10 +102,11 @@ export default defineComponent({
   },
   setup(props, context) {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
-    const activeAddress = ref({})
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
     const isDefaultAddress = ref(false)
+    const isValidFormData = ref(true)
+    const activeAddress = ref(props.defaultAddress || {})
 
     // Sort addresses to display Primary addresses first
     const userAddressesSorted = computed(() => {
@@ -112,11 +117,11 @@ export default defineComponent({
       if (!activeAddress.value) activeAddress.value = {}
       showAddressForm.value = true
     }
-    const removeAddress = () => {
+    const deleteAddress = () => {
       toggleConfirmModal()
       context.emit("onDelete", { ...activeAddress.value })
     }
-    const removeAddressDialog = (address) => {
+    const showDeleteConfirmationDialog = (address) => {
       activeAddress.value = address
       toggleConfirmModal()
     }
@@ -149,10 +154,10 @@ export default defineComponent({
       userAddressesSorted,
       addNewAddress,
       updateAddress,
-      removeAddress,
+      deleteAddress,
       selectAddress,
       activeAddress,
-      removeAddressDialog,
+      showDeleteConfirmationDialog,
       isConfirmModalOpen,
       isNewAddress,
       toggleConfirmModal,
@@ -161,6 +166,7 @@ export default defineComponent({
       saveAddress,
       setInputAddressData,
       isDefaultAddress,
+      isValidFormData,
     }
   },
 })
@@ -221,17 +227,9 @@ div {
   flex-direction: column;
   justify-content: space-between;
   gap: calc(var(--spacer-xl) / 8);
-
-  &__cancel {
-    background-color: var(--_c-light-primary);
-    border: 1px solid var(--_c-gray-middle);
-    color: var(--c-black);
-  }
-
-  &__update {
-    border: none;
-    background-color: var(--_c-green-primary);
-    color: var(--_c-light-secondary);
+  @include for-desktop {
+    width: 70%;
+    max-width: calc(var(--spacer-base) * 17.54);
   }
 }
 

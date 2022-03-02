@@ -1,5 +1,6 @@
 <template>
   <div>
+    <slot name="header-action" />
     <div>
       <hr class="details-hr" />
     </div>

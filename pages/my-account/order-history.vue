@@ -1,10 +1,12 @@
 <template>
   <div id="order-history-container">
     <div>
-      <div>
-        <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
-      </div>
-      <div></div>
+      <SfBar
+        :title="barTitle"
+        :back="true"
+        class="title-bar smartphone-only"
+        @click:back="goBack"
+      />
     </div>
     <div v-show="!isOpenOrderList" class="order-history-title">
       <div class="header-text-weight">{{ title }}</div>
@@ -41,7 +43,14 @@
           </div>
         </div>
         <div v-show="isOpenOrderItem" class="order-details">
-          <KiboOrderItemDetails :order="selectedOrder" />
+          <KiboOrderItemDetails :order="selectedOrder">
+            <template #header-action>
+              <div class="desktop-only">
+                <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
+                <hr class="order-history-hr" />
+              </div>
+            </template>
+          </KiboOrderItemDetails>
         </div>
       </div>
       <div v-show="isOpenOrderList" class="filters">
@@ -180,9 +189,9 @@ export default defineComponent({
   margin: var(--spacer-xs) auto;
 
   @include for-desktop {
-    max-width: 1272px;
+    max-width: 81.75rem;
     padding: 0;
-    margin: 0 auto;
+    margin: calc(var(--spacer-2xs) * 1.5) auto;
   }
 }
 

@@ -1,28 +1,6 @@
 <template>
   <div>
-    <div v-if="!isReadonly" class="card-list">
-      <div class="card-list__left">
-        <div v-if="isDefaultCard()" class="is-primary">Primary</div>
-        <div>Icon</div>
-      </div>
-      <div class="card-list__right">
-        <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
-        <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
-        <div class="billing">
-          <UserSavedAddress
-            :key="billingAddress.id"
-            :address="billingAddress"
-            :is-readonly="true"
-          />
-        </div>
-      </div>
-      <div class="card-list__actions">
-        <div class="card-list__edit" @click="$emit('click:edit-card', card)">
-          {{ $t("Edit") }}
-        </div>
-      </div>
-    </div>
-    <div v-else class="card-list">
+    <div v-if="isReadonly" class="card-list">
       <div class="card-list__left">
         <SfRadio
           :key="card.endingDigit"
@@ -50,6 +28,28 @@
             </div>
           </template>
         </SfRadio>
+      </div>
+    </div>
+    <div v-else class="card-list">
+      <div class="card-list__left">
+        <div v-if="isDefaultCard()" class="is-primary">{{ $t("Primary") }}</div>
+        <div>Icon</div>
+      </div>
+      <div class="card-list__right">
+        <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
+        <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
+        <div class="billing">
+          <UserSavedAddress
+            :key="billingAddress.id"
+            :address="billingAddress"
+            :is-readonly="true"
+          />
+        </div>
+      </div>
+      <div class="card-list__actions">
+        <div class="card-list__edit" @click="$emit('click:edit-card', card)">
+          {{ $t("Edit") }}
+        </div>
       </div>
     </div>
   </div>

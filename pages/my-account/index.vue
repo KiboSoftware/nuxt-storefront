@@ -151,26 +151,26 @@ export default defineComponent({
     }
 
     const saveAddress = async ({ address, setAsDefault }, typeName) => {
-      const addressInputFormat = {
+      const addressData = {
         accountId: user.value.id,
         customerContactInput: { ...address },
       }
       if (address.id) {
         // update scenario
-        addressInputFormat.contactId = address.id
+        addressData.contactId = address.id
         address.types.find((t) => t.name === typeName).isPrimary = setAsDefault
 
-        await updateUserAddress(addressInputFormat)
+        await updateUserAddress(addressData)
       } else {
         // add new scenarion
-        addressInputFormat.customerContactInput.types = [
+        addressData.customerContactInput.types = [
           {
             name: typeName,
             isPrimary: setAsDefault,
           },
         ]
-        addressInputFormat.customerContactInput.accountId = user.value.id
-        await addUserAddress(addressInputFormat)
+        addressData.customerContactInput.accountId = user.value.id
+        await addUserAddress(addressData)
       }
     }
 
@@ -185,16 +185,12 @@ export default defineComponent({
     }
 
     const deleteAddress = async (address) => {
-      if (!address.id) {
-        alert("Sorry no address found !!")
-        return false
-      }
-      const addressInputFormat = {
+      const addressData = {
         accountId: user.value.id,
         contactId: address.id,
       }
 
-      await deleteUserAddress(addressInputFormat)
+      await deleteUserAddress(addressData)
       await loadUserAddresses(user.value.id)
     }
 
@@ -223,17 +219,12 @@ export default defineComponent({
     }
 
     const deletePaymentMethod = async ({ card }) => {
-      if (!card.id) {
-        alert("Sorry no payment method found !!")
-        return false
-      }
-
       if (card.contactId) {
-        const addressInputFormat = {
+        const addressData = {
           accountId: user.value.id,
           contactId: card.contactId,
         }
-        await deleteUserAddress(addressInputFormat)
+        await deleteUserAddress(addressData)
       }
 
       await deleteCard(user.value.id, card.id)

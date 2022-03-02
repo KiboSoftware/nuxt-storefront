@@ -10,9 +10,9 @@
             <UserSavedCard
               :payment-method="paymentMethod"
               :is-readonly="isReadonly"
-              @click:remove-card="removePaymentMethodDialog(paymentMethod)"
+              @click:remove-card="showDeleteConfirmationDialog(paymentMethod)"
               @click:edit-card="updatePaymentMethod(paymentMethod)"
-              @onSelect="onSelectedcard(paymentMethod)"
+              @onSelect="onCardSelection(paymentMethod)"
             />
           </div>
         </div>
@@ -21,7 +21,7 @@
     <KiboConfirmationDialog
       :label="$t('Are you sure you want to delete this payment method ?')"
       :is-open="isConfirmModalOpen"
-      :action-handler="removePaymentMethod"
+      :action-handler="deletePaymentMethod"
       @click:close="toggleConfirmModal"
     />
     <KiboPayment v-if="showPaymentMethodForm" @input="setInputCardData" />
@@ -30,14 +30,14 @@
       :key="activeAddress.id"
       :value="activeAddress"
       :countries="countries"
-      @addressData="setInputAddressData"
+      @addressData="getAddressData"
     />
     <div>
       <SfCheckbox
         v-if="showDefaultCheckbox && showPaymentMethodForm"
         v-model="isDefaultPaymentMethod"
         name="is-default"
-        label="Save as default"
+        :label="$t('Save as default')"
         class="form__checkbox"
       />
     </div>
@@ -53,10 +53,14 @@
       {{ $t("Add New Card") }}
     </SfButton>
     <div v-if="showPaymentMethodForm" class="action-buttons">
-      <SfButton class="action-buttons__cancel" @click="closePaymentMethodForm">
+      <SfButton class="action-buttons color-light" @click="closePaymentMethodForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton class="action-buttons__update" @click="savePaymentMethod">
+      <SfButton
+        class="action-buttons color-primary"
+        :disabled="!isValidFormData"
+        @click="savePaymentMethod"
+      >
         {{ $t("Save") }}
       </SfButton>
     </div>
@@ -97,8 +101,9 @@ export default defineComponent({
     const isNewPaymentMethod = ref(false)
     const showPaymentMethodForm = ref(false)
     const isDefaultPaymentMethod = ref(false)
+    const isValidFormData = ref(true)
 
-    const setInputAddressData = (address) => {
+    const getAddressData = (address) => {
       activeAddress.value = { ...address }
     }
     const setInputCardData = (card) => {
@@ -113,11 +118,11 @@ export default defineComponent({
       showPaymentMethodForm.value = true
     }
 
-    const removePaymentMethod = () => {
+    const deletePaymentMethod = () => {
       toggleConfirmModal()
       context.emit("onDelete", activePaymentMethod)
     }
-    const removePaymentMethodDialog = (paymentMethod) => {
+    const showDeleteConfirmationDialog = (paymentMethod) => {
       activePaymentMethod.value = paymentMethod
       toggleConfirmModal()
     }
@@ -129,7 +134,7 @@ export default defineComponent({
       showPaymentMethodForm.value = true
     }
 
-    const onSelectedcard = (paymentMethod) => {
+    const onCardSelection = (paymentMethod) => {
       activePaymentMethod.value = paymentMethod
       context.emit("onSelect", activePaymentMethod)
     }
@@ -142,8 +147,8 @@ export default defineComponent({
       activePaymentMethod.value = { ...paymentMethod }
     }
 
-    const savePaymentMethod = async () => {
-      await context.emit("onSave", {
+    const savePaymentMethod = () => {
+      context.emit("onSave", {
         address: { ...activeAddress.value },
         cardInput: { ...activePaymentMethod.value },
         setAsDefault: isDefaultPaymentMethod.value,
@@ -153,10 +158,10 @@ export default defineComponent({
     return {
       addNewPaymentMethod,
       updatePaymentMethod,
-      removePaymentMethod,
-      onSelectedcard,
+      deletePaymentMethod,
+      onCardSelection,
       activePaymentMethod,
-      removePaymentMethodDialog,
+      showDeleteConfirmationDialog,
       isConfirmModalOpen,
       isNewPaymentMethod,
       toggleConfirmModal,
@@ -164,10 +169,11 @@ export default defineComponent({
       closePaymentMethodForm,
       savePaymentMethod,
       setInputPaymentMethodData,
-      setInputAddressData,
+      getAddressData,
       setInputCardData,
       activeAddress,
       isDefaultPaymentMethod,
+      isValidFormData,
     }
   },
 })
@@ -207,16 +213,8 @@ div {
   justify-content: space-between;
   gap: calc(var(--spacer-xl) / 8);
 
-  &__cancel {
-    background-color: var(--_c-light-primary);
-    border: 1px solid var(--_c-gray-middle);
-    color: var(--c-black);
-  }
-
-  &__update {
-    border: none;
-    background-color: var(--_c-green-primary);
-    color: var(--_c-light-secondary);
-  }
+  // &__cancel {
+  //   color: var(--c-black);
+  // }
 }
 </style>

@@ -1,6 +1,33 @@
 <template>
   <div>
-    <div v-if="!isReadonly" class="address-container">
+    <div v-if="isReadonly" class="address-container">
+      <div class="address-container__left">
+        <SfRadio
+          :key="id"
+          :value="id"
+          :label="address1"
+          name="address"
+          class="sf-radio"
+          selected=""
+          @input="onSelect"
+        >
+          <template #label>
+            <div class="radio-button">
+              <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
+              <p>{{ firstName }} {{ lastName }}</p>
+              <p>{{ address1 }} {{ address2 }}</p>
+              <p>{{ zipCode }}</p>
+              <p>
+                {{ city }},
+                {{ state }}
+                <span v-if="phoneNumber">{{ phoneNumber }}</span>
+              </p>
+            </div>
+          </template>
+        </SfRadio>
+      </div>
+    </div>
+    <div v-else class="address-container">
       <div class="address-container__left">
         <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
         <p>{{ firstName }} {{ lastName }}</p>
@@ -28,37 +55,6 @@
               color="var(--_c-dark-green-secondary)"
             />
           </SfIcon>
-        </div>
-      </div>
-    </div>
-    <div v-else class="address-container">
-      <div class="address-container__left">
-        <div v-if="isDefaultAddress()" class="title">{{ $t("Your default shipping address") }}</div>
-        <SfRadio
-          :key="id"
-          :value="id"
-          :label="address1"
-          name="address"
-          class="sf-radio"
-          selected=""
-          @input="onSelect"
-        >
-          <template #label>
-            <div class="radio-button">
-              <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-              <p>{{ firstName }} {{ lastName }}</p>
-              <p>{{ address1 }} {{ address2 }}</p>
-              <p>{{ zipCode }}</p>
-              <p>
-                {{ city }},
-                {{ state }}
-                <span v-if="phoneNumber">{{ phoneNumber }}</span>
-              </p>
-            </div>
-          </template>
-        </SfRadio>
-        <div v-if="isDefaultAddress()" class="title">
-          {{ $t("Previously saved shipping addresses") }}
         </div>
       </div>
     </div>
