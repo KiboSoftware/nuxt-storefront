@@ -9,7 +9,7 @@
       class="form__element"
       type="password"
       :valid="isConfirmPasswordSame === null || isConfirmPasswordSame"
-      :error-message="field.id === 'confirmPassword' ? `Password doesn't match` : ''"
+      :error-message="field.id === 'confirmPassword' ? $t(`Password doesn't match`) : ''"
       @input="(value) => handlePassword(value, field.id)"
     />
     <div class="password-requirements">
@@ -22,7 +22,7 @@
         class="password-requirements__details"
       >
         <template #icon>
-          <SfIcon size="1.25rem">
+          <SfIcon size="1.25">
             <font-awesome-icon
               icon="check-circle"
               class="fa-icon"
@@ -127,7 +127,7 @@ export default defineComponent({
 
   &__details {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
   }
 
   &__title {

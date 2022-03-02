@@ -169,6 +169,8 @@ export const useUser = () => {
       })
       user.value = response.data?.updateCustomerAccount
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
     } finally {
       loading.value = false
     }
@@ -191,6 +193,8 @@ export const useUser = () => {
         variables,
       })
     } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
     } finally {
       loading.value = false
     }

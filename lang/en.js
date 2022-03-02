@@ -227,4 +227,5 @@ export default {
   "Password number check": "at least one number",
   "Password capital letter check": "at least one capital letter",
   "Password special character check": "at least one special character such as !@#$%^&*",
+  "Password doesn't match": "Password doesn't match",
 }

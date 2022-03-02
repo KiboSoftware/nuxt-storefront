@@ -138,6 +138,7 @@ export default defineComponent({
     background-color: var(--_c-light-primary);
     border: 1px solid var(--_c-gray-middle);
     color: var(--c-black);
+    margin-bottom: 1%;
   }
 
   &__save {
