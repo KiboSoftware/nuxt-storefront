@@ -212,5 +212,10 @@ div {
   flex-direction: column;
   justify-content: space-between;
   gap: calc(var(--spacer-xl) / 8);
+
+  @include for-desktop {
+    width: 70%;
+    max-width: calc(var(--spacer-base) * 17.54);
+  }
 }
 </style>
