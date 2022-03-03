@@ -233,7 +233,9 @@ div {
   }
 }
 
-.form__checkbox {
-  margin-bottom: calc(var(--spacer-2xs) * 2);
+.form {
+  &__checkbox {
+    margin-bottom: calc(var(--spacer-2xs) * 2);
+  }
 }
 </style>

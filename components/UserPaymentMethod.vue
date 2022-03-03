@@ -212,9 +212,5 @@ div {
   flex-direction: column;
   justify-content: space-between;
   gap: calc(var(--spacer-xl) / 8);
-
-  // &__cancel {
-  //   color: var(--c-black);
-  // }
 }
 </style>
