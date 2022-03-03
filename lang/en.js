@@ -228,4 +228,6 @@ export default {
   "Password capital letter check": "at least one capital letter",
   "Password special character check": "at least one special character such as !@#$%^&*",
   "Password doesn't match": "Password doesn't match",
+  Pickup: "Pickup",
+  "Shipment Details": "Shipment Details",
 }

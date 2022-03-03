@@ -36,7 +36,7 @@
                 <SfAccordionItem header="Product Specs">
                   <SfList class="accordion-list">
                     <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
-                      {{ i }}: {{ p.join(", ") }}
+                      {{ i }}: {{ p }}
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
@@ -243,7 +243,7 @@
                   <SfAccordionItem header="Product Specs">
                     <SfList class="accordion-list">
                       <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
-                        {{ i }}: {{ p.join(", ") }}
+                        {{ i }}: {{ p }}
                       </SfListItem>
                     </SfList>
                   </SfAccordionItem>
