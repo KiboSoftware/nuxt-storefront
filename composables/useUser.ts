@@ -1,13 +1,14 @@
 import { computed, reactive } from "@vue/composition-api"
-import type { User } from "./types"
 import { storeClientCookie, removeClientCookie } from "./helpers/cookieHelper"
 import { getCurrentUser } from "@/lib/gql/queries"
 import {
   createAccountLoginMutation,
   loginMutation,
   createAccountMutation,
+  updateCustomerDataMutation,
+  updatePasswordMutation,
 } from "@/lib/gql/mutations"
-import type { Maybe, CustomerUserAuthInfoInput } from "@/server/types/GraphQL"
+import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
@@ -15,7 +16,7 @@ export const useUser = () => {
   const fetcher = nuxt.nuxt2Context.$gqlFetch
   const authCookieName = nuxt.nuxt2Context.$config.userCookieKey
 
-  const user = useState<Maybe<User>>(`use-user-user`, () => null)
+  const user = useState<Maybe<CustomerAccount>>(`use-user-user`, () => null)
   const isAuthenticated = useState<Boolean>(`use-user-isAuthenticated`, () => false)
   const loading = useState<Boolean>(`use-user-loading`, () => false)
   const error = reactive({
@@ -83,7 +84,7 @@ export const useUser = () => {
     try {
       loading.value = true
       error.login = null
-      await removeClientCookie(authCookieName)
+      removeClientCookie(authCookieName)
       await load()
     } catch (err) {
     } finally {
@@ -154,6 +155,51 @@ export const useUser = () => {
     }
   }
 
+  // updatedUserData should consist the user object clone along with updated values
+  const updateCustomerPersonalData = async (updatedUserData) => {
+    const variables = {
+      accountId: user.value.id,
+      customerAccountInput: updatedUserData,
+    }
+    try {
+      loading.value = true
+      const response = await fetcher({
+        query: updateCustomerDataMutation,
+        variables,
+      })
+      user.value = response.data?.updateCustomerAccount
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const changePassword = async ({ oldPassword, newPassword }) => {
+    const variables = {
+      accountId: user.value.id,
+      unlockAccount: true,
+      userId: user.value.userId,
+      passwordInfoInput: {
+        oldPassword,
+        newPassword,
+      },
+    }
+    try {
+      loading.value = true
+      await fetcher({
+        query: updatePasswordMutation,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   // return
   return {
     user,
@@ -162,6 +208,8 @@ export const useUser = () => {
     logout,
     createAccountAndLogin,
     isAuthenticated,
+    updateCustomerPersonalData,
+    changePassword,
     loading: computed(() => loading.value),
     error: computed(() => error),
   }

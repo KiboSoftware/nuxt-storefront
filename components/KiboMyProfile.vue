@@ -1,53 +1,72 @@
 <template>
   <div class="profile">
-    <div class="profile-list">
-      <div class="profile-list__header">{{ $t("Customer Name") }}</div>
-      <div class="profile-list__subheader">
-        <div>{{ user.firstName }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-name', user)">
-          {{ $t("Edit") }}
+    <div v-if="!isEditMode">
+      <div v-for="(field, key) in fields" :key="key" class="profile-list">
+        <div class="profile-list__header">{{ field.label }}</div>
+        <div class="profile-list__subheader">
+          <div>{{ field.value }}</div>
+          <div class="profile-list__link" @click="enableEditMode(field.id)">
+            {{ $t("Edit") }}
+          </div>
         </div>
       </div>
     </div>
-    <div class="profile-list">
-      <div class="profile-list__header">{{ $t("Email") }}</div>
-      <div class="profile-list__subheader">
-        <div>{{ user.emailAddress }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-email', user)">
-          {{ $t("Edit") }}
-        </div>
-      </div>
-    </div>
-    <div class="profile-list">
-      <div class="profile-list__header">{{ $t("Phone Number") }}</div>
-      <div class="profile-list__subheader">
-        <div>{{ user.phoneNumber }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-phone', user)">
-          {{ $t("Edit") }}
-        </div>
-      </div>
-    </div>
-    <div class="profile-list">
-      <div class="profile-list__header">{{ $t("Password") }}</div>
-      <div class="profile-list__subheader">
-        <div>{{ user.password }}</div>
-        <div class="profile-list__link" @click="$emit('click:edit-user-password', user)">
-          {{ $t("Edit") }}
-        </div>
-      </div>
+    <div v-else>
+      <KiboEditProfileInfo
+        :editable-field="editableField"
+        :user="user"
+        @click:cancel-edit="enableEditMode"
+      />
     </div>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
+import type { MyProfileFields } from "@/components/types/myProfileFields"
+import { useUser } from "@/composables"
+import { userGetters } from "@/lib/getters"
 export default defineComponent({
   name: "KiboMyProfile",
-  props: {
-    user: {
-      type: Object,
-      required: true,
-      default: () => {},
-    },
+  setup(_, context) {
+    const { user } = useUser()
+    const editableField = ref({} as MyProfileFields)
+    const fields = computed(
+      () =>
+        [
+          {
+            label: context.root.$t("Customer Name"),
+            id: "name",
+            value: userGetters.getFullName(user.value),
+            isEdit: false,
+          },
+          {
+            label: context.root.$t("Email"),
+            id: "email",
+            value: userGetters.getEmail(user.value),
+            isEdit: false,
+          },
+          {
+            label: context.root.$t("Password"),
+            id: "password",
+            value: `**********`,
+            isEdit: false,
+          },
+        ] as MyProfileFields[]
+    )
+    const isEditMode = computed(() => editableField.value.isEdit)
+
+    const enableEditMode = (id: string) => {
+      editableField.value = fields.value.find((field) => field.id === id)
+      editableField.value.isEdit = !editableField.value.isEdit
+    }
+
+    return {
+      user,
+      fields,
+      enableEditMode,
+      isEditMode,
+      editableField,
+    }
   },
 })
 </script>
@@ -70,7 +89,8 @@ export default defineComponent({
 
   &__header {
     color: var(--c-black);
-    font-size: var(--font-size--lg);
+    font-size: var(--font-size--base);
+    font-weight: var(--font-weight--semibold);
     line-height: calc(var(--spacer-2xs) * 5.5);
     text-align: left;
   }
