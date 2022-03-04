@@ -57,7 +57,6 @@ export default {
   display: flex;
   flex-direction: row;
   padding: var(--spacer-base) 0;
-  border-bottom: 1px solid var(--_c-white-secondary);
 
   ::v-deep .sf-image--wrapper {
     --image-width: calc(var(--spacer-base) * 5.04);
@@ -92,9 +91,5 @@ export default {
       }
     }
   }
-}
-
-.productRow:last-child {
-  border: none;
 }
 </style>

@@ -155,7 +155,6 @@ import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/he
 import {
   shopperContactGetters,
   shippingMethodGetters,
-  checkoutGetters,
   checkoutLineItemGetters,
   productGetters,
 } from "@/lib/getters"

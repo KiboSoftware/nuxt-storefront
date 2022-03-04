@@ -91,10 +91,15 @@ export default {
   &__item {
     display: flex;
     flex-direction: column;
+    border-bottom: 1px solid var(--_c-white-secondary);
 
     @include for-desktop {
       width: calc(var(--spacer-base) * 17.54);
     }
+  }
+
+  &__item:last-child {
+    border: none;
   }
 }
 </style>
