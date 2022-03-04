@@ -52,13 +52,11 @@ export default {
   setup(props) {
     const pickupItems = computed(() => checkoutGetters.getPickupItems(props.order))
     const shipItems = computed(() => checkoutGetters.getShipItems(props.order))
-    const isMultipleOrder = computed(() => shipItems?.value?.length && pickupItems?.value?.length)
 
     return {
       checkoutGetters,
       shipItems,
       pickupItems,
-      isMultipleOrder,
     }
   },
 }

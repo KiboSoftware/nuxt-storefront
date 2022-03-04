@@ -50,64 +50,22 @@
             </SfPayment>
           </SfStep>
           <SfStep name="Review">
-            <SfConfirmOrder
-              :order="getOrder"
-              order-title="Order details"
-              :properties-names="['Subtotal', 'Shipping', 'Total price']"
-              :table-headers="['Item', 'Description', 'Size', 'Quantity', 'Colour', 'Amount']"
-              @click:edit="currentStep = $event"
-            >
-              <template #table>
-                <kiboCheckoutItem shipping-type="Shipping to Home" :items="shipItems" />
-                <div v-if="isMultipleOrder" class="order-spacer"></div>
-                <kiboCheckoutItem
-                  v-if="pickupItems && pickupItems.length > 0"
-                  shipping-type="Pickup in Store"
-                  :items="pickupItems"
-                  :is-multiple-order="isMultipleOrder"
-                />
-              </template>
-              <template #summary>
-                <SfProperty
-                  name="Subtotal"
-                  :value="$n(getOrder.subtotal, 'currency')"
-                  class="
-                    sf-property--full-width
-                    sf-confirm-order__property sf-confirm-order__property-subtotal
-                  "
+            <KiboConfirmOrder :order="getOrder">
+              <template #others>
+                <SfCheckbox
+                  v-model="isTermsAndConditionsAccepted"
+                  name="terms"
+                  class="sf-confirm-order__totals-terms"
                 >
-                </SfProperty>
-                <SfProperty
-                  name="Shipping"
-                  :value="$n(getOrder.shippingTotal, 'currency')"
-                  class="sf-property--full-width sf-confirm-order__property"
-                >
-                </SfProperty>
-                <SfProperty
-                  name="Estimated Tax"
-                  :value="$n(getOrder.taxTotal, 'currency')"
-                  class="sf-property--full-width sf-confirm-order__property"
-                >
-                </SfProperty>
-                <SfDivider class="sf-confirm-order__divider" />
-                <SfProperty
-                  name="Total Price"
-                  :value="$n(getOrder.total, 'currency')"
-                  class="
-                    sf-property--full-width sf-property--large
-                    sf-confirm-order__property-total
-                  "
-                >
-                </SfProperty>
-                <SfCheckbox v-model="terms" name="terms" class="sf-confirm-order__totals-terms">
                   <template #label>
                     <div class="sf-checkbox__label">
-                      I agree to <SfLink href="#">Terms and conditions</SfLink>
+                      {{ $t("I agree to") }}
+                      <SfLink href="#">{{ $t("Terms and conditions") }}</SfLink>
                     </div>
                   </template>
                 </SfCheckbox>
               </template>
-            </SfConfirmOrder>
+            </KiboConfirmOrder>
           </SfStep>
         </SfSteps>
       </div>
@@ -147,15 +105,13 @@
                 </SfButton>
               </template>
             </KiboOrderSummary>
-            <SfOrderReview
+            <KiboOrderReview
               v-else
               key="order-review"
-              class="checkout__aside-order"
               :order="getOrder"
-              review-title="Order review"
+              :user="user"
+              :review-title="$t('Order review')"
               :review-title-level="3"
-              button-text="Edit"
-              :characteristics="characteristics"
               @click:personal-details-edit="currentStep = $event"
               @click:shipping-details-edit="currentStep = $event"
               @click:billing-details-edit="currentStep = $event"
@@ -168,15 +124,13 @@
     </div>
     <div class="actions">
       <SfButton
-        class="sf-button--full-width actions__button"
-        :class="{ 'is-disabled-btn': !terms && steps[currentStep] === 'Confirm and pay' }"
+        class="sf-button--full-width color-primary"
+        :disabled="!isTermsAndConditionsAccepted && steps[currentStep] === 'Confirm and pay'"
         data-testid="next-button"
         @click="updateStep"
         >{{ steps[currentStep] }}</SfButton
       >
-      <SfButton
-        class="sf-button--full-width sf-button--underlined actions__button smartphone-only"
-        @click="currentStep--"
+      <SfButton class="sf-button--full-width sf-button--underlined" @click="currentStep--"
         >Go back</SfButton
       >
     </div>
@@ -184,21 +138,9 @@
 </template>
 
 <script lang="ts">
-import {
-  SfSteps,
-  SfButton,
-  SfPayment,
-  SfConfirmOrder,
-  SfOrderReview,
-  SfLoader,
-  SfProperty,
-  SfDivider,
-  SfCheckbox,
-  SfLink,
-  sfInput,
-} from "@storefront-ui/vue"
+import { SfSteps, SfButton, SfPayment, SfLoader, SfCheckbox, SfLink } from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
-import { mapMobileObserver } from "@storefront-ui/vue/src/utilities/mobile-observer"
+import { useNuxtApp } from "#app"
 import {
   useCheckout,
   useCart,
@@ -209,7 +151,6 @@ import {
   usePurchaseLocation,
   useUserAddresses,
 } from "@/composables"
-import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
 import {
   shopperContactGetters,
@@ -225,15 +166,10 @@ export default {
   components: {
     SfSteps,
     SfPayment,
-    SfConfirmOrder,
-    SfOrderReview,
     SfButton,
     SfLoader,
-    SfProperty,
-    SfDivider,
     SfCheckbox,
     SfLink,
-    sfInput,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -258,7 +194,7 @@ export default {
       userBillingAddresses,
     } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
-    const terms = ref(false)
+    const isTermsAndConditionsAccepted = ref(false)
     const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
@@ -462,10 +398,6 @@ export default {
       })
     }
 
-    const isMobile = computed(() => mapMobileObserver().isMobile.get())
-
-    const isMultipleOrder = computed(() => shipItems?.value?.length && pickupItems?.value?.length)
-
     // billing
     const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
     const updatedBillingAddress = ref({ ...billingDetails })
@@ -528,9 +460,9 @@ export default {
         if (checkout.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
       }
     }
-    // paymentDetails
+
     const savePaymentDetails = async () => {
-      // Need to add billing address save function
+      // @TODO Need to add billing address save function
       await addPaymentMethod()
     }
 
@@ -601,7 +533,6 @@ export default {
       steps,
       personalDetails,
       payment,
-      order,
       shippingMethods,
       buttonNames: [
         { name: "Go to Shipping" },
@@ -609,27 +540,11 @@ export default {
         { name: "Pay for Order" },
         { name: "Confirm and Pay" },
       ],
-      characteristics: [
-        {
-          title: "Safety",
-          description: "It carefully packaged with a personal touch",
-          icon: "safety",
-        },
-        {
-          title: "Easy shipping",
-          description: "You’ll receive dispatch confirmation and an arrival date",
-          icon: "shipping",
-        },
-        {
-          title: "Changed your mind?",
-          description: "Rest assured, we offer free returns within 30 days",
-          icon: "return",
-        },
-      ],
       checkout,
       gotoStep,
       updateStep,
       logIn,
+      user,
       getOrder,
       loading,
       numberOfItems,
@@ -668,13 +583,9 @@ export default {
       enableCurrentStep,
       enableNextStep,
       cart,
-      pickupItems,
-      shipItems,
-      isMobile,
       checkoutLineItemGetters,
       productGetters,
-      terms,
-      isMultipleOrder,
+      isTermsAndConditionsAccepted,
     }
   },
   watch: {
@@ -881,9 +792,5 @@ export default {
   &__title {
     --heading-title-font-weight: var(--font-weight--medium);
   }
-}
-
-.order-spacer {
-  height: 20px;
 }
 </style>

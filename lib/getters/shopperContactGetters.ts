@@ -31,12 +31,12 @@ const getAddressDetails = (shopper: CustomerContact) => {
   return {
     id: getId(shopper) || "",
     firstName: getFirstName(shopper) || "",
-    lastNameOrSurname: getLastName(shopper) || "",
+    lastName: getLastName(shopper) || "",
     address1: getAddressLine1(shopper) || "",
     address2: getAddressLine2(shopper) || "",
-    cityOrTown: getCityOrTown(shopper) || "",
-    stateOrProvince: getStateOrProvince(shopper) || "",
-    postalOrZipCode: getPostalOrZipCode(shopper) || "",
+    city: getCityOrTown(shopper) || "",
+    state: getStateOrProvince(shopper) || "",
+    zipCode: getPostalOrZipCode(shopper) || "",
     country: getCountryCode(shopper) || "",
     phoneNumber: getPhoneHome(shopper) || "",
   }
@@ -56,8 +56,14 @@ const getShippingDetails = ({
   }
 }
 
-const getBillingDetails = (shopper: CustomerContact) => {
-  return getAddressDetails(shopper)
+const getBillingDetails = ({ billingContact: shopper }) => {
+  return {
+    ...getAddressDetails(shopper),
+  }
+}
+
+const getSortedAddress = (addresses) => {
+  return addresses ? addresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary) : []
 }
 const getSortedAddress = (addresses) => {
   return addresses ? addresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary) : []
