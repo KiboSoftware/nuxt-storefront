@@ -75,8 +75,8 @@ jest.mock("#app", () => ({
 describe("[composable] useUserAddresses", () => {
   const { load, userShippingAddresses, loading, error } = useUserAddresses()
 
-  test("useUserAddresses : should return user shipping addresses ", async () => {
-    const accountId = 1028
+  test("useUserAddresses : should return user addresses ", async () => {
+    const accountId = 1366
 
     await load(accountId)
     expect(userShippingAddresses.value).toEqual(userAddressesResponse.customerAccountContacts.items)
