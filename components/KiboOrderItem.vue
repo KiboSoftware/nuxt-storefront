@@ -58,7 +58,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .order-item-container {
   border: none;
-  border-bottom: 1px solid var(--_c-white-secondary);
+  border-bottom: 1px solid var(--_c-gray-middle);
 }
 
 .order-item {

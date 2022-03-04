@@ -12,7 +12,9 @@
         />
       </div>
       <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="removeFilter" />
-      <hr class="filter-hr" />
+      <hr
+        :class="`${className === 'time-filter' ? 'filter-hr filter-hr--time-filter' : 'filter-hr'}`"
+      />
     </div>
     <slot name="content"> </slot>
   </div>
@@ -35,6 +37,10 @@ export default defineComponent({
     appliedFilters: {
       type: Array,
       default: () => [],
+    },
+    className: {
+      type: String,
+      default: "",
     },
   },
   setup(_, context) {
@@ -68,10 +74,18 @@ export default defineComponent({
 }
 
 .filter-hr {
-  margin: 0 auto;
+  margin: 0 -7.8%;
   height: 1px;
   border-width: 0;
   color: var(--_c-gray-middle);
   background-color: var(--_c-gray-middle);
+
+  &--time-filter {
+    color: var(--_c-green-primary);
+    background-color: var(--_c-green-primary);
+  }
+  @include for-desktop {
+    margin: 0 auto;
+  }
 }
 </style>
