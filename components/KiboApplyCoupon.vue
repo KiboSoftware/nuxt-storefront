@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="promo">
+  <div class="promo">
+    <div class="promo__input-section">
       <SfInput
         v-model="couponApplied"
         name="promo"
@@ -12,13 +12,14 @@
       />
       <SfButton
         class="color-primary sf-button sf-button--small"
-        :aria-disabled="false"
+        :class="!couponApplied.length && 'is-disabled--button'"
+        :aria-disabled="true"
         @click="applyPromocode"
       >
         {{ $t("Apply") }}
       </SfButton>
     </div>
-    <div v-if="areCouponsApplied" class="coupon">
+    <div v-if="areCouponsApplied" class="promo__values">
       <KiboCoupon v-for="(coupon, index) in appliedCoupons" :key="index" :coupon-code="coupon" />
     </div>
   </div>
@@ -70,19 +71,24 @@ export default defineComponent({
 <style lang="scss" scoped>
 .promo {
   display: flex;
+  flex-direction: column;
   width: 100%;
   align-items: stretch;
   padding: var(--spacer-sm) 0 0 0;
 
+  &__input-section {
+    display: flex;
+  }
+
   &__input {
     flex: 1;
   }
-}
 
-.coupon {
-  display: flex;
-  padding-bottom: var(--spacer-sm);
-  flex-wrap: wrap;
+  &__values {
+    display: flex;
+    padding-bottom: var(--spacer-sm);
+    flex-wrap: wrap;
+  }
 }
 
 .sf-button--small {

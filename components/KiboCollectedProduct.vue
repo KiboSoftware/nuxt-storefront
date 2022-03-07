@@ -34,10 +34,7 @@
         <SfAccordion v-if="options.length" open="Details" show-chevron>
           <SfAccordionItem header="Details">
             <div v-for="(option, index) in options" :key="index">
-              <div class="sf-property">
-                <span class="sf-property__name">{{ option.name }}</span>
-                <span class="sf-property__value"> {{ option.value }}</span>
-              </div>
+              <SfProperty :name="option.name" :value="option.value" class="sf-property" />
             </div>
           </SfAccordionItem>
         </SfAccordion>

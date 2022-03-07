@@ -52,10 +52,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    coupons: {
-      type: Array,
-      default: null,
-    },
   },
 }
 </script>

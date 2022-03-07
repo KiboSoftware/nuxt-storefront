@@ -39,7 +39,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    margin: var(--spacer-xs);
+    margin: 0 var(--spacer-xs) 0 0;
     height: 10px;
     max-width: 109px;
     background-color: #dcdcdc;
