@@ -5,9 +5,11 @@ const getOrderNumber = (order: Order) => order?.orderNumber
 
 const getId = (order: Order) => order?.id
 
-const getSubmittedDate = (order: Order) =>
+const getSubmittedDate = (order: Order, withTimestamp?: Boolean) =>
   order?.submittedDate
-    ? format(new Date(order?.submittedDate), "EEEE, MMMM dd, yyyy")
+    ? withTimestamp
+      ? format(new Date(order?.submittedDate), "MMMM dd, yyyy, hh:mm a zzz")
+      : format(new Date(order?.submittedDate), "MMMM dd, yyyy")
     : order?.submittedDate
 
 const getExpectedDeliveryDate = (order: Order) =>

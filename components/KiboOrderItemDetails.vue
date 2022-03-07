@@ -71,7 +71,7 @@ export default defineComponent({
       return orderGetters.getId(props.order)
     })
     const orderSubmittedDate = computed(() => {
-      return orderGetters.getSubmittedDate(props.order)
+      return orderGetters.getSubmittedDate(props.order, true)
     })
     const orderTotal = computed(() => {
       return orderGetters.getOrderTotal(props.order)
