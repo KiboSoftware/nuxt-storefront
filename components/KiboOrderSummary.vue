@@ -35,21 +35,6 @@
           :applied-coupons="appliedCoupons"
           @applyPromocode="applyPromocode"
         />
-        <!-- <SfInput
-          v-model="promoCode"
-          name="promoCode"
-          :placeholder="$t('Enter Promo Code')"
-          class="sf-input--filled promo-code-input"
-          type="text"
-        />
-
-        <SfButton
-          class="promo-code-button"
-          data-testid="apply-button"
-          @click="$emit('click:apply-code')"
-        >
-          Apply
-        </SfButton> -->
       </div>
       <div class="estimated-order-total">
         <SfProperty
