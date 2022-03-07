@@ -4,7 +4,7 @@
       {{ $t("No saved addresses yet!") }}
     </div>
     <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
-      <div v-for="address in userAddressesSorted" :key="address.id" class="shipping">
+      <div v-for="(address, index) in userAddressesSorted" :key="address.id" class="shipping">
         <div class="shipping__content">
           <div class="shipping__address">
             <UserSavedAddress

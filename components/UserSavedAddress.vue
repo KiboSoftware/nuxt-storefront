@@ -13,15 +13,11 @@
         >
           <template #label>
             <div class="radio-button">
-              <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-              <p>{{ firstName }} {{ lastName }}</p>
-              <p>{{ address1 }} {{ address2 }}</p>
-              <p>{{ zipCode }}</p>
-              <p>
-                {{ city }},
-                {{ state }}
-                <span v-if="phoneNumber">{{ phoneNumber }}</span>
-              </p>
+              <UserAddressView :address="address">
+                <template #header>
+                  <div v-if="isDefaultAddress" class="is-primary">{{ $t("Primary") }}</div>
+                </template>
+              </UserAddressView>
             </div>
           </template>
         </SfRadio>
@@ -29,22 +25,18 @@
     </div>
     <div v-else class="address-container">
       <div class="address-container__left">
-        <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-        <p>{{ firstName }} {{ lastName }}</p>
-        <p>{{ address1 }} {{ address2 }}</p>
-        <p>{{ zipCode }}</p>
-        <p>
-          {{ city }},
-          {{ state }}
-          <span v-if="phoneNumber">{{ phoneNumber }}</span>
-        </p>
+        <UserAddressView :address="address">
+          <template #header>
+            <div v-if="isDefaultAddress" class="is-primary">{{ $t("Primary") }}</div>
+          </template>
+        </UserAddressView>
       </div>
       <div class="address-container__right">
         <div class="address-container__edit" @click="$emit('click:edit-address', address)">
           {{ $t("Edit") }}
         </div>
         <div
-          v-show="!isDefaultAddress()"
+          v-show="!isDefaultAddress"
           class="address-container__delete"
           @click="$emit('click:remove-address', address)"
         >
@@ -86,9 +78,9 @@ export default defineComponent({
   setup(props, context) {
     const address = computed(() => shopperContactGetters.getAddressDetails(props.address))
 
-    const isDefaultAddress = () => {
-      return props.address?.types[0]?.isPrimary || false
-    }
+    const isDefaultAddress = computed(() => {
+      return (props.address?.types && props.address?.types[0]?.isPrimary) || false
+    })
 
     const onSelect = () => {
       const { id, email, firstName, lastNameOrSurname, phoneNumbers, address } = props.address

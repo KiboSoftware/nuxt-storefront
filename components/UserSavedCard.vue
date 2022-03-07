@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isReadonly" class="card-list">
-      <div class="card-list__left">
+      <div class="card-list__content">
         <SfRadio
           :key="card.endingDigit"
           :label="card.endingDigit"
@@ -12,39 +12,44 @@
         >
           <template #label>
             <div class="radio-button">
-              <div v-if="isDefaultCard()" class="is-primary">Primary</div>
-              <div>Icon</div>
-              <div class="card-list__right">
-                <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
-                <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
-              </div>
-            </div>
-            <div class="billing">
-              <UserSavedAddress
-                :key="billingAddress.id"
-                :address="billingAddress"
-                :is-readonly="true"
-              />
+              <UserCardView :payment-method="paymentMethod">
+                <template #header>
+                  <div v-if="isDefaultCard" class="is-primary">{{ $t("Primary") }}</div>
+                </template>
+                <template #billing-address>
+                  <div class="billing">
+                    <UserAddressView
+                      :key="billingAddress.id"
+                      :address="billingAddress"
+                      :is-readonly="true"
+                    />
+                  </div>
+                </template>
+              </UserCardView>
             </div>
           </template>
         </SfRadio>
       </div>
     </div>
     <div v-else class="card-list">
-      <div class="card-list__left">
-        <div v-if="isDefaultCard()" class="is-primary">{{ $t("Primary") }}</div>
-        <div>Icon</div>
-      </div>
-      <div class="card-list__right">
-        <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
-        <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
-        <div class="billing">
-          <UserSavedAddress
-            :key="billingAddress.id"
-            :address="billingAddress"
-            :is-readonly="true"
-          />
-        </div>
+      <div class="card-list__content">
+        <UserCardView :payment-method="paymentMethod">
+          <template #header>
+            <div v-if="isDefaultCard" class="is-primary">{{ $t("Primary") }}</div>
+          </template>
+          <template #card-type>
+            <SfBadge class="sf-badge color-secondary">i</SfBadge>
+          </template>
+          <template #billing-address>
+            <div class="billing">
+              <UserAddressView
+                :key="billingAddress.id"
+                :address="billingAddress"
+                :is-readonly="true"
+              />
+            </div>
+          </template>
+        </UserCardView>
       </div>
       <div class="card-list__actions">
         <div class="card-list__edit" @click="$emit('click:edit-card', card)">
@@ -57,8 +62,13 @@
 
 <script lang="ts">
 import { defineComponent, computed } from "@vue/composition-api"
+import { SfBadge } from "@storefront-ui/vue"
+
 export default defineComponent({
   name: "UserSavedCard",
+  components: {
+    SfBadge,
+  },
   props: {
     paymentMethod: {
       type: Object,
@@ -71,11 +81,11 @@ export default defineComponent({
   },
 
   setup(props) {
-    const isDefaultCard = () => {
+    const isDefaultCard = computed(() => {
       return props.paymentMethod?.card?.isDefaultPaymentMethod || false
-    }
-    const card = computed(() => props.paymentMethod.card)
-    const billingAddress = computed(() => props.paymentMethod.billingAddress)
+    })
+    const card = computed(() => props.paymentMethod?.card)
+    const billingAddress = computed(() => props.paymentMethod?.billingAddress || {})
     return {
       isDefaultCard,
       card,

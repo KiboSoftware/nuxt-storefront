@@ -81,6 +81,10 @@ export default defineComponent({
     SfCheckbox,
   },
   props: {
+    isReadonly: {
+      type: Boolean,
+      default: false,
+    },
     paymentMethods: {
       type: Array,
       default: () => [],
