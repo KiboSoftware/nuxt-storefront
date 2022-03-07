@@ -47,7 +47,7 @@
       <div v-show="isOpenOrderList" class="filters">
         <KiboMobileFacetContainer
           :title="$t('Filter By')"
-          class-name="time-filter"
+          :is-time-filter="true"
           @close="closeFilter"
         >
           <template #content>

@@ -12,9 +12,7 @@
         />
       </div>
       <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="removeFilter" />
-      <hr
-        :class="`${className === 'time-filter' ? 'filter-hr filter-hr--time-filter' : 'filter-hr'}`"
-      />
+      <hr :class="{ 'filter-hr--time-filter': isTimeFilter }" class="filter-hr" />
     </div>
     <slot name="content"> </slot>
   </div>
@@ -38,9 +36,9 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    className: {
-      type: String,
-      default: "",
+    isTimeFilter: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(_, context) {
