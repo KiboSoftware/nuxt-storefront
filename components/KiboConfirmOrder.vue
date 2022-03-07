@@ -10,37 +10,42 @@
     <hr class="hr-order" />
     <div class="order-total">
       <SfProperty
-        name="Subtotal"
+        :name="$t('Subtotal')"
         :value="$n(order.subtotal, 'currency')"
         class="sf-property--full-width sf-confirm-order__property sf-confirm-order__property-subtotal"
       >
       </SfProperty>
       <SfProperty
-        name="Shipping"
+        :name="$t('Shipping')"
         :value="$n(order.shippingTotal, 'currency')"
         class="sf-property--full-width sf-confirm-order__property"
       >
       </SfProperty>
       <SfProperty
-        name="Estimated Tax"
         :value="$n(order.taxTotal, 'currency')"
         class="sf-property--full-width sf-confirm-order__property"
       >
+        <template #name>
+          <div class="sf-property__name">
+            {{ $t("Estimated Tax") }}
+            <SfBadge class="sf-badge--number sf-badge color-secondary tax-badge">i</SfBadge>
+          </div>
+        </template>
       </SfProperty>
       <SfDivider class="sf-confirm-order__divider" />
       <SfProperty
-        name="Total Price"
+        :name="$t('Total Price')"
         :value="$n(order.total, 'currency')"
         class="sf-property--full-width sf-property--large sf-confirm-order__property-total"
       >
       </SfProperty>
+      <slot name="others" />
     </div>
-    <slot name="others" />
   </div>
 </template>
 
 <script lang="ts">
-import { SfHeading, SfProperty, SfDivider } from "@storefront-ui/vue"
+import { SfHeading, SfProperty, SfDivider, SfBadge } from "@storefront-ui/vue"
 
 export default {
   name: "KiboConfirmOrder",
@@ -48,6 +53,7 @@ export default {
     SfHeading,
     SfProperty,
     SfDivider,
+    SfBadge,
   },
   props: {
     order: {
@@ -86,5 +92,9 @@ export default {
   @include for-desktop {
     width: calc(var(--spacer-base) * 17.54);
   }
+}
+
+.tax-badge {
+  position: absolute;
 }
 </style>

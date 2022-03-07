@@ -130,9 +130,9 @@
         @click="updateStep"
         >{{ steps[currentStep] }}</SfButton
       >
-      <SfButton class="sf-button--full-width sf-button--underlined" @click="currentStep--"
-        >Go back</SfButton
-      >
+      <SfButton class="sf-button--full-width sf-button--underlined" @click="currentStep--">{{
+        $t("Go back")
+      }}</SfButton>
     </div>
   </div>
 </template>

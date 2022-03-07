@@ -126,7 +126,7 @@
 <script>
 import { SfButton, SfCharacteristic, SfInput } from "@storefront-ui/vue"
 import { defineComponent, ref, computed } from "@vue/composition-api"
-import { shopperContactGetters, creditCardPaymentGetters } from "@/lib/getters"
+import { shopperContactGetters, creditCardPaymentGetters, userGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "KiboOrderReview",
@@ -164,9 +164,11 @@ export default defineComponent({
     const { order, user } = props
     const promoCode = ref("")
 
-    const userEmail = computed(() => user.emailAddress)
+    const userEmail = computed(() => userGetters.getUserEmail(user))
 
-    const userName = computed(() => user.firstName + " " + user.lastName)
+    const userName = computed(
+      () => userGetters.getUserFirstName(user) + " " + userGetters.getUserLastName(user)
+    )
 
     const shipping = computed(() => shopperContactGetters.getShippingDetails(order.fulfillmentInfo))
 
