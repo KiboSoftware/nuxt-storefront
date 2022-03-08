@@ -16,7 +16,7 @@
                 :key="rates.shippingMethodCode"
                 :value="rates.shippingMethodCode"
               >
-                {{ rates.shippingMethodName }} ${{ rates.price }}
+                {{ rates.shippingMethodName }} {{ $n(rates.price, "currency") }}
               </SfSelectOption>
             </SfSelect>
           </div>
