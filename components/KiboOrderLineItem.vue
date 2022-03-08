@@ -55,7 +55,6 @@ export default {
 <style lang="scss" scoped>
 .productRow {
   display: flex;
-  flex-direction: row;
   padding: var(--spacer-base) 0;
   border-bottom: 1px solid var(--_c-white-secondary);
 

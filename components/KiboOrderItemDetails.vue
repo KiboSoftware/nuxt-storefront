@@ -64,24 +64,15 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const orderNumber = computed(() => {
-      return orderGetters.getOrderNumber(props.order)
-    })
-    const orderId = computed(() => {
-      return orderGetters.getId(props.order)
-    })
-    const orderSubmittedDate = computed(() => {
-      return orderGetters.getSubmittedDate(props.order, true)
-    })
-    const orderTotal = computed(() => {
-      return orderGetters.getOrderTotal(props.order)
-    })
-    const orderStatus = computed(() => {
-      return orderGetters.getOrderStatus(props.order)
-    })
-    const orderExpectedDeliveryDate = computed(() => {
-      return orderGetters.getExpectedDeliveryDate(props.order)
-    })
+    const orderNumber = computed(() => orderGetters.getOrderNumber(props.order))
+    const orderId = computed(() => orderGetters.getId(props.order))
+    const orderSubmittedDate = computed(() => orderGetters.getSubmittedDate(props.order, true))
+    const orderTotal = computed(() => orderGetters.getOrderTotal(props.order))
+    const orderStatus = computed(() => orderGetters.getOrderStatus(props.order))
+    const orderExpectedDeliveryDate = computed(() =>
+      orderGetters.getExpectedDeliveryDate(props.order)
+    )
+
     return {
       orderNumber,
       orderId,
