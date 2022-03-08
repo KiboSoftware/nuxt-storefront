@@ -164,10 +164,10 @@ export default defineComponent({
     const { order, user } = props
     const promoCode = ref("")
 
-    const userEmail = computed(() => userGetters.getUserEmail(user))
+    const userEmail = computed(() => userGetters.getEmail(user))
 
     const userName = computed(
-      () => userGetters.getUserFirstName(user) + " " + userGetters.getUserLastName(user)
+      () => userGetters.getFirstName(user) + " " + userGetters.getLastName(user)
     )
 
     const shipping = computed(() => shopperContactGetters.getShippingDetails(order.fulfillmentInfo))

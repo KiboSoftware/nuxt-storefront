@@ -16,9 +16,18 @@ const getEmail = (user: CustomerAccount) => {
   return user.emailAddress
 }
 
+export const getFirstName = (user: CustomerAccount) => {
+  return user?.firstName
+}
+export const getLastName = (user: CustomerAccount) => {
+  return user?.lastName
+}
+
 export const userGetters = {
   isLoggedInUser,
   hasUserError,
+  getFirstName,
+  getLastName,
   getFullName,
   getEmail,
 }
