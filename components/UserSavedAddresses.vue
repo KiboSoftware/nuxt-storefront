@@ -143,8 +143,8 @@ export default defineComponent({
     const setInputAddressData = (address) => {
       activeAddress.value = { ...address }
     }
-    const saveAddress = async () => {
-      await context.emit("onSave", {
+    const saveAddress = () => {
+      context.emit("onSave", {
         address: { ...activeAddress.value },
         setAsDefault: isDefaultAddress.value,
       })

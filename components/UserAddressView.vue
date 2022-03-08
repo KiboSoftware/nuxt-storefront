@@ -1,12 +1,12 @@
 <template>
   <div class="addres-view">
     <slot name="header" />
-    <p>{{ firstName }} {{ lastName }}</p>
+    <p>{{ firstName }} {{ lastNameOrSurname }}</p>
     <p>{{ address1 }} {{ address2 }}</p>
-    <p>{{ zipCode }}</p>
+    <p>{{ postalOrZipCode }}</p>
     <p>
-      {{ city }},
-      {{ state }}
+      {{ cityOrTown }},
+      {{ stateOrProvince }}
       <span v-if="phoneNumber">{{ phoneNumber }}</span>
     </p>
   </div>
