@@ -69,7 +69,7 @@
               :order-title="$t('Order Summary')"
               :order-title-level="3"
               :number-of-items="numberOfItems"
-              :sub-total="cartSubTotal"
+              :sub-total="checkoutSubTotal"
               :standard-shipping="standardShipping"
               :estimated-tax="estimatedTax"
               :estimated-order-total="estimatedOrderTotal"
@@ -262,7 +262,7 @@ export default {
     })
 
     const numberOfItems = computed(() => checkoutGetters.getLineItemTotal(getOrder.value))
-    const cartSubTotal = computed(() => checkoutGetters.getSubtotal(getOrder.value))
+    const checkoutSubTotal = computed(() => checkoutGetters.getSubtotal(getOrder.value))
     const standardShipping = computed(() => checkoutGetters.getShippingTotal(getOrder.value))
     const estimatedTax = computed(() => checkoutGetters.getTaxTotal(getOrder.value))
     const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(getOrder.value))
@@ -275,15 +275,16 @@ export default {
     // TODO
     // const applyPromocode = async (couponApplied) => await applyCoupon(couponApplied)
 
-    const isValidCoupon = computed(() => !cart.value?.invalidCoupons[0]?.couponCode)
+    const isValidCoupon = computed(() => !getOrder.value?.invalidCoupons[0]?.couponCode)
 
     const invalidCouponErrorText = computed(
-      () => `${cart.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
+      () =>
+        `${getOrder.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
     )
 
-    const appliedCoupons = computed(() => cart.value?.couponCodes)
+    const appliedCoupons = computed(() => getOrder.value?.couponCodes)
 
-    const areCouponsApplied = computed(() => cart.value?.couponCodes.length > 0)
+    const areCouponsApplied = computed(() => getOrder.value?.couponCodes.length > 0)
 
     // personalDetails
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
@@ -536,7 +537,7 @@ export default {
       getOrder,
       loading,
       numberOfItems,
-      cartSubTotal,
+      checkoutSubTotal,
       standardShipping,
       estimatedTax,
       estimatedOrderTotal,
