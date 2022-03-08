@@ -1,58 +1,27 @@
 <template>
   <div class="form">
-    <div data-testid="shipping-method">
-      <div v-for="(item, index) in items" :key="index" class="item">
-        <h3 v-if="item.values && item.values.length" class="sf-heading__title h3">
-          {{ item.type === "shipItems" && item.values.length > 0 ? $t("Shipping To Home") : null }}
-          {{ item.type === "pickupItems" && item.values.length > 0 ? $t("Pickup In Store") : null }}
-        </h3>
-
-        <div v-if="item.type === 'shipItems'" class="rates">
-          <SfSelect
-            :value="selectedShippingMethodCode"
-            :placeholder="$t('Select Shipping Option')"
-            :valid="true"
-            data-testid="rates"
-            @input="updateField($event)"
-          >
-            <SfSelectOption
-              v-for="rates in shippingRates"
-              :key="rates.shippingMethodCode"
-              :value="rates.shippingMethodCode"
+    <div v-if="order" class="item" data-testid="shipping-method">
+      <KiboOrderLineItems :order="order">
+        <template #ship-sub-section>
+          <div class="rates order-shipment__section">
+            <SfSelect
+              :value="selectedShippingMethodCode"
+              :placeholder="$t('Select Shipping Option')"
+              :valid="true"
+              data-testid="rates"
+              @input="updateField($event)"
             >
-              {{ rates.shippingMethodName }} ${{ rates.price }}
-            </SfSelectOption>
-          </SfSelect>
-        </div>
-
-        <div v-for="product in item.values" :key="product.id" class="productRow">
-          <SfImage
-            class="sf-gallery__thumb"
-            :src="checkoutLineItemGetters.getProductImage(product)"
-            :alt="checkoutLineItemGetters.getProductName(product)"
-          />
-
-          <div class="content">
-            <div class="content__productName">
-              {{ checkoutLineItemGetters.getProductName(product) }}
-            </div>
-
-            <div
-              v-for="option in checkoutLineItemGetters.getProductOptions(product)"
-              :key="option.attributeFQN"
-              class="content__props"
-            >
-              <span class="title"> {{ option.name }}: </span> {{ option.value }} <br />
-            </div>
-
-            <div class="content__props">
-              <span class="title">{{ $t("Price") }}: </span> ${{
-                checkoutLineItemGetters.getProductPrice(product)
-              }}
-            </div>
+              <SfSelectOption
+                v-for="rates in shippingRates"
+                :key="rates.shippingMethodCode"
+                :value="rates.shippingMethodCode"
+              >
+                {{ rates.shippingMethodName }} {{ $n(rates.price, "currency") }}
+              </SfSelectOption>
+            </SfSelect>
           </div>
-        </div>
-      </div>
+        </template>
+      </KiboOrderLineItems>
     </div>
     <div class="changeStore">
       <span class="changeStore__title">{{ $t("Pickup in Store") }}: </span><br />
@@ -65,13 +34,12 @@
 </template>
 
 <script>
-import { SfImage, SfSelect } from "@storefront-ui/vue"
+import { SfSelect } from "@storefront-ui/vue"
 import { checkoutLineItemGetters } from "@/lib/getters"
 
 export default {
-  name: "KiboShipping",
+  name: "KiboShippingMethodForm",
   components: {
-    SfImage,
     SfSelect,
   },
   props: {
@@ -83,9 +51,9 @@ export default {
       type: String,
       default: "",
     },
-    items: {
-      type: Array,
-      default: () => [],
+    order: {
+      type: Object,
+      default: () => ({}),
     },
     shippingRates: {
       type: Array,
@@ -94,11 +62,6 @@ export default {
   },
   setup(props, context) {
     const selectedShippingMethodCode = ref("")
-
-    const shippingMethod = ref({
-      shipItems: [],
-      pickupItems: [],
-    })
 
     const updateField = (shippingMethodCode) => {
       selectedShippingMethodCode.value = shippingMethodCode
@@ -117,7 +80,6 @@ export default {
     return {
       updateField,
       checkoutLineItemGetters,
-      shippingMethod,
       selectedShippingMethodCode,
       handleStoreLocatorClick,
     }
@@ -133,11 +95,6 @@ export default {
 
   @include for-desktop {
     width: calc(var(--spacer-base) * 17.54);
-  }
-
-  .sf-heading__title {
-    font-weight: bold;
-    padding: var(--spacer-sm) 0;
   }
 
   ::v-deep select:hover {
@@ -156,47 +113,6 @@ export default {
 
     @include for-desktop {
       width: calc(var(--spacer-base) * 17.54);
-    }
-
-    .productRow {
-      display: flex;
-      flex-direction: row;
-      padding: var(--spacer-base) 0;
-      border-bottom: 1px solid var(--_c-white-secondary);
-
-      ::v-deep .sf-image--wrapper {
-        --image-width: calc(var(--spacer-base) * 5.04);
-        --image-height: calc(var(--spacer-base) * 5.04);
-
-        @include for-desktop {
-          --image-width: calc(var(--spacer-base) * 6.7);
-          --image-height: calc(var(--spacer-base) * 6.7);
-        }
-      }
-
-      .content {
-        display: flex;
-        padding-left: var(--spacer-base);
-        flex-direction: column;
-
-        &__productName {
-          padding-bottom: var(--spacer-2xs);
-        }
-
-        &__props {
-          padding: 2px 0 2px 0;
-          font-size: var(--font-size--sm);
-
-          .title {
-            font-weight: bold;
-            font-size: var(--font-size--sm);
-          }
-        }
-      }
-    }
-
-    .productRow:last-child {
-      border: none;
     }
   }
 

@@ -4,81 +4,107 @@
       <hr class="details-hr" />
     </div>
     <div class="order">
-      <div class="order-header-container order-item-box">
+      <div class="order-header-container order__item-box">
         <div class="order-header">
-          <div>{{ $t("Your Order") }} :</div>
-          <div>{{ $t("Order Date") }} :</div>
-          <div>{{ $t("Order Total") }}:</div>
+          <SfProperty :name="$t('Your Order:')" :value="orderNumber" />
+          <SfProperty
+            :name="$t('Order Date:')"
+            :value="orderSubmittedDate"
+            class="sf-order-summary__property"
+          />
+          <SfProperty
+            :name="$t('Order Total:')"
+            :value="$n(orderTotal, 'currency')"
+            class="sf-order-summary__property"
+          />
         </div>
       </div>
-      <hr class="details-hr-normal" />
-      <div class="order-shipment">
-        <div class="oder-shipment-header order-item-box"></div>
-        <div class="order-shipment-status order-item-box"></div>
-        <div class="order-shipment-home">
-          <div class="order-shipment-items"></div>
-        </div>
-        <div class="order-shipment-pickup">
-          <div class="oder-shipment-header"></div>
-          <div class="order-shipment-items"></div>
-        </div>
-      </div>
-      <div class="order-payment">
-        <div class="order-payment-header"></div>
-        <div class="order-payment-method">
-          <div class="order-payment-title order-item-box"></div>
-          <div class="order-payment-info order-item-box"></div>
-        </div>
-      </div>
-      <div class="order-billing-address order-item-box"></div>
-      <hr class="details-hr-normal" />
-      <div class="order-shipping-address order-item-box"></div>
-      <hr class="details-hr-normal" />
-      <div class="order-summary order-item-box">
-        <div class="order-summary-header"></div>
+      <div v-if="order.items" class="order-shipment">
+        <KiboOrderLineItems :order="order">
+          <template #ship-title>
+            <h3 class="sf-heading__title h3">{{ $t("Shipment Details") }}</h3>
+          </template>
+          <template #ship-sub-section>
+            <div class="order-shipment__section">
+              <div class="order-shipment__info">{{ order.status }}</div>
+              <div class="order-shipment__status">{{ orderExpectedDeliveryDate }}</div>
+            </div>
+          </template>
+          <template #pickup-title>
+            <h3 class="sf-heading__title h3">{{ $t("Pickup") }}</h3>
+          </template>
+          <template #pickup-sub-section>
+            <div class="order-shipment__section">
+              <div class="order-shipment__info">{{ $t("Pickup In Store") }}</div>
+              <div class="order-shipment__status">
+                {{ $t("Est. Pickup:") }} {{ orderExpectedDeliveryDate }}
+              </div>
+            </div>
+          </template>
+        </KiboOrderLineItems>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from "@vue/composition-api"
+import { defineComponent, PropType } from "@vue/composition-api"
+import { SfProperty } from "@storefront-ui/vue"
+import { orderGetters } from "@/lib/getters"
+import { Order } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "KiboOrderItemDetails",
+  components: {
+    SfProperty,
+  },
   props: {
     order: {
-      type: Object,
+      type: Object as PropType<Order>,
       default: () => ({}),
     },
   },
-  setup() {},
+  setup(props) {
+    const orderNumber = computed(() => orderGetters.getOrderNumber(props.order))
+    const orderId = computed(() => orderGetters.getId(props.order))
+    const orderSubmittedDate = computed(() => orderGetters.getSubmittedDate(props.order, true))
+    const orderTotal = computed(() => orderGetters.getOrderTotal(props.order))
+    const orderStatus = computed(() => orderGetters.getOrderStatus(props.order))
+    const orderExpectedDeliveryDate = computed(() =>
+      orderGetters.getExpectedDeliveryDate(props.order)
+    )
+
+    return {
+      orderNumber,
+      orderId,
+      orderSubmittedDate,
+      orderTotal,
+      orderStatus,
+      orderExpectedDeliveryDate,
+    }
+  },
 })
 </script>
 
 <style lang="scss" scoped>
 .order {
-  margin: 20px auto;
-}
+  margin: var(--spacer-base) auto;
 
-.order-item-box {
-  display: flex;
-  justify-content: flex-start;
-  margin-left: 30px;
+  &__item-box {
+    display: flex;
+    justify-content: flex-start;
+    margin-block: var(--spacer-sm);
+  }
+
+  .sf-property {
+    &__name,
+    &__value {
+      font-size: var(--font-size--base);
+    }
+  }
 }
 
 .details-hr {
-  margin: 0 auto;
-  height: 1px;
-  border-width: 0;
-  color: var(--_c-gray-middle);
-  background-color: var(--_c-gray-middle);
-}
-
-.details-hr-normal {
-  margin: 0 auto;
-  height: 1px;
-  border-width: 0;
-  color: var(--_c-gray-middle);
-  background-color: var(--_c-gray-middle);
+  border: none;
+  border-bottom: 2px solid var(--_c-green-primary);
 }
 </style>

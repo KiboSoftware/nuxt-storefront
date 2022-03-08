@@ -20,7 +20,7 @@
             >
               <template #shipping-methods-form>
                 <KiboShippingMethodForm
-                  :items="items"
+                  :order="checkout"
                   :cart-item-purchase-location="purchaseLocation.name"
                   :shipping-rates="shippingRates"
                   @saveShippingMethod="saveShippingMethod"
@@ -128,7 +128,7 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
+import { shopperContactGetters, shippingMethodGetters } from "@/lib/getters"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
@@ -304,15 +304,6 @@ export default {
     const updateShippingDetails = (newShippingDetails) => {
       shippingDetails.value = { ...newShippingDetails }
     }
-
-    // shippingMethods
-    const shipItems = computed(() => checkoutGetters.getShipItems(checkout.value))
-    const pickupItems = computed(() => checkoutGetters.getPickupItems(checkout.value))
-
-    const items = [
-      { type: "shipItems", values: shipItems.value },
-      { type: "pickupItems", values: pickupItems.value },
-    ]
 
     const shippingRates = computed(() =>
       shippingMethodGetters.getShippingRates(shippingMethods.value)
@@ -518,7 +509,6 @@ export default {
       userShippingAddresses,
       userBillingAddresses,
 
-      items,
       shippingRates,
       saveShippingMethod,
       handleStoreLocatorClick,

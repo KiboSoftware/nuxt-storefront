@@ -3,7 +3,6 @@
     <div>
       <div>
         <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
-        <hr class="order-history-hr desktop-only" />
       </div>
       <div></div>
     </div>
@@ -211,17 +210,14 @@ export default defineComponent({
   line-height: var(--spacer-base);
 }
 
-.order-history-hr {
-  margin: 0 auto;
-  height: 1px;
-  border-width: 0;
-  color: var(--_c-gray-middle);
-  background-color: var(--_c-gray-middle);
-}
-
 .order-history {
   display: flex;
   flex-direction: column;
+  margin: auto 1.5rem;
+
+  @include for-desktop {
+    margin: auto;
+  }
 }
 
 .history-filter {
@@ -245,12 +241,16 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin: calc(var(--spacer-2xs) * 3) 0 calc(var(--spacer-2xs) * 5) calc(var(--spacer-2xs) * 7);
+  margin: var(--spacer-base);
   color: var(--c-black);
-  font-size: calc((var(--font-size--xs) / 3) * 5);
+  font-size: var(--font-size--xl);
   line-height: var(--spacer-base);
   text-align: left;
   font-weight: bold;
+
+  @include for-desktop {
+    margin: var(--spacer-base) auto;
+  }
 }
 
 .filters {
@@ -290,5 +290,10 @@ export default defineComponent({
   &__plus-icon {
     margin: 0 -2.625rem 0 auto;
   }
+}
+
+.filter-hr {
+  border: none;
+  border-bottom: 2px solid var(--_c-green-primary);
 }
 </style>

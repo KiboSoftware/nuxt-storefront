@@ -17,8 +17,9 @@
 </template>
 <script lang="ts">
 import { SfChevron } from "@storefront-ui/vue"
-import { defineComponent } from "@vue/composition-api"
+import { defineComponent, PropType } from "@vue/composition-api"
 import { orderGetters } from "@/lib/getters"
+import { Order } from "@/server/types/GraphQL"
 
 export default defineComponent({
   name: "KiboOrderItem",
@@ -27,7 +28,7 @@ export default defineComponent({
   },
   props: {
     order: {
-      type: Object,
+      type: Object as PropType<Order>,
       default: () => ({}),
     },
   },
