@@ -230,4 +230,12 @@ export default {
   "Password doesn't match": "Password doesn't match",
   Pickup: "Pickup",
   "Shipment Details": "Shipment Details",
+  Required: "This is required field",
+  ValidEmail: "Please enter valid email address",
+  CreateAnAccount: "I want to create an account",
+  YourEmail: "Your email",
+  FasterCheckout: "Faster checkout",
+  EarnCredits: "Earn credits with every purchase",
+  FullRewards: "Full rewards program benefits",
+  ManageWishlist: "Manage your wishlist",
 }

@@ -30,6 +30,7 @@
       :value="activeAddress"
       :countries="countries"
       @addressData="setInputAddressData"
+      @validateForm="validateShippingDetails"
     />
 
     <SfButton v-if="!showAddressForm" class="action-button" @click="addNewAddress">
@@ -56,6 +57,7 @@
 import { SfButton, SfIcon } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
 import { useUiState } from "@/composables"
+import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserSavedAddresses",
@@ -88,12 +90,12 @@ export default defineComponent({
     const activeAddress = ref(props.defaultAddress)
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
+    const isValidShippingDetails = ref(false)
 
     // Sort addresses to display Primary addresses first
-    const userAddresses = [...props.addresses]
-    const userAddressesSorted = computed(() =>
-      userAddresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary)
-    )
+    const userAddressesSorted = computed(() => {
+      return shopperContactGetters.getSortedAddress([...props.addresses])
+    })
 
     const addNewAddress = () => {
       isNewAddress.value = true
@@ -135,6 +137,11 @@ export default defineComponent({
       closeAddressForm()
     }
 
+    const validateShippingDetails = (isValid) => {
+      isValidShippingDetails.value = isValid
+      context.emit("validateForm", isValid)
+    }
+
     return {
       userAddressesSorted,
       addNewAddress,
@@ -150,6 +157,7 @@ export default defineComponent({
       closeAddressForm,
       saveAddress,
       setInputAddressData,
+      validateShippingDetails,
     }
   },
 })

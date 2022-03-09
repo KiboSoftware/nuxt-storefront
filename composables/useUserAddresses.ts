@@ -1,12 +1,18 @@
 import { getUserAddressesQuery } from "@/lib/gql/queries"
-import type { Maybe, CustomerContact } from "@/server/types/GraphQL"
+import type { Maybe, CustomerContactCollection } from "@/server/types/GraphQL"
 import { useState, useNuxtApp } from "#app"
 
 export const useUserAddresses = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const userShippingAddresses = useState<Maybe<Array<CustomerContact>>>(`use-user-shipping-addresses`, () => null)
-  const userBillingAddresses = useState<Maybe<Array<CustomerContact>>>(`use-user-billing-addresses`, () => null)
+  const userShippingAddresses = useState<Maybe<Array<CustomerContactCollection>>>(
+    `use-user-shipping-addresses`,
+    () => []
+  )
+  const userBillingAddresses = useState<Maybe<Array<CustomerContactCollection>>>(
+    `use-user-billing-addresses`,
+    () => []
+  )
 
   const loading = useState<Boolean>(`use-user-address-loading`, () => false)
   const error = useState(`use-shipping-methods-error`, () => null)

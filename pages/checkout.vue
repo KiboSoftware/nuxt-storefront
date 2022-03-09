@@ -8,6 +8,7 @@
               :value="personalDetails"
               @input="updatePersonalDetails"
               @log-in="logIn"
+              @validateForm="validatePersonalDetails"
             >
             </KiboPersonalDetails>
           </SfStep>
@@ -17,6 +18,7 @@
               :user-shipping-addresses="userShippingAddresses"
               :countries="countries"
               @saveShippingAddress="saveShippingDetails"
+              @validateForm="validateShippingDetails"
             >
               <template #shipping-methods-form>
                 <KiboShippingMethodForm
@@ -25,6 +27,7 @@
                   :shipping-rates="shippingRates"
                   @saveShippingMethod="saveShippingMethod"
                   @handleStoreLocatorClick="handleStoreLocatorClick"
+                  @validateForm="validateShippingRates"
                 />
               </template>
             </KiboShipping>
@@ -38,6 +41,7 @@
                   :countries="countries"
                   @billingAddressData="updateBillingDetails"
                   @sameAsShipping="copyShippingAddress"
+                  @validateForm="validateBillingDetails"
                 />
               </template>
               <template #payment-form>
@@ -149,8 +153,15 @@ export default {
 
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo, loading } =
-      useCheckout()
+    const {
+      checkout,
+      loadFromCart,
+      setPersonalInfo,
+      setShippingInfo,
+      setBillingInfo,
+      loading,
+      load: loadCheckout,
+    } = useCheckout()
     const {
       load: loadUserAddresses,
       userShippingAddresses,
@@ -169,75 +180,22 @@ export default {
     const enableCurrentStep = ref(false)
     const enableNextStep = ref(false)
 
-    enum Steps {
-      GO_TO_SHIPPING = context?.root?.$t("Go to Shipping"),
-      GO_TO_PAYMENT = context?.root?.$t("Go to Payment"),
-      PAY_FOR_ORDER = context?.root?.$t("Pay for Order"),
-      CONFIRM_AND_PAY = context?.root?.$t("Confirm and pay"),
+    const stepLabels = {
+      GO_TO_SHIPPING: context?.root?.$t("Go to Shipping"),
+      GO_TO_PAYMENT: context?.root?.$t("Go to Payment"),
+      PAY_FOR_ORDER: context?.root?.$t("Pay for Order"),
+      CONFIRM_AND_PAY: context?.root?.$t("Confirm and pay"),
     }
     const steps = [
-      Steps.GO_TO_SHIPPING,
-      Steps.GO_TO_PAYMENT,
-      Steps.PAY_FOR_ORDER,
-      Steps.CONFIRM_AND_PAY,
+      stepLabels.GO_TO_SHIPPING,
+      stepLabels.GO_TO_PAYMENT,
+      stepLabels.PAY_FOR_ORDER,
+      stepLabels.CONFIRM_AND_PAY,
     ]
 
     enum CardTypesSupported {
       creditcard = "creditcard",
       checkbymail = "checkbymail",
-    }
-
-    const payment = {
-      sameAsShipping: false,
-      firstName: "",
-      lastName: "",
-      streetName: "",
-      apartment: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-      paymentMethod: "",
-      invoice: false,
-      cardNumber: "",
-      cardHolder: "",
-      cardMonth: "",
-      cardYear: "",
-      cardCVC: "",
-      cardKeep: false,
-    }
-
-    const order = {
-      password: "",
-      createAccount: false,
-      firstName: "John",
-      lastName: "Dog",
-      email: "john.dog@gmail.com",
-      orderItems: [
-        {
-          title: "Cream Beach Bag",
-          image: "/assets/storybook/Home/productA.jpg",
-          price: { regular: "$100.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: 1,
-          sku: "MSD23-345-324",
-        },
-        {
-          title: "Vila stripe maxi dress",
-          image: "/assets/storybook/Home/productB.jpg",
-          price: { regular: "$50.00", special: "$20.05" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: 2,
-          sku: "MSD23-345-325",
-        },
-      ],
     }
 
     const getOrder = computed(() => {
@@ -258,6 +216,10 @@ export default {
       )
     }
 
+    const isValidPersonalDetails = ref(false)
+    const validatePersonalDetails = (isValid) => {
+      isValidPersonalDetails.value = isValid
+    }
     const updatePersonalDetails = (newPersonalDetails) => {
       personalDetails.value = { ...newPersonalDetails }
     }
@@ -286,6 +248,8 @@ export default {
     const shippingDetails = computed(() => checkout.value?.fulfillmentInfo?.fulfillmentContact)
     const updatedShippingAddress = ref({})
     const saveShippingDetails = async (shippingAddress) => {
+      if (!isValidShippingDetails.value) return
+
       updatedShippingAddress.value = { ...shippingAddress }
       const params = {
         orderId: checkout?.value?.id,
@@ -301,8 +265,9 @@ export default {
       await loadShippingMethods(checkout.value?.id)
     }
 
-    const updateShippingDetails = (newShippingDetails) => {
-      shippingDetails.value = { ...newShippingDetails }
+    const isValidShippingDetails = ref(false)
+    const validateShippingDetails = (isValid) => {
+      isValidShippingDetails.value = isValid
     }
 
     const shippingRates = computed(() =>
@@ -338,6 +303,10 @@ export default {
       })
     }
 
+    const isValidShippingRates = ref(false)
+    const validateShippingRates = (isValid) => {
+      isValidShippingRates.value = isValid
+    }
     // billing
     const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
     const updatedBillingAddress = ref({ ...billingDetails })
@@ -352,7 +321,9 @@ export default {
           billingContact: { ...updatedBillingAddress.value, email: personalDetails.value?.email },
         },
       }
-      await setBillingInfo(params)
+      await setBillingInfo(params).then(async () => {
+        await savePaymentDetails()
+      })
     }
 
     const isBillingAddressAsShipping = ref(false)
@@ -360,11 +331,11 @@ export default {
       isBillingAddressAsShipping.value = isShippingAddress
     }
 
-    // accountCreation
-    const createAccount = (value) => {
-      if (!value) password.value = ""
+    const isValidBillingDetails = ref(false)
+    const validateBillingDetails = (isValid) => {
+      isValidBillingDetails.value = isValid
     }
-
+    // accountCreation
     const getPaymentMethodData = (updatedPaymentDetails) => {
       paymentDetails = {
         ...updatedPaymentDetails,
@@ -409,7 +380,6 @@ export default {
     const createUserAccount = async () => {
       const params = {
         ...personalDetails.value,
-        password: password.value,
         acceptsMarketing: true,
         isActive: true,
         id: 0,
@@ -432,22 +402,24 @@ export default {
       const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1 // // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
 
       switch (steps[currentStep.value]) {
-        case Steps.GO_TO_SHIPPING: {
+        case stepLabels.GO_TO_SHIPPING: {
+          if (!isValidPersonalDetails.value) return
           await savePersonalDetails()
           break
         }
 
-        case Steps.GO_TO_PAYMENT: {
+        case stepLabels.GO_TO_PAYMENT: {
+          if (!(isValidShippingDetails.value && isValidShippingRates.value)) return
           break
         }
 
-        case Steps.PAY_FOR_ORDER: {
+        case stepLabels.PAY_FOR_ORDER: {
+          if (!(isValidBillingDetails.value && enableCurrentStep.value)) return
           await saveBillingDetails()
-          await savePaymentDetails()
           break
         }
 
-        case Steps.CONFIRM_AND_PAY: {
+        case stepLabels.CONFIRM_AND_PAY: {
           if (typeof selectedStep !== "number") {
             await createUserAccount()
           }
@@ -467,32 +439,32 @@ export default {
       countries,
       currentStep,
       steps,
-      payment,
-      order,
+      // payment,
+      // order,
       shippingMethods,
-      buttonNames: [
-        { name: "Go to Shipping" },
-        { name: "Go to Payment" },
-        { name: "Pay for Order" },
-        { name: "Confirm and Pay" },
-      ],
-      characteristics: [
-        {
-          title: "Safety",
-          description: "It carefully packaged with a personal touch",
-          icon: "safety",
-        },
-        {
-          title: "Easy shipping",
-          description: "You’ll receive dispatch confirmation and an arrival date",
-          icon: "shipping",
-        },
-        {
-          title: "Changed your mind?",
-          description: "Rest assured, we offer free returns within 30 days",
-          icon: "return",
-        },
-      ],
+      // buttonNames: [
+      //   { name: "Go to Shipping" },
+      //   { name: "Go to Payment" },
+      //   { name: "Pay for Order" },
+      //   { name: "Confirm and Pay" },
+      // ],
+      // characteristics: [
+      //   {
+      //     title: "Safety",
+      //     description: "It carefully packaged with a personal touch",
+      //     icon: "safety",
+      //   },
+      //   {
+      //     title: "Easy shipping",
+      //     description: "You’ll receive dispatch confirmation and an arrival date",
+      //     icon: "shipping",
+      //   },
+      //   {
+      //     title: "Changed your mind?",
+      //     description: "Rest assured, we offer free returns within 30 days",
+      //     icon: "return",
+      //   },
+      // ],
       checkout,
       updateStep,
       logIn,
@@ -505,7 +477,6 @@ export default {
       shippingDetails,
       saveShippingDetails,
       updatedShippingAddress,
-      updateShippingDetails,
       userShippingAddresses,
       userBillingAddresses,
 
@@ -517,13 +488,17 @@ export default {
       billingDetails,
       updateBillingDetails,
       showCreateAccount,
-      createAccount,
       password,
       transition,
       getPaymentMethodData,
       copyShippingAddress,
       enableCurrentStep,
       enableNextStep,
+
+      validatePersonalDetails,
+      validateShippingDetails,
+      validateShippingRates,
+      validateBillingDetails,
     }
   },
   watch: {

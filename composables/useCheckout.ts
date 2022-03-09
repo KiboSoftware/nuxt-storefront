@@ -8,12 +8,12 @@ import {
 
 import { getCheckoutQuery } from "@/lib/gql/queries"
 import { useState, useNuxtApp } from "#app"
-import type { Checkout, Maybe } from "@/server/types/GraphQL"
+import type { Order, Maybe } from "@/server/types/GraphQL"
 
 export const useCheckout = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const checkout = useState<Maybe<Checkout>>(`use-checkout-result`, () => null)
+  const checkout = useState<Maybe<Order>>(`use-checkout-result`, () => null)
   const loading = useState<Boolean>(`use-checkout-loading`, () => false)
   const error = useState(`use-checkout-error`, () => null)
 

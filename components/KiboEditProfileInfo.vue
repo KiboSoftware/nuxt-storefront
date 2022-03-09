@@ -77,7 +77,7 @@ export default defineComponent({
       },
       {
         label: context.root.$t("New Password"),
-        id: "newPassword",
+        id: "password",
         value: "",
       },
       {

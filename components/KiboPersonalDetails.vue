@@ -1,106 +1,97 @@
 <template>
   <div class="sf-personal-details">
     <div class="log-in">
-      <slot name="log-in" v-bind="{ buttonText, logInInfo }">
-        <SfButton
-          class="log-in__button sf-button--full-width color-secondary"
-          data-testid="login-button"
-          @click="$emit('log-in')"
-          >{{ buttonText }}</SfButton
-        >
-        <p class="log-in__info">{{ logInInfo }}</p>
-      </slot>
+      <SfButton
+        class="log-in__button sf-button--full-width color-secondary"
+        data-testid="login-button"
+        @click="$emit('log-in')"
+        >{{ $t("Log into your account") }}</SfButton
+      >
+      <p class="log-in__info">{{ $t("or fill the details below") }}</p>
     </div>
-    <slot name="heading" v-bind="{ headingTitle, headingTitleLevel }">
-      <SfHeading
-        :title="headingTitle"
-        :level="headingTitleLevel"
-        class="sf-heading--left sf-heading--no-underline title"
-      />
-    </slot>
+    <SfHeading
+      :title="$t('Personal details')"
+      :level="2"
+      class="sf-heading--left sf-heading--no-underline title"
+    />
     <div class="form">
-      <slot name="form" v-bind="{ inputsLabels, additionalDetails, characteristics }">
-        <SfInput
-          :value="value.email"
-          :label="inputsLabels[2]"
-          name="email"
-          class="form__element"
-          required
-          @input="updateField('email', $event)"
+      <SfInput
+        :value="value.email"
+        :label="$t('YourEmail')"
+        name="email"
+        class="form__element"
+        required
+        :valid="!errorsEmail.email"
+        :error-message="errorsEmail.email"
+        @input="updateField('email', $event)"
+        @blur="validateEmail('email')"
+        @keypress="validateEmail('email')"
+      />
+      <div class="info">
+        <p class="info__heading">
+          {{ $t("Enjoy your free account") }}
+        </p>
+        <SfCharacteristic
+          v-for="(characteristic, key) in characteristics"
+          :key="key"
+          :description="characteristic.description"
+          :icon="characteristic.icon"
+          :size-icon="characteristic.size"
+          class="info__characteristic"
         />
-        <div class="info">
-          <slot name="additional-info" v-bind="{ additionalDetails, characteristics }">
-            <p class="info__heading">
-              {{ additionalDetails }}
-            </p>
-            <SfCharacteristic
-              v-for="(characteristic, key) in characteristics"
-              :key="key"
-              :description="characteristic.description"
-              :icon="characteristic.icon"
-              :size-icon="characteristic.size"
-              class="info__characteristic"
+      </div>
+
+      <div class="account-info">
+        <SfCheckbox
+          v-model="isCreateAccount"
+          name="createAccount"
+          :label="$t('CreateAnAccount')"
+          class="form__checkbox"
+          data-testid="create-account-checkbox"
+          @change="createAccount"
+        />
+        <br />
+        <transition name="sf-fade">
+          <div v-if="isCreateAccount">
+            <SfInput
+              :value="value.firstName"
+              :label="$t('First Name')"
+              name="firstName"
+              class="form__element form__element--half"
+              required
+              :valid="!errorsCreateAccount.firstName"
+              :error-message="errorsCreateAccount.firstName"
+              @input="updateField('firstName', $event)"
+              @blur="validateCreateAccount('firstName')"
+              @keypress="validateCreateAccount('firstName')"
             />
-          </slot>
-        </div>
 
-        <div class="account-info">
-          <slot
-            name="create-account"
-            v-bind="{
-              createAccountCheckboxLabel,
-              transition,
-              createAccountInputLabel,
-            }"
-          >
-            <SfCheckbox
-              v-model="createAccount"
-              name="createAccount"
-              :label="createAccountCheckboxLabel"
-              class="form__checkbox"
-              data-testid="create-account-checkbox"
-              @change="$emit('create-account', createAccount)"
+            <SfInput
+              :value="value.lastName"
+              :label="$t('Last Name')"
+              name="lastName"
+              class="form__element form__element--half"
+              required
+              :valid="!errorsCreateAccount.lastName"
+              :error-message="errorsCreateAccount.lastName"
+              @input="updateField('lastName', $event)"
+              @blur="validateCreateAccount('lastName')"
+              @keypress="validateCreateAccount('lastName')"
             />
-            <br />
-            <transition :name="transition">
-              <div v-if="createAccount">
-                <SfInput
-                  :value="value.firstName"
-                  :label="inputsLabels[0]"
-                  name="firstName"
-                  class="form__element form__element--half"
-                  required
-                  @input="updateField('firstName', $event)"
-                />
-
-                <SfInput
-                  :value="value.lastName"
-                  :label="inputsLabels[1]"
-                  name="lastName"
-                  class="form__element form__element--half"
-                  required
-                  @input="updateField('lastName', $event)"
-                />
-
-                <SfInput
-                  :has-show-password="true"
-                  type="password"
-                  :label="createAccountInputLabel"
-                  class="form__element"
-                  required
-                  data-testid="create-password-input"
-                />
-              </div>
-            </transition>
-          </slot>
-        </div>
-      </slot>
+            <KiboPasswordForm
+              :fields="passwordFormFields"
+              @input:handle-password="getPasswordValues"
+            />
+          </div>
+        </transition>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { SfInput, SfCheckbox, SfButton, SfHeading, SfCharacteristic } from "@storefront-ui/vue"
+import * as yup from "yup"
 
 export default {
   name: "KiboPersonalDetails",
@@ -116,73 +107,165 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    buttonText: {
-      type: String,
-      default: "Log into your account",
-    },
-    logInInfo: {
-      type: String,
-      default: "or fill the details below:",
-    },
-    headingTitle: {
-      type: String,
-      default: "Personal details",
-    },
-    headingTitleLevel: {
-      type: Number,
-      default: 2,
-    },
-    inputsLabels: {
-      type: Array,
-      default: () => ["First name", "Last name", "Your email"],
-    },
-    additionalDetails: {
-      type: String,
-      default: "Enjoy these perks with your free account!",
-    },
-    characteristics: {
-      type: Array,
-      default: () => [
-        { description: "Faster checkout", icon: "clock", size: "24px" },
-        {
-          description: "Earn credits with every purchase",
-          icon: "credits",
-          size: "24px",
-        },
-        {
-          description: "Full rewards program benefits",
-          icon: "rewards",
-          size: "24px",
-        },
-        { description: "Manage your wishlist", icon: "heart", size: "24px" },
-      ],
-    },
-    transition: {
-      type: String,
-      default: "sf-fade",
-    },
-    createAccountCheckboxLabel: {
-      type: String,
-      default: "I want to create an account",
-    },
-    createAccountInputLabel: {
-      type: String,
-      default: "Create Password",
-    },
   },
   setup(props, context) {
+    const errorsEmail = ref({ email: "" })
+    const errorsCreateAccount = ref({ firstName: "", lastName: "" })
+    const isCreateAccount = ref(false)
+    const isEmailValidated = ref(false)
+    const isCreateAccountValidated = ref(false)
+    const isPasswordValidated = ref(false)
+
+    const characteristics = [
+      { description: context.root.$t("FasterCheckout"), icon: "clock", size: "24px" },
+      {
+        description: context.root.$t("EarnCredits"),
+        icon: "credits",
+        size: "24px",
+      },
+      {
+        description: context.root.$t("FullRewards"),
+        icon: "rewards",
+        size: "24px",
+      },
+      { description: context.root.$t("ManageWishlist"), icon: "heart", size: "24px" },
+    ]
+
+    const validateForm = (isValidated) => {
+      context.emit("validateForm", isValidated)
+    }
+
+    const schemaEmail = yup.object({
+      email: yup
+        .string()
+        .trim()
+        .required(context.root.$t("Required"))
+        .email(context.root.$t("ValidEmail")),
+    })
+
+    const schemaCreateAccount = yup.object({
+      firstName: yup.string().trim().required(context.root.$t("Required")),
+      lastName: yup.string().trim().required(context.root.$t("Required")),
+    })
+
+    const validateEmail = (field) => {
+      schemaEmail
+        .validateAt(field, props.value)
+        .then(() => {
+          errorsEmail.value[field] = ""
+          isEmailValidated.value = true
+          if (!isCreateAccount.value) {
+            validateForm(true)
+          }
+        })
+        .catch((err) => {
+          errorsEmail.value[field] = err.message
+          isEmailValidated.value = false
+          context.emit("validateForm", isEmailValidated.value)
+        })
+
+      if (isCreateAccount.value) {
+        schemaCreateAccount
+          .validate(props.value)
+          .then(() => {
+            isCreateAccountValidated.value = true
+            context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+          })
+          .catch(() => {
+            isCreateAccountValidated.value = false
+            context.emit("validateForm", isCreateAccountValidated.value)
+          })
+      }
+    }
+
+    const validateCreateAccount = (field) => {
+      schemaCreateAccount
+        .validateAt(field, props.value)
+        .then(() => {
+          errorsCreateAccount.value[field] = ""
+        })
+        .catch((err) => {
+          errorsCreateAccount.value[field] = err.message
+        })
+
+      schemaCreateAccount
+        .validate(props.value)
+        .then(() => {
+          isCreateAccountValidated.value = true
+          context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+        })
+        .catch(() => {
+          isCreateAccountValidated.value = false
+          context.emit("validateForm", isCreateAccountValidated.value)
+        })
+    }
+
     const updateField = (fieldName, fieldValue) => {
       const values = {
         ...props.value,
-        [fieldName]: fieldValue,
+        [fieldName]: fieldValue.trim(),
       }
 
       context.emit("input", values)
     }
 
+    const createAccount = () => {
+      context.emit("create-account", isCreateAccount.value)
+
+      if (!isCreateAccount.value) {
+        context.emit("validateForm", isEmailValidated.value)
+      } else {
+        schemaCreateAccount
+          .validate(props.value)
+          .then(() => {
+            isCreateAccountValidated.value = true
+            context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+          })
+          .catch(() => {
+            isCreateAccountValidated.value = false
+            context.emit("validateForm", isCreateAccountValidated.value)
+          })
+      }
+    }
+
+    const passwordFormFields = ref([
+      {
+        label: `${context.root.$t("Password")} *`,
+        id: "password",
+        value: "",
+      },
+      {
+        label: `${context.root.$t("Confirm Password")} *`,
+        id: "confirmPassword",
+        value: "",
+      },
+    ])
+
+    const getPasswordValues = (fieldsData, isValidated) => {
+      const values = {
+        ...props.value,
+        [fieldsData[0].id]: fieldsData[0].value.trim(),
+      }
+      isPasswordValidated.value = isValidated
+      context.emit("input", values)
+
+      context.emit(
+        "validateForm",
+        isValidated ? isEmailValidated.value && isCreateAccountValidated.value : false
+      )
+    }
+
     return {
-      createAccount: false,
+      isCreateAccount,
+      errorsEmail,
+      errorsCreateAccount,
+      passwordFormFields,
+      characteristics,
       updateField,
+      validateCreateAccount,
+      validateEmail,
+      createAccount,
+      getPasswordValues,
     }
   },
 }
