@@ -46,7 +46,7 @@
     "credit-card-type": "^9.1.0",
     "cross-env": "^7.0.3",
     "date-fns": "^2.28.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-async-errors": "^3.1.1",
     "graphql": "^16.0.1",
     "graphql-tag": "^2.12.5",
