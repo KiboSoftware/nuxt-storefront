@@ -51,7 +51,7 @@
     "graphql": "^16.0.1",
     "graphql-tag": "^2.12.5",
     "nuxt-edge": "latest",
-    "nuxt-helmet": "^2.0.1",
+    "nuxt-helmet": "^2.1.1",
     "nuxt-i18n": "^6.28.1",
     "pinch-zoom-js": "^2.3.4",
     "stylelint-scss": "^3.21.0",
