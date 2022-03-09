@@ -1,24 +1,24 @@
 import { Cart, CartItem, Maybe, CrProductOption } from "@/server/types/GraphQL"
 import { useNuxtApp } from "#app"
 
-export const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
+const getCartItems = (cart: Cart): Maybe<CartItem>[] => cart?.items || []
 
-export const getCartItemName = (item: CartItem) => item?.product?.name
+const getCartItemName = (item: CartItem) => item?.product?.name
 
-export const getCartItemImage = (item: CartItem) => item?.product?.imageUrl
+const getCartItemImage = (item: CartItem) => item?.product?.imageUrl
 
-export const getCartItemPrice = (
+const getCartItemPrice = (
   item: CartItem
-): { regular: Maybe<String> | undefined; special: Maybe<String> | undefined } => {
+): { regular: Maybe<Number> | undefined | null; special: Maybe<Number> | undefined | null } => {
   return {
-    regular: `$${item.productDiscounts?.length ? item.subtotal : item.total}`,
-    ...{ special: `$${item.total}` },
+    regular: item.product?.price?.price,
+    special: item.product?.price?.salePrice,
   }
 }
 
-export const getCartItemQty = (item: CartItem): number => item?.quantity
+const getCartItemQty = (item: CartItem): number => item?.quantity
 
-export const getCartItemAttributes = (
+const getCartItemAttributes = (
   item: CartItem,
   filterByAttributeName: string
 ): Record<string, string> => {
@@ -47,28 +47,29 @@ export const getCartItemAttributes = (
   return attributes
 }
 
-export const getCartItemSku = (item: CartItem) =>
+const getCartItemSku = (item: CartItem) =>
   item?.product?.sku || item?.product?.upc || item?.product?.productCode
 
 function getTotals(cart: Cart) {
   return {
     total: cart?.total,
     subtotal: cart?.subtotal,
-    special: cart?.orderDiscounts ? cart?.discountedSubtotal : cart?.subtotal,
   }
 }
 
-export const getCartShippingPrice = (cart: Cart) => cart?.shippingTotal
+const getCartShippingPrice = (cart: Cart) => cart?.shippingTotal
 
-export const getCartTotalItems = (cart: Cart): number => cart?.items?.length || 0
+const getCartTaxTotal = (cart: Cart) => cart?.taxTotal
 
-export const getCartTotalQuantity = (cart: Cart): number => {
+const getCartTotalItems = (cart: Cart): number => cart?.items?.length || 0
+
+const getCartTotalQuantity = (cart: Cart): number => {
   return cart?.items?.reduce((acc, { quantity }) => acc + quantity, 0)
 }
 
-export const getFormattedPrice = (price: number): string => String(price)
+const getFormattedPrice = (price: number): string => String(price)
 
-export const getCoupons = (cart: Cart) =>
+const getCoupons = (cart: Cart) =>
   cart?.orderDiscounts
     ?.filter((d) => d?.couponCode !== null)
     .map((d) => ({
@@ -78,7 +79,7 @@ export const getCoupons = (cart: Cart) =>
       value: d?.impact,
     }))
 
-export const getDiscounts = (cart: Cart) => {
+const getDiscounts = (cart: Cart) => {
   return cart?.orderDiscounts?.map((d) => ({
     id: d?.discount?.id.toString(),
     name: d?.discount?.name,
@@ -92,7 +93,7 @@ const isDisabledFulfillmentOption = (fulfillmentTypesSupported, option) => {
   return !fulfillmentTypesSupported?.includes(option)
 }
 
-export const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLocation: string) => {
+const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLocation: string) => {
   const nuxt = useNuxtApp()
   const fullfillmentOptions = nuxt.nuxt2Context.$config.fullfillmentOptions
 
@@ -113,10 +114,14 @@ export const getCartFulfillmentOptions = (item: CartItem, cartItemFulfillmentLoc
   return result
 }
 
-export const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
+const getCartItem = (cart: Cart, cartItemId: string): Maybe<CartItem> =>
   cart?.items?.find((item) => item.id === cartItemId)
 
-export const getCartItemOptions = (item: CartItem) => item?.product?.options
+const getCartItemOptions = (item: CartItem) => item?.product?.options
+
+const getProductAppliedCoupons = (cartItem) => {
+  return cartItem?.productDiscounts?.map((each) => each.couponCode)
+}
 
 const getSelectedFullfillmentOption = (item: CartItem) => {
   return item?.fulfillmentMethod
@@ -146,4 +151,6 @@ export const cartGetters = {
   getCartTotalQuantity,
   getSelectedFullfillmentOption,
   getFulfillmentLocation,
+  getProductAppliedCoupons,
+  getTaxTotal: getCartTaxTotal,
 }

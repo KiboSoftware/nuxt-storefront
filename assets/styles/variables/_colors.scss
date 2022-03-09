@@ -7,4 +7,5 @@
   @include generate-color-variants(--_c-white-secondary, #eaeaea);
   @include generate-color-variants(--_c-white-primary, #f7f7f7);
   @include generate-color-variants(--_c-dark-green-secondary, #17514b);
+  @include generate-color-variants(--_c-green-success, #28a745);
 }

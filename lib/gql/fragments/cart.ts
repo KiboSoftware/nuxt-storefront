@@ -1,64 +1,69 @@
-export const cartItemDetails = /* GraphQL */`
-fragment cartItemDetails on CartItem {
-  id
-  fulfillmentMethod
-  purchaseLocation
-  fulfillmentLocationCode
-  productDiscounts{
-    discountQuantity
-  }
-  subtotal
-  total
-  product {
-    productCode
-    fulfillmentTypesSupported
-    name
-    description
-    imageUrl
-    options {
-      attributeFQN
-      name
-      value
+export const cartItemDetails = /* GraphQL */ `
+  fragment cartItemDetails on CartItem {
+    id
+    fulfillmentMethod
+    purchaseLocation
+    fulfillmentLocationCode
+    productDiscounts {
+      discountQuantity
+      couponCode
     }
-    properties {
-      attributeFQN
+    subtotal
+    total
+    product {
+      productCode
+      fulfillmentTypesSupported
       name
-      values {
+      description
+      imageUrl
+      options {
+        attributeFQN
+        name
         value
       }
+      properties {
+        attributeFQN
+        name
+        values {
+          value
+        }
+      }
+      sku
+      price {
+        price
+        salePrice
+      }
+      categories {
+        id
+      }
     }
-    sku
-    price {
-      price
-      salePrice
-    }
-    categories {
-      id
-    }
+    quantity
   }
-  quantity
-}
 `
 
-export const cartDetails = /* GraphQL */`
-${cartItemDetails}
+export const cartDetails = /* GraphQL */ `
+  ${cartItemDetails}
 
-fragment cartDetails on Cart {
-  id
-  orderDiscounts {
-    impact
-    discount {
-      id
-      name        
+  fragment cartDetails on Cart {
+    id
+    invalidCoupons {
+      couponCode
     }
-    couponCode
+    couponCodes
+    orderDiscounts {
+      impact
+      discount {
+        id
+        name
+      }
+      couponCode
+    }
+    total
+    subtotal
+    shippingTotal
+    taxTotal
+    items {
+      ...cartItemDetails
+    }
   }
-  subtotal
-  discountedSubtotal
-  shippingTotal
-  total
-  items {
-    ...cartItemDetails
-  }
-}
 `

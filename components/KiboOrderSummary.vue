@@ -5,14 +5,22 @@
       <div class="props">
         <SfProperty
           :name="properties.cartSubTotal"
-          :value="$n(cartSubTotal, 'currency')"
+          :value="$n(subTotal, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
-        />
+        >
+          <template #value>
+            <KiboPrice :regular="$n(subTotal, 'currency')" class="sf-property__price" />
+          </template>
+        </SfProperty>
         <SfProperty
           :name="properties.standardShipping"
           :value="$n(standardShipping, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
-        />
+        >
+          <template #value>
+            <KiboPrice :regular="$n(standardShipping, 'currency')" class="sf-property__price" />
+          </template>
+        </SfProperty>
         <SfProperty
           :name="properties.estimatedTax"
           :value="$n(estimatedTax, 'currency')"
@@ -20,28 +28,37 @@
         />
       </div>
       <div class="promo-code">
-        <SfInput
-          v-model="promoCode"
-          name="promoCode"
-          :placeholder="$t('Enter Promo Code')"
-          class="sf-input--filled promo-code-input"
-          type="text"
+        <KiboApplyCoupon
+          :is-valid-coupon="isValidCoupon"
+          :invalid-coupon-error-text="invalidCouponErrorText"
+          :are-coupons-applied="areCouponsApplied"
+          :applied-coupons="appliedCoupons"
+          @applyPromocode="applyPromocode"
         />
-
-        <SfButton
-          class="promo-code-button"
-          data-testid="apply-button"
-          @click="$emit('click:apply-code')"
-        >
-          Apply
-        </SfButton>
       </div>
       <div class="estimated-order-total">
         <SfProperty
           :name="properties.estimatedOrderTotal"
           :value="$n(estimatedOrderTotal, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
-        />
+        >
+          <template #value>
+            <div class="promo-code__applied">
+              <KiboPrice
+                :regular="
+                  $n(estimatedOrderTotal !== subTotal ? subTotal : estimatedOrderTotal, 'currency')
+                "
+                :special="
+                  estimatedOrderTotal !== subTotal ? $n(estimatedOrderTotal, 'currency') : null
+                "
+                class="sf-property__price"
+              />
+              <span v-if="estimatedOrderTotal !== subTotal" class="promo-code__applied__text">{{
+                $t("promo code applied")
+              }}</span>
+            </div>
+          </template>
+        </SfProperty>
       </div>
       <div class="action-details"><slot name="actions"> </slot></div>
     </div>
@@ -49,15 +66,12 @@
 </template>
 
 <script lang="ts">
-import { SfButton, SfProperty, SfInput } from "@storefront-ui/vue"
-import { checkoutGetters } from "@/lib/getters"
+import { SfProperty } from "@storefront-ui/vue"
 
 export default {
   name: "SfOrderSummary",
   components: {
-    SfButton,
     SfProperty,
-    SfInput,
   },
   props: {
     orderTitle: {
@@ -68,35 +82,55 @@ export default {
       type: Number,
       default: 2,
     },
-    order: {
-      type: Object,
-      default: () => ({}),
+    isValidCoupon: {
+      type: Boolean,
+    },
+    invalidCouponErrorText: {
+      type: String,
+      default: "",
+    },
+    appliedCoupons: {
+      type: Array,
+      default: () => [],
+    },
+    areCouponsApplied: {
+      type: Boolean,
+      default: null,
+    },
+    numberOfItems: {
+      type: Number,
+      default: 0,
+    },
+    subTotal: {
+      type: Number,
+      default: 0,
+    },
+    standardShipping: {
+      type: Number,
+      default: 0,
+    },
+    estimatedTax: {
+      type: Number,
+      default: 0,
+    },
+    estimatedOrderTotal: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props, context) {
-    const { order } = props
-
-    const numberOfItems = computed(() => checkoutGetters.getLineItemTotal(order))
-    const cartSubTotal = computed(() => checkoutGetters.getSubtotal(order))
-    const standardShipping = computed(() => checkoutGetters.getShippingTotal(order))
-    const estimatedTax = computed(() => checkoutGetters.getTaxTotal(order))
-    const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(order))
-
     const properties = {
-      cartSubTotal: context?.root?.$t("Cart Subtotal", { numberOfItems: numberOfItems.value }),
+      cartSubTotal: context?.root?.$t("Cart Subtotal", { numberOfItems: props.numberOfItems }),
       standardShipping: context?.root?.$t("Standard Shipping"),
       estimatedTax: context?.root?.$t("Estimated Tax"),
       estimatedOrderTotal: context?.root?.$t("Estimated Order Total"),
     }
 
+    const applyPromocode = (couponApplied) => context.emit("applyPromocode", couponApplied)
+
     return {
-      promoCode: "",
-      numberOfItems,
-      cartSubTotal,
-      standardShipping,
-      estimatedTax,
-      estimatedOrderTotal,
       properties,
+      applyPromocode,
     }
   },
 }
@@ -109,8 +143,11 @@ export default {
 
   @include for-desktop {
     border: 1px solid var(--_c-white-secondary);
-    margin-top: calc(var(--spacer-base) * 1.5);
     width: calc(var(--spacer-base) * 17.83);
+  }
+
+  &__property {
+    align-items: flex-start;
   }
 
   &__heading {
@@ -140,31 +177,32 @@ export default {
       padding-top: calc(var(--spacer-base) * 0.41);
       height: calc(var(--spacer-base) * 4.79);
       border-bottom: 1px solid var(--_c-gray-middle);
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacer-2xs);
     }
 
     .promo-code {
       display: flex;
-      height: calc(var(--spacer-base) * 3.75);
       align-items: center;
       justify-content: space-between;
+      padding-top: calc(var(--spacer-base) * 0.83);
 
-      .promo-code-input {
-        padding-top: calc(var(--spacer-base) * 0.83);
-      }
+      &__applied {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
 
-      ::v-deep .sf-input input {
-        background-color: var(--c-white);
-        width: calc(var(--spacer-base) * 10.83);
-        border: 1px solid var(--_c-gray-middle);
-      }
-
-      .promo-code-button {
-        width: calc(var(--spacer-base) * 4);
-        height: calc(var(--spacer-base) * 1.41);
+        &__text {
+          color: var(--c-danger);
+          font-size: var(--font-size--xs);
+        }
       }
     }
 
     .estimated-order-total {
+      align-items: flex-start;
+
       .sf-property__name,
       .sf-property__value {
         font-size: var(--h5-font-size);

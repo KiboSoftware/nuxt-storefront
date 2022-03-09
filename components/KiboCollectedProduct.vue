@@ -12,15 +12,17 @@
         </component>
       </div>
       <div class="kibo-collectedProduct__price-wrapper">
-        <SfPrice
+        <KiboPrice
           v-if="regularPrice"
-          :regular="regularPrice"
-          :special="specialPrice"
+          :regular="$n(regularPrice, 'currency')"
+          :special="specialPrice && $n(specialPrice, 'currency')"
           class="kibo-collectedProduct__price"
+          :small="true"
+          :coupons="couponsApplied"
         />
       </div>
       <div class="kibo-collectedProduct__quantitySelector-wrapper">
-        <p>Qty:</p>
+        <p>{{ $t("Qty") }}</p>
         <SfQuantitySelector
           :qty="quantity"
           :min="1"
@@ -32,10 +34,7 @@
         <SfAccordion v-if="options.length" open="Details" show-chevron>
           <SfAccordionItem header="Details">
             <div v-for="(option, index) in options" :key="index">
-              <div class="sf-property">
-                <span class="sf-property__name">{{ option.name }}</span>
-                <span class="sf-property__value"> {{ option.value }}</span>
-              </div>
+              <SfProperty :name="option.name" :value="option.value" class="sf-property" />
             </div>
           </SfAccordionItem>
         </SfAccordion>
@@ -158,6 +157,10 @@ export default defineComponent({
     selectedOption: {
       type: String,
       default: "",
+    },
+    couponsApplied: {
+      type: Array,
+      default: null,
     },
   },
   setup(props, context) {

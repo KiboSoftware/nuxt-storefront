@@ -1,0 +1,81 @@
+@mixin _price(
+  $type,
+  $margin: 0,
+  $color: var(--c-text),
+  $weight: var(--font-weight--bold),
+  $text-decoration: none
+) {
+  margin: var(--price-#{$type}-margin, $margin);
+  color: var(--price-#{$type}-color, $color);
+  @include font(
+    --price-#{$type}-font,
+    $weight,
+    var(--font-size--base),
+    1.6,
+    var(--font-family--secondary)
+  );
+
+  text-decoration: var(--price-#{$type}-text-decoration, $text-decoration);
+}
+
+.kibo-price {
+  display: flex;
+  flex-wrap: var(--price-flex-wrap, wrap);
+  flex-direction: var(--price-flex-direction, row);
+  align-items: var(--price-align-items, flex-end);
+  width: fit-content;
+  justify-content: flex-end;
+
+  &__regular {
+    @include _price($type: regular);
+
+    &--small {
+      @include _price($type: regular-small);
+
+      --price-regular-small-font-size: var(--font-size--sm);
+    }
+  }
+
+  &__special {
+    @include _price($type: special);
+
+    --price-special-color: var(--c-danger);
+
+    &--small {
+      @include _price($type: special-small);
+
+      --price-special-small-font-size: var(--font-size--sm);
+      --price-special-small-color: var(--c-danger);
+    }
+  }
+
+  &__old {
+    @include _price($type: old, $margin: 0 var(--spacer-xs) 0 0);
+
+    position: relative;
+
+    &--small {
+      @include _price($type: old-small, $margin: 0 var(--spacer-xs) 0 0);
+
+      position: relative;
+
+      --price-old-small-font-size: var(--font-size--sm);
+    }
+  }
+
+  &__old::before,
+  &__old--small::before {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 50%;
+    right: 0;
+    border-top: 1px solid;
+    border-color: inherit;
+    -webkit-transform: rotate(-20deg);
+    -moz-transform: rotate(-20deg);
+    -ms-transform: rotate(-20deg);
+    -o-transform: rotate(-20deg);
+    transform: rotate(-20deg);
+  }
+}

@@ -2,46 +2,15 @@
   <div id="detailed-cart">
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart__title-wrapper">
-      <h3 class="sf-heading__title h3">
-        {{ $t("Shopping Cart") }} ({{ cartItems.length }} {{ $t("Items") }})
-      </h3>
+      <h1 class="detailed-cart__title">
+        {{ $t("Shopping Cart") }} ({{ numberOfCartItems }}
+        {{ `${numberOfCartItems === 1 ? $t("Item") : $t("Items")}` }})
+      </h1>
     </div>
-    <div class="detailed-cart">
-      <div v-if="cartItems.length" class="detailed-cart__aside">
-        <div class="sf-property--full-width sf-property">
-          <span class="sf-property__name-noBold">{{ $t("Order Subtotal") }}</span>
-          <span class="sf-property__value">${{ cartOrder.subtotal }}</span>
-        </div>
-        <div><hr class="sf-divider" /></div>
-        <div class="promo">
-          <SfInput name="promo" placeholder="Enter Promo Code" class="promo__input" type="text" />
-          <button
-            class="color-primary sf-button sf-button--small"
-            :aria-disabled="false"
-            :link="null"
-          >
-            {{ $t("Apply") }}
-          </button>
-        </div>
-        <div class="sf-property--full-width sf-property">
-          <span class="sf-property__name">{{ $t("Estimated Order Total") }}</span>
-          <span class="sf-property__value"> ${{ cartOrder.total }}</span>
-        </div>
-
-        <div class="checkout-button">
-          <button
-            class="color-primary sf-button sf-button--full-width"
-            :aria-disabled="false"
-            :link="null"
-            @click="checkout"
-          >
-            {{ $t("Checkout") }}
-          </button>
-        </div>
-      </div>
+    <div v-if="cartItems.length" class="detailed-cart">
       <div class="detailed-cart__main">
         <transition name="sf-fade" mode="out-in">
-          <div v-if="cartItems.length" key="detailed-cart" class="collected-product-list">
+          <div key="detailed-cart" class="collected-product-list">
             <transition-group name="sf-fade" tag="div">
               <KiboCollectedProduct
                 v-for="cartItem in cartItems"
@@ -51,43 +20,65 @@
                 :purchase-location="selectedLocation"
                 :image="cartItem.product.imageUrl"
                 :title="cartItem.product.name"
-                :regular-price="cartItem.product.price.price && `$${cartItem.product.price.price}`"
-                :special-price="
-                  cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
-                "
+                :regular-price="cartItemPrice(cartItem).regular"
+                :special-price="cartItemPrice(cartItem).special"
                 :options="cartItem.product.options"
                 :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
                 :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
                 :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
+                :coupons-applied="productAppliedCoupons(cartItem)"
                 class="sf-collected-product--detailed collected-product"
                 @click:remove="removeHandler(product)"
               >
               </KiboCollectedProduct>
             </transition-group>
           </div>
-          <div v-else key="empty-cart" class="empty-cart">
-            <SfImage
-              :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
-              alt="Empty cart"
-              class="empty-cart__image"
-            />
-            <SfHeading
-              title="Your cart is empty"
-              :level="2"
-              description="Looks like you haven’t added any items to the cart yet. Start
-                shopping to fill it in."
-            />
-            <SfButton class="sf-button--full-width color-primary empty-cart__button">{{
-              $t("Start shopping")
-            }}</SfButton>
-          </div>
         </transition>
       </div>
+      <div class="detailed-cart__aside">
+        <transition name="sf-fade">
+          <KiboOrderSummary
+            v-if="numberOfCartItems > 0"
+            :number-of-items="numberOfCartItems"
+            :sub-total="cartSubTotal"
+            :standard-shipping="standardShipping"
+            :estimated-tax="estimatedTax"
+            :estimated-order-total="cartTotal"
+            :is-valid-coupon="isValidCoupon"
+            :invalid-coupon-error-text="invalidCouponErrorText"
+            :applied-coupons="appliedCoupons"
+            :are-coupons-applied="areCouponsApplied"
+            @applyPromocode="applyPromocode"
+          >
+            <template #actions>
+              <SfButton class="color-primary sf-button sf-button--full-width" @click="checkout">
+                {{ $t("Checkout") }}
+              </SfButton>
+            </template>
+          </KiboOrderSummary>
+        </transition>
+      </div>
+    </div>
+    <div v-else key="empty-cart" class="empty-cart">
+      <SfImage
+        :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
+        alt="Empty cart"
+        class="empty-cart__image"
+      />
+      <SfHeading
+        title="Your cart is empty"
+        :level="2"
+        description="Looks like you haven’t added any items to the cart yet. Start
+                shopping to fill it in."
+      />
+      <SfButton class="sf-button--full-width color-primary empty-cart__button">{{
+        $t("Start shopping")
+      }}</SfButton>
     </div>
   </div>
 </template>
 <script>
-import { SfButton, SfImage, SfHeading, SfBreadcrumbs, SfInput } from "@storefront-ui/vue"
+import { SfButton, SfImage, SfHeading, SfBreadcrumbs } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
 import { usePurchaseLocation, useCart, useUiHelpers, useStoreLocations } from "@/composables"
@@ -101,15 +92,14 @@ export default defineComponent({
     SfImage,
     SfButton,
     SfHeading,
-    SfInput,
   },
-  setup() {
+  setup(_, context) {
     const { getProductLink } = useUiHelpers()
     const { purchaseLocation } = usePurchaseLocation()
-    const { cart, load: loadCart } = useCart()
     const router = useRouter()
     const { locations, search: searchStoreLocations } = useStoreLocations("selected-stores")
 
+    const { cart, load: loadCart, applyCoupon } = useCart()
     const breadcrumbs = [
       {
         text: "Home",
@@ -128,22 +118,32 @@ export default defineComponent({
         .filter((item) => {
           return item.fulfillmentMethod === "Pickup"
         })
-        .map((item) => `${filterOperator} ${item.fulfillmentLocationCode}`.join(" or "))
+        .map((item) => `${filterOperator} ${item.fulfillmentLocationCode}`)
+        .join(" or ")
       await searchStoreLocations({ locationCodes })
     }, null)
 
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
-        : "Select My Store"
+        : context.root.$t("Select My Store")
     })
 
     const cartItems = computed(() => cartGetters.getItems(cart.value))
-    const cartOrder = computed(() => cartGetters.getTotals(cart.value))
+    const cartSubTotal = computed(() => cartGetters.getTotals(cart.value).subtotal)
+    const cartTotal = computed(() => cartGetters.getTotals(cart.value).total)
+    const standardShipping = computed(() => cartGetters.getShippingPrice(cart.value))
+    const estimatedTax = computed(() => cartGetters.getTaxTotal(cart.value))
 
-    const cartItemFulfillmentLocation = (cartItem) => {
-      return cartGetters.getFulfillmentLocation(cartItem, locations.value)
-    }
+    const numberOfCartItems = computed(() => cartItems.value.length)
+
+    const cartItemFulfillmentLocation = (cartItem) =>
+      cartGetters.getFulfillmentLocation(cartItem, locations.value)
+
+    const cartItemPrice = (cartItem) => cartGetters.getItemPrice(cartItem)
+
+    const cartItemFulfillmentTypes = (cartItem) =>
+      cartGetters.getCartFulfillmentOptions(cartItem, purchaseLocation.value)
 
     const checkout = () => {
       router.push({ path: "/checkout" })
@@ -156,16 +156,42 @@ export default defineComponent({
     const getCartItemSelectedFulfillmentOption = (cartItem) =>
       cartGetters.getSelectedFullfillmentOption(cartItem)
 
+    const applyPromocode = async (couponApplied) => await applyCoupon(couponApplied)
+
+    const isValidCoupon = computed(() => !cart.value?.invalidCoupons[0]?.couponCode)
+
+    const invalidCouponErrorText = computed(
+      () => `${cart.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
+    )
+
+    const appliedCoupons = computed(() => cart.value?.couponCodes)
+
+    const areCouponsApplied = computed(() => cart.value?.couponCodes.length > 0)
+
+    const productAppliedCoupons = (cartItem) => cartGetters.getProductAppliedCoupons(cartItem)
+
     return {
       breadcrumbs,
       selectedLocation,
       cartItems,
-      cartOrder,
       cartItemFulfillmentOptions,
+      isValidCoupon,
+      invalidCouponErrorText,
+      appliedCoupons,
+      areCouponsApplied,
+      cartItemFulfillmentTypes,
       getProductLink,
       productGetters,
       checkout,
       getCartItemSelectedFulfillmentOption,
+      applyPromocode,
+      cartItemPrice,
+      productAppliedCoupons,
+      numberOfCartItems,
+      cartSubTotal,
+      cartTotal,
+      standardShipping,
+      estimatedTax,
     }
   },
 })
@@ -173,10 +199,6 @@ export default defineComponent({
 <style lang="scss">
 #detailed-cart {
   box-sizing: border-box;
-  @include for-desktop {
-    max-width: 1272px;
-    margin: 0 auto;
-  }
 }
 
 .breadcrumbs {
@@ -187,14 +209,19 @@ export default defineComponent({
   &__main {
     padding: 0 var(--spacer-sm);
     @include for-desktop {
-      padding: 0;
+      flex: 1;
+      padding: 0 0 0 0;
+      width: 65.74%; //860px;
     }
   }
 
   &__aside {
     box-sizing: border-box;
-    border: 2px solid var(--_c-white-secondary);
-    padding: var(--spacer-base) var(--spacer-sm);
+    padding: 0;
+
+    @include for-desktop {
+      width: 31.57%; //413px;
+    }
   }
   @include for-desktop {
     display: flex;
@@ -215,19 +242,15 @@ export default defineComponent({
     width: 100%;
     padding: 0 0 var(--spacer-lg) 0;
   }
+
+  &__title {
+    font-size: var(--h1-font-size);
+  }
 }
 
 .collected-product {
   --collected-product-padding: var(--spacer-sm) 0;
   --collected-product-actions-display: flex;
-
-  // Need to discuss with Chandradeepta if below styles are required
-  // border: 1px solid var(--c-light);
-  // border-width: 1px 0 0 0;
-
-  // &:first-of-type {
-  //   border-top: none;
-  // }
 
   &__properties {
     --property-value-font-weight: var(--font-weight--normal);
@@ -283,7 +306,12 @@ export default defineComponent({
 }
 
 .sf-property {
-  padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
+  display: flex;
+  align-items: center;
+
+  &__price {
+    margin: 0;
+  }
 
   &__name {
     @include font(
@@ -325,7 +353,7 @@ export default defineComponent({
   display: flex;
   width: 100%;
   align-items: stretch;
-  padding: var(--spacer-sm) 0;
+  padding: var(--spacer-sm) 0 0 0;
 
   &__input {
     flex: 1;
@@ -338,5 +366,16 @@ export default defineComponent({
 
 .sf-input {
   --input-text-indent: var(--spacer-sm);
+}
+
+.coupon {
+  display: flex;
+  padding-bottom: var(--spacer-sm);
+  flex-wrap: wrap;
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
 }
 </style>

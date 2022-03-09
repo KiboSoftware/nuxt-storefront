@@ -259,10 +259,10 @@ import {
   useCart,
   useUiHelpers,
   useUiState,
-  useUser,
   useSearchSuggestions,
   useCategoryTree,
   useProductSearch,
+  useUser,
 } from "@/composables"
 
 import {
@@ -293,7 +293,7 @@ export default defineComponent({
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
     const { result, search, loading } = useSearchSuggestions()
     const modal = nuxt.nuxt2Context.$modal
-    const { user, load: loadUser } = useUser()
+    const { user } = useUser()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const { cart } = useCart()
 
@@ -427,7 +427,7 @@ export default defineComponent({
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)
-        : "Select My Store"
+        : context.root.$t("Select My Store")
     })
 
     const totalItemsInCart = computed(() => {
@@ -437,7 +437,6 @@ export default defineComponent({
 
     return {
       user,
-      loadUser,
       accountIcon,
       isMobile,
       removeSearchResults,

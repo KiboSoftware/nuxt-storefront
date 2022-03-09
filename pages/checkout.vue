@@ -68,6 +68,15 @@
               :order="getOrder"
               :order-title="$t('Order Summary')"
               :order-title-level="3"
+              :number-of-items="numberOfItems"
+              :sub-total="checkoutSubTotal"
+              :standard-shipping="standardShipping"
+              :estimated-tax="estimatedTax"
+              :estimated-order-total="estimatedOrderTotal"
+              :is-valid-coupon="isValidCoupon"
+              :invalid-coupon-error-text="invalidCouponErrorText"
+              :applied-coupons="appliedCoupons"
+              :are-coupons-applied="areCouponsApplied"
             >
               <template #actions>
                 <SfButton
@@ -128,7 +137,7 @@ import {
 } from "@/composables"
 import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters } from "@/lib/getters"
+import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
@@ -149,8 +158,15 @@ export default {
 
     const currentStep = ref(0)
     const { cart } = useCart()
-    const { checkout, loadFromCart, setPersonalInfo, setShippingInfo, setBillingInfo, loading } =
-      useCheckout()
+    const {
+      checkout,
+      load: loadCheckout,
+      loadFromCart,
+      setPersonalInfo,
+      setShippingInfo,
+      setBillingInfo,
+      loading,
+    } = useCheckout()
     const {
       load: loadUserAddresses,
       userShippingAddresses,
@@ -169,17 +185,18 @@ export default {
     const enableCurrentStep = ref(false)
     const enableNextStep = ref(false)
 
-    enum Steps {
-      GO_TO_SHIPPING = context?.root?.$t("Go to Shipping"),
-      GO_TO_PAYMENT = context?.root?.$t("Go to Payment"),
-      PAY_FOR_ORDER = context?.root?.$t("Pay for Order"),
-      CONFIRM_AND_PAY = context?.root?.$t("Confirm and pay"),
+    const stepLabels = {
+      GO_TO_SHIPPING: context?.root?.$t("Go to Shipping"),
+      GO_TO_PAYMENT: context?.root?.$t("Go to Payment"),
+      PAY_FOR_ORDER: context?.root?.$t("Pay for Order"),
+      CONFIRM_AND_PAY: context?.root?.$t("Confirm and pay"),
     }
+
     const steps = [
-      Steps.GO_TO_SHIPPING,
-      Steps.GO_TO_PAYMENT,
-      Steps.PAY_FOR_ORDER,
-      Steps.CONFIRM_AND_PAY,
+      stepLabels.GO_TO_SHIPPING,
+      stepLabels.GO_TO_PAYMENT,
+      stepLabels.PAY_FOR_ORDER,
+      stepLabels.CONFIRM_AND_PAY,
     ]
 
     enum CardTypesSupported {
@@ -244,9 +261,30 @@ export default {
       return { ...checkout?.value }
     })
 
+    const numberOfItems = computed(() => checkoutGetters.getLineItemTotal(getOrder.value))
+    const checkoutSubTotal = computed(() => checkoutGetters.getSubtotal(getOrder.value))
+    const standardShipping = computed(() => checkoutGetters.getShippingTotal(getOrder.value))
+    const estimatedTax = computed(() => checkoutGetters.getTaxTotal(getOrder.value))
+    const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(getOrder.value))
+
     const logIn = () => {
       toggleLoginModal()
     }
+
+    // coupons
+    // TODO
+    // const applyPromocode = async (couponApplied) => await applyCoupon(couponApplied)
+
+    const isValidCoupon = computed(() => !getOrder.value?.invalidCoupons[0]?.couponCode)
+
+    const invalidCouponErrorText = computed(
+      () =>
+        `${getOrder.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
+    )
+
+    const appliedCoupons = computed(() => getOrder.value?.couponCodes)
+
+    const areCouponsApplied = computed(() => getOrder.value?.couponCodes.length > 0)
 
     // personalDetails
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
@@ -432,22 +470,22 @@ export default {
       const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1 // // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
 
       switch (steps[currentStep.value]) {
-        case Steps.GO_TO_SHIPPING: {
+        case stepLabels.GO_TO_SHIPPING: {
           await savePersonalDetails()
           break
         }
 
-        case Steps.GO_TO_PAYMENT: {
+        case stepLabels.GO_TO_PAYMENT: {
           break
         }
 
-        case Steps.PAY_FOR_ORDER: {
+        case stepLabels.PAY_FOR_ORDER: {
           await saveBillingDetails()
           await savePaymentDetails()
           break
         }
 
-        case Steps.CONFIRM_AND_PAY: {
+        case stepLabels.CONFIRM_AND_PAY: {
           if (typeof selectedStep !== "number") {
             await createUserAccount()
           }
@@ -498,6 +536,16 @@ export default {
       logIn,
       getOrder,
       loading,
+      numberOfItems,
+      checkoutSubTotal,
+      standardShipping,
+      estimatedTax,
+      estimatedOrderTotal,
+
+      isValidCoupon,
+      invalidCouponErrorText,
+      appliedCoupons,
+      areCouponsApplied,
 
       personalDetails,
       updatePersonalDetails,
@@ -576,6 +624,7 @@ export default {
     @include for-desktop {
       flex: 0 0 26.8125rem;
       width: 31.57%; //413px;
+      margin-top: calc(var(--spacer-base) * 1.5);
     }
 
     &-order {

@@ -5,6 +5,8 @@ import {
   deleteCartItemMutation,
   updateCartItemQuantityMutation,
   updateCartItemMutation,
+  updateCartCouponMutation,
+  deleteCartCouponMutation,
 } from "@/lib/gql/mutations"
 import type { Cart, Maybe, CartItemInput } from "@/server/types/GraphQL"
 
@@ -114,12 +116,45 @@ export const useCart = () => {
     }
   }
 
+  const applyCoupon = async (couponCode: string) => {
+    try {
+      const response = await fetcher({
+        query: updateCartCouponMutation,
+        variables: { cartId: cart.value?.id, couponCode },
+      })
+      cart.value = response.data.updateCartCoupon
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // TODO
+  const removeCoupon = async (couponCode: string) => {
+    try {
+      const response = await fetcher({
+        query: deleteCartCouponMutation,
+        variables: { cartId: cart.value?.id, couponCode },
+      })
+      cart.value = response.data.deleteCartCoupon
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     loading,
     addItemsToCart,
     updateCartItemQuantity,
     removeCartItem,
     load,
+    applyCoupon,
+    removeCoupon,
     cart,
     error,
     newestCartItemId,

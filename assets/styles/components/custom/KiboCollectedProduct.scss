@@ -154,23 +154,11 @@
   padding: var(--property-name-margin, 0 var(--spacer-xs) var(--spacer-xs) 0);
 
   &__name {
-    @include font(
-      --property-name-font,
-      var(--font-weight--semibold),
-      var(--font-size--xs),
-      1.2,
-      var(--font-family--secondary)
-    );
+    --property-name-font-size: var(--font-size--sm);
   }
 
   &__value {
-    @include font(
-      --property-value-font,
-      var(--font-weight--normal),
-      var(--font-size--xs),
-      1.2,
-      var(--font-family--secondary)
-    );
+    --property-value-font-size: var(--font-size--sm);
   }
 }
 
