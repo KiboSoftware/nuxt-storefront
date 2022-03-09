@@ -7,9 +7,13 @@
             <SfSelect
               :value="selectedShippingMethodCode"
               :placeholder="$t('Select Shipping Option')"
-              :valid="true"
               data-testid="rates"
-              @input="updateField($event)"
+              :valid="!errors.shippingRates"
+              :error-message="errors.shippingRates"
+              @input="
+                updateField($event)
+                validate('shippingRates')
+              "
             >
               <SfSelectOption
                 v-for="rates in shippingRates"
@@ -34,6 +38,7 @@
 </template>
 
 <script>
+import * as yup from "yup"
 import { SfSelect } from "@storefront-ui/vue"
 import { checkoutLineItemGetters } from "@/lib/getters"
 
@@ -75,6 +80,29 @@ export default {
 
     const handleStoreLocatorClick = () => {
       context.emit("handleStoreLocatorClick")
+      context.emit("validateForm", true)
+    }
+
+    const errors = ref({ shippingRates: "" })
+    const validateForm = () => {
+      context.emit("validateForm", !Object.values(errors.value).filter(Boolean).length)
+    }
+    const schema = yup.object({
+      shippingRates: yup.string().trim().required(context.root.$t("Required")),
+    })
+
+    const validate = (field) => {
+      yup
+        .reach(schema, field)
+        .validate(selectedShippingMethodCode.value)
+        .then(() => {
+          errors.value[field] = ""
+          validateForm()
+        })
+        .catch((err) => {
+          errors.value[field] = err.message
+          validateForm()
+        })
     }
 
     return {
@@ -82,6 +110,8 @@ export default {
       checkoutLineItemGetters,
       selectedShippingMethodCode,
       handleStoreLocatorClick,
+      validate,
+      errors,
     }
   },
 }

@@ -12,6 +12,7 @@
         :addresses="userShippingAddresses"
         :is-readonly="isReadonly"
         @onSave="saveShippingAddress"
+        @validateForm="validateShippingDetails"
       />
     </div>
 
@@ -49,10 +50,22 @@ export default {
       default: () => [],
     },
   },
-  setup(_, context) {
+  setup(props, context) {
     const isReadonly = true
+    const isValidShippingDetails = ref(false)
+    const shippingAddress = ref({ ...props.value })
+
+    const validateShippingDetails = (isValid) => {
+      isValidShippingDetails.value = isValid
+      context.emit("validateForm", isValid)
+    }
+
+    const updateShippingDetails = (newShippingDetails) => {
+      shippingAddress.value = { ...newShippingDetails }
+    }
 
     const saveShippingAddress = (updatedAddress) => {
+      context.emit("validateForm", isValidShippingDetails.value)
       context.emit("saveShippingAddress", {
         ...updatedAddress,
       })
@@ -61,6 +74,8 @@ export default {
     return {
       isReadonly,
       saveShippingAddress,
+      updateShippingDetails,
+      validateShippingDetails,
     }
   },
 }
