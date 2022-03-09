@@ -186,24 +186,7 @@ export default {
         ...props.value,
         [fieldName]: fieldValue.trim(),
       }
-
       context.emit("input", values)
-    }
-
-    const createAccount = async () => {
-      context.emit("create-account", isCreateAccount.value)
-      if (!isCreateAccount.value) {
-        context.emit("validateForm", isEmailValidated.value)
-      } else {
-        try {
-          await schemaCreateAccount.validate(props.value)
-          isCreateAccountValidated.value = true
-          context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
-        } catch (err) {
-          isCreateAccountValidated.value = false
-          context.emit("validateForm", isCreateAccountValidated.value)
-        }
-      }
     }
 
     const passwordFormFields = ref([
@@ -231,6 +214,22 @@ export default {
         "validateForm",
         isValidated ? isEmailValidated.value && isCreateAccountValidated.value : false
       )
+    }
+
+    const createAccount = async () => {
+      context.emit("create-account", isCreateAccount.value)
+      if (!isCreateAccount.value) {
+        context.emit("validateForm", isEmailValidated.value)
+      } else {
+        try {
+          await schemaCreateAccount.validate(props.value)
+          isCreateAccountValidated.value = true
+          context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+        } catch (err) {
+          isCreateAccountValidated.value = false
+          context.emit("validateForm", isCreateAccountValidated.value)
+        }
+      }
     }
 
     return {
