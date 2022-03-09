@@ -112,7 +112,7 @@ export default defineComponent({
     const currentYear = new Date().getFullYear()
     const facetAllOptions = ref([
       { label: "Last 30 days", filterValue: "M-1", isApplied: false },
-      { label: "Last 6 months", filterValue: "M-6", isApplied: true },
+      { label: "Last 6 months", filterValue: "M-6", isApplied: false },
       { label: `${currentYear}`, filterValue: `Y-${currentYear}`, isApplied: false },
       { label: `${currentYear - 1}`, filterValue: `Y-${currentYear - 1}`, isApplied: false },
       { label: `${currentYear - 2}`, filterValue: `Y-${currentYear - 2}`, isApplied: false },
@@ -176,16 +176,9 @@ export default defineComponent({
     useAsync(async () => {
       const facetsFromURL = getFacetsFromURL()
       facetsFromURL.filters.forEach((filter) => {
+        filters.value.push(filter)
         facetAllOptions.value.find((facet) => facet.filterValue === filter).isApplied = true
       })
-
-      facetAllOptions.value.forEach((facet) => {
-        if (facet.isApplied) {
-          filters.value.push(facet.filterValue)
-        }
-      })
-
-      changeFilters(filters.value.join(","))
 
       await getOrders({ filters: facetsFromURL.filters.length ? facetsFromURL.filters : "" })
     }, null)

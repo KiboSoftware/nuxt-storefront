@@ -42,8 +42,29 @@ jest.mock("#app", () => ({
 
 describe("[composable] useUserOrder", () => {
   const { result, getOrders, loading, error } = useUserOrder(`search-orders`)
-  test("search: should search products and save as result", async () => {
+  test("search: should search orders and save as result", async () => {
     await getOrders({ filters: "" })
+    expect(result.value).toStrictEqual(searchOrderResponse.data.orders)
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeFalsy()
+  })
+
+  test("search: should search orders and save as result", async () => {
+    await getOrders({ filters: ["M-6"] })
+    expect(result.value).toStrictEqual(searchOrderResponse.data.orders)
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeFalsy()
+  })
+
+  test("search: should search orders and save as result", async () => {
+    await getOrders({ filters: ["Y-2022"] })
+    expect(result.value).toStrictEqual(searchOrderResponse.data.orders)
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeFalsy()
+  })
+
+  test("search: should search orders and save as result", async () => {
+    await getOrders({ filters: ["M-6", "Y-2022"] })
     expect(result.value).toStrictEqual(searchOrderResponse.data.orders)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()
