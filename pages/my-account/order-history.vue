@@ -262,11 +262,6 @@ export default defineComponent({
 .order-history {
   display: flex;
   flex-direction: column;
-  margin: auto 1.5rem;
-
-  @include for-desktop {
-    margin: auto;
-  }
 }
 
 .history-filter {
@@ -300,6 +295,10 @@ export default defineComponent({
 
 .filters {
   margin: 0 calc(var(--spacer-2xs) * 6.5);
+
+  @include for-desktop {
+    margin: 0;
+  }
 
   &__apply {
     border: none;
@@ -339,8 +338,6 @@ export default defineComponent({
 }
 
 .filter-hr {
-  border: none;
-  border-bottom: 2px solid var(--_c-green-primary);
   height: 1px;
   border-width: 0;
   color: var(--_c-gray-middle);
