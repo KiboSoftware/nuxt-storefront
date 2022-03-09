@@ -58,7 +58,6 @@ export default {
   Apply: "Apply",
   "Update password": "Update password",
   "Update personal data": "Update personal data",
-  Item: "Item",
   "Go back": "Go back",
   "Continue to shipping": "Continue to shipping",
   "I agree to": "I agree to",
