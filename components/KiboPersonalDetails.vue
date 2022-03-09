@@ -64,17 +64,12 @@
               @blur="validateCreateAccount('firstName')"
             />
 
-            <SfInput
-              :value="value.lastName"
-              :label="$t('Last Name')"
-              name="lastName"
-              class="form__element form__element--half"
-              required
-              :valid="!errorsCreateAccount.lastName"
-              :error-message="errorsCreateAccount.lastName"
-              @input="updateField('lastName', $event)"
-              @blur="validateCreateAccount('lastName')"
-            />
+            <SfInput :value="value.lastName" :label="$t('Last Name')" name="lastName"
+            class="form__element form__element--half" required
+            :valid="!errorsCreateAccount.lastName" :error-message="errorsCreateAccount.lastName"
+            @input="updateField('lastName', $event)" @blur="validateCreateAccount('lastName')"
+            <<<<<<< HEAD ======= @keypress="validateCreateAccount('lastName')" >>>>>>> cf32723
+            (feat(checkout): Error handling & validation) />
             <KiboPasswordForm
               :fields="passwordFormFields"
               @input:handle-password="getPasswordValues"
