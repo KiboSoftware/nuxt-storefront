@@ -157,6 +157,7 @@ import {
   shippingMethodGetters,
   checkoutLineItemGetters,
   productGetters,
+  checkoutGetters,
 } from "@/lib/getters"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
@@ -244,38 +245,6 @@ export default {
       cardYear: "",
       cardCVC: "",
       cardKeep: false,
-    }
-
-    const order = {
-      password: "",
-      createAccount: false,
-      firstName: "John",
-      lastName: "Dog",
-      email: "john.dog@gmail.com",
-      orderItems: [
-        {
-          title: "Cream Beach Bag",
-          image: "/assets/storybook/Home/productA.jpg",
-          price: { regular: "$100.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: 1,
-          sku: "MSD23-345-324",
-        },
-        {
-          title: "Vila stripe maxi dress",
-          image: "/assets/storybook/Home/productB.jpg",
-          price: { regular: "$50.00", special: "$20.05" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: 2,
-          sku: "MSD23-345-325",
-        },
-      ],
     }
 
     const getOrder = computed(() => {
