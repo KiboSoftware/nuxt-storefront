@@ -76,6 +76,12 @@
       <div class="checkout__aside">
         <transition name="sf-fade">
           <SfLoader :loading="loading">
+            <!-- 
+              TODO - tobe added into KiboOrderSummary
+              :is-valid-coupon="isValidCoupon"
+              :invalid-coupon-error-text="invalidCouponErrorText"
+              :applied-coupons="appliedCoupons"
+              :are-coupons-applied="areCouponsApplied" -->
             <KiboOrderSummary
               v-if="currentStep <= 2"
               :order="getOrder"
@@ -86,10 +92,6 @@
               :standard-shipping="standardShipping"
               :estimated-tax="estimatedTax"
               :estimated-order-total="estimatedOrderTotal"
-              :is-valid-coupon="isValidCoupon"
-              :invalid-coupon-error-text="invalidCouponErrorText"
-              :applied-coupons="appliedCoupons"
-              :are-coupons-applied="areCouponsApplied"
             >
               <template #actions>
                 <SfButton
@@ -511,11 +513,11 @@ export default {
       standardShipping,
       estimatedTax,
       estimatedOrderTotal,
-
-      isValidCoupon,
-      invalidCouponErrorText,
-      appliedCoupons,
-      areCouponsApplied,
+      //TODO Summary
+      // isValidCoupon,
+      // invalidCouponErrorText,
+      // appliedCoupons,
+      // areCouponsApplied,
 
       updatePersonalDetails,
 
