@@ -66,10 +66,6 @@ const getSortedAddress = (addresses) => {
   return addresses ? addresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary) : []
 }
 
-const getSortedAddress = (addresses) => {
-  return addresses ? addresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary) : []
-}
-
 export const shopperContactGetters = {
   getId,
   getFirstName,
