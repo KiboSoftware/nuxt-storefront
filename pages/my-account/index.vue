@@ -115,7 +115,7 @@ export default defineComponent({
     }
 
     const gotoOrderHistory = () => {
-      app.router.push({ path: "my-account/order-history" })
+      app.router.push({ path: "my-account/order-history?filters=M-6" })
     }
 
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
