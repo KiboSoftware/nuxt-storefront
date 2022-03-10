@@ -59,7 +59,7 @@ describe("[composable] useCustomerCreditCards", () => {
     const accountId = 1383
 
     await load(accountId)
-    expect(cards.value).toStrictEqual(getPaymentCardsQueryResponse)
+    expect(cards.value).toStrictEqual(getPaymentCardsQueryResponse.items)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()
   })

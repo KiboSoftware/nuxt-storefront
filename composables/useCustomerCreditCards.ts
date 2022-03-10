@@ -1,25 +1,30 @@
-import { computed } from "@vue/composition-api"
-import { ref } from "@nuxtjs/composition-api"
-import type { CardCollection, CardInput } from "@/server/types/GraphQL"
-import { deleteCustomerAccountCard, updateCustomerAccountCard } from "@/lib/gql/mutations"
+import { ref, computed } from "@nuxtjs/composition-api"
 import { useNuxtApp, useState } from "#app"
+import type { CardInput, Card } from "@/server/types/GraphQL"
+import {
+  deleteCustomerAccountCard,
+  updateCustomerAccountCard,
+  addCustomerAccountCard,
+} from "@/lib/gql/mutations"
 import { getCustomerAccountCards } from "@/lib/gql/queries"
 
 export const useCustomerCreditCards = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const cards = ref<CardCollection>()
+  const cards = ref<Card[]>([])
   const loading = useState<Boolean>(`use-customer-credit-cards-loading`, () => false)
   const error = useState(`use-customer-credit-cards-error`, () => null)
 
-  const getCustomerAccountCardsDetails = async (accountId: Number) => {
+  const getCustomerAccountCardsDetails = async (id: Number) => {
     loading.value = true
     try {
       const response = await fetcher({
         query: getCustomerAccountCards,
-        variables: { accountId },
+        variables: { accountId: id },
       })
-      cards.value = response?.data?.customerAccountCards
+      cards.value = response?.data?.customerAccountCards?.items
+        ? response?.data?.customerAccountCards?.items
+        : []
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
@@ -53,6 +58,25 @@ export const useCustomerCreditCards = () => {
       loading.value = false
     }
   }
+  const addCustomerAccountCardDetails = async (accountId: Number, cardInput: CardInput) => {
+    loading.value = true
+    try {
+      const variables = {
+        accountId,
+        cardInput,
+      }
+
+      await fetcher({
+        query: addCustomerAccountCard,
+        variables,
+      })
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
 
   const deleteCustomerAccountCardDetails = async (accountId: Number, cardId: String) => {
     loading.value = true
@@ -77,6 +101,9 @@ export const useCustomerCreditCards = () => {
 
   const load = async (accountId: Number) => await getCustomerAccountCardsDetails(accountId)
 
+  const addCard = async (accountId: Number, cardInput: CardInput) =>
+    await addCustomerAccountCardDetails(accountId, cardInput)
+
   const updateCard = async (accountId: Number, cardId: String, cardInput: CardInput) =>
     await updateCustomerAccountCardDetails(accountId, cardId, cardInput)
 
@@ -86,6 +113,7 @@ export const useCustomerCreditCards = () => {
   return {
     cards,
     load,
+    addCard,
     updateCard,
     deleteCard,
     error: computed(() => error.value),

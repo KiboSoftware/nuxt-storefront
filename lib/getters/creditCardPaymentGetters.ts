@@ -26,6 +26,15 @@ const getNameOnCard = (cardDetails) => cardDetails?.nameOnCard
 
 const getAppliedTotal = (checkout) => checkout?.total
 
+const getCardDetailsWithBilling = (cards, billingAddresses) => {
+  return cards?.map((c) => {
+    return {
+      card: { ...c },
+      billingAddress: { ...billingAddresses.find((ba) => ba.id === c.contactId) },
+    }
+  })
+}
+
 export const creditCardPaymentGetters = {
   getCardNumberMask,
   getId,
@@ -34,4 +43,5 @@ export const creditCardPaymentGetters = {
   getExpireMonth,
   getExpireYear,
   getNameOnCard,
+  getCardDetailsWithBilling,
 }

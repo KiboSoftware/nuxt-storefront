@@ -1,11 +1,12 @@
 import { paymentCardItems } from "../../fragments/payment"
 
 export const getCustomerAccountCards = /* GraphQL */ `
-  query customerAccountCards($accountId: Int) {
-    items {
-      ...paymentCardItems
+  query customerAccountCards($accountId: Int!) {
+    customerAccountCards(accountId: $accountId) {
+      items {
+        ...customerAccountCardItems
+      }
     }
-    totalCount: Int!
   }
   ${paymentCardItems}
 `

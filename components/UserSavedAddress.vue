@@ -1,23 +1,42 @@
 <template>
   <div>
-    <div v-if="!isReadonly" class="address-container">
+    <div v-if="isReadonly" class="address-container">
       <div class="address-container__left">
-        <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-        <p>{{ firstName }} {{ lastNameOrSurname }}</p>
-        <p>{{ address1 }} {{ address2 }}</p>
-        <p>{{ postalOrZipCode }}</p>
-        <p>
-          {{ cityOrTown }},
-          {{ stateOrProvince }}
-          <span v-if="phoneNumbers.home">{{ phoneNumbers.home }}</span>
-        </p>
+        <SfRadio
+          :key="id"
+          :value="id"
+          :label="address1"
+          name="address"
+          class="sf-radio"
+          selected=""
+          @input="onSelect"
+        >
+          <template #label>
+            <div class="radio-button">
+              <UserAddressView :address="address">
+                <template #header>
+                  <div v-if="isDefaultAddress" class="is-primary">{{ $t("Primary") }}</div>
+                </template>
+              </UserAddressView>
+            </div>
+          </template>
+        </SfRadio>
+      </div>
+    </div>
+    <div v-else class="address-container">
+      <div class="address-container__left">
+        <UserAddressView :address="address">
+          <template #header>
+            <div v-if="isDefaultAddress" class="is-primary">{{ $t("Primary") }}</div>
+          </template>
+        </UserAddressView>
       </div>
       <div class="address-container__right">
         <div class="address-container__edit" @click="$emit('click:edit-address', address)">
           {{ $t("Edit") }}
         </div>
         <div
-          v-show="!isDefaultAddress()"
+          v-show="!isDefaultAddress"
           class="address-container__delete"
           @click="$emit('click:remove-address', address)"
         >
@@ -31,43 +50,12 @@
         </div>
       </div>
     </div>
-    <div v-else class="address-container">
-      <div class="address-container__left">
-        <div v-if="isDefaultAddress()" class="title">{{ $t("Your default shipping address") }}</div>
-        <SfRadio
-          :key="id"
-          :value="id"
-          :label="address1"
-          name="address"
-          class="sf-radio"
-          selected=""
-          @input="onSelect"
-        >
-          <template #label>
-            <div class="radio-button">
-              <div v-if="isDefaultAddress()" class="is-primary">{{ $t("Primary") }}</div>
-              <p>{{ firstName }} {{ lastNameOrSurname }}</p>
-              <p>{{ address1 }} {{ address2 }}</p>
-              <p>{{ postalOrZipCode }}</p>
-              <p>
-                {{ cityOrTown }},
-                {{ stateOrProvince }}
-                <span v-if="phoneNumber">{{ phoneNumber }}</span>
-              </p>
-            </div>
-          </template>
-        </SfRadio>
-        <div v-if="isDefaultAddress()" class="title">
-          {{ $t("Previously saved shipping addresses") }}
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { SfIcon, SfRadio } from "@storefront-ui/vue"
-import { defineComponent } from "@vue/composition-api"
+import { defineComponent, computed } from "@vue/composition-api"
 import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
@@ -79,7 +67,7 @@ export default defineComponent({
   props: {
     address: {
       type: Object,
-      required: true,
+      default: () => {},
     },
     isReadonly: {
       type: Boolean,
@@ -90,9 +78,9 @@ export default defineComponent({
   setup(props, context) {
     const address = computed(() => shopperContactGetters.getAddressDetails(props.address))
 
-    const isDefaultAddress = () => {
-      return props.address?.types[0]?.isPrimary || false
-    }
+    const isDefaultAddress = computed(() => {
+      return (props.address?.types && props.address?.types[0]?.isPrimary) || false
+    })
 
     const onSelect = () => {
       const { id, email, firstName, lastNameOrSurname, phoneNumbers, address } = props.address
@@ -129,9 +117,12 @@ p {
 
 .address-container {
   display: flex;
+  border-bottom: 1px solid var(--_c-white-secondary);
+  padding-bottom: calc(var(--spacer-2xs) * 5);
 
   &__left {
     flex: 90%;
+    line-height: calc(var(--spacer-2xs) * 5.5);
 
     .title {
       margin: 16px 0;

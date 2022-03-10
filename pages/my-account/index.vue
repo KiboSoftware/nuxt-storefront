@@ -1,11 +1,7 @@
 <template>
   <div id="my-account">
-    <div>
-      <div>
-        <SfBar :title="$t('Back')" :back="true" class="title-bar" @click:back="goBack" />
-        <hr class="myaccount-hr desktop-only" />
-      </div>
-      <div></div>
+    <div class="smartphone-only">
+      <SfBar :title="$t('Back')" :back="true" class="title-bar" @click:back="goBack" />
     </div>
     <div>
       <div class="profile-header">
@@ -23,13 +19,7 @@
         <div class="header-text-font">{{ $t("My Account") }}</div>
       </div>
 
-      <SfAccordion
-        open=""
-        :multiple="false"
-        transition=""
-        show-chevron
-        @click:open="changeActivePage"
-      >
+      <SfAccordion open="" :multiple="false" transition="sf-fade" show-chevron>
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('My profile')">
           <SfList>
             <SfListItem>
@@ -40,18 +30,30 @@
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Shipping Address')">
           <SfList>
             <SfListItem>
-              <UserSavedAddresses
-                :countries="countries"
-                :addresses="account.addresses"
-                @onSave="saveAddress"
-              />
+              <SfLoader :loading="loadingUserShipping">
+                <UserSavedAddresses
+                  :show-default-checkbox="true"
+                  :countries="countries"
+                  :addresses="userShippingAddresses"
+                  @onSave="saveShippingAddress"
+                  @onDelete="deleteAddress"
+                />
+              </SfLoader>
             </SfListItem>
           </SfList>
         </SfAccordionItem>
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Payment Method')">
           <SfList>
             <SfListItem>
-              <UserPaymentMethod />
+              <SfLoader :loading="loadingUserCard">
+                <UserPaymentMethod
+                  :show-default-checkbox="true"
+                  :payment-methods="paymentMethods"
+                  :countries="countries"
+                  @onSave="savePaymentMethod"
+                  @onDelete="deletePaymentMethod"
+                />
+              </SfLoader>
             </SfListItem>
           </SfList>
         </SfAccordionItem>
@@ -72,18 +74,27 @@
     </div>
     <div>
       <div class="vertical-space"></div>
-      <div class="profile-logout spacer" @click="changeActivePage('Log out')">
-        {{ $t("Log out") }}
+      <div class="spacer">
+        <span class="profile-logout" @click="changeActivePage('Log out')">{{ $t("Log out") }}</span>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { SfAccordion, SfList, SfBar, SfChevron, SfButton, SfIcon } from "@storefront-ui/vue"
-import { defineComponent, ref } from "@vue/composition-api"
+import {
+  SfAccordion,
+  SfList,
+  SfBar,
+  SfChevron,
+  SfButton,
+  SfIcon,
+  SfLoader,
+} from "@storefront-ui/vue"
+import { computed, defineComponent, ref } from "@vue/composition-api"
+import { onMounted } from "@nuxtjs/composition-api"
 import { useNuxtApp } from "#app"
-import { useUser, useUiState } from "@/composables"
-
+import { useUser, useUiState, useUserAddresses, useCustomerCreditCards } from "@/composables"
+import { creditCardPaymentGetters } from "@/lib/getters"
 export default defineComponent({
   name: "MyAccount",
   components: {
@@ -93,6 +104,7 @@ export default defineComponent({
     SfChevron,
     SfButton,
     SfIcon,
+    SfLoader,
   },
   setup() {
     const { user, logout } = useUser()
@@ -100,8 +112,28 @@ export default defineComponent({
     const app = nuxt.nuxt2Context.app
     const countries = nuxt.nuxt2Context.$config.countries
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
+    const {
+      loading: loadingUserShipping,
+      load: loadUserAddresses,
+      userShippingAddresses,
+      userBillingAddresses,
+      addUserAddress,
+      updateUserAddress,
+      deleteUserAddress,
+    } = useUserAddresses()
 
-    const account = ref({}) // @TODO fetch account data from API
+    const {
+      loading: loadingUserCard,
+      cards,
+      load: loadCard,
+      addCard,
+      deleteCard,
+    } = useCustomerCreditCards()
+
+    const paymentMethods = computed(() =>
+      creditCardPaymentGetters.getCardDetailsWithBilling(cards.value, userBillingAddresses.value)
+    )
+    const account = ref({})
 
     const goBack = () => {
       app.router.push({ path: "/" })
@@ -110,18 +142,111 @@ export default defineComponent({
       if (title === "Log out") {
         await logout()
         app.router.push({ path: "/" })
-        return false
       }
+      return false
     }
 
     const gotoOrderHistory = () => {
       app.router.push({ path: "my-account/order-history?filters=M-6" })
     }
 
-    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-    const saveAddress = (address) => {
-      // add/save address here
+    const saveAddress = async ({ address, setAsDefault }, typeName) => {
+      const addressData = {
+        accountId: user.value.id,
+        customerContactInput: { ...address },
+      }
+      if (address.id) {
+        // update scenario
+        addressData.contactId = address.id
+        address.types.find((t) => t.name === typeName).isPrimary = setAsDefault
+
+        await updateUserAddress(addressData)
+      } else {
+        // add new scenarion
+        addressData.customerContactInput.types = [
+          {
+            name: typeName,
+            isPrimary: setAsDefault,
+          },
+        ]
+        addressData.customerContactInput.accountId = user.value.id
+        await addUserAddress(addressData)
+      }
     }
+
+    const saveShippingAddress = async (params) => {
+      await saveAddress(params, "Shipping")
+      await loadUserAddresses(user.value.id)
+    }
+
+    const saveBillingAddress = async (params) => {
+      await saveAddress(params, "Billing")
+      await loadUserAddresses(user.value.id)
+    }
+
+    const deleteAddress = async (address) => {
+      const addressData = {
+        accountId: user.value.id,
+        contactId: address.id,
+      }
+
+      await deleteUserAddress(addressData)
+      await loadUserAddresses(user.value.id)
+    }
+
+    const savePaymentMethod = async ({ address, cardInput, setAsDefault }) => {
+      const addressId = await saveAddress({ address, setAsDefault }, "Billing") // get address id here
+
+      // save Customer Card
+      const cardInputFormat = {
+        contactId: addressId,
+        cardInput: {
+          ...cardInput,
+        },
+      }
+
+      if (cardInput.id) {
+        // update scenario
+        cardInputFormat.cardInput.isDefaultPayMethod = setAsDefault
+        await updateCard(user.value.id, cardInput.id, cardInputFormat)
+      } else {
+        // add new scenarion
+        cardInputFormat.cardInput.isDefaultPayMethod = setAsDefault
+        await addCard(user.value.id, cardInputFormat)
+      }
+
+      await loadCard(user.value.id)
+    }
+
+    const deletePaymentMethod = async ({ card }) => {
+      if (card.contactId) {
+        const addressData = {
+          accountId: user.value.id,
+          contactId: card.contactId,
+        }
+        await deleteUserAddress(addressData)
+      }
+
+      await deleteCard(user.value.id, card.id)
+      await loadCard(user.value.id)
+    }
+
+    watch(
+      () => user.value,
+      async (newVal) => {
+        if (newVal.id) {
+          await loadUserAddresses(user.value.id)
+          await loadCard(user.value.id)
+        }
+      }
+    )
+
+    onMounted(async () => {
+      if (user.value?.id) {
+        await loadUserAddresses(user.value.id)
+        await loadCard(user.value.id)
+      }
+    })
 
     return {
       logout,
@@ -133,7 +258,21 @@ export default defineComponent({
       isConfirmModalOpen,
       toggleConfirmModal,
       countries,
+      loadingUserShipping,
+      saveShippingAddress,
+      saveBillingAddress,
       saveAddress,
+      deleteAddress,
+      addUserAddress,
+      updateUserAddress,
+      deleteUserAddress,
+      userShippingAddresses,
+      userBillingAddresses,
+      loadUserAddresses,
+      loadingUserCard,
+      paymentMethods,
+      savePaymentMethod,
+      deletePaymentMethod,
     }
   },
 })
@@ -151,9 +290,9 @@ export default defineComponent({
   margin: var(--spacer-xs) auto;
 
   @include for-desktop {
-    max-width: 1272px;
+    max-width: 81.75rem;
     padding: 0;
-    margin: 0 auto;
+    margin: calc(var(--spacer-2xs) * 1.5) auto;
   }
 }
 
@@ -295,7 +434,7 @@ div.kibo-sf-accordion-item {
   @include for-desktop {
     display: flex;
     align-items: center;
-    gap: 9px;
+    gap: calc(var(--spacer-2xs) * 2);
   }
 }
 

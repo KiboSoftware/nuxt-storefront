@@ -1,16 +1,17 @@
 <template>
   <div>
-    <div v-if="!addresses.length" class="no-shipping-address">
+    <div v-if="!userAddressesSorted" class="no-shipping-address">
       {{ $t("No saved addresses yet!") }}
     </div>
     <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
-      <div v-for="address in userAddressesSorted" :key="address.id" class="shipping">
+      <div v-for="(address, index) in userAddressesSorted" :key="address.id" class="shipping">
         <div class="shipping__content">
           <div class="shipping__address">
             <UserSavedAddress
+              :key="index"
               :address="address"
               :is-readonly="isReadonly"
-              @click:remove-address="removeAddressDialog(address)"
+              @click:remove-address="showDeleteConfirmationDialog(address)"
               @click:edit-address="updateAddress(address)"
               @onSelect="selectAddress"
             />
@@ -21,7 +22,7 @@
     <KiboConfirmationDialog
       :label="$t('Are you sure you want to delete this address ?')"
       :is-open="isConfirmModalOpen"
-      :action-handler="removeAddress"
+      :action-handler="deleteAddress"
       @click:close="toggleConfirmModal"
     />
     <KiboAddressForm
@@ -31,7 +32,15 @@
       :countries="countries"
       @addressData="setInputAddressData"
     />
-
+    <div>
+      <SfCheckbox
+        v-if="showDefaultCheckbox && showAddressForm"
+        v-model="isDefaultAddress"
+        name="is-default"
+        :label="$t('Save as default')"
+        class="form__checkbox"
+      />
+    </div>
     <SfButton v-if="!showAddressForm" class="action-button" @click="addNewAddress">
       <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
         <font-awesome-icon
@@ -43,29 +52,38 @@
       {{ $t("Add New Address") }}
     </SfButton>
     <div v-if="showAddressForm" class="action-buttons">
-      <SfButton class="action-buttons__cancel" @click="closeAddressForm">
+      <SfButton class="action-buttons color-light" @click="closeAddressForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton class="action-buttons__update" @click="saveAddress">
+      <SfButton
+        class="action-buttons color-primary"
+        :disabled="!isValidFormData"
+        @click="saveAddress"
+      >
         {{ $t("Save") }}
       </SfButton>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { SfButton, SfIcon } from "@storefront-ui/vue"
-import { defineComponent, ref } from "@vue/composition-api"
+import { SfButton, SfIcon, SfCheckbox } from "@storefront-ui/vue"
+import { defineComponent, ref, computed } from "@vue/composition-api"
 import { useUiState } from "@/composables"
+import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserSavedAddresses",
   components: {
     SfButton,
     SfIcon,
+    SfCheckbox,
   },
-
   props: {
     isReadonly: {
+      type: Boolean,
+      default: false,
+    },
+    showDefaultCheckbox: {
       type: Boolean,
       default: false,
     },
@@ -84,30 +102,26 @@ export default defineComponent({
   },
   setup(props, context) {
     const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
-
-    const activeAddress = ref(props.defaultAddress)
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
+    const isDefaultAddress = ref(false)
+    const isValidFormData = ref(true)
+    const activeAddress = ref(props.defaultAddress || {})
 
     // Sort addresses to display Primary addresses first
-    const userAddresses = [...props.addresses]
-    const userAddressesSorted = computed(() =>
-      userAddresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary)
-    )
-
+    const userAddressesSorted = computed(() => {
+      return shopperContactGetters.getSortedAddress([...props.addresses])
+    })
     const addNewAddress = () => {
       isNewAddress.value = true
-
       if (!activeAddress.value) activeAddress.value = {}
-
       showAddressForm.value = true
     }
-
-    const removeAddress = () => {
+    const deleteAddress = () => {
       toggleConfirmModal()
-      context.emit("onDelete", activeAddress)
+      context.emit("onDelete", { ...activeAddress.value })
     }
-    const removeAddressDialog = (address) => {
+    const showDeleteConfirmationDialog = (address) => {
       activeAddress.value = address
       toggleConfirmModal()
     }
@@ -116,6 +130,7 @@ export default defineComponent({
       showAddressForm.value = false
       activeAddress.value = address
       showAddressForm.value = true
+      isDefaultAddress.value = address?.types[0]?.isPrimary || false
     }
 
     const selectAddress = (address) => {
@@ -125,24 +140,24 @@ export default defineComponent({
     const closeAddressForm = () => {
       showAddressForm.value = false
     }
-
     const setInputAddressData = (address) => {
       activeAddress.value = { ...address }
     }
-
     const saveAddress = () => {
-      context.emit("onSave", { ...activeAddress.value })
+      context.emit("onSave", {
+        address: { ...activeAddress.value },
+        setAsDefault: isDefaultAddress.value,
+      })
       closeAddressForm()
     }
-
     return {
       userAddressesSorted,
       addNewAddress,
       updateAddress,
-      removeAddress,
+      deleteAddress,
       selectAddress,
       activeAddress,
-      removeAddressDialog,
+      showDeleteConfirmationDialog,
       isConfirmModalOpen,
       isNewAddress,
       toggleConfirmModal,
@@ -150,6 +165,8 @@ export default defineComponent({
       closeAddressForm,
       saveAddress,
       setInputAddressData,
+      isDefaultAddress,
+      isValidFormData,
     }
   },
 })
@@ -163,12 +180,11 @@ div {
   border: none;
 }
 
-::v-deep .sf-button {
+.action-button {
   height: calc(var(--spacer-2xs) * 10.5);
   background: var(--c-black);
   width: 100%;
   max-width: calc(var(--spacer-base) * 15.66);
-
   @include for-desktop {
     width: 70%;
     max-width: calc(var(--spacer-base) * 17.54);
@@ -197,6 +213,9 @@ div {
 
 .shipping-list {
   margin-bottom: var(--spacer-base);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacer-2xs) * 5);
 }
 
 .plus-circle-icon {
@@ -208,17 +227,14 @@ div {
   flex-direction: column;
   justify-content: space-between;
   gap: calc(var(--spacer-xl) / 8);
-
-  &__cancel {
-    background-color: var(--_c-light-primary);
-    border: 1px solid var(--_c-gray-middle);
-    color: var(--c-black);
+  @include for-desktop {
+    max-width: calc(var(--spacer-base) * 17.54);
   }
+}
 
-  &__update {
-    border: none;
-    background-color: var(--_c-green-primary);
-    color: var(--_c-light-secondary);
+.form {
+  &__checkbox {
+    margin-bottom: calc(var(--spacer-2xs) * 2);
   }
 }
 </style>

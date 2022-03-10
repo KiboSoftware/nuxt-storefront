@@ -33,3 +33,15 @@ export type SearchRelatedProductsResponse = QueryResponse<"products", GraphQL.Pr
 
 // CategoryCollection
 export type CategoryTreeResponse = QueryResponse<"categoriesTree", GraphQL.CategoryCollection>
+
+// createUserAddress
+export type AddUserAddressParams = GraphQL.MutationCreateCustomerAccountContactArgs
+export type AddUserAddressResponse = QueryResponse<"customerContact", GraphQL.CustomerContact>
+
+// updateUserAddress
+export type UpdateUserAddressParams = GraphQL.MutationUpdateCustomerAccountContactArgs
+export type UpdateUserAddressResponse = QueryResponse<"customerContact", GraphQL.CustomerContact>
+
+// deleteUserAddress
+export type DeleteUserAddressParams = GraphQL.MutationDeleteCustomerAccountContactArgs
+export type DeleteUserAddressResponse = QueryResponse<"user", boolean>
