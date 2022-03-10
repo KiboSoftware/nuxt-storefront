@@ -316,7 +316,6 @@ export default {
           shippingMethodName: checkout.value?.fulfillmentInfo?.shippingMethodName,
         },
       }
-
       await setShippingInfo(params)
       await loadShippingMethods(checkout.value?.id)
     }

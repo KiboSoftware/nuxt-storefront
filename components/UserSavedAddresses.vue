@@ -153,6 +153,10 @@ export default defineComponent({
       })
       closeAddressForm()
     }
+    const validateShippingDetails = (isValid) => {
+      isValidShippingDetails.value = isValid
+      context.emit("validateForm", isValid)
+    }
     return {
       userAddressesSorted,
       addNewAddress,
