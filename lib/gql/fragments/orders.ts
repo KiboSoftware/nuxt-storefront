@@ -89,7 +89,10 @@ export const baseOrderFragment = /* GraphQL */ `
       }
       couponCode
     }
-
+    invalidCoupons {
+      couponCode
+    }
+    couponCodes
     billingInfo {
       billingContact {
         ...contactForOrdersFragment

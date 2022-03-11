@@ -275,13 +275,15 @@ export default {
     // TODO
     // const applyPromocode = async (couponApplied) => await applyCoupon(couponApplied)
 
-    const isValidCoupon = computed(() => !getOrder.value?.invalidCoupons[0]?.couponCode)
+    const isValidCoupon = computed(
+      () => getOrder.value?.invalidCoupons && !getOrder.value?.invalidCoupons[0]?.couponCode
+    )
 
     const invalidCouponErrorText = computed(
       () =>
+        getOrder.value?.invalidCoupons &&
         `${getOrder.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
     )
-
     const appliedCoupons = computed(() => getOrder.value?.couponCodes)
 
     const areCouponsApplied = computed(() => getOrder.value?.couponCodes.length > 0)
@@ -324,11 +326,11 @@ export default {
     const shippingDetails = computed(() => checkout.value?.fulfillmentInfo?.fulfillmentContact)
     const updatedShippingAddress = ref({})
     const saveShippingDetails = async (shippingAddress) => {
-      updatedShippingAddress.value = { ...shippingAddress }
+      updatedShippingAddress.value = { ...shippingAddress.address }
       const params = {
         orderId: checkout?.value?.id,
         fulfillmentInfoInput: {
-          fulfillmentContact: { ...shippingAddress, email: personalDetails.value?.email },
+          fulfillmentContact: { ...shippingAddress.address, email: personalDetails.value?.email },
           isDestinationCommercial: false,
           shippingMethodCode: checkout.value?.fulfillmentInfo?.shippingMethodCode,
           shippingMethodName: checkout.value?.fulfillmentInfo?.shippingMethodName,
@@ -380,14 +382,17 @@ export default {
     const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
     const updatedBillingAddress = ref({ ...billingDetails })
     const updateBillingDetails = (newBillingDetails) => {
-      updatedBillingAddress.value = { ...newBillingDetails }
+      updatedBillingAddress.value = { ...newBillingDetails.address }
     }
 
     const saveBillingDetails = async () => {
       const params = {
         orderId: checkout.value?.id,
         billingInfoInput: {
-          billingContact: { ...updatedBillingAddress.value, email: personalDetails.value?.email },
+          billingContact: {
+            ...updatedBillingAddress.value.address,
+            email: personalDetails.value?.email,
+          },
         },
       }
       await setBillingInfo(params)
@@ -420,7 +425,7 @@ export default {
             checkout,
             paymentDetails.value,
             tokenizedData,
-            updatedBillingAddress.value,
+            updatedBillingAddress.value.address,
             isBillingAddressAsShipping.value
           )
         }
