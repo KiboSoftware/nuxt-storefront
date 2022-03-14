@@ -147,6 +147,18 @@ export default defineComponent({
     }
   }
 
+  &__content {
+    flex: auto;
+
+    .sf-badge {
+      --badge-color: var(--c-white);
+      --badge-padding: 0.5rem;
+
+      font-style: italic;
+      border-radius: 0.25rem;
+    }
+  }
+
   &__actions {
     display: flex;
     flex-direction: column;
