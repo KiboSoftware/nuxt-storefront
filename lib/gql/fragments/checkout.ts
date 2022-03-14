@@ -42,21 +42,6 @@ export const checkoutLineItemFragment = /* GraphQL */ `
   ${checkoutItemProductFragment}
 `
 
-export const checkoutPaymentFragment = /* GraphQL */ `
-  fragment checkoutPaymentFragment on Payment {
-    id
-    amountCollected
-    amountCredited
-    amountRequested
-    availableActions
-    orderId
-    paymentServiceTransactionId
-    paymentType
-    paymentWorkflow
-    status
-  }
-`
-
 export const baseCheckoutFragment = /* GraphQL */ `
   fragment baseCheckoutFragment on Order {
     id
@@ -184,4 +169,39 @@ export const fullfillmentInfoFragment = /* GraphQL */ `
       }
     }
   }
+`
+
+export const checkoutPaymentFragment = /* GraphQL */ `
+  fragment checkoutPaymentFragment on Payment {
+    id
+    amountCollected
+    amountCredited
+    amountRequested
+    availableActions
+    orderId
+    paymentServiceTransactionId
+    paymentType
+    paymentWorkflow
+    status
+    billingInfo {
+      billingContact {
+        ...billingContactFragment
+      }
+      isSameBillingShippingAddress
+      card {
+        paymentServiceCardId
+        isUsedRecurring
+        nameOnCard
+        isCardInfoSaved
+        isTokenized
+        ccLastFour
+        paymentOrCardType
+        cardNumberPartOrMask
+        expireMonth
+        expireYear
+        bin
+      }
+    }
+  }
+  ${billingContactFragment}
 `

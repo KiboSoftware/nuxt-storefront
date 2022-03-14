@@ -26,6 +26,8 @@ const getOrderTotal = (order: Order) => order?.total
 
 const getOrderStatus = (order: Order) => order?.status
 
+const getOrderPayments = (order: Order) => order?.payments
+
 export const orderGetters = {
   getOrderNumber,
   getId,
@@ -34,4 +36,5 @@ export const orderGetters = {
   getOrderTotal,
   getOrderStatus,
   getExpectedDeliveryDate,
+  getOrderPayments,
 }
