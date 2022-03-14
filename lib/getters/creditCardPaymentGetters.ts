@@ -35,6 +35,22 @@ const getCardDetailsWithBilling = (cards, billingAddresses) => {
   })
 }
 
+const getPaymentMethods = (payments) => {
+  if (!payments) return []
+  const paymentsMethods = payments
+    .filter((p) => p?.billingInfo?.card)
+    .map((c) => {
+      return {
+        cardType: c.paymentOrCardType,
+        cardNumber: c.cardNumberPartOrMask,
+        expiry: c.expireMonth + " / " + c.expireYear,
+        cvv: c.ccLastFour,
+      }
+    })
+
+  return paymentsMethods
+}
+
 export const creditCardPaymentGetters = {
   getCardNumberMask,
   getId,
@@ -44,4 +60,5 @@ export const creditCardPaymentGetters = {
   getExpireYear,
   getNameOnCard,
   getCardDetailsWithBilling,
+  getPaymentMethods,
 }

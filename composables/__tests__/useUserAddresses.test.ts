@@ -1,8 +1,6 @@
 import { getUserAddressesQuery } from "@/lib/gql/queries"
 import { useUserAddresses } from "@/composables"
-
 const mockGetUserAddressesQuery = getUserAddressesQuery
-
 // Response
 const userAddressesResponse = {
   customerAccountContacts: {
@@ -56,7 +54,6 @@ const userAddressesResponse = {
     ],
   },
 }
-
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
@@ -71,13 +68,10 @@ jest.mock("#app", () => ({
     },
   }),
 }))
-
 describe("[composable] useUserAddresses", () => {
   const { load, userShippingAddresses, loading, error } = useUserAddresses()
-
   test("useUserAddresses : should return user addresses ", async () => {
     const accountId = 1366
-
     await load(accountId)
     expect(userShippingAddresses.value).toEqual(userAddressesResponse.customerAccountContacts.items)
     expect(loading).toBeFalsy()

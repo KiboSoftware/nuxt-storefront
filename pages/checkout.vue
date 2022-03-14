@@ -50,13 +50,22 @@
             </SfPayment>
           </SfStep>
           <SfStep name="Review">
-            <SfConfirmOrder
-              :order="getOrder"
-              order-title="Order details"
-              :properties-names="['Subtotal', 'Shipping', 'Total price']"
-              :table-headers="['Size', 'Description', 'Quantity', 'Colour', 'Amount']"
-              @click:edit="currentStep = $event"
-            />
+            <KiboConfirmOrder :order="getOrder">
+              <template #others>
+                <SfCheckbox
+                  v-model="isTermsAndConditionsAccepted"
+                  name="terms"
+                  class="sf-confirm-order__totals-terms"
+                >
+                  <template #label>
+                    <div class="sf-checkbox__label">
+                      {{ $t("I agree to") }}
+                      <SfLink href="#">{{ $t("Terms and conditions") }}</SfLink>
+                    </div>
+                  </template>
+                </SfCheckbox>
+              </template>
+            </KiboConfirmOrder>
           </SfStep>
         </SfSteps>
       </div>
@@ -96,35 +105,42 @@
                 </SfButton>
               </template>
             </KiboOrderSummary>
-
-            <SfOrderReview
+            <KiboOrderReview
               v-else
               key="order-review"
-              class="checkout__aside-order"
               :order="getOrder"
-              review-title="Order review"
+              :user="user"
+              :review-title="$t('Order review')"
               :review-title-level="3"
-              button-text="Edit"
-              :characteristics="characteristics"
-              @click:edit="currentStep = $event"
+              @click:personal-details-edit="currentStep = $event"
+              @click:shipping-details-edit="currentStep = $event"
+              @click:billing-details-edit="currentStep = $event"
+              @click:payment-details-edit="currentStep = $event"
+              @click:promo-code-apply="currentStep = $event"
             />
           </SfLoader>
         </transition>
       </div>
     </div>
+    <div class="actions">
+      <SfButton
+        class="sf-button--full-width color-primary"
+        :disabled="!isTermsAndConditionsAccepted && steps[currentStep] === 'Confirm and pay'"
+        data-testid="next-button"
+        @click="updateStep"
+        >{{ steps[currentStep] }}</SfButton
+      >
+      <SfButton class="sf-button--full-width sf-button--underlined" @click="currentStep--">{{
+        $t("Go back")
+      }}</SfButton>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  SfSteps,
-  SfButton,
-  SfPayment,
-  SfConfirmOrder,
-  SfOrderReview,
-  SfLoader,
-} from "@storefront-ui/vue"
+import { SfSteps, SfButton, SfPayment, SfLoader, SfCheckbox, SfLink } from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
+import { useNuxtApp } from "#app"
 import {
   useCheckout,
   useCart,
@@ -135,9 +151,14 @@ import {
   usePurchaseLocation,
   useUserAddresses,
 } from "@/composables"
-import { useNuxtApp } from "#app"
 import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
-import { shopperContactGetters, shippingMethodGetters, checkoutGetters } from "@/lib/getters"
+import {
+  shopperContactGetters,
+  shippingMethodGetters,
+  checkoutLineItemGetters,
+  productGetters,
+  checkoutGetters,
+} from "@/lib/getters"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
@@ -145,10 +166,10 @@ export default {
   components: {
     SfSteps,
     SfPayment,
-    SfConfirmOrder,
-    SfOrderReview,
     SfButton,
     SfLoader,
+    SfCheckbox,
+    SfLink,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -173,6 +194,7 @@ export default {
       userBillingAddresses,
     } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
+    const isTermsAndConditionsAccepted = ref(false)
     const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
@@ -223,38 +245,6 @@ export default {
       cardYear: "",
       cardCVC: "",
       cardKeep: false,
-    }
-
-    const order = {
-      password: "",
-      createAccount: false,
-      firstName: "John",
-      lastName: "Dog",
-      email: "john.dog@gmail.com",
-      orderItems: [
-        {
-          title: "Cream Beach Bag",
-          image: "/assets/storybook/Home/productA.jpg",
-          price: { regular: "$100.00" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: 1,
-          sku: "MSD23-345-324",
-        },
-        {
-          title: "Vila stripe maxi dress",
-          image: "/assets/storybook/Home/productB.jpg",
-          price: { regular: "$50.00", special: "$20.05" },
-          configuration: [
-            { name: "Size", value: "XS" },
-            { name: "Color", value: "White" },
-          ],
-          qty: 2,
-          sku: "MSD23-345-325",
-        },
-      ],
     }
 
     const getOrder = computed(() => {
@@ -438,9 +428,9 @@ export default {
         if (checkout.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
       }
     }
-    // paymentDetails
+
     const savePaymentDetails = async () => {
-      // Need to add billing address save function
+      // @TODO Need to add billing address save function
       await addPaymentMethod()
     }
 
@@ -501,12 +491,16 @@ export default {
       }
     }
 
+    const gotoStep = (value) => {
+      currentStep.value = value
+    }
+
     return {
       countries,
       currentStep,
       steps,
+      personalDetails,
       payment,
-      order,
       shippingMethods,
       buttonNames: [
         { name: "Go to Shipping" },
@@ -514,26 +508,11 @@ export default {
         { name: "Pay for Order" },
         { name: "Confirm and Pay" },
       ],
-      characteristics: [
-        {
-          title: "Safety",
-          description: "It carefully packaged with a personal touch",
-          icon: "safety",
-        },
-        {
-          title: "Easy shipping",
-          description: "You’ll receive dispatch confirmation and an arrival date",
-          icon: "shipping",
-        },
-        {
-          title: "Changed your mind?",
-          description: "Rest assured, we offer free returns within 30 days",
-          icon: "return",
-        },
-      ],
       checkout,
+      gotoStep,
       updateStep,
       logIn,
+      user,
       getOrder,
       loading,
       numberOfItems,
@@ -547,7 +526,6 @@ export default {
       appliedCoupons,
       areCouponsApplied,
 
-      personalDetails,
       updatePersonalDetails,
 
       shippingDetails,
@@ -572,6 +550,10 @@ export default {
       copyShippingAddress,
       enableCurrentStep,
       enableNextStep,
+      cart,
+      checkoutLineItemGetters,
+      productGetters,
+      isTermsAndConditionsAccepted,
     }
   },
   watch: {
@@ -679,5 +661,104 @@ export default {
   display: flex;
   gap: var(--spacer-base);
   flex-direction: column;
+}
+
+.kibo-collectedProduct {
+  &__price {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+@include for-mobile {
+  ::v-deep .sf-table {
+    &__row {
+      --_table-column-width: 3;
+    }
+  }
+}
+
+.is-disabled-btn {
+  pointer-events: none;
+  opacity: 0.5;
+  background: #ccc;
+}
+
+.sf-table__data:nth-child(even),
+.sf-table__header:nth-child(even) {
+  order: 0;
+}
+
+.sf-order-review {
+  @include for-desktop {
+    border: 1px solid #eaeaea;
+    margin-top: calc(var(--spacer-base) * 1.25);
+  }
+
+  ::v-deep &__heading {
+    --heading-title-font-weight: var(--font-weight--bold);
+    --heading-padding: 0;
+    --heading-title-margin: 0 0 var(--spacer-xl) 0;
+    --heading-title-font-size: var(--font-size--4xl);
+
+    @include for-desktop {
+      --heading-title-font-weight: var(--font-weight--semibold);
+    }
+  }
+
+  &__property {
+    margin: var(--spacer-base) 0;
+
+    --property-name-font-weight: var(--font-weight--medium);
+    --property-value-font-weight: var(--font-weight--bold);
+
+    &:last-of-type {
+      margin: var(--spacer-base) 0 var(--spacer-xl);
+
+      --property-name-color: var(--c-text);
+    }
+  }
+
+  &__divider {
+    --divider-border-color: var(--c-white);
+    --divider-margin: var(--spacer-xl) 0 0 0;
+  }
+
+  &__promo-code {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+
+    &-input {
+      --input-background: var(--c-white);
+      --input-label-font-size: var(--font-size--base);
+
+      flex: 1;
+    }
+
+    .promoCode {
+      border: 1px solid #cdcdcd;
+    }
+
+    &-button {
+      --button-height: 1.875rem;
+    }
+  }
+
+  &__characteristics {
+    &-item {
+      margin: var(--spacer-base) 0;
+
+      &:last-of-type {
+        margin: 0;
+      }
+    }
+  }
+}
+
+.sf-heading {
+  &__title {
+    --heading-title-font-weight: var(--font-weight--medium);
+  }
 }
 </style>

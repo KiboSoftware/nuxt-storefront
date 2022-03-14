@@ -22,10 +22,16 @@
           </template>
         </SfProperty>
         <SfProperty
-          :name="properties.estimatedTax"
           :value="$n(estimatedTax, 'currency')"
           class="sf-property--full-width sf-property--large sf-order-summary__property"
-        />
+        >
+          <template #name>
+            <div class="sf-property__name">
+              {{ properties.estimatedTax }}
+              <SfBadge class="sf-badge--number sf-badge color-secondary tax-badge">i</SfBadge>
+            </div>
+          </template>
+        </SfProperty>
       </div>
       <div class="promo-code">
         <KiboApplyCoupon
@@ -66,12 +72,13 @@
 </template>
 
 <script lang="ts">
-import { SfProperty } from "@storefront-ui/vue"
+import { SfProperty, SfBadge } from "@storefront-ui/vue"
 
 export default {
   name: "SfOrderSummary",
   components: {
     SfProperty,
+    SfBadge,
   },
   props: {
     orderTitle: {
@@ -218,5 +225,9 @@ export default {
       gap: calc(var(--spacer-base) * 0.66);
     }
   }
+}
+
+.tax-badge {
+  position: absolute;
 }
 </style>

@@ -56,9 +56,12 @@ const getShippingDetails = ({
   }
 }
 
-const getBillingDetails = (shopper: CustomerContact) => {
-  return getAddressDetails(shopper)
+const getBillingDetails = ({ billingContact: shopper }) => {
+  return {
+    ...getAddressDetails(shopper),
+  }
 }
+
 const getSortedAddress = (addresses) => {
   return addresses ? addresses?.sort((a, b) => b?.types[0]?.isPrimary - a?.types[0]?.isPrimary) : []
 }

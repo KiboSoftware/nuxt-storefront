@@ -52,13 +52,11 @@ export default {
   setup(props) {
     const pickupItems = computed(() => checkoutGetters.getPickupItems(props.order))
     const shipItems = computed(() => checkoutGetters.getShipItems(props.order))
-    const isMultipleOrder = computed(() => shipItems?.value?.length && pickupItems?.value?.length)
 
     return {
       checkoutGetters,
       shipItems,
       pickupItems,
-      isMultipleOrder,
     }
   },
 }
@@ -93,10 +91,15 @@ export default {
   &__item {
     display: flex;
     flex-direction: column;
+    border-bottom: 1px solid var(--_c-white-secondary);
 
     @include for-desktop {
       width: calc(var(--spacer-base) * 17.54);
     }
+  }
+
+  &__item:last-child {
+    border: none;
   }
 }
 </style>
