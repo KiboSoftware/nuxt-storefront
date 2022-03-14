@@ -3,19 +3,25 @@
     <div v-if="isReadonly" class="card-list">
       <div class="card-list__content">
         <SfRadio
-          :key="card.endingDigit"
-          :label="card.endingDigit"
+          :key="card.id"
+          :label="card.cardNumberPart"
           name="payment-method"
-          :selected="true"
+          selected=""
           class="form__radio payment-method"
           @change="$emit('onSelect', card)"
         >
           <template #label>
             <div class="radio-button">
-              <UserCardView :payment-method="paymentMethod">
+              <UserCardView :key="'card' + card.id" :payment-card="card">
                 <template #header>
                   <div v-if="isDefaultCard" class="is-primary">{{ $t("Primary") }}</div>
                 </template>
+                <template #card-type>
+                  <SfBadge class="sf-badge color-secondary"
+                    ><span class="card-type">{{ card.cardType }}</span></SfBadge
+                  >
+                </template>
+
                 <template #billing-address>
                   <div class="billing">
                     <UserAddressView
@@ -33,12 +39,14 @@
     </div>
     <div v-else class="card-list">
       <div class="card-list__content">
-        <UserCardView :payment-method="paymentMethod">
+        <UserCardView :payment-card="card">
           <template #header>
             <div v-if="isDefaultCard" class="is-primary">{{ $t("Primary") }}</div>
           </template>
           <template #card-type>
-            <SfBadge class="sf-badge color-secondary">i</SfBadge>
+            <SfBadge class="sf-badge color-secondary"
+              ><span class="card-type">{{ card.cardType }}</span></SfBadge
+            >
           </template>
           <template #billing-address>
             <div class="billing">
@@ -52,8 +60,21 @@
         </UserCardView>
       </div>
       <div class="card-list__actions">
-        <div class="card-list__edit" @click="$emit('click:edit-card', card)">
+        <div class="card-list__edit" @click="$emit('click:edit-card', paymentMethod)">
           {{ $t("Edit") }}
+        </div>
+        <div
+          v-show="!isDefaultCard"
+          class="card-list__delete"
+          @click="$emit('click:remove-card', paymentMethod)"
+        >
+          <SfIcon size="1.25rem">
+            <font-awesome-icon
+              icon="trash"
+              class="fa-solid"
+              color="var(--_c-dark-green-secondary)"
+            />
+          </SfIcon>
         </div>
       </div>
     </div>
@@ -62,12 +83,14 @@
 
 <script lang="ts">
 import { defineComponent, computed } from "@vue/composition-api"
-import { SfBadge } from "@storefront-ui/vue"
+import { SfBadge, SfRadio, SfIcon } from "@storefront-ui/vue"
 
 export default defineComponent({
   name: "UserSavedCard",
   components: {
     SfBadge,
+    SfRadio,
+    SfIcon,
   },
   props: {
     paymentMethod: {
@@ -81,11 +104,12 @@ export default defineComponent({
   },
 
   setup(props) {
+    const { card, billingAddress } = props.paymentMethod
+
     const isDefaultCard = computed(() => {
-      return props.paymentMethod?.card?.isDefaultPaymentMethod || false
+      return card?.isDefaultPayMethod || false
     })
-    const card = computed(() => props.paymentMethod?.card)
-    const billingAddress = computed(() => props.paymentMethod?.billingAddress || {})
+
     return {
       isDefaultCard,
       card,
@@ -112,10 +136,22 @@ export default defineComponent({
     flex: 4;
   }
 
+  &__content {
+    flex: auto;
+
+    .sf-badge {
+      --badge-color: var(--c-white);
+      --badge-padding: 0.5rem;
+
+      font-style: italic;
+      border-radius: 0.25rem;
+    }
+  }
+
   &__actions {
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
-    flex: 1;
   }
 
   &__edit {
@@ -123,5 +159,14 @@ export default defineComponent({
     text-decoration: underline;
     cursor: pointer;
   }
+}
+
+.billing {
+  margin-top: var(--spacer-xs);
+}
+
+.card-type {
+  overflow-wrap: break-word;
+  overflow: hidden;
 }
 </style>

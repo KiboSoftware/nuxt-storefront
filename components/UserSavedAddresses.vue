@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!userAddressesSorted" class="no-shipping-address">
+    <div v-if="!userAddressesSorted.length" class="no-shipping-address">
       {{ $t("No saved addresses yet!") }}
     </div>
     <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
@@ -204,14 +204,13 @@ div {
   flex-direction: row;
 
   &__left {
-    flex: 90%;
+    flex: auto;
   }
 
   &__right {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    flex: 10%;
   }
 
   &__edit {
@@ -220,7 +219,6 @@ div {
 }
 
 .shipping-list {
-  margin-bottom: var(--spacer-base);
   display: flex;
   flex-direction: column;
   gap: calc(var(--spacer-2xs) * 5);
@@ -244,5 +242,17 @@ div {
   &__checkbox {
     margin-bottom: calc(var(--spacer-2xs) * 2);
   }
+}
+
+.shipping {
+  border-bottom: 1px solid var(--_c-white-secondary);
+
+  &__content {
+    padding-bottom: var(--spacer-xs);
+  }
+}
+
+.shipping:last-child {
+  border: none;
 }
 </style>

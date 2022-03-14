@@ -9,11 +9,11 @@ const hasUserError = (error: { login: string; register: string }) => {
 }
 
 const getFullName = (user: CustomerAccount) => {
-  return `${user.firstName} ${user.lastName}`
+  return `${user?.firstName} ${user?.lastName}`
 }
 
 const getEmail = (user: CustomerAccount) => {
-  return user.emailAddress
+  return user?.emailAddress
 }
 
 export const getFirstName = (user: CustomerAccount) => {

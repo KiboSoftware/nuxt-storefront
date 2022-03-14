@@ -1,5 +1,7 @@
 <template>
   <div class="sf-payment" data-testid="kiboAddressForm">
+    <slot name="addressLabel" />
+    <slot name="sameAsShipping" />
     <div class="form">
       <SfInput
         :label="$t('First Name')"
@@ -134,6 +136,10 @@ export default {
     countries: {
       type: Array,
       default: () => [],
+    },
+    addressLable: {
+      type: String,
+      default: () => "",
     },
   },
 

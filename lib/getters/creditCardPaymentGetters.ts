@@ -18,6 +18,13 @@ const getPaymentType = (selectedType: string) => {
   return paymentType
 }
 
+const getExpireDate = (cardDetails): String =>
+  cardDetails?.expireMonth && cardDetails?.expireYear
+    ? cardDetails?.expireMonth + "/" + cardDetails?.expireYear
+    : ""
+
+const getCardEndingDigits = (cardNumber): String => (cardNumber ? "x" + cardNumber?.slice(-4) : "")
+
 const getExpireMonth = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[0]) || 0
 
 const getExpireYear = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[1]) || 0
@@ -27,12 +34,19 @@ const getNameOnCard = (cardDetails) => cardDetails?.nameOnCard
 const getAppliedTotal = (checkout) => checkout?.total
 
 const getCardDetailsWithBilling = (cards, billingAddresses) => {
-  return cards?.map((c) => {
+  const result = cards?.map((c) => {
     return {
       card: { ...c },
       billingAddress: { ...billingAddresses.find((ba) => ba.id === c.contactId) },
     }
   })
+  return result
+}
+
+const getSortedPaymentMethods = (paymentMethods) => {
+  return paymentMethods
+    ? paymentMethods?.sort((a, b) => b?.card?.isDefaultPayMethod - a?.card?.isDefaultPayMethod)
+    : []
 }
 
 const getPaymentMethods = (payments) => {
@@ -64,4 +78,7 @@ export const creditCardPaymentGetters = {
   getCardDetailsWithBilling,
   getPaymentMethods,
   getCardType,
+  getExpireDate,
+  getSortedPaymentMethods,
+  getCardEndingDigits,
 }

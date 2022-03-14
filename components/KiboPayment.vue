@@ -18,7 +18,7 @@
     </div>
 
     <div class="credit-card-form">
-      <div v-if="isCreditCardSelected">
+      <div v-show="creditCardFormData.paymentType === 'creditcard'">
         <div class="credit-card-form__element custom-form-element sf-input">
           <div class="sf-input__wrapper">
             <input
@@ -92,7 +92,6 @@ import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
 import { usePaymentTypes, useUiValidationSchemas } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
-import { defaultPaymentDetails } from "@/composables/helpers"
 
 export default defineComponent({
   name: "KiboPayment",
@@ -102,11 +101,30 @@ export default defineComponent({
     SfIcon,
     SfButton,
   },
-  setup(_, context) {
+  props: {
+    value: {
+      type: Object,
+      default: () => ({
+        paymentType: "",
+        card: {
+          cardType: "",
+          cardNumber: "",
+          cvv: "",
+          expiryDate: "",
+          expireMonth: 0,
+          expireYear: 0,
+          isCardInfoSaved: false,
+          paymentWorkflow: "Mozu",
+          isCardDetailsFilled: false,
+        },
+      }),
+    },
+  },
+  setup(props, context) {
     const { loadPaymentTypes } = usePaymentTypes()
     const paymentMethods = loadPaymentTypes()
     const isCreditCardSelected = ref(false)
-    const creditCardFormData = ref(defaultPaymentDetails())
+    const creditCardFormData = computed(() => props.value || {})
     const error = ref({ cardNumber: "", expiryDate: "", cvv: "" })
     const isValidForm = ref({ cardNumber: false, expiryDate: false, cvv: false })
 
