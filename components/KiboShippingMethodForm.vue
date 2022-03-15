@@ -41,6 +41,7 @@
 import * as yup from "yup"
 import { SfSelect } from "@storefront-ui/vue"
 import { checkoutLineItemGetters } from "@/lib/getters"
+import { useUiValidationSchemas } from "@/composables"
 
 export default {
   name: "KiboShippingMethodForm",
@@ -87,22 +88,18 @@ export default {
     const validateForm = () => {
       context.emit("validateForm", !Object.values(errors.value).filter(Boolean).length)
     }
-    const schema = yup.object({
-      shippingRates: yup.string().trim().required(context.root.$t("Required")),
-    })
 
-    const validate = (field) => {
-      yup
-        .reach(schema, field)
-        .validate(selectedShippingMethodCode.value)
-        .then(() => {
-          errors.value[field] = ""
-          validateForm()
-        })
-        .catch((err) => {
-          errors.value[field] = err.message
-          validateForm()
-        })
+    const schema = useUiValidationSchemas(context.root, "shippingRates")
+    const validate = async (field) => {
+      // validate individual field
+      try {
+        await yup.reach(schema, field).validate(selectedShippingMethodCode.value)
+        errors.value[field] = ""
+        validateForm()
+      } catch (err) {
+        errors.value[field] = err.message
+        validateForm()
+      }
     }
 
     return {

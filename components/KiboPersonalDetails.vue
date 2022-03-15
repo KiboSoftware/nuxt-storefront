@@ -25,7 +25,6 @@
         :error-message="errorsEmail.email"
         @input="updateField('email', $event)"
         @blur="validateEmail('email')"
-        @keypress="validateEmail('email')"
       />
       <div class="info">
         <p class="info__heading">
@@ -63,7 +62,6 @@
               :error-message="errorsCreateAccount.firstName"
               @input="updateField('firstName', $event)"
               @blur="validateCreateAccount('firstName')"
-              @keypress="validateCreateAccount('firstName')"
             />
 
             <SfInput
@@ -76,7 +74,6 @@
               :error-message="errorsCreateAccount.lastName"
               @input="updateField('lastName', $event)"
               @blur="validateCreateAccount('lastName')"
-              @keypress="validateCreateAccount('lastName')"
             />
             <KiboPasswordForm
               :fields="passwordFormFields"
@@ -91,7 +88,7 @@
 
 <script lang="ts">
 import { SfInput, SfCheckbox, SfButton, SfHeading, SfCharacteristic } from "@storefront-ui/vue"
-import * as yup from "yup"
+import { useUiValidationSchemas } from "@/composables"
 
 export default {
   name: "KiboPersonalDetails",
@@ -108,6 +105,7 @@ export default {
       default: () => ({}),
     },
   },
+
   setup(props, context) {
     const errorsEmail = ref({ email: "" })
     const errorsCreateAccount = ref({ firstName: "", lastName: "" })
@@ -135,69 +133,52 @@ export default {
       context.emit("validateForm", isValidated)
     }
 
-    const schemaEmail = yup.object({
-      email: yup
-        .string()
-        .trim()
-        .required(context.root.$t("Required"))
-        .email(context.root.$t("ValidEmail")),
-    })
+    const schemaEmail = useUiValidationSchemas(context.root, "email")
+    const schemaCreateAccount = useUiValidationSchemas(context.root, "createAccount")
 
-    const schemaCreateAccount = yup.object({
-      firstName: yup.string().trim().required(context.root.$t("Required")),
-      lastName: yup.string().trim().required(context.root.$t("Required")),
-    })
-
-    const validateEmail = (field) => {
-      schemaEmail
-        .validateAt(field, props.value)
-        .then(() => {
-          errorsEmail.value[field] = ""
-          isEmailValidated.value = true
-          if (!isCreateAccount.value) {
-            validateForm(true)
-          }
-        })
-        .catch((err) => {
-          errorsEmail.value[field] = err.message
-          isEmailValidated.value = false
-          context.emit("validateForm", isEmailValidated.value)
-        })
+    const validateEmail = async (field) => {
+      try {
+        await schemaEmail.validateAt(field, props.value)
+        errorsEmail.value[field] = ""
+        isEmailValidated.value = true
+        if (!isCreateAccount.value) {
+          validateForm(true)
+        }
+      } catch (err) {
+        errorsEmail.value[field] = err.message
+        isEmailValidated.value = false
+        context.emit("validateForm", isEmailValidated.value)
+      }
 
       if (isCreateAccount.value) {
-        schemaCreateAccount
-          .validate(props.value)
-          .then(() => {
-            isCreateAccountValidated.value = true
-            context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
-          })
-          .catch(() => {
-            isCreateAccountValidated.value = false
-            context.emit("validateForm", isCreateAccountValidated.value)
-          })
+        try {
+          await schemaCreateAccount.validate(props.value)
+
+          isCreateAccountValidated.value = true
+          context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+        } catch (err) {
+          isCreateAccountValidated.value = false
+          context.emit("validateForm", isCreateAccountValidated.value)
+        }
       }
     }
 
-    const validateCreateAccount = (field) => {
-      schemaCreateAccount
-        .validateAt(field, props.value)
-        .then(() => {
-          errorsCreateAccount.value[field] = ""
-        })
-        .catch((err) => {
-          errorsCreateAccount.value[field] = err.message
-        })
+    const validateCreateAccount = async (field) => {
+      try {
+        await schemaCreateAccount.validateAt(field, props.value)
+        errorsCreateAccount.value[field] = ""
+      } catch (err) {
+        errorsCreateAccount.value[field] = err.message
+      }
 
-      schemaCreateAccount
-        .validate(props.value)
-        .then(() => {
-          isCreateAccountValidated.value = true
-          context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
-        })
-        .catch(() => {
-          isCreateAccountValidated.value = false
-          context.emit("validateForm", isCreateAccountValidated.value)
-        })
+      try {
+        await schemaCreateAccount.validate(props.value)
+        isCreateAccountValidated.value = true
+        context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+      } catch (err) {
+        isCreateAccountValidated.value = false
+        context.emit("validateForm", isCreateAccountValidated.value)
+      }
     }
 
     const updateField = (fieldName, fieldValue) => {
@@ -209,22 +190,19 @@ export default {
       context.emit("input", values)
     }
 
-    const createAccount = () => {
+    const createAccount = async () => {
       context.emit("create-account", isCreateAccount.value)
-
       if (!isCreateAccount.value) {
         context.emit("validateForm", isEmailValidated.value)
       } else {
-        schemaCreateAccount
-          .validate(props.value)
-          .then(() => {
-            isCreateAccountValidated.value = true
-            context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
-          })
-          .catch(() => {
-            isCreateAccountValidated.value = false
-            context.emit("validateForm", isCreateAccountValidated.value)
-          })
+        try {
+          await schemaCreateAccount.validate(props.value)
+          isCreateAccountValidated.value = true
+          context.emit("validateForm", isEmailValidated.value && isPasswordValidated.value)
+        } catch (err) {
+          isCreateAccountValidated.value = false
+          context.emit("validateForm", isCreateAccountValidated.value)
+        }
       }
     }
 

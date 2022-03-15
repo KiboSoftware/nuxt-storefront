@@ -11,7 +11,6 @@
         :value="addressDetails.firstName"
         @input="updateField('firstName', $event)"
         @blur="validate('firstName')"
-        @keypress="validate('firstName')"
       />
       <SfInput
         :label="$t('Last Name')"
@@ -23,7 +22,6 @@
         :value="addressDetails.lastNameOrSurname"
         @input="updateField('lastNameOrSurname', $event)"
         @blur="validate('lastNameOrSurname')"
-        @keypress="validate('lastNameOrSurname')"
       />
       <SfInput
         :label="$t('Street Address')"
@@ -35,7 +33,6 @@
         :value="addressDetails.address && addressDetails.address.address1"
         @input="updateField('address1', $event)"
         @blur="validate('address1')"
-        @keypress="validate('address1')"
       />
       <SfInput
         :label="$t('Apt')"
@@ -47,7 +44,6 @@
         :value="addressDetails.address && addressDetails.address.address2"
         @input="updateField('address2', $event)"
         @blur="validate('address2')"
-        @keypress="validate('address2')"
       />
       <SfInput
         :label="$t('City')"
@@ -59,7 +55,6 @@
         :value="addressDetails.address && addressDetails.address.cityOrTown"
         @input="updateField('cityOrTown', $event)"
         @blur="validate('cityOrTown')"
-        @keypress="validate('cityOrTown')"
       />
       <SfInput
         :label="$t('State')"
@@ -71,7 +66,6 @@
         :value="addressDetails.address && addressDetails.address.stateOrProvince"
         @input="updateField('stateOrProvince', $event)"
         @blur="validate('stateOrProvince')"
-        @keypress="validate('stateOrProvince')"
       />
       <SfInput
         :label="$t('Zip Code')"
@@ -83,7 +77,6 @@
         :value="addressDetails.address && addressDetails.address.postalOrZipCode"
         @input="updateField('postalOrZipCode', $event)"
         @blur="validate('postalOrZipCode')"
-        @keypress="validate('postalOrZipCode')"
       />
       <SfSelect
         :label="$t('Country')"
@@ -98,7 +91,6 @@
           validate('countryCode')
         "
         @blur="validate('countryCode')"
-        @keypress="validate('countryCode')"
       >
         <SfSelectOption
           v-for="countryOption in countries"
@@ -118,7 +110,6 @@
         :value="addressDetails.phoneNumbers && addressDetails.phoneNumbers.home"
         @input="updateField('phoneNumbers', $event)"
         @blur="validate('phoneNumbers')"
-        @keypress="validate('phoneNumbers')"
       />
     </div>
   </div>
@@ -127,7 +118,7 @@
 <script lang="ts">
 import { SfInput, SfSelect } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
-import * as yup from "yup"
+import { useUiValidationSchemas } from "@/composables"
 
 export default {
   name: "KiboAddressForm",
@@ -196,57 +187,36 @@ export default {
         Object.keys(errors.value).filter((field) => (errors.value[field] = errorMessage))
       }
     }
-    const validateForm = () => {
-      schema
-        .validate(props.value)
-        .then(() => {
-          context.emit("validateForm", true)
-        })
-        .catch(() => {
-          context.emit("validateForm", false)
-        })
-    }
-    const schema = yup.object({
-      firstName: yup.string().required(context.root.$t("Required")),
-      lastNameOrSurname: yup.string().required(context.root.$t("Required")),
-      address: yup.object({
-        address1: yup.string().required(context.root.$t("Required")),
-        address2: yup.string().required(context.root.$t("Required")),
-        cityOrTown: yup.string().required(context.root.$t("Required")),
-        stateOrProvince: yup.string().required(context.root.$t("Required")),
-        postalOrZipCode: yup
-          .string()
-          .required(context.root.$t("Required"))
-          .matches(/^[0-9]+$/, "Must be only digits"),
-        countryCode: yup.string().required(context.root.$t("Required")),
-      }),
-      phoneNumbers: yup.object({
-        home: yup
-          .string()
-          .required(context.root.$t("Required"))
-          .matches(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\\./0-9]*$/g, "Must be valid phone number"),
-      }),
-    })
 
-    const validate = (field) => {
-      let validateField = ""
-      if (field === "phoneNumbers") {
-        validateField = `${field}.home`
-      } else if (address.includes(field)) {
-        validateField = `address[${field}]`
-      } else {
-        validateField = field
+    const schema = useUiValidationSchemas(context.root, "addressForm")
+
+    const validateForm = async () => {
+      try {
+        await schema.validate(props.value)
+        context.emit("validateForm", true)
+      } catch (err) {
+        context.emit("validateForm", false)
       }
-      schema
-        .validateAt(validateField, addressDetails.value)
-        .then(() => {
-          assignErrors(field, "")
-          validateForm()
-        })
-        .catch((err) => {
-          assignErrors(field, err.message)
-          validateForm()
-        })
+    }
+   
+    const validate = async (field) => {
+      try {
+        let validateField = ""
+        if (field === "phoneNumbers") {
+          validateField = `${field}.home`
+        } else if (address.includes(field)) {
+          validateField = `address[${field}]`
+        } else {
+          validateField = field
+        }
+
+        await schema.validateAt(validateField, addressDetails.value)
+        assignErrors(field, "")
+        validateForm()
+      } catch (err) {
+        assignErrors(field, err.message)
+        validateForm()
+      }
     }
 
     onMounted(() => {
