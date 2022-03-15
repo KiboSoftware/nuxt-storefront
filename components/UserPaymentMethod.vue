@@ -14,7 +14,7 @@
             <UserSavedCard
               :payment-method="paymentMethod"
               :is-readonly="isReadonly"
-              @click:remove-card="showDeleteConfirmationDialog(paymentMethod)"
+              @click:delete-card="handleDeleteCard(paymentMethod)"
               @click:edit-card="updatePaymentMethod(paymentMethod)"
               @onSelect="onCardSelection(paymentMethod)"
             />
@@ -22,12 +22,6 @@
         </div>
       </div>
     </transition-group>
-    <KiboConfirmationDialog
-      :label="$t('Are you sure you want to delete this payment method ?')"
-      :is-open="isConfirmModalOpen"
-      :action-handler="deletePaymentMethod"
-      @click:close="toggleConfirmModal"
-    />
     <KiboPayment
       v-if="showPaymentMethodForm"
       :key="activePaymentMethod.card.id"
@@ -91,7 +85,6 @@
 import { SfButton, SfIcon, SfCheckbox } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
 import UserSavedCard from "@/components/UserSavedCard"
-import { useUiState } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
 
 export default defineComponent({
@@ -129,7 +122,6 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
     const activePaymentMethod = ref({})
     const activeAddress = ref({})
     const isNewPaymentMethod = ref(false)
@@ -159,14 +151,6 @@ export default defineComponent({
       showPaymentMethodForm.value = true
     }
 
-    const deletePaymentMethod = () => {
-      toggleConfirmModal()
-      context.emit("onDelete", activePaymentMethod)
-    }
-    const showDeleteConfirmationDialog = (paymentMethod) => {
-      activePaymentMethod.value = paymentMethod
-      toggleConfirmModal()
-    }
     const updatePaymentMethod = ({ card, billingAddress }) => {
       sameAsShipping.value = false
       const cardData = {
@@ -211,17 +195,16 @@ export default defineComponent({
       activeAddress.value.id = ""
       showPaymentMethodForm.value = true
     }
+    const handleDeleteCard = (paymentMethod) => {
+      context.emit("onDelete", { ...paymentMethod })
+    }
     return {
       userPaymentMethodsSorted,
       addNewPaymentMethod,
       updatePaymentMethod,
-      deletePaymentMethod,
       onCardSelection,
       activePaymentMethod,
-      showDeleteConfirmationDialog,
-      isConfirmModalOpen,
       isNewPaymentMethod,
-      toggleConfirmModal,
       showPaymentMethodForm,
       closePaymentMethodForm,
       savePaymentMethod,
@@ -232,6 +215,7 @@ export default defineComponent({
       isValidFormData,
       sameAsShipping,
       copyFromShipping,
+      handleDeleteCard,
     }
   },
 })

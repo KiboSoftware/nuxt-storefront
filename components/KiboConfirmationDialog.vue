@@ -1,102 +1,54 @@
 <template>
-  <SfModal
-    class="sf-modal modal-confirm"
-    :visible="isOpen"
-    overlay
-    :persistent="false"
-    :cross="false"
-  >
-    <template #modal-bar>
-      <slot name="modal-bar" v-bind="{ label }">
-        <div class="title">
-          {{ label }}
-        </div>
-      </slot>
-    </template>
-    <transition name="sf-fade" mode="out-in">
-      <div class="modal-content">
-        <div class="action-buttons" v-bind="{ actionHandler }">
-          <button
-            class="action-buttons__cancel action-buttons__font"
-            :aria-disabled="false"
-            :link="null"
-            @click="$emit('click:close')"
-          >
-            {{ $t("Cancel") }}
-          </button>
-          <button
-            class="action-buttons__delete action-buttons__font"
-            :aria-disabled="false"
-            :link="null"
-            @click="actionHandler"
-          >
-            {{ $t("Delete") }}
-          </button>
-        </div>
+  <transition name="sf-fade" mode="out-in">
+    <div class="modal-content">
+      <div class="action-buttons" v-bind="{ actionHandler }">
+        <SfButton class="color-light" :aria-disabled="false" :link="null" @click="$emit('onClose')">
+          {{ $t("Cancel") }}
+        </SfButton>
+        <SfButton :aria-disabled="false" :link="null" @click="handleDelete">
+          {{ $t("Delete") }}
+        </SfButton>
       </div>
-    </transition>
-  </SfModal>
+    </div>
+  </transition>
 </template>
 <script lang="ts">
-import { SfModal } from "@storefront-ui/vue"
+import { SfButton } from "@storefront-ui/vue"
 export default {
   name: "KiboConfirmationDialog",
   components: {
-    SfModal,
+    SfButton,
   },
   props: {
-    isOpen: {
-      type: Boolean,
-      default: false,
-    },
-    label: {
+    title: {
       type: String,
       default: "Are you sure ?",
     },
-    actionHandler: {
-      type: Function,
-      default: () => {},
+    properties: {
+      type: Object,
+      default: () => {
+        return {}
+      },
     },
+  },
+  setup(props, context) {
+    const { actionHandler } = props?.properties as { title: String; actionHandler: Function }
+
+    const handleDelete = () => {
+      actionHandler()
+      context.emit("onClose")
+    }
+    return {
+      handleDelete,
+    }
   },
 }
 </script>
 <style lang="scss" scoped>
-.title {
-  color: var(--c-black);
-  font-size: var(--font-size--base);
-  letter-spacing: 0.2px;
-  line-height: calc(var(--spacer-2xs) * 4.5);
-  max-width: calc(var(--spacer-2xl) * 4.25);
-  text-align: left;
-  margin: calc(var(--spacer-2xs) * 5) calc(var(--spacer-2xs) * 2.5);
-}
-
-.sf-modal {
-  --modal-width: calc(var(--spacer-2xl) * 6);
-  --modal-content-padding: 0;
-
-  &__close {
-    margin-right: var(--spacer-xs);
-  }
-
-  @include for-mobile {
-    --modal-width: 90%;
-    --modal-height: fit-content;
-
-    ::v-deep &__container {
-      z-index: 2;
-      top: var(--spacer-base);
-      margin: 0 auto;
-      background-color: var(--_c-light-secondary);
-      border-radius: calc(var(--spacer-2xs) / 2);
-      box-shadow: 0 0 var(--spacer-sm) calc(var(--spacer-2xs) / 2) rgba(43, 43, 43, 0.25);
-      padding: calc(var(--spacer-xl) / 8);
-    }
-
-    ::v-deep .sf-bar {
-      justify-content: flex-start;
-      border-bottom: none;
-    }
+::v-deep .sf-modal {
+  &__container {
+    height: 200px;
+    margin: auto;
   }
 }
 
@@ -104,35 +56,14 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  align-self: center;
   padding: calc(var(--spacer-2xs) * 2.5);
   gap: calc(var(--spacer-xl) / 8);
+  width: 90%;
+}
 
-  &__cancel {
-    background-color: var(--_c-light-primary);
-    border: 1px solid var(--_c-gray-middle);
-    color: var(--c-black);
-  }
-
-  &__delete {
-    border: none;
-    background-color: var(--_c-green-primary);
-    color: var(--_c-light-secondary);
-  }
-
-  &__font {
-    border-radius: var(--spacer-2xs);
-    height: calc(var(--spacer-2xs) * 10.5);
-    font-size: var(--font-size--lg);
-    line-height: calc(var(--spacer-2xs) * 5.5);
-    text-align: center;
-  }
-
-  .sf-primary {
-    flex-wrap: wrap;
-
-    &__button {
-      width: 80%;
-    }
-  }
+.modal-content {
+  display: flex;
+  flex-direction: column;
 }
 </style>

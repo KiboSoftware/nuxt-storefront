@@ -45,7 +45,7 @@
           </template>
           <template #card-type>
             <SfBadge class="sf-badge color-secondary"
-              ><span class="card-type">{{ card.cardType }}</span></SfBadge
+              ><span class="card-type">{{ cardType }}</span></SfBadge
             >
           </template>
           <template #billing-address>
@@ -66,7 +66,7 @@
         <div
           v-show="!isDefaultCard"
           class="card-list__delete"
-          @click="$emit('click:remove-card', paymentMethod)"
+          @click="$emit('click:delete-card', paymentMethod)"
         >
           <SfIcon size="1.25rem">
             <font-awesome-icon
@@ -84,6 +84,7 @@
 <script lang="ts">
 import { defineComponent, computed } from "@vue/composition-api"
 import { SfBadge, SfRadio, SfIcon } from "@storefront-ui/vue"
+import { creditCardPaymentGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserSavedCard",
@@ -110,10 +111,13 @@ export default defineComponent({
       return card?.isDefaultPayMethod || false
     })
 
+    const cardType = computed(() => creditCardPaymentGetters.getCardType(card))
+
     return {
       isDefaultCard,
       card,
       billingAddress,
+      cardType,
     }
   },
 })

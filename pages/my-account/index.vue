@@ -36,7 +36,7 @@
                   :countries="countries"
                   :addresses="userShippingAddresses"
                   @onSave="saveShippingAddress"
-                  @onDelete="deleteAddress"
+                  @onDelete="handleDeleteAddress"
                 />
               </SfLoader>
             </SfListItem>
@@ -51,7 +51,7 @@
                   :payment-methods="paymentMethods"
                   :countries="countries"
                   @onSave="savePaymentMethod"
-                  @onDelete="deletePaymentMethod"
+                  @onDelete="handleDeletePaymentMethod"
                 />
               </SfLoader>
             </SfListItem>
@@ -92,14 +92,9 @@ import {
 } from "@storefront-ui/vue"
 import { computed, defineComponent, ref } from "@vue/composition-api"
 import { onMounted } from "@nuxtjs/composition-api"
+import KiboConfirmationDialog from "@/components/KiboConfirmationDialog.vue"
 import { useNuxtApp } from "#app"
-import {
-  useUser,
-  useUiState,
-  useUserAddresses,
-  useCustomerCreditCards,
-  usePaymentMethods,
-} from "@/composables"
+import { useUser, useUserAddresses, useCustomerCreditCards, usePaymentMethods } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
 export default defineComponent({
   name: "MyAccount",
@@ -112,12 +107,13 @@ export default defineComponent({
     SfIcon,
     SfLoader,
   },
-  setup() {
+  setup(_, context) {
     const { user, logout } = useUser()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const countries = nuxt.nuxt2Context.$config.countries
-    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
+    const modal = nuxt.nuxt2Context.$modal
+
     const {
       loading: loadingUserAddress,
       load: loadUserAddresses,
@@ -167,7 +163,7 @@ export default defineComponent({
       app.router.push({ path: "my-account/order-history?filters=M-6" })
     }
 
-    const saveAddress = async ({ address, setAsDefault }, typeName) => {
+    const saveAddress = ({ address, setAsDefault }, typeName) => {
       const addressData = {
         accountId: user.value.id,
         customerContactInput: { ...address },
@@ -177,7 +173,7 @@ export default defineComponent({
         addressData.contactId = address.id
         address.types.find((t) => t.name === typeName).isPrimary = setAsDefault
 
-        return await updateUserAddress(addressData)
+        return updateUserAddress(addressData)
       } else {
         // add new scenarion
         addressData.customerContactInput.types = [
@@ -187,7 +183,7 @@ export default defineComponent({
           },
         ]
         addressData.customerContactInput.accountId = user.value.id
-        return await addUserAddress(addressData)
+        return addUserAddress(addressData)
       }
     }
 
@@ -199,6 +195,18 @@ export default defineComponent({
     const saveBillingAddress = async (params) => {
       await saveAddress(params, "Billing")
       await loadUserAddresses(user.value.id)
+    }
+
+    const handleDeleteAddress = (address) => {
+      modal.show({
+        component: KiboConfirmationDialog,
+        props: {
+          title: context?.root?.$t("Are you sure you want to delete this address ?"),
+          actionHandler: async () => {
+            await deleteAddress(address)
+          },
+        },
+      })
     }
 
     const deleteAddress = async (address) => {
@@ -258,6 +266,18 @@ export default defineComponent({
       await loadCard(user.value.id)
     }
 
+    const handleDeletePaymentMethod = (paymentMethod) => {
+      modal.show({
+        component: KiboConfirmationDialog,
+        props: {
+          title: context?.root?.$t("Are you sure you want to delete this payment method ?"),
+          actionHandler: async () => {
+            await deletePaymentMethod(paymentMethod)
+          },
+        },
+      })
+    }
+
     watch(
       () => user.value,
       async (newVal) => {
@@ -282,8 +302,6 @@ export default defineComponent({
       goBack,
       changeActivePage,
       gotoOrderHistory,
-      isConfirmModalOpen,
-      toggleConfirmModal,
       countries,
       loadingUserAddress,
       saveShippingAddress,
@@ -301,6 +319,8 @@ export default defineComponent({
       savePaymentMethod,
       deletePaymentMethod,
       isLoadingPaymentMethods,
+      handleDeletePaymentMethod,
+      handleDeleteAddress,
     }
   },
 })

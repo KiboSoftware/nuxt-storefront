@@ -38,7 +38,7 @@
         <div
           v-show="!isDefaultAddress"
           class="address-container__delete"
-          @click="$emit('click:remove-address', address)"
+          @click="$emit('click:delete-address', address)"
         >
           <SfIcon size="1.25rem">
             <font-awesome-icon

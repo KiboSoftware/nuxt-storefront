@@ -29,6 +29,14 @@ const getExpireMonth = (cardDetails): number => parseInt(cardDetails?.expiryDate
 
 const getExpireYear = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[1]) || 0
 
+const getCardType = (cardDetails): String => {
+  if (cardDetails?.cardType?.toLowerCase()?.includes("american")) return "AE"
+  else if (cardDetails?.cardType?.toLowerCase()?.includes("discover")) return "DC"
+  else if (cardDetails?.cardType?.toLowerCase()?.includes("master")) return "MC"
+  else if (cardDetails?.cardType?.toLowerCase()?.includes("visa")) return "VISA"
+  else return "CC"
+}
+
 const getNameOnCard = (cardDetails) => cardDetails?.nameOnCard
 
 const getAppliedTotal = (checkout) => checkout?.total
@@ -81,4 +89,5 @@ export const creditCardPaymentGetters = {
   getExpireDate,
   getSortedPaymentMethods,
   getCardEndingDigits,
+  getCardType,
 }
