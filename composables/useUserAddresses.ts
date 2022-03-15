@@ -16,11 +16,11 @@ import type { Maybe, CustomerContact } from "@/server/types/GraphQL"
 export const useUserAddresses = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
-  const userShippingAddresses = useState<Maybe<Array<CustomerContactCollection>>>(
+  const userShippingAddresses = useState<Maybe<Array<CustomerContact>>>(
     `use-user-shipping-addresses`,
     () => []
   )
-  const userBillingAddresses = useState<Maybe<Array<CustomerContactCollection>>>(
+  const userBillingAddresses = useState<Maybe<Array<CustomerContact>>>(
     `use-user-billing-addresses`,
     () => []
   )
