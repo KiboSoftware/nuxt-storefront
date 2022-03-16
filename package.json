@@ -33,7 +33,7 @@
     ]
   },
   "dependencies": {
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^6.1.0",
     "@kibocommerce/graphql-client": "^1.0.3-beta.7",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/style-resources": "^1.2.1",
