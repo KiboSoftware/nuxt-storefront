@@ -1,8 +1,15 @@
 <template>
-  <SfModal class="sf-modal" :visible="!!componentRef" cross @close="handleClose">
+  <SfModal
+    class="sf-modal"
+    :class="{ 'mobile-view': isSmallModal }"
+    :visible="!!componentRef"
+    :cross="showCross"
+    @close="handleClose"
+  >
     <template #modal-bar>
       <SfBar
         class="sf-modal__bar bar-heading"
+        :class="{ 'hide-bar': isSmallModal }"
         :title="titleRef"
         :close="true"
         :back="false"
@@ -22,6 +29,8 @@ export default {
   setup() {
     const componentRef = ref(null)
     const titleRef = ref("")
+    const isSmallModal = ref(false)
+    const showCross = ref(true)
     const properties = ref(null)
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
@@ -33,6 +42,8 @@ export default {
     modal.subscription.$on("open", ({ component, props }) => {
       componentRef.value = component
       titleRef.value = props?.title
+      isSmallModal.value = props?.isSmallModal
+      if (props?.showCross === false) showCross.value = props?.showCross
       properties.value = props
     })
 
@@ -41,6 +52,8 @@ export default {
       componentRef,
       titleRef,
       properties,
+      isSmallModal,
+      showCross,
     }
   },
 }
@@ -52,5 +65,23 @@ export default {
 
 .bar-heading {
   color: var(--_c-dark-primary);
+}
+
+.hide-bar {
+  display: none;
+}
+
+@include for-mobile {
+  .mobile-view {
+    --modal-width: calc(var(--spacer-3xl) * 2);
+    --modal-top: 50%;
+    --modal-left: 50%;
+    --modal-bottom: none;
+    --modal-right: none;
+    --modal-transform: translate3d(-50%, -50%, 0);
+    --modal-height: auto;
+    --modal-max-height: 90%;
+    --modal-content-padding: var(--spacer-sm) var(--spacer-lg);
+  }
 }
 </style>
