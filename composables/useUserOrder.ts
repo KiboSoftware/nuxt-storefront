@@ -16,15 +16,17 @@ export const useUserOrder = (referenceKey: string) => {
   const error = useState(`use-userOrders-error-${referenceKey}`, () => null)
 
   const getOrders = async (params: {
-    filters?: Array<string> | string
-    startIndex?: number
-    pageSize?: number
+    orderNumber?: string
+    billingEmail?: string
+    filters?: string | string[]
   }) => {
     try {
       loading.value = true
-      const { filters } = params
+      const { orderNumber, billingEmail, filters } = params
       const variables = buildOrdersFilterInput({
         filters,
+        orderNumber,
+        billingEmail,
       })
       const ordersResponse = await fetcher({
         query: getOrdersQuery,

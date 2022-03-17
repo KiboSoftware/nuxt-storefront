@@ -23,8 +23,11 @@
       <template #content-bottom>
         <div class="side-bar-nav">
           <div class="side-bar-nav__link">
-            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
-              <span class="burger-bottom-link"> Nav Link 1</span>
+            <SfButton
+              class="sf-button--pure sf-header__action sf-header__bottom-link"
+              @click="goToOrderStatus"
+            >
+              <span class="burger-bottom-link">{{ $t("Order Status") }}</span>
             </SfButton>
           </div>
           <div class="side-bar-nav__link">
@@ -59,7 +62,7 @@
           </div>
           <div class="kibo-top-bar__content"></div>
           <div class="kibo-top-bar__nav-link">
-            <div><SfMenuItem label="Nav Link 1" /></div>
+            <div><SfMenuItem label="Order Status" @click="goToOrderStatus" /></div>
             <div><SfMenuItem label="Nav Link 2" /></div>
             <div><SfMenuItem label="Nav Link 3" /></div>
             <div><SfMenuItem label="Nav Link 4" /></div>
@@ -414,6 +417,11 @@ export default defineComponent({
       })
     }
 
+    const goToOrderStatus = () => {
+      if (isMobile.value) toggleHamburger()
+      app.router.push({ path: "/order-status" })
+    }
+
     onMounted(() => {
       nextTick(() => {
         if (searchBarRef.value.$el) searchBarRef.value.$el.children[0].focus()
@@ -469,6 +477,7 @@ export default defineComponent({
       isHamburgerOpen,
       toggleHamburger,
       gotoCart,
+      goToOrderStatus,
     }
   },
 })

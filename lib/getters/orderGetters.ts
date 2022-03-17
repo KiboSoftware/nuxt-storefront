@@ -27,6 +27,18 @@ const getOrderTotal = (order: Order) => order?.total
 const getOrderStatus = (order: Order) => order?.status
 
 const getOrderPayments = (order: Order) => order?.payments
+const getShippedTo = (order: Order) =>
+  order?.fulfillmentInfo?.fulfillmentContact?.firstName.charAt(0).toUpperCase() +
+  order?.fulfillmentInfo?.fulfillmentContact?.firstName.slice(1) +
+  " " +
+  order?.fulfillmentInfo?.fulfillmentContact?.lastNameOrSurname.charAt(0).toUpperCase() +
+  order?.fulfillmentInfo?.fulfillmentContact?.lastNameOrSurname.slice(1)
+
+const getShippingAddress = (order) => order?.fulfillmentInfo?.fulfillmentContact
+
+const getItemCount = (order) => {
+  return order?.items?.length
+}
 
 export const orderGetters = {
   getOrderNumber,
@@ -37,4 +49,7 @@ export const orderGetters = {
   getOrderStatus,
   getExpectedDeliveryDate,
   getOrderPayments,
+  getShippedTo,
+  getShippingAddress,
+  getItemCount,
 }

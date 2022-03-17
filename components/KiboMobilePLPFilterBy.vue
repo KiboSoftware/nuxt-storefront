@@ -130,7 +130,7 @@ export default defineComponent({
   &__is-disabled--button {
     --button-background: #c0e3df;
 
-    color: #fefefe;
+    color: var(--_c-white-disabled);
   }
 }
 

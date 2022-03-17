@@ -1,35 +1,43 @@
 <template>
   <div>
     <slot name="header-action" />
-    <div>
-      <hr class="details-hr" />
-    </div>
     <div class="order">
       <div class="order-status">
         <div class="order-header-container order__item-box">
-          <div class="order-header">
-            <SfProperty :name="$t('Your Order')" :value="orderNumber" />
-            <SfProperty
-              :name="$t('Order Date')"
-              :value="orderSubmittedDate"
-              class="sf-order-summary__property"
-            />
-            <SfProperty
-              :name="$t('Order Total')"
-              :value="$n(orderTotal, 'currency')"
-              class="sf-order-summary__property"
-            />
-          </div>
-        </div>
-        <div v-if="order.items" class="order-shipment">
-          <KiboOrderLineItems :order="order">
-            <template #ship-title>
-              <h3 class="sf-heading__title h3">{{ $t("Shipment Details") }}</h3>
+        <div class="order-header">
+          <SfProperty :name="$t('Order Number')" :value="orderNumber" />
+          <SfProperty
+            :name="$t('Order Date')"
+            :value="orderSubmittedDate"
+            class="sf-order-summary__property"
+          />
+          <SfProperty :name="$t('Order Total')" class="sf-order-summary__property">
+            <template #value>
+              <span class="sf-property__value">
+                {{ $n(orderTotal, "currency") }}
+                <span class="items">{{
+                  `(${orderItemCount} item${orderItemCount > 1 ? $t("s") : $t("")})`
+                }}</span>
+              </span>
             </template>
-            <template #ship-sub-section>
-              <div class="order-shipment__section">
-                <div class="order-shipment__info">{{ order.status }}</div>
-                <div class="order-shipment__status">{{ orderExpectedDeliveryDate }}</div>
+          </SfProperty>
+          <SfProperty v-if="isOrderStatus" :name="$t('Shipped to')" :value="orderShippedTo" />
+        </div>
+      </div>
+      <div>
+        <hr class="order-item-spacer" />
+      </div>
+      <div v-if="order.items" class="order-shipment">
+        <KiboOrderLineItems :order="order">
+          <template #ship-title>
+            <h3 class="sf-heading__title h3">
+              {{ `${isOrderStatus ? $t("Shipped") : $t("Shipment Details")}` }}
+            </h3>
+          </template>
+          <template #ship-sub-section>
+            <div class="order-shipment__section">
+              <div class="order-shipment__info">{{ order.status }}</div>
+              <div class="order-shipment__status">{{ orderExpectedDeliveryDate }}</div>
               </div>
             </template>
             <template #pickup-title>
@@ -106,6 +114,10 @@ export default defineComponent({
       type: Object as PropType<Order>,
       default: () => ({}),
     },
+    isOrderStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const orderNumber = computed(() => orderGetters.getOrderNumber(props.order))
@@ -124,6 +136,8 @@ export default defineComponent({
     const orderStandardShipping = computed(() => checkoutGetters.getShippingTotal(props.order))
     const orderEstimatedTax = computed(() => checkoutGetters.getTaxTotal(props.order))
     const numberOfOrderItems = computed(() => props.order.items.length)
+    const orderShippedTo = computed(() => orderGetters.getShippedTo(props.order))
+    const orderItemCount = computed(() => orderGetters.getItemCount(props.order))
 
     return {
       orderNumber,
@@ -138,6 +152,8 @@ export default defineComponent({
       orderStandardShipping,
       orderEstimatedTax,
       numberOfOrderItems,
+      orderShippedTo,
+      orderItemCount,
     }
   },
 })
@@ -162,7 +178,12 @@ export default defineComponent({
   }
 
   .sf-property {
-    &__name,
+    &__name {
+      font-size: var(--font-size--base);
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
     &__value {
       font-size: var(--font-size--base);
     }
@@ -205,8 +226,19 @@ export default defineComponent({
   }
 }
 
-.details-hr {
-  border: none;
-  border-bottom: 2px solid var(--_c-green-primary);
+.items {
+  color: var(--_c-gray-primary);
+}
+
+.order-item-spacer {
+  height: 1px;
+  margin: var(--spacer-sm) -7.8% 0;
+  border-width: 0;
+  color: var(--_c-gray-middle);
+  background-color: var(--_c-gray-middle);
+
+  @include for-desktop {
+    margin: var(--spacer-sm) auto 0;
+  }
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
-  <div class="store-details">
+  <div class="store-details" :class="isOrderDetail && 'store-details--order-detail'">
     <SfRadio
-      class="sf-radio--transparent"
+      class="sf-radio__transparent"
+      :class="isOrderDetail && 'sf-radio__transparent--no-radio'"
       :name="location.code"
       :value="location.code"
       :label="location.name"
@@ -58,6 +59,9 @@
         </SfAccordion>
       </template>
     </SfRadio>
+    <div v-if="isOrderDetail">
+      <hr class="store-details-hr" />
+    </div>
   </div>
 </template>
 
@@ -81,6 +85,10 @@ export default defineComponent({
       type: String,
       default: "",
     },
+    isOrderDetail: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(_, context) {
     const handleStoreChange = (location) => {
@@ -95,7 +103,12 @@ export default defineComponent({
 <style lang="scss" scoped>
 .store-details {
   padding: var(--spacer-base) var(--spacer-base) var(--spacer-base) var(--spacer-lg);
-  border-bottom: 1px solid var(--c-light);
+  border-bottom: 1px solid var(--_c-gray-primary);
+
+  &--order-detail {
+    border: none;
+    padding: var(--spacer-base) 0;
+  }
 }
 
 .section-border {
@@ -105,6 +118,10 @@ export default defineComponent({
 .sf-accordion-item {
   &__header {
     text-decoration: underline;
+
+    @include for-mobile {
+      padding: var(--spacer-sm) var(--spacer-sm) var(--spacer-sm) 0;
+    }
   }
 }
 
@@ -112,14 +129,49 @@ export default defineComponent({
   text-transform: capitalize;
 }
 
-.sf-radio--transparent {
+.sf-radio__transparent {
   &__content {
     display: flex;
     justify-content: flex-start;
+  }
+
+  &--no-radio {
+    ::v-deep .sf-radio {
+      input,
+      &__checkmark {
+        display: none;
+      }
+
+      &__content {
+        margin-left: 0;
+      }
+
+      &__container {
+        padding-left: 0;
+      }
+    }
+
+    .sf-accordion-item {
+      &__header {
+        border: 0;
+      }
+    }
   }
 }
 
 .sf-button--pure {
   --button-height: 1.625rem;
+}
+
+.store-details-hr {
+  height: 1px;
+  margin: var(--spacer-sm) -7.8% 0;
+  border-width: 0;
+  color: var(--_c-gray-middle);
+  background-color: var(--_c-gray-middle);
+
+  @include for-desktop {
+    margin: var(--spacer-sm) auto 0;
+  }
 }
 </style>

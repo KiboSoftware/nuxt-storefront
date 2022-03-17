@@ -2,6 +2,8 @@ export const buildOrdersFilterInput = (params: {
   filters?: Array<string> | string
   startIndex?: number
   pageSize?: number
+  orderNumber?: string
+  billingEmail?: string
 }) => {
   const variables = {
     filter: "",
@@ -28,6 +30,10 @@ export const buildOrdersFilterInput = (params: {
       }
     }
     variables.filter = searchFilters.join(" and ")
+  }
+
+  if (params.orderNumber && params.billingEmail) {
+    variables.filter = `orderNumber eq ${params.orderNumber} and email eq ${params.billingEmail}`
   }
   return variables
 }

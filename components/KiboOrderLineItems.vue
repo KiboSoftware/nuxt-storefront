@@ -13,12 +13,16 @@
 
         <div v-for="(item, index) in shipItems" :key="index" class="order-shipment__item">
           <KiboOrderLineItem :item="item" />
+          <hr v-if="index != shipItems.length - 1" class="line-item-spacer" />
         </div>
+        <div>
+          <div class="shipping-address">{{ $t("Shipping Address") }}</div>
+          <UserAddressView :address="address" />
+        </div>
+        <hr class="order-shipment__spacer" />
       </div>
 
       <div v-if="pickupItems && pickupItems.length > 0">
-        <div class="order-shipment__spacer"></div>
-
         <div class="order-shipment__title">
           <slot name="pickup-title">
             <h3 class="sf-heading__title h3">
@@ -30,6 +34,8 @@
 
         <div v-for="(item, index) in pickupItems" :key="index" class="item">
           <KiboOrderLineItem :item="item" />
+          <KiboStoreAddress :item="item" />
+          <hr v-if="index != pickupItems.length - 1" class="line-item-spacer" />
         </div>
       </div>
     </div>
@@ -37,7 +43,7 @@
 </template>
 <script lang="ts">
 import { PropType } from "@vue/composition-api"
-import { checkoutGetters } from "@/lib/getters"
+import { checkoutGetters, orderGetters } from "@/lib/getters"
 import { Order } from "@/server/types/GraphQL"
 
 export default {
@@ -52,11 +58,15 @@ export default {
   setup(props) {
     const pickupItems = computed(() => checkoutGetters.getPickupItems(props.order))
     const shipItems = computed(() => checkoutGetters.getShipItems(props.order))
+    const isMultipleOrder = computed(() => shipItems?.value?.length && pickupItems?.value?.length)
+    const address = computed(() => orderGetters.getShippingAddress(props.order))
 
     return {
       checkoutGetters,
       shipItems,
       pickupItems,
+      isMultipleOrder,
+      address,
     }
   },
 }
@@ -64,8 +74,6 @@ export default {
 
 <style lang="scss" scoped>
 .order-shipment {
-  border-top: 1px solid var(--_c-gray-middle);
-
   &__title,
   &__section {
     padding-top: var(--spacer-base);
@@ -76,7 +84,15 @@ export default {
   }
 
   &__spacer {
-    border-bottom: 1px solid var(--_c-gray-middle);
+    height: 1px;
+    margin: var(--spacer-sm) -7.8% 0;
+    border-width: 0;
+    color: var(--_c-gray-middle);
+    background-color: var(--_c-gray-middle);
+
+    @include for-desktop {
+      margin: var(--spacer-sm) auto 0;
+    }
   }
 
   &__info {
@@ -100,6 +116,23 @@ export default {
 
   &__item:last-child {
     border: none;
+  }
+}
+
+.shipping-address {
+  font-weight: bold;
+  padding-bottom: var(--spacer-sm);
+}
+
+.line-item-spacer {
+  height: 1px;
+  margin: var(--spacer-sm) -7.8% 0;
+  border-width: 0;
+  color: var(--_c-gray-middle);
+  background-color: var(--_c-gray-middle);
+
+  @include for-desktop {
+    margin: var(--spacer-sm) auto 0;
   }
 }
 </style>
