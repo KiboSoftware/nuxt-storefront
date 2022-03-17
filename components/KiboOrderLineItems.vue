@@ -58,14 +58,12 @@ export default {
   setup(props) {
     const pickupItems = computed(() => checkoutGetters.getPickupItems(props.order))
     const shipItems = computed(() => checkoutGetters.getShipItems(props.order))
-    const isMultipleOrder = computed(() => shipItems?.value?.length && pickupItems?.value?.length)
     const address = computed(() => orderGetters.getShippingAddress(props.order))
 
     return {
       checkoutGetters,
       shipItems,
       pickupItems,
-      isMultipleOrder,
       address,
     }
   },
@@ -107,15 +105,6 @@ export default {
   &__item {
     display: flex;
     flex-direction: column;
-    border-bottom: 1px solid var(--_c-white-secondary);
-
-    @include for-desktop {
-      width: calc(var(--spacer-base) * 17.54);
-    }
-  }
-
-  &__item:last-child {
-    border: none;
   }
 }
 
@@ -132,6 +121,7 @@ export default {
   background-color: var(--_c-gray-middle);
 
   @include for-desktop {
+    width: 100%;
     margin: var(--spacer-sm) auto 0;
   }
 }
