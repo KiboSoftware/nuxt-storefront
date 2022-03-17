@@ -132,23 +132,18 @@ export default defineComponent({
 .card-list {
   display: flex;
 
-  &__left {
-    flex: 1;
-  }
-
-  &__right {
-    flex: 4;
-  }
-
   &__content {
     flex: auto;
 
     .sf-badge {
       --badge-color: var(--c-white);
-      --badge-padding: 0.5rem;
+      --badge-padding: var(--spacer-xs);
+      --badge-width: calc(var(--spacer-sm) * 3);
+      --badge-height: var(--spacer-lg);
 
+      font-size: var(--font-size--xs);
       font-style: italic;
-      border-radius: 0.25rem;
+      border-radius: var(--spacer-2xs);
     }
   }
 

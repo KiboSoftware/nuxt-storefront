@@ -2,10 +2,10 @@
   <div class="cards">
     <div><slot name="header" /></div>
     <div class="card-view">
-      <div class="card-list__left">
+      <div class="card-view__left">
         <div><slot name="card-type" /></div>
       </div>
-      <div class="card-list__right">
+      <div class="card-view__right">
         <div>{{ $t("Ending") }} : {{ cardLastDigits }}</div>
         <div>{{ $t("Exp") }} : {{ cardExpireDate }}</div>
         <slot name="billing-address" />
@@ -29,7 +29,7 @@ export default defineComponent({
   setup(props) {
     const card = computed(() => props?.paymentCard || {})
     const cardLastDigits = computed(() =>
-      creditCardPaymentGetters.getCardEndingDigits(props?.paymentCard?.cardNumberPart)
+      creditCardPaymentGetters.getCardEndingDigits(props?.paymentCard)
     )
     const cardExpireDate = computed(() =>
       creditCardPaymentGetters.getExpireDate(props?.paymentCard)
@@ -55,14 +55,14 @@ p {
 
 .card-view {
   display: flex;
-  gap: 3%;
+  gap: var(--spacer-lg);
 
   &__left {
-    flex: 1;
+    margin-top: calc(var(--spacer-2xs) * 1.5);
   }
 
   &__right {
-    flex: 4;
+    line-height: calc(var(--spacer-xs) * 3);
   }
 }
 </style>

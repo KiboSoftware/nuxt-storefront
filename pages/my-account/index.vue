@@ -203,7 +203,7 @@ export default defineComponent({
         props: {
           isSmallModal: true,
           showCross: false,
-          title: context?.root?.$t("Are you sure you want to delete this address ?"),
+          headerText: context?.root?.$t("Are you sure you want to delete this address ?"),
           actionHandler: async () => {
             await deleteAddress(address)
           },
@@ -274,7 +274,7 @@ export default defineComponent({
         props: {
           isSmallModal: true,
           showCross: false,
-          title: context?.root?.$t("Are you sure you want to delete this payment method ?"),
+          headerText: context?.root?.$t("Are you sure you want to delete this payment method ?"),
           actionHandler: async () => {
             await deletePaymentMethod(paymentMethod)
           },

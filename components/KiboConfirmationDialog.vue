@@ -4,10 +4,10 @@
       <div class="modal-content__header">{{ headerText }}</div>
       <div class="action-buttons" v-bind="{ actionHandler }">
         <SfButton class="color-light" :aria-disabled="false" :link="null" @click="$emit('onClose')">
-          {{ $t("Cancel") }}
+          {{ $t(buttonText1) }}
         </SfButton>
         <SfButton :aria-disabled="false" :link="null" @click="handleDelete">
-          {{ $t("Delete") }}
+          {{ $t(buttonText2) }}
         </SfButton>
       </div>
     </div>
@@ -21,9 +21,13 @@ export default {
     SfButton,
   },
   props: {
-    title: {
+    buttonText1: {
       type: String,
-      default: "Are you sure ?",
+      default: "Cancel",
+    },
+    buttonText2: {
+      type: String,
+      default: "Delete",
     },
     properties: {
       type: Object,
@@ -46,6 +50,7 @@ export default {
     return {
       handleDelete,
       headerText,
+      actionHandler,
     }
   },
 }

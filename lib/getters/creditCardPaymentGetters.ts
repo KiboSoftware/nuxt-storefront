@@ -23,7 +23,8 @@ const getExpireDate = (cardDetails): String =>
     ? cardDetails?.expireMonth + "/" + cardDetails?.expireYear
     : ""
 
-const getCardEndingDigits = (cardNumber): String => (cardNumber ? "x" + cardNumber?.slice(-4) : "")
+const getCardEndingDigits = (cardDetails): String =>
+  cardDetails?.cardNumberPart ? "x" + cardDetails?.cardNumberPart?.slice(-4) : ""
 
 const getExpireMonth = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[0]) || 0
 
