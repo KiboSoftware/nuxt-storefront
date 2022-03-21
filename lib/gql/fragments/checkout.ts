@@ -174,15 +174,8 @@ export const fullfillmentInfoFragment = /* GraphQL */ `
 export const checkoutPaymentFragment = /* GraphQL */ `
   fragment checkoutPaymentFragment on Payment {
     id
-    amountCollected
-    amountCredited
-    amountRequested
-    availableActions
-    orderId
-    paymentServiceTransactionId
     paymentType
     paymentWorkflow
-    status
     billingInfo {
       billingContact {
         ...billingContactFragment
@@ -190,16 +183,11 @@ export const checkoutPaymentFragment = /* GraphQL */ `
       isSameBillingShippingAddress
       card {
         paymentServiceCardId
-        isUsedRecurring
-        nameOnCard
-        isCardInfoSaved
         isTokenized
-        ccLastFour
         paymentOrCardType
         cardNumberPartOrMask
         expireMonth
         expireYear
-        bin
       }
     }
   }

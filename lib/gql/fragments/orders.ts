@@ -114,15 +114,8 @@ export const baseOrderFragment = /* GraphQL */ `
 export const orderPaymentFragment = /* GraphQL */ `
   fragment orderPaymentFragment on Payment {
     id
-    amountCollected
-    amountCredited
-    amountRequested
-    availableActions
-    orderId
-    paymentServiceTransactionId
     paymentType
     paymentWorkflow
-    status
     billingInfo {
       billingContact {
         ...contactForOrdersFragment
@@ -130,16 +123,11 @@ export const orderPaymentFragment = /* GraphQL */ `
       isSameBillingShippingAddress
       card {
         paymentServiceCardId
-        isUsedRecurring
-        nameOnCard
-        isCardInfoSaved
         isTokenized
-        ccLastFour
         paymentOrCardType
         cardNumberPartOrMask
         expireMonth
         expireYear
-        bin
       }
     }
   }
