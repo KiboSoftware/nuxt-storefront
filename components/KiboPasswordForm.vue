@@ -45,6 +45,7 @@
 <script lang="ts">
 import { SfInput, SfCharacteristic, SfIcon } from "@storefront-ui/vue"
 import { defineComponent, PropType } from "@vue/composition-api"
+import { useUiValidationSchemas } from "@/composables"
 
 export default defineComponent({
   name: "KiboPasswordForm",
@@ -90,14 +91,21 @@ export default defineComponent({
     ])
 
     const isConfirmPasswordSame = ref(null)
-
-    const handlePassword = (value, inputType) => {
+    const schema = useUiValidationSchemas(context.root, "password")
+    const validatePassword = (errors = []) => {
+      requirements.value.forEach((requirement) => {
+        requirement.isValid = !errors.includes(requirement.label)
+      })
+    }
+    const handlePassword = async (value, inputType) => {
       props.fields.find((field) => field.id === inputType).value = value
       if (inputType === "password") {
-        requirements.value[0].isValid = value.length > 8 // length check
-        requirements.value[1].isValid = /\d/.test(value) // number check
-        requirements.value[2].isValid = /(?=.*[A-Z])/.test(value) // capital letter check
-        requirements.value[3].isValid = /[!@#$%^&*]/.test(value) // special character check
+        try {
+          await schema.validate({ password: value }, { abortEarly: false })
+          validatePassword()
+        } catch (err) {
+          validatePassword(err.inner.map((error) => error.message))
+        }
       }
       if (inputType === "confirmPassword") {
         isConfirmPasswordSame.value =
