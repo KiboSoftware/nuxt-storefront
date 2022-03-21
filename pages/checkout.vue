@@ -76,12 +76,6 @@
       <div class="checkout__aside">
         <transition name="sf-fade">
           <SfLoader :loading="loading">
-            <!-- 
-              TODO - tobe added into KiboOrderSummary
-              :is-valid-coupon="isValidCoupon"
-              :invalid-coupon-error-text="invalidCouponErrorText"
-              :applied-coupons="appliedCoupons"
-              :are-coupons-applied="areCouponsApplied" -->
             <KiboOrderSummary
               v-if="currentStep <= 2"
               :order="getOrder"
@@ -92,6 +86,10 @@
               :standard-shipping="standardShipping"
               :estimated-tax="estimatedTax"
               :estimated-order-total="estimatedOrderTotal"
+              :is-valid-coupon="isValidCoupon"
+              :invalid-coupon-error-text="invalidCouponErrorText"
+              :applied-coupons="appliedCoupons"
+              :are-coupons-applied="areCouponsApplied"
             >
               <template #actions>
                 <SfButton
@@ -258,15 +256,10 @@ export default {
         `${getOrder.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
     )
 
-    const invalidCouponErrorText = computed(
-      () =>
-        getOrder.value?.invalidCoupons &&
-        `${getOrder.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
-    )
+    const appliedCoupons = computed(() => getOrder.value?.couponCodes)
 
     const areCouponsApplied = computed(() => getOrder.value?.couponCodes?.length > 0)
 
-    const areCouponsApplied = computed(() => getOrder.value?.couponCodes?.length > 0)
     // personalDetails
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
     let paymentDetails = ref(defaultPaymentDetails())
