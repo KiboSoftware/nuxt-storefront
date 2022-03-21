@@ -267,6 +267,8 @@ export default {
     const areCouponsApplied = computed(() => getOrder.value?.couponCodes?.length > 0)
     const appliedCoupons = computed(() => getOrder.value?.couponCodes)
 
+    const areCouponsApplied = computed(() => getOrder.value?.couponCodes?.length > 0)
+
     // personalDetails
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
     let paymentDetails = ref(defaultPaymentDetails())
