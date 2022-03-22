@@ -35,6 +35,7 @@
       </div>
       <div class="promo-code">
         <KiboApplyCoupon
+          v-if="appliedCoupons.length"
           :is-valid-coupon="isValidCoupon"
           :invalid-coupon-error-text="invalidCouponErrorText"
           :are-coupons-applied="areCouponsApplied"
@@ -75,7 +76,7 @@
 import { SfProperty, SfBadge } from "@storefront-ui/vue"
 
 export default {
-  name: "SfOrderSummary",
+  name: "KiboOrderSummary",
   components: {
     SfProperty,
     SfBadge,

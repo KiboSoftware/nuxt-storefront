@@ -7,20 +7,20 @@
         :alt="checkoutLineItemGetters.getProductName(item)"
       />
 
-      <div class="content">
-        <div class="content__productName">
+      <div class="item-content">
+        <div class="item-content__productName">
           {{ checkoutLineItemGetters.getProductName(item) }}
         </div>
 
         <div
           v-for="option in checkoutLineItemGetters.getProductOptions(item)"
           :key="option.attributeFQN"
-          class="content__props"
+          class="item-content__props"
         >
           <span class="title"> {{ option.name }}: </span> {{ option.value }} <br />
         </div>
 
-        <div class="content__props">
+        <div class="item-content__props">
           <span class="title">{{ $t("Price") }}: </span> ${{
             checkoutLineItemGetters.getProductPrice(item)
           }}
@@ -72,7 +72,7 @@ export default {
     }
   }
 
-  .content {
+  .item-content {
     display: flex;
     padding-left: var(--spacer-base);
     flex-direction: column;

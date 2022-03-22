@@ -42,12 +42,11 @@
             </div>
           </div>
         </div>
-        <div v-show="isOpenOrderItem" class="order-details">
+        <div v-if="isOpenOrderItem" class="order-details">
           <KiboOrderItemDetails :order="selectedOrder">
             <template #header-action>
               <div class="desktop-only">
                 <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
-                <hr class="order-history-hr" />
               </div>
             </template>
           </KiboOrderItemDetails>

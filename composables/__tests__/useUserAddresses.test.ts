@@ -74,7 +74,7 @@ describe("[composable] useUserAddresses", () => {
     const accountId = 1366
     await load(accountId)
     expect(userShippingAddresses.value).toEqual(userAddressesResponse.customerAccountContacts.items)
-    expect(loading).toBeFalsy()
+    expect(loading.value).toBeFalsy()
     expect(error).toBeFalsy()
   })
 })

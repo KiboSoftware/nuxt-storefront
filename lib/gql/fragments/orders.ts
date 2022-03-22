@@ -69,6 +69,7 @@ export const orderItemFragment = /* GraphQL */ `
   }
   ${orderItemProductFragment}
 `
+
 export const baseOrderFragment = /* GraphQL */ `
   fragment baseOrderFragment on Order {
     id
@@ -89,7 +90,10 @@ export const baseOrderFragment = /* GraphQL */ `
       }
       couponCode
     }
-
+    invalidCoupons {
+      couponCode
+    }
+    couponCodes
     billingInfo {
       billingContact {
         ...contactForOrdersFragment
@@ -105,4 +109,26 @@ export const baseOrderFragment = /* GraphQL */ `
     }
   }
   ${contactForOrdersFragment}
+`
+
+export const orderPaymentFragment = /* GraphQL */ `
+  fragment orderPaymentFragment on Payment {
+    id
+    paymentType
+    paymentWorkflow
+    billingInfo {
+      billingContact {
+        ...contactForOrdersFragment
+      }
+      isSameBillingShippingAddress
+      card {
+        paymentServiceCardId
+        isTokenized
+        paymentOrCardType
+        cardNumberPartOrMask
+        expireMonth
+        expireYear
+      }
+    }
+  }
 `

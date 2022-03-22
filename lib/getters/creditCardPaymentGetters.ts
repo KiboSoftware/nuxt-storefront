@@ -51,6 +51,8 @@ const getPaymentMethods = (payments) => {
   return paymentsMethods
 }
 
+const getCardType = (cards) => cards?.paymentOrCardType
+
 export const creditCardPaymentGetters = {
   getCardNumberMask,
   getId,
@@ -61,4 +63,5 @@ export const creditCardPaymentGetters = {
   getNameOnCard,
   getCardDetailsWithBilling,
   getPaymentMethods,
+  getCardType,
 }

@@ -1,4 +1,8 @@
-import { baseCheckoutFragment, checkoutLineItemFragment } from "../../fragments"
+import {
+  baseCheckoutFragment,
+  checkoutLineItemFragment,
+  checkoutPaymentFragment,
+} from "../../fragments"
 
 export const getOrCreateCheckoutFromCartMutation = /* GraphQL */ `
   mutation getOrCreateCheckoutFromCart($cartId: String!) {
@@ -7,8 +11,12 @@ export const getOrCreateCheckoutFromCartMutation = /* GraphQL */ `
       items {
         ...checkoutLineItemFragment
       }
+      payments {
+        ...checkoutPaymentFragment
+      }
     }
   }
   ${baseCheckoutFragment}
   ${checkoutLineItemFragment}
+  ${checkoutPaymentFragment}
 `

@@ -2,6 +2,7 @@ import {
   baseCheckoutFragment,
   checkoutLineItemFragment,
   fullfillmentInfoFragment,
+  checkoutPaymentFragment,
 } from "../../fragments"
 
 export const getCheckoutQuery = /* GraphQL */ `
@@ -14,9 +15,13 @@ export const getCheckoutQuery = /* GraphQL */ `
       fulfillmentInfo {
         ...fullfillmentInfoFragment
       }
+      payments {
+        ...checkoutPaymentFragment
+      }
     }
   }
   ${baseCheckoutFragment}
   ${checkoutLineItemFragment}
   ${fullfillmentInfoFragment}
+  ${checkoutPaymentFragment}
 `
