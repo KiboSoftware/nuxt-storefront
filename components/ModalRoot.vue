@@ -1,9 +1,9 @@
 <template>
   <SfModal
     class="sf-modal"
-    :class="{ 'mobile-view': isSmallModal }"
+    :class="{ 'mobile-small-modal': isSmallModal }"
     :visible="!!componentRef"
-    :cross="showCross"
+    :cross="!isSmallModal"
     @close="handleClose"
   >
     <template #modal-bar>
@@ -30,7 +30,6 @@ export default {
     const componentRef = ref(null)
     const titleRef = ref("")
     const isSmallModal = ref(false)
-    const showCross = ref(true)
     const properties = ref(null)
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
@@ -43,7 +42,6 @@ export default {
       componentRef.value = component
       titleRef.value = props?.title
       isSmallModal.value = props?.isSmallModal
-      if (props?.showCross === false) showCross.value = props?.showCross
       properties.value = props
     })
 
@@ -53,7 +51,6 @@ export default {
       titleRef,
       properties,
       isSmallModal,
-      showCross,
     }
   },
 }
@@ -72,7 +69,7 @@ export default {
 }
 
 @include for-mobile {
-  .mobile-view {
+  .mobile-small-modal {
     --modal-width: calc(var(--spacer-3xl) * 2);
     --modal-top: 50%;
     --modal-left: 50%;
