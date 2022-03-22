@@ -36,10 +36,6 @@ const getShippedTo = (order: Order) =>
 
 const getShippingAddress = (order) => order?.fulfillmentInfo?.fulfillmentContact
 
-const getItemCount = (order) => {
-  return order?.items?.length
-}
-
 export const orderGetters = {
   getOrderNumber,
   getId,
@@ -51,5 +47,4 @@ export const orderGetters = {
   getOrderPayments,
   getShippedTo,
   getShippingAddress,
-  getItemCount,
 }

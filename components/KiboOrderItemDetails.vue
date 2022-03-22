@@ -4,40 +4,42 @@
     <div class="order">
       <div class="order-status">
         <div class="order-header-container order__item-box">
-        <div class="order-header">
-          <SfProperty :name="$t('Order Number')" :value="orderNumber" />
-          <SfProperty
-            :name="$t('Order Date')"
-            :value="orderSubmittedDate"
-            class="sf-order-summary__property"
-          />
-          <SfProperty :name="$t('Order Total')" class="sf-order-summary__property">
-            <template #value>
-              <span class="sf-property__value">
-                {{ $n(orderTotal, "currency") }}
-                <span class="items">{{
-                  `(${orderItemCount} ${orderItemCount > 1 ? $tc("item", 2) : $tc("item", 1)})`
-                }}</span>
-              </span>
-            </template>
-          </SfProperty>
-          <SfProperty v-if="isOrderStatus" :name="$t('Shipped to')" :value="orderShippedTo" />
+          <div class="order-header">
+            <SfProperty :name="$t('Order Number')" :value="orderNumber" />
+            <SfProperty
+              :name="$t('Order Date')"
+              :value="orderSubmittedDate"
+              class="sf-order-summary__property"
+            />
+            <SfProperty :name="$t('Order Total')" class="sf-order-summary__property">
+              <template #value>
+                <span class="sf-property__value">
+                  {{ $n(orderTotal, "currency") }}
+                  <span class="items">{{
+                    `(${numberOfOrderItems} ${
+                      numberOfOrderItems > 1 ? $tc("item", 2) : $tc("item", 1)
+                    })`
+                  }}</span>
+                </span>
+              </template>
+            </SfProperty>
+            <SfProperty v-if="isOrderStatus" :name="$t('Shipped to')" :value="orderShippedTo" />
+          </div>
         </div>
-      </div>
-      <div>
-        <hr class="order-item-spacer" />
-      </div>
-      <div v-if="order.items" class="order-shipment">
-        <KiboOrderLineItems :order="order">
-          <template #ship-title>
-            <h3 class="sf-heading__title h3">
-              {{ `${isOrderStatus ? $t("Shipped") : $t("Shipment Details")}` }}
-            </h3>
-          </template>
-          <template #ship-sub-section>
-            <div class="order-shipment__section">
-              <div class="order-shipment__info">{{ order.status }}</div>
-              <div class="order-shipment__status">{{ orderExpectedDeliveryDate }}</div>
+        <div>
+          <hr class="order-item-spacer" />
+        </div>
+        <div v-if="order.items" class="order-shipment">
+          <KiboOrderLineItems :order="order">
+            <template #ship-title>
+              <h3 class="sf-heading__title h3">
+                {{ `${isOrderStatus ? $t("Shipped") : $t("Shipment Details")}` }}
+              </h3>
+            </template>
+            <template #ship-sub-section>
+              <div class="order-shipment__section">
+                <div class="order-shipment__info">{{ order.status }}</div>
+                <div class="order-shipment__status">{{ orderExpectedDeliveryDate }}</div>
               </div>
             </template>
             <template #pickup-title>
@@ -53,9 +55,9 @@
             </template>
           </KiboOrderLineItems>
 
-          <div v-if="order.payments" class="order-payment">
+          <div v-if="order.payments && !isOrderStatus" class="order-payment">
             <div class="order-payment__title">
-              <h3 class="sf-heading__title h3">{{ $t("Payment Infrormation") }}</h3>
+              <h3 class="sf-heading__title h3">{{ $t("Payment Information") }}</h3>
             </div>
             <div v-for="(payment, index) in orderPayments" :key="index" class="order-payment__item">
               <div class="order-payment__method">
@@ -83,11 +85,11 @@
           </div>
         </div>
       </div>
-      <div class="order-summary">
+      <div v-if="!isOrderStatus" class="order-summary">
         <KiboOrderSummary
           v-if="numberOfOrderItems > 0"
           :number-of-items="numberOfOrderItems"
-          :sub-total="orderSubTotal"
+          :sub-total="parseInt(orderSubTotal)"
           :standard-shipping="orderStandardShipping"
           :estimated-tax="orderEstimatedTax"
           :estimated-order-total="orderTotal"
@@ -135,9 +137,8 @@ export default defineComponent({
     const orderSubTotal = computed(() => checkoutGetters.getSubtotal(props.order))
     const orderStandardShipping = computed(() => checkoutGetters.getShippingTotal(props.order))
     const orderEstimatedTax = computed(() => checkoutGetters.getTaxTotal(props.order))
-    const numberOfOrderItems = computed(() => props.order.items.length)
+    const numberOfOrderItems = computed(() => props.order?.items?.length)
     const orderShippedTo = computed(() => orderGetters.getShippedTo(props.order))
-    const orderItemCount = computed(() => orderGetters.getItemCount(props.order))
 
     return {
       orderNumber,
@@ -153,7 +154,6 @@ export default defineComponent({
       orderEstimatedTax,
       numberOfOrderItems,
       orderShippedTo,
-      orderItemCount,
     }
   },
 })
@@ -161,14 +161,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .order {
-  margin: var(--spacer-base);
   display: flex;
   gap: 2.67%;
   justify-content: space-between;
   flex-wrap: wrap;
+  margin: var(--spacer-base) auto;
 
   @include for-desktop {
-    margin: var(--spacer-base) auto;
     flex-wrap: nowrap;
   }
 
@@ -195,7 +194,6 @@ export default defineComponent({
 }
 
 .order-payment {
-  border-top: 1px solid var(--_c-gray-middle);
   padding-bottom: var(--spacer-base);
 
   &__title {

@@ -15,7 +15,7 @@ const searchOrderResponse = {
             fulfillmentContact: {
               id: 1,
               firstName: "abc",
-              lastNameOrSurname: "xyz",
+              lastNameOrSurname: "def",
             },
           },
           items: [
