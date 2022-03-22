@@ -8,7 +8,7 @@
 <script lang="ts">
 import { useAsync } from "@nuxtjs/composition-api"
 import { useStoreLocations } from "@/composables"
-import { storeLocationGetters } from "~~/lib/getters"
+import { storeLocationGetters } from "@/lib/getters"
 
 export default {
   name: "KiboStoreAddress",

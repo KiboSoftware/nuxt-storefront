@@ -118,9 +118,9 @@ export default defineComponent({
 .sf-accordion-item {
   &__header {
     text-decoration: underline;
-
-    @include for-mobile {
-      padding: var(--spacer-sm) var(--spacer-sm) var(--spacer-sm) 0;
+    padding: var(--spacer-sm) var(--spacer-sm) var(--spacer-sm) 0;
+    @include for-desktop {
+      padding: calc(var(--spacer-sm) * 0.5) 0;
     }
   }
 }
