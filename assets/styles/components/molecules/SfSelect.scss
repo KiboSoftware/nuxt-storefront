@@ -1,8 +1,6 @@
 .sf-select {
-  flex-wrap: wrap;
-
   &__label {
-    // height: 0.9rem;
+    height: 0.9rem;
     --select-label-top: 0;
     --select-label-color: var(--_c-gray-primary);
 
@@ -23,6 +21,5 @@
     border-radius: var(--spacer-2xs);
     height: calc(var(--spacer-lg) + 0.125rem);
     border: 1px solid var(--_c-gray-middle);
-    margin-top: 15px;
   }
 }
