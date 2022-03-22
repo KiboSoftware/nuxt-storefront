@@ -70,7 +70,6 @@ export default {
 
 <style lang="scss" scoped>
 .footer {
-  margin-bottom: 3.75rem;
   @include for-desktop {
     margin-bottom: 0;
   }

@@ -9,6 +9,5 @@
       <Nuxt />
     </div>
     <AppFooter />
-    <BottomNavigation />
   </div>
 </template>
