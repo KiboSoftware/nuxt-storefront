@@ -31,6 +31,7 @@
       :value="activeAddress"
       :countries="countries"
       @addressData="setInputAddressData"
+      @validateForm="validateShippingDetails"
     />
     <div>
       <SfCheckbox
@@ -107,11 +108,13 @@ export default defineComponent({
     const isDefaultAddress = ref(false)
     const isValidFormData = ref(true)
     const activeAddress = ref(props.defaultAddress || {})
+    const isValidShippingDetails = ref(false)
 
     // Sort addresses to display Primary addresses first
     const userAddressesSorted = computed(() => {
       return shopperContactGetters.getSortedAddress([...props.addresses])
     })
+
     const addNewAddress = () => {
       isNewAddress.value = true
       if (!activeAddress.value) activeAddress.value = {}
@@ -150,6 +153,10 @@ export default defineComponent({
       })
       closeAddressForm()
     }
+    const validateShippingDetails = (isValid) => {
+      isValidShippingDetails.value = isValid
+      context.emit("validateForm", isValid)
+    }
     return {
       userAddressesSorted,
       addNewAddress,
@@ -167,6 +174,7 @@ export default defineComponent({
       setInputAddressData,
       isDefaultAddress,
       isValidFormData,
+      validateShippingDetails,
     }
   },
 })

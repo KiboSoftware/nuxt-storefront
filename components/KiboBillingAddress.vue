@@ -13,6 +13,7 @@
         :value="billingDetails"
         :countries="countries"
         @addressData="updateBillingDetails"
+        @validateForm="validateBillingDetails"
       />
       <SfCheckbox
         v-model="saveBillingAddress"
@@ -53,11 +54,18 @@ export default {
     const sameAsShipping = ref(false)
     const saveBillingAddress = ref(false)
     const keyRefCopyAddress = ref(1)
+    const isValidBillingDetails = ref(false)
 
     const updateBillingDetails = (newBillingDetails) => {
       billingDetails.value = { ...newBillingDetails }
       context.emit("billingAddressData", { ...newBillingDetails })
     }
+
+    const validateBillingDetails = (isValid) => {
+      isValidBillingDetails.value = isValid
+      context.emit("validateForm", isValid)
+    }
+
     watch(sameAsShipping, () => {
       if (sameAsShipping.value) {
         Object.keys(props.shipping).forEach((key) => {
@@ -79,6 +87,7 @@ export default {
       saveBillingAddress,
       updateBillingDetails,
       keyRefCopyAddress,
+      validateBillingDetails,
     }
   },
 }

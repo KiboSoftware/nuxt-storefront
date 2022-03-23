@@ -1,4 +1,4 @@
-import { CustomerContact } from "@/server/types/GraphQL"
+import { CustomerContact, Contact } from "@/server/types/GraphQL"
 
 const getId = (shopper: CustomerContact) => shopper?.id?.toString()
 const getFirstName = (shopper: CustomerContact) => shopper?.firstName
@@ -17,7 +17,7 @@ const getPhoneHome = (shopper: CustomerContact) => shopper?.phoneNumbers?.home
 const getPhoneMobile = (shopper: CustomerContact) => shopper?.phoneNumbers?.mobile
 const getPhoneWork = (shopper: CustomerContact) => shopper?.phoneNumbers?.work
 
-const getPersonalDetails = (shopper: CustomerContact, personalDetails) => {
+const getPersonalDetails = (shopper: Contact, personalDetails) => {
   if (!shopper) return { firstName: "", lastName: "", email: "" }
 
   return {

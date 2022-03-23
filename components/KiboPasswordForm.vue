@@ -93,7 +93,7 @@ export default defineComponent({
 
     const handlePassword = (value, inputType) => {
       props.fields.find((field) => field.id === inputType).value = value
-      if (inputType === "newPassword") {
+      if (inputType === "password") {
         requirements.value[0].isValid = value.length > 8 // length check
         requirements.value[1].isValid = /\d/.test(value) // number check
         requirements.value[2].isValid = /(?=.*[A-Z])/.test(value) // capital letter check
@@ -101,7 +101,7 @@ export default defineComponent({
       }
       if (inputType === "confirmPassword") {
         isConfirmPasswordSame.value =
-          value === props.fields.find((field) => field.id === "newPassword").value
+          value === props.fields.find((field) => field.id === "password").value
       }
       context.emit("input:handle-password", props.fields, isConfirmPasswordSame.value)
     }

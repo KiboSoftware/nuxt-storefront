@@ -234,4 +234,12 @@ export default {
   "is an invalid code": "is an invalid code",
   "promo code applied": "promo code applied",
   Qty: "Qty:",
+  Required: "This is required field",
+  ValidEmail: "Please enter valid email address",
+  CreateAnAccount: "I want to create an account",
+  YourEmail: "Your email",
+  FasterCheckout: "Faster checkout",
+  EarnCredits: "Earn credits with every purchase",
+  FullRewards: "Full rewards program benefits",
+  ManageWishlist: "Manage your wishlist",
 }

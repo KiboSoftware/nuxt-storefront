@@ -8,6 +8,7 @@
               :value="personalDetails"
               @input="updatePersonalDetails"
               @log-in="logIn"
+              @validateForm="validatePersonalDetails"
             >
             </KiboPersonalDetails>
           </SfStep>
@@ -17,6 +18,7 @@
               :user-shipping-addresses="userShippingAddresses"
               :countries="countries"
               @saveShippingAddress="saveShippingDetails"
+              @validateForm="validateShippingDetails"
             >
               <template #shipping-methods-form>
                 <KiboShippingMethodForm
@@ -25,6 +27,7 @@
                   :shipping-rates="shippingRates"
                   @saveShippingMethod="saveShippingMethod"
                   @handleStoreLocatorClick="handleStoreLocatorClick"
+                  @validateForm="validateShippingRates"
                 />
               </template>
             </KiboShipping>
@@ -38,6 +41,7 @@
                   :countries="countries"
                   @billingAddressData="updateBillingDetails"
                   @sameAsShipping="copyShippingAddress"
+                  @validateForm="validateBillingDetails"
                 />
               </template>
               <template #payment-form>
@@ -226,27 +230,6 @@ export default {
       checkbymail = "checkbymail",
     }
 
-    const payment = {
-      sameAsShipping: false,
-      firstName: "",
-      lastName: "",
-      streetName: "",
-      apartment: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-      phoneNumber: "",
-      paymentMethod: "",
-      invoice: false,
-      cardNumber: "",
-      cardHolder: "",
-      cardMonth: "",
-      cardYear: "",
-      cardCVC: "",
-      cardKeep: false,
-    }
-
     const getOrder = computed(() => {
       return { ...checkout?.value }
     })
@@ -287,6 +270,10 @@ export default {
       )
     }
 
+    const isValidPersonalDetails = ref(false)
+    const validatePersonalDetails = (isValid) => {
+      isValidPersonalDetails.value = isValid
+    }
     const updatePersonalDetails = (newPersonalDetails) => {
       personalDetails.value = { ...newPersonalDetails }
     }
@@ -315,6 +302,8 @@ export default {
     const shippingDetails = computed(() => checkout.value?.fulfillmentInfo?.fulfillmentContact)
     const updatedShippingAddress = ref({})
     const saveShippingDetails = async (shippingAddress) => {
+      if (!isValidShippingDetails.value) return
+
       updatedShippingAddress.value = { ...shippingAddress.address }
       const params = {
         orderId: checkout?.value?.id,
@@ -325,13 +314,13 @@ export default {
           shippingMethodName: checkout.value?.fulfillmentInfo?.shippingMethodName,
         },
       }
-
       await setShippingInfo(params)
       await loadShippingMethods(checkout.value?.id)
     }
 
-    const updateShippingDetails = (newShippingDetails) => {
-      shippingDetails.value = { ...newShippingDetails }
+    const isValidShippingDetails = ref(false)
+    const validateShippingDetails = (isValid) => {
+      isValidShippingDetails.value = isValid
     }
 
     const shippingRates = computed(() =>
@@ -367,6 +356,10 @@ export default {
       })
     }
 
+    const isValidShippingRates = ref(false)
+    const validateShippingRates = (isValid) => {
+      isValidShippingRates.value = isValid
+    }
     // billing
     const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
     const updatedBillingAddress = ref({ ...billingDetails })
@@ -385,6 +378,7 @@ export default {
         },
       }
       await setBillingInfo(params)
+      await savePaymentDetails()
     }
 
     const isBillingAddressAsShipping = ref(false)
@@ -392,11 +386,11 @@ export default {
       isBillingAddressAsShipping.value = isShippingAddress
     }
 
-    // accountCreation
-    const createAccount = (value) => {
-      if (!value) password.value = ""
+    const isValidBillingDetails = ref(false)
+    const validateBillingDetails = (isValid) => {
+      isValidBillingDetails.value = isValid
     }
-
+    // accountCreation
     const getPaymentMethodData = (updatedPaymentDetails) => {
       paymentDetails = {
         ...updatedPaymentDetails,
@@ -441,7 +435,6 @@ export default {
     const createUserAccount = async () => {
       const params = {
         ...personalDetails.value,
-        password: password.value,
         acceptsMarketing: true,
         isActive: true,
         id: 0,
@@ -465,17 +458,19 @@ export default {
 
       switch (steps[currentStep.value]) {
         case stepLabels.GO_TO_SHIPPING: {
+          if (!isValidPersonalDetails.value) return
           await savePersonalDetails()
           break
         }
 
         case stepLabels.GO_TO_PAYMENT: {
+          if (!(isValidShippingDetails.value && isValidShippingRates.value)) return
           break
         }
 
         case stepLabels.PAY_FOR_ORDER: {
+          if (!(isValidBillingDetails.value && enableCurrentStep.value)) return
           await saveBillingDetails()
-          await savePaymentDetails()
           break
         }
 
@@ -504,14 +499,7 @@ export default {
       currentStep,
       steps,
       personalDetails,
-      payment,
       shippingMethods,
-      buttonNames: [
-        { name: "Go to Shipping" },
-        { name: "Go to Payment" },
-        { name: "Pay for Order" },
-        { name: "Confirm and Pay" },
-      ],
       checkout,
       gotoStep,
       updateStep,
@@ -524,7 +512,6 @@ export default {
       standardShipping,
       estimatedTax,
       estimatedOrderTotal,
-
       isValidCoupon,
       invalidCouponErrorText,
       appliedCoupons,
@@ -535,7 +522,6 @@ export default {
       shippingDetails,
       saveShippingDetails,
       updatedShippingAddress,
-      updateShippingDetails,
       userShippingAddresses,
       userBillingAddresses,
 
@@ -547,7 +533,6 @@ export default {
       billingDetails,
       updateBillingDetails,
       showCreateAccount,
-      createAccount,
       password,
       transition,
       getPaymentMethodData,
@@ -558,6 +543,11 @@ export default {
       checkoutLineItemGetters,
       productGetters,
       isTermsAndConditionsAccepted,
+
+      validatePersonalDetails,
+      validateShippingDetails,
+      validateShippingRates,
+      validateBillingDetails,
     }
   },
   watch: {

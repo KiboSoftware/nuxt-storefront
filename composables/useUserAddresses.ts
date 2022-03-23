@@ -6,12 +6,12 @@ import {
   updateUserAddressMutation,
   deleteUserAddressMutation,
 } from "@/lib/gql/mutations"
-import type { Maybe, CustomerContact } from "@/server/types/GraphQL"
 import type {
   AddUserAddressParams,
   UpdateUserAddressParams,
   DeleteUserAddressParams,
 } from "@/server/types/Api"
+import type { Maybe, CustomerContact } from "@/server/types/GraphQL"
 
 export const useUserAddresses = () => {
   const nuxt = useNuxtApp()
