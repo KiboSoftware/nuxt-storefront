@@ -88,5 +88,4 @@ export const creditCardPaymentGetters = {
   getExpireDate,
   getSortedPaymentMethods,
   getCardEndingDigits,
-  getCardType,
 }
