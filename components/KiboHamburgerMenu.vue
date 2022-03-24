@@ -213,8 +213,6 @@ export default defineComponent({
 }
 
 .sidebar-menu-mobile {
-  padding-bottom: 2px;
-
   .sf-list {
     &__item {
       display: flex;
