@@ -80,7 +80,7 @@
       />
       <SfSelect
         :label="$t('Country')"
-        :placeholder="`Select ${$t('Country')}`"
+        :placeholder="`${$t('SelectCountry')}`"
         class="form__element form__element--half form__element--half-even form__select"
         :valid="!errors.countryCode"
         :error-message="errors.countryCode"
