@@ -63,6 +63,7 @@ export const orderItemFragment = /* GraphQL */ `
     subtotal
     discountTotal
     quantity
+    fulfillmentLocationCode
     product {
       ...orderItemProductFragment
     }

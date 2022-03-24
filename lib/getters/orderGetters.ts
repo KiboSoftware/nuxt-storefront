@@ -1,6 +1,8 @@
 import { format } from "date-fns"
 import { Order } from "@/server/types/GraphQL"
 
+const capitalizeWord = (word) => word && word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+
 const getOrderNumber = (order: Order) => order?.orderNumber
 
 const getId = (order: Order) => order?.id
@@ -27,6 +29,12 @@ const getOrderTotal = (order: Order) => order?.total
 const getOrderStatus = (order: Order) => order?.status
 
 const getOrderPayments = (order: Order) => order?.payments
+const getShippedTo = (order: Order) =>
+  capitalizeWord(order?.fulfillmentInfo?.fulfillmentContact?.firstName) +
+  " " +
+  capitalizeWord(order?.fulfillmentInfo?.fulfillmentContact?.lastNameOrSurname)
+
+const getShippingAddress = (order) => order?.fulfillmentInfo?.fulfillmentContact
 
 export const orderGetters = {
   getOrderNumber,
@@ -37,4 +45,6 @@ export const orderGetters = {
   getOrderStatus,
   getExpectedDeliveryDate,
   getOrderPayments,
+  getShippedTo,
+  getShippingAddress,
 }

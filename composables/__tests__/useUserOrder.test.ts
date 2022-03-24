@@ -11,6 +11,13 @@ const searchOrderResponse = {
           orderNumber: 36,
           status: "Pending",
           total: 3425,
+          fulfillmentInfo: {
+            fulfillmentContact: {
+              id: 1,
+              firstName: "abc",
+              lastNameOrSurname: "xyz",
+            },
+          },
           items: [
             {
               product: {

@@ -1,30 +1,40 @@
 <template>
   <div>
     <slot name="header-action" />
-    <div>
-      <hr class="details-hr" />
-    </div>
     <div class="order">
       <div class="order-status">
         <div class="order-header-container order__item-box">
           <div class="order-header">
-            <SfProperty :name="$t('Your Order')" :value="orderNumber" />
+            <SfProperty :name="$t('Order Number')" :value="orderNumber" />
             <SfProperty
               :name="$t('Order Date')"
               :value="orderSubmittedDate"
               class="sf-order-summary__property"
             />
-            <SfProperty
-              :name="$t('Order Total')"
-              :value="$n(orderTotal, 'currency')"
-              class="sf-order-summary__property"
-            />
+            <SfProperty :name="$t('Order Total')" class="sf-order-summary__property">
+              <template #value>
+                <span class="sf-property__value">
+                  {{ $n(orderTotal, "currency") }}
+                  <span class="items">{{
+                    `(${numberOfOrderItems} ${
+                      numberOfOrderItems > 1 ? $tc("item", 2) : $tc("item", 1)
+                    })`
+                  }}</span>
+                </span>
+              </template>
+            </SfProperty>
+            <SfProperty v-if="isOrderStatus" :name="$t('Shipped to')" :value="orderShippedTo" />
           </div>
+        </div>
+        <div>
+          <hr class="order-item-spacer" />
         </div>
         <div v-if="order.items" class="order-shipment">
           <KiboOrderLineItems :order="order">
             <template #ship-title>
-              <h3 class="sf-heading__title h3">{{ $t("Shipment Details") }}</h3>
+              <h3 class="sf-heading__title h3">
+                {{ `${isOrderStatus ? $t("Shipped") : $t("Shipment Details")}` }}
+              </h3>
             </template>
             <template #ship-sub-section>
               <div class="order-shipment__section">
@@ -45,9 +55,9 @@
             </template>
           </KiboOrderLineItems>
 
-          <div v-if="order.payments" class="order-payment">
+          <div v-if="order.payments && !isOrderStatus" class="order-payment">
             <div class="order-payment__title">
-              <h3 class="sf-heading__title h3">{{ $t("Payment Infrormation") }}</h3>
+              <h3 class="sf-heading__title h3">{{ $t("Payment Information") }}</h3>
             </div>
             <div v-for="(payment, index) in orderPayments" :key="index" class="order-payment__item">
               <div class="order-payment__method">
@@ -75,11 +85,11 @@
           </div>
         </div>
       </div>
-      <div class="order-summary">
+      <div v-if="!isOrderStatus" class="order-summary">
         <KiboOrderSummary
           v-if="numberOfOrderItems > 0"
           :number-of-items="numberOfOrderItems"
-          :sub-total="orderSubTotal"
+          :sub-total="parseInt(orderSubTotal)"
           :standard-shipping="orderStandardShipping"
           :estimated-tax="orderEstimatedTax"
           :estimated-order-total="orderTotal"
@@ -106,6 +116,10 @@ export default defineComponent({
       type: Object as PropType<Order>,
       default: () => ({}),
     },
+    isOrderStatus: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const orderNumber = computed(() => orderGetters.getOrderNumber(props.order))
@@ -123,7 +137,8 @@ export default defineComponent({
     const orderSubTotal = computed(() => checkoutGetters.getSubtotal(props.order))
     const orderStandardShipping = computed(() => checkoutGetters.getShippingTotal(props.order))
     const orderEstimatedTax = computed(() => checkoutGetters.getTaxTotal(props.order))
-    const numberOfOrderItems = computed(() => props.order.items.length)
+    const numberOfOrderItems = computed(() => props.order?.items?.length)
+    const orderShippedTo = computed(() => orderGetters.getShippedTo(props.order))
 
     return {
       orderNumber,
@@ -138,6 +153,7 @@ export default defineComponent({
       orderStandardShipping,
       orderEstimatedTax,
       numberOfOrderItems,
+      orderShippedTo,
     }
   },
 })
@@ -145,14 +161,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .order {
-  margin: var(--spacer-base);
   display: flex;
   gap: 2.67%;
   justify-content: space-between;
   flex-wrap: wrap;
+  margin: var(--spacer-base) auto;
 
   @include for-desktop {
-    margin: var(--spacer-base) auto;
     flex-wrap: nowrap;
   }
 
@@ -162,7 +177,12 @@ export default defineComponent({
   }
 
   .sf-property {
-    &__name,
+    &__name {
+      font-size: var(--font-size--base);
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
     &__value {
       font-size: var(--font-size--base);
     }
@@ -174,7 +194,6 @@ export default defineComponent({
 }
 
 .order-payment {
-  border-top: 1px solid var(--_c-gray-middle);
   padding-bottom: var(--spacer-base);
 
   &__title {
@@ -205,8 +224,19 @@ export default defineComponent({
   }
 }
 
-.details-hr {
-  border: none;
-  border-bottom: 2px solid var(--_c-green-primary);
+.items {
+  color: var(--_c-gray-primary);
+}
+
+.order-item-spacer {
+  height: 1px;
+  margin: var(--spacer-sm) -7.8% 0;
+  border-width: 0;
+  color: var(--_c-gray-middle);
+  background-color: var(--_c-gray-middle);
+
+  @include for-desktop {
+    margin: var(--spacer-sm) auto 0;
+  }
 }
 </style>

@@ -47,6 +47,7 @@
             <template #header-action>
               <div class="desktop-only">
                 <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
+                <hr class="order-history-hr order-history-hr--spacer" />
               </div>
             </template>
           </KiboOrderItemDetails>
@@ -345,13 +346,16 @@ export default defineComponent({
   }
 }
 
-.filter-hr {
+.filter-hr,
+.order-history-hr {
   height: 1px;
   border-width: 0;
+  margin: 0 -7.8%;
   color: var(--_c-gray-middle);
   background-color: var(--_c-gray-middle);
 
-  &--time-filter {
+  &--time-filter,
+  &--spacer {
     color: var(--_c-green-primary);
     background-color: var(--_c-green-primary);
   }
