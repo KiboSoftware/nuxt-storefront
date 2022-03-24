@@ -243,10 +243,9 @@ export default {
   FullRewards: "Full rewards program benefits",
   ManageWishlist: "Manage your wishlist",
   SelectCountry: "Select Country",
-  "Checking the status of your order is fast and simple!":
-    "Checking the status of your order is fast and simple!",
-  "Simply enter your order number and billing email to track your order":
-    "Simply enter your order number and billing email to track your order",
+  checkOrderStatus: "Checking the status of your order is fast and simple!",
+  enterOrderNumberAndBillingEmail:
+    "Simply enter your order number and billing email to track your order.",
   "View Order Status": "View Order Status",
   "Check Order Status": "Check Order Status",
   "Filter Orders": "Filter Orders",
@@ -256,7 +255,7 @@ export default {
   "View More": "View More",
   item: "item | items",
   "Order Number": "Order Number",
-  "Enter your order number": "Enter your order number",
+  enterOrderNumber: "Enter your order number",
   "Billing Email": "Billing Email",
-  "Enter a valid billing email address": "Enter a valid billing email address",
+  enterValidEmailAddress: "Enter a valid billing email address",
 }

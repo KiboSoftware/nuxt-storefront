@@ -7,10 +7,10 @@
     <hr class="order-status-hr" />
     <div v-show="!isOpenOrderStatus" class="order-status">
       <div class="status-order">
-        {{ $t("Checking the status of your order is fast and simple!") }}
+        {{ $t("checkOrderStatus") }}
       </div>
       <div class="track-order">
-        {{ $t("Simply enter your order number and billing email to track your order.") }}
+        {{ $t("enterOrderNumberAndBillingEmail") }}
       </div>
       <form class="form order-status-form" @submit.prevent="() => false">
         <SfInput
@@ -19,7 +19,7 @@
           v-model="form.orderNumber"
           class="form__element form__element--half"
           name="orderNumber"
-          :placeholder="`${$t('Enter your order number')}`"
+          :placeholder="`${$t('enterOrderNumber')}`"
           required
         />
         <SfInput
@@ -28,7 +28,7 @@
           v-model="form.billingEmail"
           class="form__element form__element--half form__element--half-even"
           name="billingEmail"
-          :placeholder="`${$t('Enter a valid billing email address')}`"
+          :placeholder="`${$t('enterValidEmailAddress')}`"
           required
         />
         <SfButton
