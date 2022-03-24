@@ -20,7 +20,7 @@ const getParentCategory = async (categories: PrCategory[], categoryCode: String 
     if (parent.categoryCode.toString() === categoryCode) {
       return categories
     } else if (parent.childrenCategories) {
-      await getParentCategory(parent.childrenCategories, categoryCode)
+      return await getParentCategory(parent.childrenCategories, categoryCode)
     }
   }
 }
