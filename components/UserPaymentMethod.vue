@@ -14,6 +14,7 @@
             <UserSavedCard
               :payment-method="paymentMethod"
               :is-readonly="isReadonly"
+              :selected-card-id="selectedCardId"
               @click:delete-card="handleDeleteCard(paymentMethod)"
               @click:edit-card="updatePaymentMethod(paymentMethod)"
               @onSelect="onCardSelection(paymentMethod)"
@@ -22,10 +23,12 @@
         </div>
       </div>
     </transition-group>
-    <KiboPayment
+    <KiboPaymentForm
       v-if="showPaymentMethodForm"
       :key="activePaymentMethod.card.id"
       :value="activePaymentMethod"
+      :show-payment-method-form="showPaymentMethodForm"
+      :is-checkout="isCheckout"
       @input="setInputCardData"
     />
 
@@ -43,7 +46,7 @@
         <div class="same-as-shipping">
           <SfCheckbox
             v-model="sameAsShipping"
-            :label="$t('Save Billing Address Same As Shipping')"
+            :label="$t('BillingAddressSameAsShipping')"
             name="copyShippingAddress"
             class="form__element form__checkbox"
             @change="copyFromShipping"
@@ -56,7 +59,7 @@
         v-if="showDefaultCheckbox && showPaymentMethodForm"
         v-model="isDefaultPaymentMethod"
         name="is-default"
-        :label="$t('Save as default')"
+        :label="$t('makeThisMyDefaultPayment')"
         class="form__checkbox"
       />
     </div>
@@ -114,21 +117,26 @@ export default defineComponent({
     },
     showCopyFromShipping: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     shipping: {
       type: Object,
       default: null,
     },
+    isCheckout: {
+      type: Boolean,
+      default: () => false,
+    },
   },
   setup(props, context) {
-    const activePaymentMethod = ref({})
-    const activeAddress = ref({})
+    const activePaymentMethod = ref(props.paymentMethods || {})
+    const activeAddress = ref(props.paymentMethods.address || {})
     const isNewPaymentMethod = ref(false)
     const showPaymentMethodForm = ref(false)
     const isDefaultPaymentMethod = ref(false)
     const isValidFormData = ref(true)
     const sameAsShipping = ref(false)
+    const selectedCardId = ref("")
 
     const getAddressData = (address) => {
       activeAddress.value = { ...address }
@@ -173,6 +181,7 @@ export default defineComponent({
 
     const onCardSelection = (paymentMethod) => {
       activePaymentMethod.value = paymentMethod
+      selectedCardId.value = paymentMethod?.card.id
       context.emit("onSelect", activePaymentMethod)
     }
     const closePaymentMethodForm = () => {
@@ -185,6 +194,7 @@ export default defineComponent({
         address: { ...activeAddress.value },
         cardInput: { ...activePaymentMethod.value },
         setAsDefault: isDefaultPaymentMethod.value,
+        sameAsShipping: sameAsShipping.value,
       })
       closePaymentMethodForm()
     }
@@ -216,6 +226,7 @@ export default defineComponent({
       sameAsShipping,
       copyFromShipping,
       handleDeleteCard,
+      selectedCardId,
     }
   },
 })
@@ -281,6 +292,6 @@ div {
 
 .same-as-shipping,
 .no-shipping-payment-method {
-  margin-bottom: var(--spacer-xs);
+  margin-bottom: var(--spacer-base);
 }
 </style>

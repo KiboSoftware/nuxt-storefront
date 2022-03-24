@@ -3,7 +3,7 @@
     <div class="form">
       <SfCheckbox
         v-model="sameAsShipping"
-        :label="$t('Save Billing Address Same As Shipping')"
+        :label="$t('BillingAddressSameAsShipping')"
         name="copyShippingAddress"
         class="form__element form__checkbox"
         @change="$emit('sameAsShipping', sameAsShipping)"

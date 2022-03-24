@@ -194,7 +194,7 @@ export default {
   Country: "Country",
   "Phone Number": "Phone number",
   "Save Billing Address": "Save billing address",
-  "Save Billing Address Same As Shipping": "Save billing address same as shipping",
+  BillingAddressSameAsShipping: "Billing address same as shipping",
   "Select Shipping Option": "Select Shipping Option",
   Price: "Price",
   "Change Store": "Change Store",
@@ -258,4 +258,5 @@ export default {
   enterOrderNumber: "Enter your order number",
   "Billing Email": "Billing Email",
   enterValidEmailAddress: "Enter a valid billing email address",
+  makeThisMyDefaultPayment: "Make this my default payment",
 }

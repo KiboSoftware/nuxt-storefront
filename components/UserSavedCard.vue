@@ -2,11 +2,12 @@
   <div>
     <div v-if="isReadonly" class="card-list">
       <div class="card-list__content">
-        <SfRadio
+        <KiboRadio
           :key="card.id"
           :label="card.cardNumberPart"
+          :value="card.id"
           name="payment-method"
-          selected=""
+          :selected="selectedCardId"
           class="form__radio payment-method"
           @change="$emit('onSelect', card)"
         >
@@ -34,7 +35,7 @@
               </UserCardView>
             </div>
           </template>
-        </SfRadio>
+        </KiboRadio>
       </div>
     </div>
     <div v-else class="card-list">
@@ -83,14 +84,13 @@
 
 <script lang="ts">
 import { defineComponent, computed } from "@vue/composition-api"
-import { SfBadge, SfRadio, SfIcon } from "@storefront-ui/vue"
+import { SfBadge, SfIcon } from "@storefront-ui/vue"
 import { creditCardPaymentGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserSavedCard",
   components: {
     SfBadge,
-    SfRadio,
     SfIcon,
   },
   props: {
@@ -101,6 +101,10 @@ export default defineComponent({
     isReadonly: {
       type: Boolean,
       default: false,
+    },
+    selectedCardId: {
+      type: String,
+      default: "",
     },
   },
 
