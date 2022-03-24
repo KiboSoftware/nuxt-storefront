@@ -59,7 +59,6 @@ export default {
         buttonText: "Shop Holiday Items on Sale",
         background: "rgb(236, 239, 241)",
         image: "https://i.pinimg.com/474x/ac/0f/38/ac0f388b725f5c24d4f0b63c547be9f5.jpg",
-        // className: "sf-hero-item--position-bg-top-left sf-hero-item--align-right",
       },
       {
         title: "Save upto 30%",
