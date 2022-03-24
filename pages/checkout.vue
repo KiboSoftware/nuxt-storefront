@@ -256,9 +256,8 @@ export default {
         `${getOrder.value?.invalidCoupons[0]?.couponCode} ${context.root.$t("is an invalid code")}`
     )
 
-    const appliedCoupons = computed(() => getOrder.value?.couponCodes)
-
     const areCouponsApplied = computed(() => getOrder.value?.couponCodes?.length > 0)
+    const appliedCoupons = computed(() => getOrder.value?.couponCodes)
 
     // personalDetails
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })

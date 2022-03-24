@@ -60,6 +60,42 @@ const handlePasswordSchema = (contextRoot) =>
       .matches(/[!@#$%^&*]/g, contextRoot.$t("Password special character check")),
   })
 
+const handlePaymentSchema = (contextRoot) => {
+  return yup.object({
+    cardNumber: yup
+      .string()
+      .required(contextRoot.$t("cardNumberRequired"))
+      .matches(/^\d{15,16}$/g, contextRoot.$t("cardNumberInvalid"))
+      .test({
+        name: "card-type",
+        test: (value) => {
+          const pattern = /^\d{15,16}$/
+          return !value.match(pattern) && creditCardType(value).length !== 0
+            ? ""
+            : contextRoot.$t("cardNumberInvalid")
+        },
+      }),
+    expiryDate: yup
+      .string()
+      .required(contextRoot.$t("expiryDateRequired"))
+      .matches(/^(0?[1-9]|1[012])[/-]\d{4}$/g, contextRoot.$t("expiryDateInvalidFormat"))
+      .test({
+        name: "expiry-date",
+        test: (value) => {
+          const month = parseInt(value.split("/")[0])
+          const year = parseInt(value.split("/")[1])
+          const currentDate = new Date()
+          const someDay = new Date()
+          someDay.setFullYear(year, month, 1)
+          return someDay >= currentDate ? contextRoot.$t("expiryDateInvalid") : ""
+        },
+      }),
+    cvv: yup
+      .string()
+      .required(contextRoot.$t("cvvRequired"))
+      .matches(/^\d{3,4}$/g, contextRoot.$t("cvvInvalid")),
+  })
+}
 export const useUiValidationSchemas = (contextRoot, schemaName) => {
   const validate = {
     addressForm: handleAddressFormSchema(contextRoot),
@@ -67,59 +103,7 @@ export const useUiValidationSchemas = (contextRoot, schemaName) => {
     createAccount: handleCreateAccountSchema(contextRoot),
     shippingRates: handleShippingRatesSchema(contextRoot),
     password: handlePasswordSchema(contextRoot),
+    payment: handlePaymentSchema(contextRoot),
   }
   return validate[schemaName]
-}
-// ##TODO below validation will be handled by yup schema in icky-533
-
-export const useUiValidation = (contextRoot, fieldName, fieldValue) => {
-  const validate = {
-    cardNumber: handleCardNumber(contextRoot, fieldValue),
-    expiryDate: handleCardExpiryDate(contextRoot, fieldValue),
-    cvv: handleCardCVV(contextRoot, fieldValue),
-  }
-
-  return validate[fieldName]
-}
-
-const handleCardNumber = (contextRoot, fieldValue) => {
-  const pattern = /^\d{15,16}$/
-  if (!fieldValue) {
-    return { isValid: false, message: contextRoot.$t("cardNumberRequired") }
-  } else if (!fieldValue.match(pattern) || creditCardType(fieldValue).length === 0) {
-    return { isValid: false, message: contextRoot.$t("cardNumberInvalid") }
-  }
-  return { isValid: true, message: "" }
-}
-
-const handleCardExpiryDate = (contextRoot, fieldValue) => {
-  const pattern = /^(0?[1-9]|1[012])[/-]\d{4}$/
-
-  if (!fieldValue) {
-    return { isValid: false, message: contextRoot.$t("expiryDateRequired") }
-  } else if (!fieldValue.match(pattern)) {
-    return { isValid: false, message: contextRoot.$t("expiryDateInvalidFormat") }
-  } else {
-    const month = parseInt(fieldValue.split("/")[0])
-    const year = parseInt(fieldValue.split("/")[1])
-
-    const currentDate = new Date()
-    const someDay = new Date()
-    someDay.setFullYear(year, month, 1)
-    if (someDay > currentDate) {
-      return { isValid: true, message: "" }
-    } else {
-      return { isValid: false, message: contextRoot.$t("expiryDateInvalid") }
-    }
-  }
-}
-
-const handleCardCVV = (contextRoot, fieldValue) => {
-  const pattern = /^\d{3,4}$/
-  if (!fieldValue) {
-    return { isValid: false, message: contextRoot.$t("cvvRequired") }
-  } else if (!fieldValue.match(pattern)) {
-    return { isValid: false, message: contextRoot.$t("cvvInvalid") }
-  }
-  return { isValid: true, message: "" }
 }

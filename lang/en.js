@@ -242,4 +242,5 @@ export default {
   EarnCredits: "Earn credits with every purchase",
   FullRewards: "Full rewards program benefits",
   ManageWishlist: "Manage your wishlist",
+  SelectCountry: "Select Country",
 }
