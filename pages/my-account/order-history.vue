@@ -39,6 +39,7 @@
           <div class="order-history__details">
             <div v-for="order in orders" :key="order.id" @click="gotoOrderDetails(order)">
               <KiboOrderItem :order="order" />
+              <hr class="filter-hr" />
             </div>
           </div>
         </div>
@@ -225,13 +226,6 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss">
-@include for-mobile {
-  .content {
-    width: 100%;
-  }
-}
-</style>
 <style lang="scss" scoped>
 #order-history-container {
   box-sizing: border-box;
@@ -252,11 +246,6 @@ export default defineComponent({
 }
 
 .sf-bar {
-  margin-left: calc(var(--spacer-2xs) * 7);
-  @include for-desktop {
-    margin-left: 0;
-  }
-
   ::v-deep &__title {
     padding-left: calc(var(--spacer-2xs) * 3.5);
   }
@@ -276,7 +265,6 @@ export default defineComponent({
 .history-filter {
   display: flex;
   justify-content: center;
-  margin-inline: calc(var(--spacer-2xs) * 7.5);
   margin-bottom: calc(var(--spacer-xl) / 8);
 
   &__tiles {
@@ -290,7 +278,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin: var(--spacer-base);
+  margin: var(--spacer-base) 0;
   color: var(--c-black);
   font-size: var(--font-size--xl);
   line-height: var(--spacer-base);
@@ -353,6 +341,7 @@ export default defineComponent({
   margin: 0 -7.8%;
   color: var(--_c-gray-middle);
   background-color: var(--_c-gray-middle);
+  margin: 0 -7.8%;
 
   &--time-filter,
   &--spacer {

@@ -27,6 +27,8 @@
             </SfListItem>
           </SfList>
         </SfAccordionItem>
+        <div class="vertical-space vertical-space--hr"></div>
+
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Shipping Address')">
           <SfList>
             <SfListItem>
@@ -42,6 +44,8 @@
             </SfListItem>
           </SfList>
         </SfAccordionItem>
+        <div class="vertical-space vertical-space--hr"></div>
+
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Payment Method')">
           <SfList>
             <SfListItem>
@@ -57,10 +61,12 @@
             </SfListItem>
           </SfList>
         </SfAccordionItem>
+        <div class="vertical-space vertical-space--hr"></div>
       </SfAccordion>
       <div class="order-header-border">
         <div class="header-text-font">{{ $t("Order Details") }}</div>
       </div>
+      <div class="vertical-space vertical-space--hr"></div>
     </div>
     <div class="order-history">
       <SfButton
@@ -72,8 +78,8 @@
         <SfChevron class="sf-chevron--right" />
       </SfButton>
     </div>
+    <div class="vertical-space"></div>
     <div>
-      <div class="vertical-space"></div>
       <div class="spacer">
         <span class="profile-logout" @click="changeActivePage('Log out')">{{ $t("Log out") }}</span>
       </div>
@@ -327,13 +333,6 @@ export default defineComponent({
   },
 })
 </script>
-<style lang="scss">
-@include for-mobile {
-  .content {
-    width: 100%;
-  }
-}
-</style>
 <style lang="scss" scoped>
 #my-account {
   box-sizing: border-box;
@@ -357,24 +356,14 @@ export default defineComponent({
   }
 }
 
-div.kibo-sf-accordion-item {
-  border: none;
-  border-bottom: 1px solid var(--_c-white-secondary);
-}
-
 .sf-accordion-item {
-  padding: 0 calc(var(--spacer-2xs) * 3.5);
-
-  @include for-desktop {
-    padding: 0;
-  }
-
   ::v-deep &__content {
-    padding-top: 0;
+    padding: 0;
     border: none;
   }
 
   ::v-deep &__header {
+    padding: 0;
     justify-content: space-between;
     color: var(--_c-dark-primary);
     font-size: var(--font-size--base);
@@ -384,8 +373,6 @@ div.kibo-sf-accordion-item {
 
     @include for-desktop {
       height: calc(var(--spacer-xl) * 1.5);
-      padding-left: 0;
-      padding-right: 0;
     }
   }
 }
@@ -398,10 +385,6 @@ div.kibo-sf-accordion-item {
 }
 
 .sf-bar {
-  @include for-mobile {
-    margin-left: calc(var(--spacer-2xs) * 7);
-  }
-
   ::v-deep &__title {
     padding-left: calc(var(--spacer-2xs) * 3.5);
   }
@@ -428,43 +411,32 @@ div.kibo-sf-accordion-item {
   text-align: left;
   font-weight: bold;
   height: calc(var(--spacer-2xs) * 14.5);
-  margin-left: calc(var(--spacer-2xs) * 7);
 
   @include for-desktop {
     font-size: var(--font-size--4xl);
     line-height: calc(var(--spacer-xs) * 4.25);
-    margin-left: 0;
   }
 }
 
 .vertical-space {
   background-color: var(--_c-white-secondary);
-  width: 100%;
   height: calc(var(--spacer-2xs) * 4.75);
+  margin: 0 -7.8%;
+
+  &--hr {
+    height: 1px;
+  }
+  @include for-desktop {
+    margin: 0 auto;
+  }
 }
 
 .spacer {
   margin-top: calc(var(--spacer-2xs) * 2.5);
-  margin-left: calc(var(--spacer-2xs) * 7);
-  @include for-desktop {
-    margin-left: 0;
-  }
 }
 
 .profile-logout {
   cursor: pointer;
-}
-
-.order-header-border {
-  border: none;
-  border-bottom: 1px solid var(--_c-white-secondary);
-}
-
-.order-history {
-  margin: 0 calc(var(--spacer-2xs) * 3.5) 0 calc(var(--spacer-2xs) * 3.5);
-  @include for-desktop {
-    margin: 0;
-  }
 }
 
 .svg-inline--fa.fa-w-16 {
