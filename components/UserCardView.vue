@@ -27,7 +27,6 @@ export default defineComponent({
   },
 
   setup(props) {
-    const card = computed(() => props?.paymentCard || {})
     const cardLastDigits = computed(() =>
       creditCardPaymentGetters.getCardEndingDigits(props?.paymentCard)
     )
@@ -35,7 +34,6 @@ export default defineComponent({
       creditCardPaymentGetters.getExpireDate(props?.paymentCard)
     )
     return {
-      card,
       cardLastDigits,
       cardExpireDate,
     }

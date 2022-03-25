@@ -70,7 +70,7 @@ export default {
 
 @include for-mobile {
   .mobile-small-modal {
-    --modal-width: calc(var(--spacer-3xl) * 2);
+    --modal-width: 90%;
     --modal-top: 50%;
     --modal-left: 50%;
     --modal-bottom: none;
@@ -79,6 +79,10 @@ export default {
     --modal-height: auto;
     --modal-max-height: 90%;
     --modal-content-padding: var(--spacer-sm) var(--spacer-lg);
+  }
+
+  ::v-deep .sf-modal__container {
+    border-radius: 2%;
   }
 }
 </style>

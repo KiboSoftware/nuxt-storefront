@@ -4,10 +4,10 @@
       <div class="modal-content__header">{{ headerText }}</div>
       <div class="action-buttons" v-bind="{ actionHandler }">
         <SfButton class="color-light" :aria-disabled="false" :link="null" @click="$emit('onClose')">
-          {{ $t(buttonText1) }}
+          {{ cancelButtonText }}
         </SfButton>
         <SfButton :aria-disabled="false" :link="null" @click="handleDelete">
-          {{ $t(buttonText2) }}
+          {{ confirmationButtonText }}
         </SfButton>
       </div>
     </div>
@@ -21,11 +21,11 @@ export default {
     SfButton,
   },
   props: {
-    buttonText1: {
+    cancelButtonText: {
       type: String,
       default: "Cancel",
     },
-    buttonText2: {
+    confirmationButtonText: {
       type: String,
       default: "Delete",
     },
@@ -62,8 +62,12 @@ export default {
   justify-content: space-between;
   align-self: center;
   padding: calc(var(--spacer-2xs) * 2.5);
-  gap: var(--spacer-2xs);
-  width: 90%;
+  gap: var(--spacer-xs);
+  width: 100%;
+
+  @include for-desktop {
+    width: 90%;
+  }
 }
 
 .modal-content {
