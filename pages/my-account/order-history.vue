@@ -8,9 +8,17 @@
         @click:back="goBack"
       />
     </div>
+    <SfBar
+      v-show="isOpenOrderItem"
+      :title="barTitle"
+      :back="true"
+      class="title-bar desktop-only"
+      @click:back="goBack"
+    />
     <div v-show="!isOpenOrderList" class="order-history-title">
       <div class="header-text-weight">{{ title }}</div>
     </div>
+    <hr v-show="isOpenOrderItem" class="filter-hr filter-hr--time-filter" />
     <div>
       <div v-show="!isOpenOrderList" class="order-history">
         <div v-show="!isOpenOrderItem">
@@ -44,14 +52,7 @@
           </div>
         </div>
         <div v-if="isOpenOrderItem" class="order-details">
-          <KiboOrderItemDetails :order="selectedOrder">
-            <template #header-action>
-              <div class="desktop-only">
-                <SfBar :title="barTitle" :back="true" class="title-bar" @click:back="goBack" />
-                <hr class="order-history-hr order-history-hr--spacer" />
-              </div>
-            </template>
-          </KiboOrderItemDetails>
+          <KiboOrderItemDetails :order="selectedOrder" />
         </div>
       </div>
       <div v-show="isOpenOrderList" class="filters">
@@ -255,6 +256,10 @@ export default defineComponent({
   font-weight: bold;
   font-size: var(--font-size--xl);
   line-height: var(--spacer-base);
+
+  @include for-desktop {
+    font-size: calc(var(--spacer-2xs) * 7);
+  }
 }
 
 .order-history {
@@ -278,7 +283,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  margin: var(--spacer-base) 0;
+  margin: 0 0 var(--spacer-base) 0;
   color: var(--c-black);
   font-size: var(--font-size--xl);
   line-height: var(--spacer-base);
@@ -291,8 +296,6 @@ export default defineComponent({
 }
 
 .filters {
-  margin: 0 calc(var(--spacer-2xs) * 6.5);
-
   @include for-desktop {
     margin: 0;
   }
@@ -316,7 +319,7 @@ export default defineComponent({
     font-size: var(--font-size--lg);
     line-height: calc(var(--spacer-2xs) * 5.5);
     text-align: left;
-    margin: calc(var(--spacer-2xs) * 3.5) auto;
+    margin: calc(var(--spacer-2xs) * 3.5) 0;
   }
 }
 
@@ -341,7 +344,6 @@ export default defineComponent({
   margin: 0 -7.8%;
   color: var(--_c-gray-middle);
   background-color: var(--_c-gray-middle);
-  margin: 0 -7.8%;
 
   &--time-filter,
   &--spacer {

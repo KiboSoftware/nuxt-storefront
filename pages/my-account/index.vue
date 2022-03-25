@@ -21,6 +21,23 @@
 
       <SfAccordion open="" :multiple="false" transition="sf-fade" show-chevron>
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('My profile')">
+          <template #header="{ header, isOpen, accordionClick }">
+            <SfButton
+              :aria-pressed="isOpen.toString()"
+              :aria-expanded="isOpen.toString()"
+              :class="{ 'is-open': false }"
+              class="sf-button--pure sf-accordion-item__header"
+              @click="accordionClick"
+            >
+              {{ header }}
+              <slot name="additional-info" />
+              <SfChevron
+                tabindex="0"
+                class="sf-accordion-item__chevron"
+                :class="{ 'sf-chevron--top': isOpen }"
+              />
+            </SfButton>
+          </template>
           <SfList>
             <SfListItem>
               <KiboMyProfile />
@@ -30,6 +47,23 @@
         <div class="vertical-space vertical-space--hr"></div>
 
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Shipping Address')">
+          <template #header="{ header, isOpen, accordionClick }">
+            <SfButton
+              :aria-pressed="isOpen.toString()"
+              :aria-expanded="isOpen.toString()"
+              :class="{ 'is-open': false }"
+              class="sf-button--pure sf-accordion-item__header"
+              @click="accordionClick"
+            >
+              {{ header }}
+              <slot name="additional-info" />
+              <SfChevron
+                tabindex="0"
+                class="sf-accordion-item__chevron"
+                :class="{ 'sf-chevron--top': isOpen }"
+              />
+            </SfButton>
+          </template>
           <SfList>
             <SfListItem>
               <SfLoader :loading="loadingUserAddress">
@@ -47,6 +81,23 @@
         <div class="vertical-space vertical-space--hr"></div>
 
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Payment Method')">
+          <template #header="{ header, isOpen, accordionClick }">
+            <SfButton
+              :aria-pressed="isOpen.toString()"
+              :aria-expanded="isOpen.toString()"
+              :class="{ 'is-open': false }"
+              class="sf-button--pure sf-accordion-item__header"
+              @click="accordionClick"
+            >
+              {{ header }}
+              <slot name="additional-info" />
+              <SfChevron
+                tabindex="0"
+                class="sf-accordion-item__chevron"
+                :class="{ 'sf-chevron--top': isOpen }"
+              />
+            </SfButton>
+          </template>
           <SfList>
             <SfListItem>
               <SfLoader :loading="isLoadingPaymentMethods">
