@@ -4,17 +4,11 @@
       <SfBar
         :title="barTitle"
         :back="true"
-        class="title-bar smartphone-only"
+        class="title-bar"
+        :class="{ 'smartphone-only': !isOpenOrderItem }"
         @click:back="goBack"
       />
     </div>
-    <SfBar
-      v-show="isOpenOrderItem"
-      :title="barTitle"
-      :back="true"
-      class="title-bar desktop-only"
-      @click:back="goBack"
-    />
     <div v-show="!isOpenOrderList" class="order-history-title">
       <div class="header-text-weight">{{ title }}</div>
     </div>
