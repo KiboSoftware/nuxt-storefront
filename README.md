@@ -1,11 +1,79 @@
-# kibo-nuxt-vue-starter
+# Kibo NuxtJS Storefront Starter
+
+Headless storefront built using VueJS, on [NuxtJS 3 (bridge)](https://v3.nuxtjs.org/) using [StorefrontUI](https://www.storefrontui.io/) and custom components
+
+Demo: [nuxt-storefront-iota.vercel.app](https://nuxt-storefront-iota.vercel.app/)
+
+## Features
+
+- Performant
+- SEO Ready
+- Internationalization
+- Responsive
+- UI Components
+- Theming
+
+#### Ecommerce Features
+
+- Product
+  - View and Configure Product Variants
+  - Add to Cart
+  - Add to wishlist
+- Product Listing
+  - Search Products by Category or Query
+  - Search Faceting on Product Attributes
+- User Account
+  - Login, Register and manage Addresses
+  - View Order History
+- Cart
+  - Get Cart
+  - Add / Remove Cart Items
+- Checkout
+- Store Locations
+  - Search for nearby Store locations
+- CMS components
+
+## Requirements:
+
+- NodeJS v14 or later
+- KiboCommerce Account
+
+## Steps
+
+1. [Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) or clone the repo
+   ```
+   example:
+   git clone https://github.com/KiboSoftware/nuxt-storefront
+   cd nuxt-storefront
+   ```
+2. Checkout develop branch `git checkout develop`
+3. Run `yarn` to install dependencies
+4. Create a .env file from the .env.template file
+   ```
+   $ cp .env.template .env
+   ```
+5. The following data is required to configure the Kibo Nuxt Storefront.
+
+- `KIBO_API_HOST` - Your Kibo Commerce API Host.
+- `KIBO_AUTH_HOST` - Kibo Commerce Authentication Host Server. It is used to request an access token from Kibo Commerce OAuth 2.0 service. Production and Production sandbox, use `home.mozu.com`
+- `KIBO_CLIENT_ID` - Unique Application (Client) ID of your Application
+- `KIBO_SHARED_SECRET` - Secret API key used to authenticate application. Viewable from your [Kibo eCommerce Dev Center](https://mozu.com/login)
+- `KIBO_PCI_HOST` - PCI payments host, For Production and Production sandbox, use `pmts.mozu.com`
+
+```
+    example:
+    KIBO_AUTH_HOST=home.mozu.com
+    KIBO_CLIENT_ID=i7d6294.HeadlessStorefront.1.0.0.Release
+    KIBO_SHARED_SECRET=132213b896c3499592954ea6a92b6825
+    KIBO_API_HOST=t26507-s41315.sandbox.mozu.com
+    KIBO_PCI_HOST=pmts.mozu.com
+```
+
+Visit [Kibo documentation](https://docs.kibocommerce.com/221803/1108695-getting-started-headless) for more details on creating a clientId and sharedSecret
 
 ## Build Setup
 
 ```bash
-# install dependencies
-$ yarn install
-
 # serve with hot reload at localhost:3000
 $ yarn dev
 
@@ -17,53 +85,12 @@ $ yarn start
 $ yarn generate
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+## Resources
 
-## Special Directories
+[Kibo API Documentation](https://apidocs.kibocommerce.com/?spec=overview#overview)
+[NuxtJS](https://v3.nuxtjs.org/)
+[StorefrontUI](https://www.storefrontui.io/)
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+## Contributors
 
-### `assets`
-
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
-
-### `components`
-
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
-
-### `layouts`
-
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
-
-### `pages`
-
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
-
-### `plugins`
-
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
-
-### `static`
-
-This directory contains your static files. Each file inside this directory is mapped to `/`.
-
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
-
-### `store`
-
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
-
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
-# nuxt-storefront
+Contributions of all kind welcome!
