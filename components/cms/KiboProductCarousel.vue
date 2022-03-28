@@ -1,60 +1,46 @@
 <template>
-  <div class="carousel-wrapper">
-    <h2>{{ title }}</h2>
-    <div>
-      <SfCarousel
-        v-if="products"
-        class="carousel"
-        :settings="{ peek: 16, breakpoints: { 1023: { peek: 0, perView: 2 } } }"
-      >
-        <template #prev="{ go }">
-          <SfArrow aria-label="prev" class="sf-arrow--left sf-arrow--long" @click="go('prev')" />
-        </template>
-        <template #next="{ go }">
-          <SfArrow aria-label="next" class="sf-arrow--right sf-arrow--long" @click="go('next')" />
-        </template>
-        <SfCarouselItem
-          v-for="(product, i) in products"
-          :key="`carousel-item-${productGetters.getProductId(product)}`"
-          class="carousel__item"
-        >
-          <KiboProductCard
-            :key="productGetters.getProductId(product)"
-            :style="{ '--index': i }"
-            :score-rating="3"
-            :max-rating="5"
-            wishlist-icon=""
-            is-in-wishlist-icon=""
-            :is-in-wishlist="false"
-            :title="productGetters.getName(product)"
-            :image="productGetters.getCoverImage(product)"
-            :show-add-to-cart-button="false"
-            :regular-price="`$${productGetters.getPrice(product).regular}`"
-            :special-price="
-              productGetters.getPrice(product).special && productGetters.getPrice(product).special
-            "
-            :link="localePath(getProductLink(productGetters.getProductId(product)))"
-            image-width="12.563rem"
-            image-height="12.563rem"
-            class="products__product-card"
-          />
-        </SfCarouselItem>
-      </SfCarousel>
+  <div class="carousel-wrapper" v-if="!loading && products.length > 0">
+    <div class="header">
+      <p class="title">{{ title }}</p>
+      <SfLink>{{ $t("Shop All") }}</SfLink>
+    </div>
+    <div class="product-carousel-container">
+      <KiboProductCard
+        v-for="(product, i) in products"
+        :key="productGetters.getProductId(product)"
+        :style="{ '--index': i }"
+        :score-rating="3"
+        :max-rating="5"
+        wishlist-icon=""
+        is-in-wishlist-icon=""
+        :is-in-wishlist="false"
+        :title="productGetters.getName(product)"
+        :image="productGetters.getCoverImage(product)"
+        :show-add-to-cart-button="false"
+        :regular-price="`$${productGetters.getPrice(product).regular}`"
+        :special-price="
+          productGetters.getPrice(product).special && productGetters.getPrice(product).special
+        "
+        :link="localePath(getProductLink(productGetters.getProductId(product)))"
+        image-width="12.563rem"
+        image-height="12.563rem"
+        class="products__product-card"
+      />
     </div>
   </div>
 </template>
 <script>
-import { SfCarousel, SfArrow } from "@storefront-ui/vue"
+import { SfLink } from "@storefront-ui/vue"
 import { useProductSearch, useUiHelpers } from "@/composables"
 import { productGetters } from "@/lib/getters"
 export default {
   components: {
-    SfCarousel,
-    SfArrow,
+    SfLink,
   },
   props: {
     productCodes: {
-      type: Array
+      type: Array,
+      default: () => [],
     },
     title: {
       type: String,
@@ -62,9 +48,9 @@ export default {
     },
   },
   setup(props) {
-    const { search, result } = useProductSearch(`top-sellers`)
+    const { search, result, loading } = useProductSearch(`top-sellers`)
     const { getProductLink } = useUiHelpers()
-    const products = computed(() => result.value?.items)
+    const products = computed(() => result.value?.items || [])
     const { productCodes } = props
 
     onMounted(async () => {
@@ -80,18 +66,43 @@ export default {
       products,
       productGetters,
       getProductLink,
+      loading,
     }
   },
 }
 </script>
 <style lang="scss" scoped>
-h2 {
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
+.carousel-wrapper {
+  box-sizing: border-box;
+  margin: calc(var(--spacer-sm) * 2) 0 calc(var(--spacer-sm) * 3);
 }
 
-.carousel-wrapper {
-  margin: 80px 0 100px;
+.title {
+  font-size: var(--font-size--lg);
+  font-weight: bold;
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 var(--spacer-base) var(--spacer-base);
+  @include for-desktop {
+    margin: 0 0 var(--spacer-base) 0;
+  }
+}
+
+.sf-link {
+  text-decoration: none;
+  font-family: var(--font-family--primary);
+}
+
+.product-carousel-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  column-gap: var(--spacer-xs);
+  padding: var(--spacer-xs) var(--spacer-base);
+  background-color: var(--_c-white-primary);
 }
 </style>

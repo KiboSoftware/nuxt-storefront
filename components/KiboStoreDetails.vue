@@ -120,7 +120,7 @@ export default defineComponent({
     text-decoration: underline;
     padding: var(--spacer-sm) var(--spacer-sm) var(--spacer-sm) 0;
     @include for-desktop {
-      padding: calc(var(--spacer-sm) * 0.5) 0;
+      padding: var(--spacer-xs) 0;
     }
   }
 }

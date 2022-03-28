@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div>
     <SfHero class="hero" :slider-options="{ autoplay: false }">
       <SfHeroItem
         v-for="(img, index) in heroes"
@@ -31,6 +32,19 @@
         </template>
       </SfHeroItem>
     </SfHero>
+    </div>
+    <div class="product-carousels">
+      <KiboProductCarousel
+        class="carousels"
+        :title="'Recently Viewed & Related'"
+        :product-codes="relatedProducts"
+      />
+      <KiboProductCarousel
+        class="carousels"
+        :title="'Recommended for you'"
+        :product-codes="recommendedProducts"
+      />
+    </div>
     <div class="large-and-medium-content">
       <div class="large-content">
         <div class="large-content__header">{{ contentTiles.largeHeaderTitle }}</div>
@@ -55,7 +69,7 @@
           </div>
         </div>
       </div>
-    </div>
+    
   </div>
 </template>
 
@@ -68,9 +82,10 @@ import hoodieImg from "@/assets/images/Mobile-Homepage-Hoodie.png"
 import outdoorGearImg from "@/assets/images/Mobile-Homepage-OutdoorGear.png"
 import gymImg from "@/assets/images/Mobile-Homepage-Gym.png"
 import golfImg from "@/assets/images/Mobile-Homepage-Golf.png"
+import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
 
 export default {
-  components: { SfHero, SfButton },
+  components: { SfHero, SfButton, KiboProductCarousel },
   layout: "full-width",
   setup() {
     const pageName = "home-page"
@@ -234,10 +249,15 @@ export default {
       ],
     }
 
+    const relatedProducts = ["MS-CAM-001", "xxx", "MS-EYE-004", "MS-BTL-004", "MS-GIFT-002"]
+    const recommendedProducts = ["MS-BTL-003", "xxx", "MS-EYE-005", "MS-BTL-001", "MS-EYE-003"]
+
     return {
       pageName,
       heroes,
       contentTiles,
+      relatedProducts,
+      recommendedProducts
     }
   },
 }
@@ -348,6 +368,22 @@ export default {
     @include for-desktop {
       width: 24%;
     }
+  }
+}
+    
+.product-carousels {
+  display: block;
+  @include for-desktop {
+    margin: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.carousels {
+  width: auto;
+  @include for-desktop {
+    width: 48%;
   }
 }
 </style>
