@@ -14,8 +14,13 @@
           <SfIcon class="sf-header__icon">
             <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
           </SfIcon>
-          <div class="icon-name-sidebar">
-            <span>{{ $t("My Account") }} </span>
+          <div class="icon-name-sidebar" v-if="!isAuthenticated">
+            <span class="kibo-header__icon-title">{{ $t("My Account") }}</span>
+            <span class="kibo-header__icon-name">{{ $t("Log In") }}</span>
+          </div>
+          <div class="icon-name-sidebar" v-if="isAuthenticated">
+            <span class="kibo-header__icon-title">{{ `Hi, ${user.firstName}` }}</span>
+            <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
           </div>
         </SfButton>
       </template>
@@ -138,8 +143,13 @@
               <SfIcon class="sf-header__icon">
                 <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
               </SfIcon>
-              <div class="kibo-header__icon">
-                <span class="kibo-header__icon-name"> My Account</span>
+              <div class="kibo-header__icon" v-if="!isAuthenticated">
+                <span class="kibo-header__icon-title">{{ $t("My Account") }}</span>
+                <span class="kibo-header__icon-name">{{ $t("Log In") }}</span>
+              </div>
+              <div class="kibo-header__icon" v-if="isAuthenticated">
+                <span class="kibo-header__icon-title">{{ `Hi, ${user.firstName}` }}</span>
+                <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
               </div>
             </SfButton>
             <SfButton
@@ -600,11 +610,18 @@ export default defineComponent({
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    padding-left: var(--spacer-2xs);
+    padding-left: var(--spacer-xs);
   }
 
   &__icon-name {
     font-size: var(--font-size--xs);
+    white-space: nowrap;
+  }
+
+  &__icon-title {
+    font-size: var(--font-size--sm);
+    font-weight: bold;
+    white-space: nowrap;
   }
 }
 
@@ -679,6 +696,8 @@ export default defineComponent({
 }
 
 .icon-name-sidebar {
+  display: flex;
+  flex-direction: column;
   padding-left: var(--font-size--xs);
   color: var(--_c-dark-primary);
   font-family: var(--font-family--primary);

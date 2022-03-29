@@ -41,12 +41,11 @@
             <SfButton
               type="submit"
               class="form__submit login-button sf-button--text-lg"
+              :class="`${!isLoginDisabled ? 'login-button__is-disabled--button' : ''}`"
               data-testid="log-in-button"
-              :disabled="loading"
+              :disabled="!isLoginDisabled"
             >
-              <SfLoader :class="{ loader: loading }" :loading="loading">
-                <div>{{ $t("Log In") }}</div>
-              </SfLoader>
+              <div>{{ $t("Log In") }}</div>
             </SfButton>
           </div>
         </form>
@@ -123,7 +122,7 @@
             class="sf-button--full-width form__submit"
             data-testid="create-acount-button"
           >
-            Create an account
+            {{ $t("Create an account") }}
           </SfButton>
         </form>
         <SfButton
@@ -131,7 +130,7 @@
           data-testid="log-in-account"
           @click="setIsLoginValue(true)"
         >
-          or Log In To Your Account
+          {{ $t("loginToYourAccount") }}
         </SfButton>
       </div>
     </transition>
@@ -221,6 +220,11 @@ export default {
       }
     }
 
+    const isLoginDisabled = computed(() => {
+      const userInput = form.value as LoginFormType
+      return userInput.username && userInput.password
+    })
+
     return {
       form,
       userError,
@@ -239,6 +243,7 @@ export default {
       login,
       isAuthenticated,
       user,
+      isLoginDisabled,
     }
   },
 }
@@ -317,6 +322,12 @@ export default {
   border-radius: var(--spacer-2xs);
   padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) 0 calc(var(--spacer-base) * 2.8);
   align-self: center;
+
+  &__is-disabled--button {
+    --button-background: var(--_c-green-primary-disabled);
+
+    color: var(--_c-white-disabled);
+  }
 }
 
 .sf-heading {
