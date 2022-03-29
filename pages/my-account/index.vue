@@ -134,6 +134,7 @@
       <div class="spacer">
         <span class="profile-logout" @click="changeActivePage('Log out')">{{ $t("Log out") }}</span>
       </div>
+      <div class="vertical-space vertical-space--hr"></div>
     </div>
   </div>
 </template>
@@ -423,6 +424,7 @@ export default defineComponent({
     border: none;
 
     @include for-desktop {
+      font-size: calc(var(--font-size--base) * 1.25);
       height: calc(var(--spacer-xl) * 1.5);
     }
   }
@@ -475,6 +477,7 @@ export default defineComponent({
   margin: 0 -7.8%;
 
   &--hr {
+    background-color: var(--_c-gray-secondary);
     height: 1px;
   }
   @include for-desktop {
@@ -483,11 +486,19 @@ export default defineComponent({
 }
 
 .spacer {
-  margin-top: calc(var(--spacer-2xs) * 2.5);
+  margin: calc(var(--spacer-2xs) * 2.5) 0;
+
+  @include for-desktop {
+    margin: var(--spacer-sm) 0;
+  }
 }
 
 .profile-logout {
   cursor: pointer;
+
+  @include for-desktop {
+    font-size: calc(var(--font-size--base) * 1.25);
+  }
 }
 
 .svg-inline--fa.fa-w-16 {
