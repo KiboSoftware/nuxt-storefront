@@ -151,21 +151,6 @@ export default defineComponent({
     }
   }
 
-  &__content {
-    flex: auto;
-
-    .sf-badge {
-      --badge-color: var(--c-white);
-      --badge-padding: var(--spacer-xs);
-      --badge-width: calc(var(--spacer-sm) * 3);
-      --badge-height: var(--spacer-lg);
-
-      font-size: var(--font-size--xs);
-      font-style: italic;
-      border-radius: var(--spacer-2xs);
-    }
-  }
-
   &__actions {
     display: flex;
     flex-direction: column;
