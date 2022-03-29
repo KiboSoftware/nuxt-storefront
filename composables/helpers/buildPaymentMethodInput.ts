@@ -32,7 +32,7 @@ export const buildPaymentMethodInput = (
     amount: checkoutGetters.getTotal(checkout?.value),
     newBillingInfo: {
       ...billingInfo,
-      paymentWorkflow: creditCardData.card.paymentWorkflow,
+      paymentWorkflow: creditCardData.paymentWorkflow,
       isSameBillingShippingAddress: isBillingAddressAsShipping,
     },
   }
@@ -43,6 +43,7 @@ export const buildPaymentMethodInput = (
 export const defaultPaymentDetails = () => {
   return {
     paymentType: "",
+    paymentWorkflow: "Mozu",
     card: {
       cardType: "",
       cardNumber: "",
@@ -51,7 +52,6 @@ export const defaultPaymentDetails = () => {
       expireMonth: 0,
       expireYear: 0,
       isCardInfoSaved: false,
-      paymentWorkflow: "Mozu",
       isCardDetailsFilled: false,
     },
   }

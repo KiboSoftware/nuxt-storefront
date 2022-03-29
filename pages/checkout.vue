@@ -33,25 +33,16 @@
             </KiboShipping>
           </SfStep>
           <SfStep name="Payment">
-            <SfPayment @input="payment = $event">
-              <template #billing-form>
-                <KiboBillingAddress
-                  :value="billingDetails"
-                  :shipping="updatedShippingAddress"
-                  :countries="countries"
-                  @billingAddressData="updateBillingDetails"
-                  @sameAsShipping="copyShippingAddress"
-                  @validateForm="validateBillingDetails"
-                />
-              </template>
-              <template #payment-form>
-                <KiboPayment
-                  :shipping="updatedShippingAddress"
-                  :countries="countries"
-                  @input="getPaymentMethodData"
-                />
-              </template>
-            </SfPayment>
+            <KiboPayments
+              :countries="countries"
+              :shipping-address="updatedShippingAddress"
+              :cards="cards"
+              :is-loading-payment-methods="isLoadingPaymentMethods"
+              :user-billing-addresses="userBillingAddresses"
+              :is-checkout="true"
+              @saveBillingAndPayments="saveBillingAndPayments"
+              @onPaymentSelect="onPaymentSelect"
+            />
           </SfStep>
           <SfStep name="Review">
             <KiboConfirmOrder :order="getOrder">
@@ -142,7 +133,7 @@
 </template>
 
 <script lang="ts">
-import { SfSteps, SfButton, SfPayment, SfLoader, SfCheckbox, SfLink } from "@storefront-ui/vue"
+import { SfSteps, SfButton, SfLoader, SfCheckbox, SfLink } from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
 import { useNuxtApp } from "#app"
 import {
@@ -154,14 +145,16 @@ import {
   useShippingMethods,
   usePurchaseLocation,
   useUserAddresses,
+  useCustomerCreditCards,
 } from "@/composables"
-import { buildPaymentMethodInput, defaultPaymentDetails } from "@/composables/helpers"
+import { buildPaymentMethodInput } from "@/composables/helpers"
 import {
   shopperContactGetters,
   shippingMethodGetters,
   checkoutLineItemGetters,
   productGetters,
   checkoutGetters,
+  userGetters,
 } from "@/lib/getters"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
@@ -169,7 +162,6 @@ export default {
   name: "Checkout",
   components: {
     SfSteps,
-    SfPayment,
     SfButton,
     SfLoader,
     SfCheckbox,
@@ -195,12 +187,15 @@ export default {
     const {
       load: loadUserAddresses,
       userShippingAddresses,
+      addUserAddress,
       userBillingAddresses,
+      loading: loadingUserAddress,
     } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
     const isTermsAndConditionsAccepted = ref(false)
     const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
+    const { load: loadCard, cards, loading: loadingUserCard, addCard } = useCustomerCreditCards()
     const { tokenizeCard, addPaymentMethodByTokenizeCard } = usePaymentMethods()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
 
@@ -210,6 +205,9 @@ export default {
     const transition = "sf-fade"
     const enableCurrentStep = ref(false)
     const enableNextStep = ref(false)
+    const isAuthenticated = computed(() => {
+      return userGetters.isLoggedInUser(user.value)
+    })
 
     const stepLabels = {
       GO_TO_SHIPPING: context?.root?.$t("Go to Shipping"),
@@ -261,7 +259,7 @@ export default {
 
     // personalDetails
     const personalDetails = ref({ firstName: "", lastName: "", email: "" })
-    let paymentDetails = ref(defaultPaymentDetails())
+
     const populatePersonalDetails = () => {
       personalDetails.value = shopperContactGetters.getPersonalDetails(
         checkout.value?.fulfillmentInfo?.fulfillmentContact,
@@ -359,76 +357,135 @@ export default {
     const validateShippingRates = (isValid) => {
       isValidShippingRates.value = isValid
     }
-    // billing
-    const billingDetails = computed(() => checkout.value?.billingInfo?.billingContact)
-    const updatedBillingAddress = ref({ ...billingDetails })
-    const updateBillingDetails = (newBillingDetails) => {
-      updatedBillingAddress.value = { ...newBillingDetails.address }
-    }
 
-    const saveBillingDetails = async () => {
-      const params = {
-        orderId: checkout.value?.id,
-        billingInfoInput: {
-          billingContact: {
-            ...updatedBillingAddress.value.address,
-            email: personalDetails.value?.email,
-          },
-        },
+    // billing and payment
+    const onPaymentSelect = async (selectedPaymentInfo) => {
+      const tokenizedData = {
+        id: selectedPaymentInfo.cardInput.card.id,
+        numberPart: selectedPaymentInfo.cardInput.card.cardNumberPart,
       }
-      await setBillingInfo(params)
-      await savePaymentDetails()
+      const paymentAction = buildPaymentMethodInput(
+        currencyCode,
+        checkout,
+        selectedPaymentInfo.cardInput,
+        tokenizedData,
+        selectedPaymentInfo.address,
+        false
+      )
+
+      await savePaymentMethodToOrder(paymentAction, selectedPaymentInfo.billingAddress)
     }
 
-    const isBillingAddressAsShipping = ref(false)
-    const copyShippingAddress = (isShippingAddress) => {
-      isBillingAddressAsShipping.value = isShippingAddress
+    const saveBillingAndPayments = async (newPaymentInfo) => {
+      if (newPaymentInfo.sameAsShipping) newPaymentInfo.address.id = 0
+      if (isAuthenticated.value && newPaymentInfo.cardInput?.card.isCardInfoSaved) {
+        await saveUserPaymentMethod(newPaymentInfo)
+      } else {
+        await savePaymentMethod(newPaymentInfo)
+      }
+    }
+
+    const saveUserPaymentMethod = async ({ address, cardInput, setAsDefault, sameAsShipping }) => {
+      const { card } = cardInput
+      const tokenizedData = await tokenizeCard(card)
+      if (!tokenizedData) {
+        return
+      }
+      const response = await saveUserAddress({ address, setAsDefault }, "Billing") // get address id here
+      const addressId = response?.id
+      // save Customer Card
+      const cardInputFormat = {
+        id: tokenizedData.id,
+        contactId: addressId,
+        cardType: card.cardType,
+        cardNumberPart: card.cardNumber,
+        expireMonth: card.expireMonth,
+        expireYear: card.expireYear,
+        isDefaultPayMethod: card.isDefaultPayMethod,
+      }
+      // add new scenarion
+      cardInputFormat.isDefaultPayMethod = setAsDefault
+      await addCard(user.value.id, cardInputFormat)
+
+      const paymentAction = buildPaymentMethodInput(
+        currencyCode,
+        checkout,
+        cardInput,
+        tokenizedData,
+        address,
+        sameAsShipping
+      )
+
+      await savePaymentMethodToOrder(paymentAction, address)
+
+      await loadUserAddresses(user.value.id)
+      await loadCard(user.value.id)
     }
 
     const isValidBillingDetails = ref(false)
     const validateBillingDetails = (isValid) => {
       isValidBillingDetails.value = isValid
     }
-    // accountCreation
-    const getPaymentMethodData = (updatedPaymentDetails) => {
-      paymentDetails = {
-        ...updatedPaymentDetails,
+
+    const saveUserAddress = ({ address, setAsDefault }, typeName) => {
+      const addressData = {
+        accountId: user.value.id,
+        customerContactInput: { ...address },
       }
-      enableCurrentStep.value = paymentDetails.value.card.isCardDetailsFilled // TODO: Handle next step validation once other checkout validations are done
+      addressData.customerContactInput.types = [
+        {
+          name: typeName,
+          isPrimary: setAsDefault,
+        },
+      ]
+      addressData.customerContactInput.accountId = user.value.id
+      return addUserAddress(addressData)
     }
 
-    const addPaymentMethod = async () => {
+    // Payment
+    const savePaymentMethod = async ({ address, cardInput, sameAsShipping }) => {
       let paymentAction
-      if (paymentDetails.value.paymentType.toLowerCase() === CardTypesSupported.creditcard) {
-        const tokenizedData = await tokenizeCard(paymentDetails.value.card)
-        if (tokenizedData) {
-          paymentAction = buildPaymentMethodInput(
-            currencyCode,
-            checkout,
-            paymentDetails.value,
-            tokenizedData,
-            updatedBillingAddress.value.address,
-            isBillingAddressAsShipping.value
-          )
+      if (cardInput.paymentType.toLowerCase() === CardTypesSupported.creditcard) {
+        const { card } = cardInput
+        const tokenizedData = await tokenizeCard(card)
+        if (!tokenizedData) {
+          return
         }
-      } else if (
-        paymentDetails.value.paymentType.toLowerCase() === CardTypesSupported.checkbymail
-      ) {
+
+        paymentAction = buildPaymentMethodInput(
+          currencyCode,
+          checkout,
+          cardInput,
+          tokenizedData,
+          address,
+          sameAsShipping
+        )
+      } else if (cardInput.paymentType.toLowerCase() === CardTypesSupported.checkbymail) {
         paymentAction = {
-          paymentType: paymentDetails.value.paymentType,
+          paymentType: cardInput.paymentType,
           check: { checkNumber: "VSF123123" },
         }
       }
+      savePaymentMethodToOrder(paymentAction, address)
+    }
+
+    const savePaymentMethodToOrder = async (paymentAction, address) => {
       if (checkout?.value?.id && paymentAction) {
         await addPaymentMethodByTokenizeCard(checkout?.value?.id, paymentAction)
+        await saveBillingDetails(address)
         await loadCheckout(checkout?.value?.id)
         if (checkout.value.payments) enableNextStep.value = true // TODO: Handle next step validation once other checkout validations are done
       }
     }
 
-    const savePaymentDetails = async () => {
-      // @TODO Need to add billing address save function
-      await addPaymentMethod()
+    const saveBillingDetails = async (address) => {
+      const params = {
+        orderId: checkout.value?.id,
+        billingInfoInput: {
+          billingContact: { ...address, email: personalDetails.value?.email },
+        },
+      }
+      await setBillingInfo(params)
     }
 
     const createUserAccount = async () => {
@@ -448,8 +505,13 @@ export default {
 
       if (user.value?.id) {
         await loadUserAddresses(user.value?.id)
+        await loadCard(user.value.id)
       }
     }, null)
+
+    const isLoadingPaymentMethods = computed(() => {
+      return loadingUserCard.value || loadingUserAddress.value
+    })
 
     // others
     const updateStep = async (selectedStep: number) => {
@@ -522,20 +584,16 @@ export default {
       saveShippingDetails,
       updatedShippingAddress,
       userShippingAddresses,
-      userBillingAddresses,
 
       shippingRates,
       saveShippingMethod,
       handleStoreLocatorClick,
       purchaseLocation,
 
-      billingDetails,
-      updateBillingDetails,
       showCreateAccount,
       password,
       transition,
-      getPaymentMethodData,
-      copyShippingAddress,
+
       enableCurrentStep,
       enableNextStep,
       cart,
@@ -547,6 +605,12 @@ export default {
       validateShippingDetails,
       validateShippingRates,
       validateBillingDetails,
+      saveBillingAndPayments,
+      saveUserAddress,
+      userBillingAddresses,
+      cards,
+      isLoadingPaymentMethods,
+      onPaymentSelect,
     }
   },
   watch: {
