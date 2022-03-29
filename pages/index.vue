@@ -31,12 +31,52 @@
         </template>
       </SfHeroItem>
     </SfHero>
+    <div class="large-and-medium-content">
+      <div class="large-content">
+        <div class="large-content__header">{{ contentTiles.largeHeaderTitle }}</div>
+        <div class="large-tiles">
+          <div
+            v-for="(tile, index) in contentTiles.largeTiles"
+            :key="'medium' + index"
+            class="large-tiles__tiles"
+          >
+            <KiboContentTile :content-tile="tile" />
+          </div>
+        </div>
+      </div>
+      <div class="medium-content">
+        <div class="medium-tiles">
+          <div
+            v-for="(tile, index) in contentTiles.mediumTiles"
+            :key="'medium' + index"
+            class="medium-tiles__tiles"
+          >
+            <KiboContentTile :content-tile="tile" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="back-to-top">
+      <div class="back-to-top__content" @click="goToTop">
+        <span class="sf-chevron--top sf-chevron">
+          <span class="sf-chevron__bar sf-chevron__bar--left" />
+          <span class="sf-chevron__bar sf-chevron__bar--right" />
+        </span>
+        <span>{{ $t("Back to top") }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { SfHero, SfButton } from "@storefront-ui/vue"
 import CarouselImage1 from "@/assets/images/Mobile-Homepage-HeroBanner.png"
+import nikeGearImg from "@/assets/images/Mobile-Homepage-50OffNikeGear.png"
+import runningGearImg from "@/assets/images/Mobile-Homepage-50OffRunningGear.png"
+import hoodieImg from "@/assets/images/Mobile-Homepage-Hoodie.png"
+import outdoorGearImg from "@/assets/images/Mobile-Homepage-OutdoorGear.png"
+import gymImg from "@/assets/images/Mobile-Homepage-Gym.png"
+import golfImg from "@/assets/images/Mobile-Homepage-Golf.png"
 
 export default {
   components: { SfHero, SfButton },
@@ -69,9 +109,148 @@ export default {
         image: "https://i.pinimg.com/736x/04/96/05/04960532dffffe5e551b3fab6015a874.jpg",
       },
     ]
+    const contentTiles = {
+      largeHeaderTitle: "The Latest Lineup",
+      largeTiles: [
+        {
+          imgUrl: runningGearImg,
+          content: {
+            header: "Up to 50% off running gear",
+            subHeader: "Save on selected footwear,equipment and more",
+            links: [
+              {
+                label: "TOP DEALS",
+                url: "",
+              },
+              {
+                label: "CLUB DEALS",
+                url: "",
+              },
+              {
+                label: "FOOTWARE DEALS",
+                url: "",
+              },
+            ],
+          },
+        },
+        {
+          imgUrl: nikeGearImg,
+          content: {
+            header: "Up to 50% off Nike gear",
+            subHeader: "Save big on clothing and footwear from Nike",
+            links: [
+              {
+                label: "SHOP MEN'S",
+                url: "",
+              },
+              {
+                label: "SHOP WOMEN'S",
+                url: "",
+              },
+              {
+                label: "SHOP KID'S",
+                url: "",
+              },
+            ],
+          },
+        },
+      ],
+      mediumTiles: [
+        {
+          imgUrl: hoodieImg,
+          content: {
+            header: "Hoodies and Fleece",
+            subHeader: "Warm wishes for everyone on your list",
+            links: [
+              {
+                label: "MEN’S",
+                url: "",
+              },
+              {
+                label: "WOMEN'S",
+                url: "",
+              },
+              {
+                label: "KID'S",
+                url: "",
+              },
+            ],
+          },
+        },
+        {
+          imgUrl: outdoorGearImg,
+          content: {
+            header: "Up to 30% off outdoor gear",
+            subHeader: "Including 25% off select jackets, pants, and more",
+            links: [
+              {
+                label: "JACKETS",
+                url: "",
+              },
+              {
+                label: "PANTS",
+                url: "",
+              },
+              {
+                label: "FOOTWEAR",
+                url: "",
+              },
+            ],
+          },
+        },
+        {
+          imgUrl: gymImg,
+          content: {
+            header: "Up to 40% off gym essentials",
+            subHeader: "Clothing and gear for strength and cardio",
+            links: [
+              {
+                label: "STRENGTH TRAINING",
+                url: "",
+              },
+              {
+                label: "CARDIO WORKOUT",
+                url: "",
+              },
+              {
+                label: "FITNESS DEALS",
+                url: "",
+              },
+            ],
+          },
+        },
+        {
+          imgUrl: golfImg,
+          content: {
+            header: "Up to 50% off golf gear",
+            subHeader: "Save on select apparel, equipment, and more",
+            links: [
+              {
+                label: "GOLF SHIRTS",
+                url: "",
+              },
+              {
+                label: "GOLD PANTS",
+                url: "",
+              },
+              {
+                label: "GOLF FOOTWEAR",
+                url: "",
+              },
+            ],
+          },
+        },
+      ],
+    }
+    const goToTop = () => {
+      window.scrollTo(0, 0)
+    }
+
     return {
       pageName,
       heroes,
+      contentTiles,
+      goToTop,
     }
   },
 }
@@ -133,6 +312,75 @@ export default {
       background-color: var(--_c-green-primary);
       margin-top: 1rem;
     }
+  }
+}
+
+.large-and-medium-content {
+  margin-top: calc(var(--spacer-xs) * 8.75);
+  padding: 0 5.48%;
+
+  @include for-desktop {
+    padding: 0 2%;
+  }
+}
+
+.large-content {
+  &__header {
+    color: var(--_c-green-primary);
+    font-size: var(--spacer-base);
+    line-height: calc(var(--spacer-2xs) * 7.125);
+    text-align: left;
+  }
+}
+
+.large-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: calc(var(--spacer-2xs) * 4.5);
+
+  &__tiles {
+    margin-bottom: calc(var(--spacer-2xs) * 9);
+
+    @include for-desktop {
+      width: 48%;
+    }
+  }
+}
+
+.medium-tiles {
+  display: flex;
+  margin-top: calc(var(--spacer-2xs) * 4.5);
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  &__tiles {
+    margin-bottom: calc(var(--spacer-2xs) * 9);
+    width: 45%;
+
+    @include for-desktop {
+      width: 24%;
+    }
+  }
+}
+
+.back-to-top {
+  display: flex;
+  justify-content: flex-end;
+
+  &__content {
+    position: absolute;
+    width: calc(var(--spacer-sm) * 3.93);
+    height: calc(var(--spacer-sm) * 3.93);
+    border-style: solid;
+    border-width: 1px;
+    border-right: none;
+    border-color: var(--_c-gray-secondary);
+    background-color: var(--_c-white-primary);
+    margin-top: calc(var(--spacer-2xs) * -13);
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 </style>
