@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!userAddressesSorted" class="no-shipping-address">
+    <div v-if="!userAddressesSorted.length" class="no-shipping-address">
       {{ $t("No saved addresses yet!") }}
     </div>
     <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
@@ -11,7 +11,7 @@
               :key="index"
               :address="address"
               :is-readonly="isReadonly"
-              @click:remove-address="showDeleteConfirmationDialog(address)"
+              @click:delete-address="handleDeleteAddress(address)"
               @click:edit-address="updateAddress(address)"
               @onSelect="selectAddress"
             />
@@ -19,12 +19,6 @@
         </div>
       </div>
     </transition-group>
-    <KiboConfirmationDialog
-      :label="$t('Are you sure you want to delete this address ?')"
-      :is-open="isConfirmModalOpen"
-      :action-handler="deleteAddress"
-      @click:close="toggleConfirmModal"
-    />
     <KiboAddressForm
       v-if="showAddressForm"
       :key="activeAddress.id"
@@ -53,14 +47,10 @@
       {{ $t("Add New Address") }}
     </SfButton>
     <div v-if="showAddressForm" class="action-buttons">
-      <SfButton class="action-buttons color-light" @click="closeAddressForm">
+      <SfButton class="color-light" @click="closeAddressForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton
-        class="action-buttons color-primary"
-        :disabled="!isValidFormData"
-        @click="saveAddress"
-      >
+      <SfButton class="color-primary" :disabled="!isValidFormData" @click="saveAddress">
         {{ $t("Save") }}
       </SfButton>
     </div>
@@ -69,7 +59,6 @@
 <script lang="ts">
 import { SfButton, SfIcon, SfCheckbox } from "@storefront-ui/vue"
 import { defineComponent, ref, computed } from "@vue/composition-api"
-import { useUiState } from "@/composables"
 import { shopperContactGetters } from "@/lib/getters"
 
 export default defineComponent({
@@ -102,7 +91,6 @@ export default defineComponent({
     },
   },
   setup(props, context) {
-    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
     const isDefaultAddress = ref(false)
@@ -119,14 +107,6 @@ export default defineComponent({
       isNewAddress.value = true
       if (!activeAddress.value) activeAddress.value = {}
       showAddressForm.value = true
-    }
-    const deleteAddress = () => {
-      toggleConfirmModal()
-      context.emit("onDelete", { ...activeAddress.value })
-    }
-    const showDeleteConfirmationDialog = (address) => {
-      activeAddress.value = address
-      toggleConfirmModal()
     }
     const updateAddress = (address) => {
       isNewAddress.value = false
@@ -157,17 +137,18 @@ export default defineComponent({
       isValidShippingDetails.value = isValid
       context.emit("validateForm", isValid)
     }
+
+    const handleDeleteAddress = (address) => {
+      context.emit("onDelete", { ...address })
+    }
+
     return {
       userAddressesSorted,
       addNewAddress,
       updateAddress,
-      deleteAddress,
       selectAddress,
       activeAddress,
-      showDeleteConfirmationDialog,
-      isConfirmModalOpen,
       isNewAddress,
-      toggleConfirmModal,
       showAddressForm,
       closeAddressForm,
       saveAddress,
@@ -175,6 +156,7 @@ export default defineComponent({
       isDefaultAddress,
       isValidFormData,
       validateShippingDetails,
+      handleDeleteAddress,
     }
   },
 })
@@ -204,14 +186,13 @@ div {
   flex-direction: row;
 
   &__left {
-    flex: 90%;
+    flex: auto;
   }
 
   &__right {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    flex: 10%;
   }
 
   &__edit {
@@ -220,7 +201,6 @@ div {
 }
 
 .shipping-list {
-  margin-bottom: var(--spacer-base);
   display: flex;
   flex-direction: column;
   gap: calc(var(--spacer-2xs) * 5);
@@ -244,5 +224,17 @@ div {
   &__checkbox {
     margin-bottom: calc(var(--spacer-2xs) * 2);
   }
+}
+
+.shipping {
+  border-bottom: 1px solid var(--_c-white-secondary);
+
+  &__content {
+    padding-bottom: var(--spacer-xs);
+  }
+}
+
+.shipping:last-child {
+  border: none;
 }
 </style>

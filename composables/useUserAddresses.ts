@@ -58,10 +58,11 @@ export const useUserAddresses = () => {
   const addUserAddress = async (params: AddUserAddressParams) => {
     loading.value = true
     try {
-      await fetcher({
+      const response = await fetcher({
         query: addUserAddressMutation,
         variables: params,
       })
+      return response?.data?.createCustomerAccountContact
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)
@@ -73,10 +74,11 @@ export const useUserAddresses = () => {
   const updateUserAddress = async (params: UpdateUserAddressParams) => {
     loading.value = true
     try {
-      await fetcher({
+      const response = await fetcher({
         query: updateUserAddressMutation,
         variables: params,
       })
+      return response?.data?.updateCustomerAccountContact
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error(err)

@@ -1,16 +1,20 @@
 <template>
   <div>
-    <div v-if="!paymentMethods.length" class="no-shipping-payment-method">
+    <div v-if="!userPaymentMethodsSorted.length" class="no-shipping-payment-method">
       No saved payments yet!
     </div>
     <transition-group tag="div" name="fade" class="payment-list">
-      <div v-for="paymentMethod in paymentMethods" :key="paymentMethod.endingDigit" class="card">
+      <div
+        v-for="paymentMethod in userPaymentMethodsSorted"
+        :key="paymentMethod.card.id"
+        class="card"
+      >
         <div class="card__content">
           <div class="card__payment">
             <UserSavedCard
               :payment-method="paymentMethod"
               :is-readonly="isReadonly"
-              @click:remove-card="showDeleteConfirmationDialog(paymentMethod)"
+              @click:delete-card="handleDeleteCard(paymentMethod)"
               @click:edit-card="updatePaymentMethod(paymentMethod)"
               @onSelect="onCardSelection(paymentMethod)"
             />
@@ -18,20 +22,35 @@
         </div>
       </div>
     </transition-group>
-    <KiboConfirmationDialog
-      :label="$t('Are you sure you want to delete this payment method ?')"
-      :is-open="isConfirmModalOpen"
-      :action-handler="deletePaymentMethod"
-      @click:close="toggleConfirmModal"
-    />
-    <KiboPayment v-if="showPaymentMethodForm" @input="setInputCardData" />
-    <KiboAddressForm
+    <KiboPayment
       v-if="showPaymentMethodForm"
+      :key="activePaymentMethod.card.id"
+      :value="activePaymentMethod"
+      @input="setInputCardData"
+    />
+
+    <KiboAddressForm
+      v-show="showPaymentMethodForm"
       :key="activeAddress.id"
       :value="activeAddress"
       :countries="countries"
       @addressData="getAddressData"
-    />
+    >
+      <template #addressLabel>
+        <div class="address-label">{{ $t("Billing Address") }}</div>
+      </template>
+      <template v-if="shipping" #sameAsShipping>
+        <div class="same-as-shipping">
+          <SfCheckbox
+            v-model="sameAsShipping"
+            :label="$t('Save Billing Address Same As Shipping')"
+            name="copyShippingAddress"
+            class="form__element form__checkbox"
+            @change="copyFromShipping"
+          />
+        </div>
+      </template>
+    </KiboAddressForm>
     <div>
       <SfCheckbox
         v-if="showDefaultCheckbox && showPaymentMethodForm"
@@ -53,14 +72,10 @@
       {{ $t("Add New Card") }}
     </SfButton>
     <div v-if="showPaymentMethodForm" class="action-buttons">
-      <SfButton class="action-buttons color-light" @click="closePaymentMethodForm">
+      <SfButton class="color-light" @click="closePaymentMethodForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton
-        class="action-buttons color-primary"
-        :disabled="!isValidFormData"
-        @click="savePaymentMethod"
-      >
+      <SfButton class="color-primary" :disabled="!isValidFormData" @click="savePaymentMethod">
         {{ $t("Save") }}
       </SfButton>
     </div>
@@ -70,7 +85,7 @@
 import { SfButton, SfIcon, SfCheckbox } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
 import UserSavedCard from "@/components/UserSavedCard"
-import { useUiState } from "@/composables"
+import { creditCardPaymentGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "UserPaymentMethod",
@@ -97,15 +112,23 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    showCopyFromShipping: {
+      type: Boolean,
+      default: true,
+    },
+    shipping: {
+      type: Object,
+      default: null,
+    },
   },
-  setup(_, context) {
-    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
+  setup(props, context) {
     const activePaymentMethod = ref({})
     const activeAddress = ref({})
     const isNewPaymentMethod = ref(false)
     const showPaymentMethodForm = ref(false)
     const isDefaultPaymentMethod = ref(false)
     const isValidFormData = ref(true)
+    const sameAsShipping = ref(false)
 
     const getAddressData = (address) => {
       activeAddress.value = { ...address }
@@ -114,27 +137,37 @@ export default defineComponent({
       activePaymentMethod.value = { ...card.value }
     }
 
+    // Sort pament Methods to display Primary paymentMethod first
+    const userPaymentMethodsSorted = computed(() => {
+      return creditCardPaymentGetters.getSortedPaymentMethods([...props.paymentMethods])
+    })
+
     const addNewPaymentMethod = () => {
+      sameAsShipping.value = false
       isNewPaymentMethod.value = true
       showPaymentMethodForm.value = false
-      if (!activePaymentMethod.value) activePaymentMethod.value = {}
-      if (!activeAddress.value) activeAddress.value = {}
+      if (activePaymentMethod.value) activePaymentMethod.value = { card: {}, paymentType: "" }
+      if (activeAddress.value) activeAddress.value = {}
       showPaymentMethodForm.value = true
     }
 
-    const deletePaymentMethod = () => {
-      toggleConfirmModal()
-      context.emit("onDelete", activePaymentMethod)
-    }
-    const showDeleteConfirmationDialog = (paymentMethod) => {
-      activePaymentMethod.value = paymentMethod
-      toggleConfirmModal()
-    }
-    const updatePaymentMethod = (paymentMethod) => {
+    const updatePaymentMethod = ({ card, billingAddress }) => {
+      sameAsShipping.value = false
+      const cardData = {
+        ...card,
+        cardNumber: "",
+        cvv: "",
+        expiryDate: creditCardPaymentGetters.getExpireDate(card),
+        isCardInfoSaved: false,
+        paymentWorkflow: "Mozu",
+        isCardDetailsFilled: false,
+      }
+
       isNewPaymentMethod.value = false
       showPaymentMethodForm.value = false
-      activePaymentMethod.value = paymentMethod
-      isDefaultPaymentMethod.value = paymentMethod?.isDefaultPayMethod || false
+      activePaymentMethod.value = { card: cardData, paymentType: "" }
+      activeAddress.value = billingAddress
+      isDefaultPaymentMethod.value = card?.isDefaultPayMethod || false
       showPaymentMethodForm.value = true
     }
 
@@ -147,10 +180,6 @@ export default defineComponent({
       activePaymentMethod.value = {}
     }
 
-    const setInputPaymentMethodData = (paymentMethod) => {
-      activePaymentMethod.value = { ...paymentMethod }
-    }
-
     const savePaymentMethod = () => {
       context.emit("onSave", {
         address: { ...activeAddress.value },
@@ -159,25 +188,34 @@ export default defineComponent({
       })
       closePaymentMethodForm()
     }
+
+    const copyFromShipping = () => {
+      showPaymentMethodForm.value = false
+      activeAddress.value = sameAsShipping.value ? { ...props.shipping } : {}
+      activeAddress.value.id = ""
+      showPaymentMethodForm.value = true
+    }
+    const handleDeleteCard = (paymentMethod) => {
+      context.emit("onDelete", { ...paymentMethod })
+    }
     return {
+      userPaymentMethodsSorted,
       addNewPaymentMethod,
       updatePaymentMethod,
-      deletePaymentMethod,
       onCardSelection,
       activePaymentMethod,
-      showDeleteConfirmationDialog,
-      isConfirmModalOpen,
       isNewPaymentMethod,
-      toggleConfirmModal,
       showPaymentMethodForm,
       closePaymentMethodForm,
       savePaymentMethod,
-      setInputPaymentMethodData,
       getAddressData,
       setInputCardData,
       activeAddress,
       isDefaultPaymentMethod,
       isValidFormData,
+      sameAsShipping,
+      copyFromShipping,
+      handleDeleteCard,
     }
   },
 })
@@ -204,7 +242,9 @@ div {
 }
 
 .payment-list {
-  margin-bottom: var(--spacer-base);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacer-2xs) * 5);
 }
 
 .plus-circle-icon {
@@ -220,5 +260,27 @@ div {
   @include for-desktop {
     max-width: calc(var(--spacer-base) * 17.54);
   }
+}
+
+.card {
+  border-bottom: 1px solid var(--_c-white-secondary);
+
+  &__content {
+    padding-bottom: var(--spacer-xs);
+  }
+}
+
+.card:last-child {
+  border: none;
+}
+
+.address-label {
+  font-weight: bold;
+  margin-bottom: calc(var(--spacer-xs) * 2);
+}
+
+.same-as-shipping,
+.no-shipping-payment-method {
+  margin-bottom: var(--spacer-xs);
 }
 </style>

@@ -30,13 +30,13 @@
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Shipping Address')">
           <SfList>
             <SfListItem>
-              <SfLoader :loading="loadingUserShipping">
+              <SfLoader :loading="loadingUserAddress">
                 <UserSavedAddresses
                   :show-default-checkbox="true"
                   :countries="countries"
                   :addresses="userShippingAddresses"
                   @onSave="saveShippingAddress"
-                  @onDelete="deleteAddress"
+                  @onDelete="handleDeleteAddress"
                 />
               </SfLoader>
             </SfListItem>
@@ -45,13 +45,13 @@
         <SfAccordionItem class="kibo-sf-accordion-item" :header="$t('Payment Method')">
           <SfList>
             <SfListItem>
-              <SfLoader :loading="loadingUserCard">
+              <SfLoader :loading="isLoadingPaymentMethods">
                 <UserPaymentMethod
                   :show-default-checkbox="true"
                   :payment-methods="paymentMethods"
                   :countries="countries"
                   @onSave="savePaymentMethod"
-                  @onDelete="deletePaymentMethod"
+                  @onDelete="handleDeletePaymentMethod"
                 />
               </SfLoader>
             </SfListItem>
@@ -92,8 +92,9 @@ import {
 } from "@storefront-ui/vue"
 import { computed, defineComponent, ref } from "@vue/composition-api"
 import { onMounted } from "@nuxtjs/composition-api"
+import KiboConfirmationDialog from "@/components/KiboConfirmationDialog.vue"
 import { useNuxtApp } from "#app"
-import { useUser, useUiState, useUserAddresses, useCustomerCreditCards } from "@/composables"
+import { useUser, useUserAddresses, useCustomerCreditCards, usePaymentMethods } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
 export default defineComponent({
   name: "MyAccount",
@@ -106,14 +107,15 @@ export default defineComponent({
     SfIcon,
     SfLoader,
   },
-  setup() {
+  setup(_, context) {
     const { user, logout } = useUser()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const countries = nuxt.nuxt2Context.$config.countries
-    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
+    const modal = nuxt.nuxt2Context.$modal
+
     const {
-      loading: loadingUserShipping,
+      loading: loadingUserAddress,
       load: loadUserAddresses,
       userShippingAddresses,
       userBillingAddresses,
@@ -127,12 +129,23 @@ export default defineComponent({
       cards,
       load: loadCard,
       addCard,
+      updateCard,
       deleteCard,
     } = useCustomerCreditCards()
 
+    const { tokenizeCard } = usePaymentMethods()
+
     const paymentMethods = computed(() =>
-      creditCardPaymentGetters.getCardDetailsWithBilling(cards.value, userBillingAddresses.value)
+      creditCardPaymentGetters.getCardDetailsWithBilling(
+        [...cards.value],
+        [...userBillingAddresses.value]
+      )
     )
+
+    const isLoadingPaymentMethods = computed(() => {
+      return loadingUserCard.value || loadingUserAddress.value
+    })
+
     const account = ref({})
 
     const goBack = () => {
@@ -150,7 +163,7 @@ export default defineComponent({
       app.router.push({ path: "my-account/order-history?filters=M-6" })
     }
 
-    const saveAddress = async ({ address, setAsDefault }, typeName) => {
+    const saveAddress = ({ address, setAsDefault }, typeName) => {
       const addressData = {
         accountId: user.value.id,
         customerContactInput: { ...address },
@@ -160,7 +173,7 @@ export default defineComponent({
         addressData.contactId = address.id
         address.types.find((t) => t.name === typeName).isPrimary = setAsDefault
 
-        await updateUserAddress(addressData)
+        return updateUserAddress(addressData)
       } else {
         // add new scenarion
         addressData.customerContactInput.types = [
@@ -170,7 +183,7 @@ export default defineComponent({
           },
         ]
         addressData.customerContactInput.accountId = user.value.id
-        await addUserAddress(addressData)
+        return addUserAddress(addressData)
       }
     }
 
@@ -184,6 +197,19 @@ export default defineComponent({
       await loadUserAddresses(user.value.id)
     }
 
+    const handleDeleteAddress = (address) => {
+      modal.show({
+        component: KiboConfirmationDialog,
+        props: {
+          isSmallModal: true,
+          headerText: context?.root?.$t("Are you sure you want to delete this address ?"),
+          actionHandler: async () => {
+            await deleteAddress(address)
+          },
+        },
+      })
+    }
+
     const deleteAddress = async (address) => {
       const addressData = {
         accountId: user.value.id,
@@ -195,26 +221,36 @@ export default defineComponent({
     }
 
     const savePaymentMethod = async ({ address, cardInput, setAsDefault }) => {
-      const addressId = await saveAddress({ address, setAsDefault }, "Billing") // get address id here
-
+      const { card } = cardInput
+      const tokenizedData = await tokenizeCard(card)
+      if (!tokenizedData) {
+        return
+      }
+      const response = await saveAddress({ address, setAsDefault }, "Billing") // get address id here
+      const addressId = response.id
       // save Customer Card
       const cardInputFormat = {
+        id: tokenizedData.id,
         contactId: addressId,
-        cardInput: {
-          ...cardInput,
-        },
+        cardType: card.cardType,
+        cardNumberPart: card.cardNumber,
+        expireMonth: card.expireMonth,
+        expireYear: card.expireYear,
+        isDefaultPayMethod: card.isDefaultPayMethod,
       }
 
-      if (cardInput.id) {
+      if (card.id) {
         // update scenario
-        cardInputFormat.cardInput.isDefaultPayMethod = setAsDefault
-        await updateCard(user.value.id, cardInput.id, cardInputFormat)
+        cardInputFormat.id = tokenizedData.id // existing card id is not preserved due to generate tokenizeCard
+        cardInputFormat.isDefaultPayMethod = setAsDefault
+        await updateCard(user.value.id, card.id, cardInputFormat)
       } else {
         // add new scenarion
-        cardInputFormat.cardInput.isDefaultPayMethod = setAsDefault
+        cardInputFormat.isDefaultPayMethod = setAsDefault
         await addCard(user.value.id, cardInputFormat)
       }
 
+      await loadUserAddresses(user.value.id)
       await loadCard(user.value.id)
     }
 
@@ -231,11 +267,24 @@ export default defineComponent({
       await loadCard(user.value.id)
     }
 
+    const handleDeletePaymentMethod = (paymentMethod) => {
+      modal.show({
+        component: KiboConfirmationDialog,
+        props: {
+          isSmallModal: true,
+          headerText: context?.root?.$t("Are you sure you want to delete this payment method ?"),
+          actionHandler: async () => {
+            await deletePaymentMethod(paymentMethod)
+          },
+        },
+      })
+    }
+
     watch(
       () => user.value,
       async (newVal) => {
         if (newVal.id) {
-          await loadUserAddresses(user.value.id)
+          await loadUserAddresses(newVal.id)
           await loadCard(user.value.id)
         }
       }
@@ -255,10 +304,8 @@ export default defineComponent({
       goBack,
       changeActivePage,
       gotoOrderHistory,
-      isConfirmModalOpen,
-      toggleConfirmModal,
       countries,
-      loadingUserShipping,
+      loadingUserAddress,
       saveShippingAddress,
       saveBillingAddress,
       saveAddress,
@@ -273,6 +320,9 @@ export default defineComponent({
       paymentMethods,
       savePaymentMethod,
       deletePaymentMethod,
+      isLoadingPaymentMethods,
+      handleDeletePaymentMethod,
+      handleDeleteAddress,
     }
   },
 })

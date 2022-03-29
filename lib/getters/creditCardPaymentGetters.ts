@@ -18,21 +18,44 @@ const getPaymentType = (selectedType: string) => {
   return paymentType
 }
 
+const getExpireDate = (cardDetails): String =>
+  cardDetails?.expireMonth && cardDetails?.expireYear
+    ? cardDetails?.expireMonth + "/" + cardDetails?.expireYear
+    : ""
+
+const getCardEndingDigits = (cardDetails): String =>
+  cardDetails?.cardNumberPart ? "x" + cardDetails?.cardNumberPart?.slice(-4) : ""
+
 const getExpireMonth = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[0]) || 0
 
 const getExpireYear = (cardDetails): number => parseInt(cardDetails?.expiryDate.split("/")[1]) || 0
+
+const getCardType = (cardDetails): String => {
+  if (cardDetails?.cardType?.toLowerCase()?.includes("american")) return "AE"
+  else if (cardDetails?.cardType?.toLowerCase()?.includes("discover")) return "DC"
+  else if (cardDetails?.cardType?.toLowerCase()?.includes("master")) return "MC"
+  else if (cardDetails?.cardType?.toLowerCase()?.includes("visa")) return "VISA"
+  else return "CC"
+}
 
 const getNameOnCard = (cardDetails) => cardDetails?.nameOnCard
 
 const getAppliedTotal = (checkout) => checkout?.total
 
 const getCardDetailsWithBilling = (cards, billingAddresses) => {
-  return cards?.map((c) => {
+  const result = cards?.map((c) => {
     return {
       card: { ...c },
       billingAddress: { ...billingAddresses.find((ba) => ba.id === c.contactId) },
     }
   })
+  return result
+}
+
+const getSortedPaymentMethods = (paymentMethods) => {
+  return paymentMethods
+    ? paymentMethods?.sort((a, b) => b?.card?.isDefaultPayMethod - a?.card?.isDefaultPayMethod)
+    : []
 }
 
 const getPaymentMethods = (payments) => {
@@ -51,8 +74,6 @@ const getPaymentMethods = (payments) => {
   return paymentsMethods
 }
 
-const getCardType = (cards) => cards?.paymentOrCardType
-
 export const creditCardPaymentGetters = {
   getCardNumberMask,
   getId,
@@ -64,4 +85,7 @@ export const creditCardPaymentGetters = {
   getCardDetailsWithBilling,
   getPaymentMethods,
   getCardType,
+  getExpireDate,
+  getSortedPaymentMethods,
+  getCardEndingDigits,
 }

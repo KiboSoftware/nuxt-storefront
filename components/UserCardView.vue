@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <slot class="header" name="header" />
+  <div class="cards">
+    <div><slot name="header" /></div>
     <div class="card-view">
-      <div class="card-list__left">
+      <div class="card-view__left">
         <div><slot name="card-type" /></div>
       </div>
-      <div class="card-list__right">
-        <div>{{ $t("Ending") }} :{{ card.endingDigit }}</div>
-        <div>{{ $t("Exp") }} : {{ card.expiry }}</div>
+      <div class="card-view__right">
+        <div>{{ $t("Ending") }} : {{ cardLastDigits }}</div>
+        <div>{{ $t("Exp") }} : {{ cardExpireDate }}</div>
         <slot name="billing-address" />
       </div>
     </div>
@@ -15,19 +15,27 @@
 </template>
 <script lang="ts">
 import { defineComponent, computed } from "@vue/composition-api"
+import { creditCardPaymentGetters } from "@/lib/getters"
+
 export default defineComponent({
   name: "UserCardView",
   props: {
-    paymentMethod: {
+    paymentCard: {
       type: Object,
       default: () => {},
     },
   },
 
   setup(props) {
-    const card = computed(() => props.paymentMethod?.card || {})
+    const cardLastDigits = computed(() =>
+      creditCardPaymentGetters.getCardEndingDigits(props?.paymentCard)
+    )
+    const cardExpireDate = computed(() =>
+      creditCardPaymentGetters.getExpireDate(props?.paymentCard)
+    )
     return {
-      card,
+      cardLastDigits,
+      cardExpireDate,
     }
   },
 })
@@ -45,14 +53,14 @@ p {
 
 .card-view {
   display: flex;
-  gap: 3%;
+  gap: var(--spacer-lg);
 
   &__left {
-    flex: 1;
+    margin-top: calc(var(--spacer-2xs) * 1.5);
   }
 
   &__right {
-    flex: 4;
+    line-height: calc(var(--spacer-xs) * 3);
   }
 }
 </style>

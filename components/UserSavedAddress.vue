@@ -38,7 +38,7 @@
         <div
           v-show="!isDefaultAddress"
           class="address-container__delete"
-          @click="$emit('click:remove-address', address)"
+          @click="$emit('click:delete-address', address)"
         >
           <SfIcon size="1.25rem">
             <font-awesome-icon
@@ -117,11 +117,10 @@ p {
 
 .address-container {
   display: flex;
-  border-bottom: 1px solid var(--_c-white-secondary);
   padding-bottom: calc(var(--spacer-2xs) * 5);
 
   &__left {
-    flex: 90%;
+    flex: auto;
     line-height: calc(var(--spacer-2xs) * 5.5);
 
     .title {
@@ -134,7 +133,6 @@ p {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    flex: 10%;
   }
 
   &__edit {

@@ -63,11 +63,4 @@ describe("[composable] useUiState", () => {
     toggleHamburger()
     expect(isHamburgerOpen.value).toBeTruthy()
   })
-
-  test("toggleFilterSidebar", () => {
-    const { isConfirmModalOpen, toggleConfirmModal } = useUiState()
-    expect(isConfirmModalOpen.value).toBeFalsy()
-    toggleConfirmModal()
-    expect(isConfirmModalOpen.value).toBeTruthy()
-  })
 })
