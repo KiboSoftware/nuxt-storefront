@@ -14,22 +14,25 @@ const getCategoryCode = (category: PrCategory) => category?.categoryCode
 
 const getParentCategory = (categories: PrCategory[], categoryCode: String | Number) => {
   const parentCategoryTree = { value: [] }
-  const findCategoryByCode = (category: PrCategory, code: String | Number) => {
+  const findCategoryByCode = (
+    category: PrCategory,
+    code: String | Number,
+    parentCategory: PrCategory[]
+  ) => {
     if (category?.categoryCode === code) {
-      parentCategoryTree.value = categories
+      parentCategoryTree.value = parentCategory
       return true
     }
     return category?.childrenCategories?.find((childCategory: PrCategory) => {
-      const found = findCategoryByCode(childCategory, code)
+      const found = findCategoryByCode(childCategory, code, category?.childrenCategories)
       if (found) {
-        parentCategoryTree.value = category?.childrenCategories
         return true
       }
       return false
     })
   }
   for (const rootCategory of categories) {
-    if (findCategoryByCode(rootCategory, categoryCode)) {
+    if (findCategoryByCode(rootCategory, categoryCode, categories)) {
       break
     }
   }
