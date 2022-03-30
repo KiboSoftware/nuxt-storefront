@@ -205,12 +205,12 @@
             </SfLink>
           </div>
           <div class="kibo-mobile__header-column">
-            <SfIcon size="1.25rem">
+            <SfIcon size="1.25rem" @click="handleStoreLocatorClick">
               <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
             </SfIcon>
           </div>
           <div class="kibo-mobile__header-column">
-            <SfIcon size="1.25rem">
+            <SfIcon size="1.25rem" @click="gotoCart">
               <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
               <SfBadge
                 v-if="totalItemsInCart"
