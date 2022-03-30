@@ -25,4 +25,22 @@
     height: calc(var(--spacer-lg) + 0.125rem);
     border: 1px solid var(--_c-gray-middle);
   }
+
+  &.country {
+    @include for-desktop {
+      height: 36px;
+      bottom: 20px;
+    }
+  }
+
+  &.country > &__label {
+    @include for-desktop {
+      position: relative;
+      padding-left: 0;
+    }
+  }
+
+  &.is-invalid > select {
+    border: 1px solid var(--c-danger);
+  }
 }

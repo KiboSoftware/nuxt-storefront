@@ -92,7 +92,7 @@ import { defineComponent } from "@vue/composition-api"
 import { SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
-import { usePaymentTypes, useUiValidation } from "@/composables"
+import { usePaymentTypes, useUiValidationSchemas } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
 
 export default defineComponent({
@@ -135,20 +135,29 @@ export default defineComponent({
     }
 
     const savePaymentToCustomerAccount = (selected) => {
-      console.log(selected)
       creditCardFormData.value.card.isCardInfoSaved = selected
       isCardInfoSaved.value = selected
     }
 
-    const updatePaymentFields = (fieldName?: string) => {
-      const { isValid, message } = useUiValidation(
-        context.root,
-        fieldName,
-        creditCardFormData.value.card[fieldName]
-      )
+    const schema = useUiValidationSchemas(context.root, "payment")
 
-      error.value[fieldName] = isValid ? "" : message
-      isValidForm.value[fieldName] = isValid
+    const assignErrors = (errorField = "", errorMessage = "") => {
+      if (errorField) {
+        error.value[errorField] = errorMessage
+      } else {
+        Object.keys(error.value).filter((field) => (error.value[field] = errorMessage))
+      }
+    }
+
+    const updatePaymentFields = async (fieldName?: string) => {
+      try {
+        await schema.validateAt(fieldName, creditCardFormData.value.card)
+        assignErrors(fieldName, "")
+        isValidForm.value[fieldName] = true
+      } catch (err) {
+        assignErrors(fieldName, err.message)
+        isValidForm.value[fieldName] = false
+      }
 
       creditCardFormData.value.card.isCardDetailsFilled = Object.values(isValidForm.value).every(
         (value) => value
