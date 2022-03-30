@@ -120,15 +120,15 @@ export default {
             links: [
               {
                 label: "TOP DEALS",
-                url: "",
+                url: "/",
               },
               {
                 label: "CLUB DEALS",
-                url: "",
+                url: "/",
               },
               {
                 label: "FOOTWARE DEALS",
-                url: "",
+                url: "/",
               },
             ],
           },
@@ -141,15 +141,15 @@ export default {
             links: [
               {
                 label: "SHOP MEN'S",
-                url: "",
+                url: "/",
               },
               {
                 label: "SHOP WOMEN'S",
-                url: "",
+                url: "/",
               },
               {
                 label: "SHOP KID'S",
-                url: "",
+                url: "/",
               },
             ],
           },
@@ -164,15 +164,15 @@ export default {
             links: [
               {
                 label: "MEN’S",
-                url: "",
+                url: "/",
               },
               {
                 label: "WOMEN'S",
-                url: "",
+                url: "/",
               },
               {
                 label: "KID'S",
-                url: "",
+                url: "/",
               },
             ],
           },
@@ -185,15 +185,15 @@ export default {
             links: [
               {
                 label: "JACKETS",
-                url: "",
+                url: "/",
               },
               {
                 label: "PANTS",
-                url: "",
+                url: "/",
               },
               {
                 label: "FOOTWEAR",
-                url: "",
+                url: "/",
               },
             ],
           },
@@ -206,15 +206,15 @@ export default {
             links: [
               {
                 label: "STRENGTH TRAINING",
-                url: "",
+                url: "/",
               },
               {
                 label: "CARDIO WORKOUT",
-                url: "",
+                url: "/",
               },
               {
                 label: "FITNESS DEALS",
-                url: "",
+                url: "/",
               },
             ],
           },
@@ -227,15 +227,15 @@ export default {
             links: [
               {
                 label: "GOLF SHIRTS",
-                url: "",
+                url: "/",
               },
               {
                 label: "GOLD PANTS",
-                url: "",
+                url: "/",
               },
               {
                 label: "GOLF FOOTWEAR",
-                url: "",
+                url: "/",
               },
             ],
           },
@@ -381,6 +381,7 @@ export default {
     z-index: 2;
     display: flex;
     flex-wrap: wrap;
+    cursor: pointer;
   }
 }
 </style>

@@ -13,7 +13,11 @@
       <div class="tile__subheader">{{ contentTile.content.subHeader }}</div>
       <div class="tile__links">
         <div v-for="(link, index) in contentTile.content.links" :key="index" class="tile__link">
-          {{ link.label }}
+          <SfButton
+            :link="link.url"
+            class="sf-button--pure sf-header__action sf-header__bottom-link"
+            >{{ link.label }}
+          </SfButton>
         </div>
       </div>
     </div>
@@ -22,10 +26,10 @@
 
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfImage } from "@storefront-ui/vue"
+import { SfImage, SfButton } from "@storefront-ui/vue"
 
 export default defineComponent({
-  components: { SfImage },
+  components: { SfImage, SfButton },
   props: {
     contentTile: {
       type: Object,
@@ -87,6 +91,12 @@ export default defineComponent({
     @include for-desktop {
       &:hover {
         text-decoration-line: underline;
+      }
+    }
+
+    ::v-deep .sf-header {
+      &__action {
+        margin: 0;
       }
     }
   }
