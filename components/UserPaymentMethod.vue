@@ -38,6 +38,7 @@
       :value="activeAddress"
       :countries="countries"
       @addressData="getAddressData"
+      @validateForm="validateBillingDetails"
     >
       <template #addressLabel>
         <div class="address-label">{{ $t("Billing Address") }}</div>
@@ -78,7 +79,7 @@
       <SfButton class="color-light" @click="closePaymentMethodForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton class="color-primary" :disabled="!isValidFormData" @click="savePaymentMethod">
+      <SfButton class="color-primary" :disabled="!isValidBillingDetails" @click="savePaymentMethod">
         {{ $t("Save") }}
       </SfButton>
     </div>
@@ -134,9 +135,9 @@ export default defineComponent({
     const isNewPaymentMethod = ref(false)
     const showPaymentMethodForm = ref(false)
     const isDefaultPaymentMethod = ref(false)
-    const isValidFormData = ref(true)
     const sameAsShipping = ref(false)
     const selectedCardId = ref("")
+    const isValidBillingDetails = ref(false)
 
     const getAddressData = (address) => {
       activeAddress.value = { ...address }
@@ -195,6 +196,8 @@ export default defineComponent({
         cardInput: { ...activePaymentMethod.value },
         setAsDefault: isDefaultPaymentMethod.value,
         sameAsShipping: sameAsShipping.value,
+        isValidPaymentForm:
+          activePaymentMethod.value.card.isCardDetailsFilled && isValidBillingDetails.value,
       })
       closePaymentMethodForm()
     }
@@ -208,6 +211,11 @@ export default defineComponent({
     const handleDeleteCard = (paymentMethod) => {
       context.emit("onDelete", { ...paymentMethod })
     }
+
+    const validateBillingDetails = (isValid) => {
+      isValidBillingDetails.value = isValid
+    }
+
     return {
       userPaymentMethodsSorted,
       addNewPaymentMethod,
@@ -222,11 +230,12 @@ export default defineComponent({
       setInputCardData,
       activeAddress,
       isDefaultPaymentMethod,
-      isValidFormData,
+      isValidBillingDetails,
       sameAsShipping,
       copyFromShipping,
       handleDeleteCard,
       selectedCardId,
+      validateBillingDetails,
     }
   },
 })

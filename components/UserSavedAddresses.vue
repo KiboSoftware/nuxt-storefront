@@ -50,7 +50,7 @@
       <SfButton class="color-light" @click="closeAddressForm">
         {{ $t("Cancel") }}
       </SfButton>
-      <SfButton class="color-primary" :disabled="!isValidFormData" @click="saveAddress">
+      <SfButton class="color-primary" :disabled="!isValidShippingDetails" @click="saveAddress">
         {{ $t("Save") }}
       </SfButton>
     </div>
@@ -94,7 +94,6 @@ export default defineComponent({
     const isNewAddress = ref(false)
     const showAddressForm = ref(false)
     const isDefaultAddress = ref(false)
-    const isValidFormData = ref(true)
     const activeAddress = ref(props.defaultAddress || {})
     const isValidShippingDetails = ref(false)
 
@@ -154,9 +153,9 @@ export default defineComponent({
       saveAddress,
       setInputAddressData,
       isDefaultAddress,
-      isValidFormData,
       validateShippingDetails,
       handleDeleteAddress,
+      isValidShippingDetails,
     }
   },
 })
