@@ -55,7 +55,7 @@
     "nuxt-i18n": "^6.28.1",
     "pinch-zoom-js": "^2.3.4",
     "stylelint-scss": "^3.21.0",
-    "vue-i18n": "^8.26.1",
+    "vue-i18n": "^8.27.1",
     "vue-lazy-hydration": "^2.0.0-beta.4",
     "winston": "^3.3.3",
     "yup": "^0.32.11"
