@@ -38,5 +38,6 @@
   
   &.color-primary.is-disabled--button {
     background-color: var(--_c-green-primary-disabled) ;
+    color: var(--_c-white-disabled);
   }
 }

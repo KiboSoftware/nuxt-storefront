@@ -40,8 +40,7 @@
 
             <SfButton
               type="submit"
-              class="form__submit login-button sf-button--text-lg"
-              :class="`${!isLoginDisabled ? 'login-button__is-disabled--button' : ''}`"
+              class="form__submit login-button sf-button--text-lg color-primary"
               data-testid="log-in-button"
               :disabled="!isLoginDisabled"
             >
@@ -322,12 +321,6 @@ export default {
   border-radius: var(--spacer-2xs);
   padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) 0 calc(var(--spacer-base) * 2.8);
   align-self: center;
-
-  &__is-disabled--button {
-    --button-background: var(--_c-green-primary-disabled);
-
-    color: var(--_c-white-disabled);
-  }
 }
 
 .sf-heading {
