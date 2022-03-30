@@ -41,7 +41,7 @@
 
             <div class="category-content">
               <SfList>
-                <SfListItem v-for="(category, key) in megaMenuCategories" :key="key">
+                <SfListItem v-for="category in megaMenuCategories" :key="category.categoryCode">
                   <SfMenuItem
                     :label="category.content.name"
                     :icon="showOrHideIcon(category)"
@@ -292,6 +292,10 @@ export default defineComponent({
   overflow-y: auto;
   transform: var(--mega-menu-content-transform);
   transition: transform 150ms ease-in-out;
+
+  ::v-deep .sf-menu-item {
+    height: 3.75rem;
+  }
 }
 
 .is-active-hamburger {
