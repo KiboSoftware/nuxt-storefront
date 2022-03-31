@@ -99,7 +99,7 @@
                 ><b>{{ $t("Total") }}</b></span
               >
               <span class="sf-property__value"
-                ><b>{{ $n(getCartItemTotalPrice, "currency") }}</b></span
+                ><strong>{{ $n(getCartItemTotalPrice, "currency") }}</strong></span
               >
             </div>
           </div>
