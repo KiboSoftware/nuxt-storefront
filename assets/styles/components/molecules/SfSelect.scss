@@ -28,8 +28,8 @@
 
   &.country {
     @include for-desktop {
-      height: 36px;
-      bottom: 20px;
+      height: calc(var(--spacer-base) * 1.5);
+      bottom: calc(var(--spacer-sm) * 1.25);
     }
   }
 
