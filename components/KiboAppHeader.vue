@@ -19,7 +19,7 @@
             <span class="kibo-header__icon-name">{{ $t("Log In") }}</span>
           </div>
           <div class="icon-name-sidebar" v-if="isAuthenticated">
-            <span class="kibo-header__icon-title">{{ `Hi, ${user.firstName}` }}</span>
+            <span class="kibo-header__icon-title">{{ $t("Hi") }} {{ user.firstName }}</span>
             <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
           </div>
         </SfButton>
@@ -148,7 +148,7 @@
                 <span class="kibo-header__icon-name">{{ $t("Log In") }}</span>
               </div>
               <div class="kibo-header__icon" v-if="isAuthenticated">
-                <span class="kibo-header__icon-title">{{ `Hi, ${user.firstName}` }}</span>
+                <span class="kibo-header__icon-title">{{ $t("Hi") }}{{ user.firstName }}</span>
                 <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
               </div>
             </SfButton>
