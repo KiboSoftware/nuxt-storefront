@@ -36,12 +36,12 @@
     <div class="product-carousels">
       <KiboProductCarousel
         class="carousels"
-        :title="'Recently Viewed & Related'"
+        :title="$t('recentlyViewed')"
         :product-codes="relatedProducts"
       />
       <KiboProductCarousel
         class="carousels"
-        :title="'Recommended for you'"
+        :title="$t('recommendedForYou')"
         :product-codes="recommendedProducts"
       />
     </div>
@@ -376,6 +376,7 @@ export default {
   @include for-desktop {
     margin: 0 1.5rem;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
   }
 }

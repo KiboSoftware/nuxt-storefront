@@ -263,4 +263,6 @@ export default {
   Hi: "Hi, ",
   "Shop All": "Shop All",
   "Go To My Account": "Go To My Account",
+  recentlyViewed: "Recently Viewed & Related",
+  recommendedForYou: "Recommended for you",
 }
