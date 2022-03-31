@@ -16,7 +16,7 @@
           <div id="scrollable" role="tablist" class="thumbnail__scrollable">
             <div
               v-for="(image, i) in images"
-              :key="i"
+              :key="image.alt"
               class="thumbnail__image-container"
               :class="selectedImage.index === i && 'thumbnail__image-container--selected'"
               @click="
@@ -101,7 +101,7 @@
         <div class="thumbnail__dots-container">
           <div
             v-for="(image, i) in images"
-            :key="i"
+            :key="image.alt"
             class="thumbnail__dots"
             :class="selectedImage.index === i && 'thumbnail__dots--selected'"
             @click="
