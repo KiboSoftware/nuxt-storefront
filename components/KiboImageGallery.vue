@@ -46,7 +46,9 @@
       <div id="pinch-scroll-zoom" class="preview__container">
         <div class="preview__controls">
           <div
-            :class="currentZoomState.scale.toFixed(2) >= 5 && 'preview__controls-button--disabled'"
+            :class="
+              currentZoomState.scale.toFixed(2) >= maxScale && 'preview__controls-button--disabled'
+            "
             class="preview__controls-button"
             @click="zoomIn()"
           >
@@ -56,7 +58,7 @@
           </div>
           <div
             :class="
-              currentZoomState.scale.toFixed(2) <= 0.4 && 'preview__controls-button--disabled'
+              currentZoomState.scale.toFixed(2) <= minScale && 'preview__controls-button--disabled'
             "
             class="preview__controls-button"
             @click="zoomOut()"
@@ -74,8 +76,8 @@
         <client-only>
           <PinchScrollZoom
             ref="zoomRef"
-            :max-scale="5"
-            :min-scale="0.4"
+            :max-scale="maxScale"
+            :min-scale="minScale"
             :width="dimensions.width"
             :height="dimensions.height"
             :content-width="dimensions.width + 100"
@@ -154,6 +156,10 @@ export default {
       height: 0,
     })
 
+    const maxScale = 5
+    const minScale = 0.4
+    const NumberOfPxToScroll = 136
+
     const setDimensions = (width, height) => {
       dimensions.value.width = Number(width)
       dimensions.value.height = Number(height)
@@ -206,14 +212,14 @@ export default {
     }
 
     const zoomIn = () => {
-      if (currentZoomState.value.scale < 5) {
+      if (currentZoomState.value.scale < maxScale) {
         currentZoomState.value.scale += 0.02
         zoomRef.value.setData(currentZoomState.value)
       }
     }
 
     const zoomOut = () => {
-      if (currentZoomState.value.scale > 0.4) {
+      if (currentZoomState.value.scale > minScale) {
         currentZoomState.value.scale -= 0.02
         zoomRef.value.setData(currentZoomState.value)
       }
@@ -226,7 +232,9 @@ export default {
 
     const isScrollAtBottom = (element?: HTMLElement) => {
       if (element) {
-        return element.scrollHeight - (element.scrollTop + element.clientHeight) < 136
+        return (
+          element.scrollHeight - (element.scrollTop + element.clientHeight) < NumberOfPxToScroll
+        )
       }
     }
 
@@ -235,14 +243,14 @@ export default {
       const scrollableDiv = document.getElementById("scrollable")
 
       scrollableDiv?.scrollBy({
-        top: isDirectionUp ? -136 : 136,
+        top: isDirectionUp ? -NumberOfPxToScroll : NumberOfPxToScroll,
         behavior: "smooth",
       })
 
       setArrowVisibility(
         isDirectionUp
           ? {
-              up: scrollableDiv!.scrollTop > 136,
+              up: scrollableDiv!.scrollTop > NumberOfPxToScroll,
               down: true,
             }
           : {
@@ -285,6 +293,8 @@ export default {
       zoomIn,
       zoomOut,
       reset,
+      maxScale,
+      minScale,
       handleVerticalSlider,
       handleThumbnailClick,
       dimensions,
