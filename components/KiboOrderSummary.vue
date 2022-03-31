@@ -35,7 +35,6 @@
       </div>
       <div class="promo-code">
         <KiboApplyCoupon
-          v-if="appliedCoupons.length"
           :is-valid-coupon="isValidCoupon"
           :invalid-coupon-error-text="invalidCouponErrorText"
           :are-coupons-applied="areCouponsApplied"

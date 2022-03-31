@@ -464,10 +464,6 @@ export default defineComponent({
   text-align: justify;
 }
 
-.kpc-price > .sf-price__regular {
-  font-size: var(--font-size--sm);
-}
-
 .sf-image--placeholder {
   height: calc(var(--spacer-base) * 6.25);
   width: calc(var(--spacer-base) * 6.25);

@@ -131,6 +131,13 @@ const getFulfillmentLocation = (item: CartItem, locations): string => {
   return locations.find((location) => location.code === item?.fulfillmentLocationCode)?.name
 }
 
+const getAddToCartTotalPrice = (item: CartItem): Number => {
+  const regular = item.product?.price?.price
+  const special = item.product?.price?.salePrice
+  const qty = item?.quantity ? item?.quantity : 0
+  return special ? special * qty : regular * qty
+}
+
 export const cartGetters = {
   getTotals,
   getShippingPrice: getCartShippingPrice,
@@ -153,4 +160,5 @@ export const cartGetters = {
   getFulfillmentLocation,
   getProductAppliedCoupons,
   getTaxTotal: getCartTaxTotal,
+  getAddToCartTotalPrice,
 }

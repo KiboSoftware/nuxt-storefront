@@ -43,8 +43,8 @@
                 <KiboPrice
                   :regular="$n(productGetters.getPrice(product).regular, 'currency')"
                   :special="
-                    product.price.salePrice &&
-                    $n(productGetters.getPrice(product).special, 'currency')
+                    productGetters.getSalePrice(product) &&
+                    $n(productGetters.getSalePrice(product), 'currency')
                   "
                   class="kibo-collectedProduct__price"
                 />
