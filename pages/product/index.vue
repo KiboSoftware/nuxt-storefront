@@ -713,4 +713,8 @@ export default defineComponent({
 .prod-spec-mobile > .sf-accordion-item {
   width: 100%;
 }
+
+::v-deep .sf-badge {
+  --badge-width: auto;
+}
 </style>
