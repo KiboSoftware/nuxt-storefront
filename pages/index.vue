@@ -56,15 +56,6 @@
         </div>
       </div>
     </div>
-    <div class="back-to-top">
-      <div class="back-to-top__content" @click="goToTop">
-        <span class="sf-chevron--top sf-chevron">
-          <span class="sf-chevron__bar sf-chevron__bar--left" />
-          <span class="sf-chevron__bar sf-chevron__bar--right" />
-        </span>
-        <span>{{ $t("Back to top") }}</span>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -242,15 +233,11 @@ export default {
         },
       ],
     }
-    const goToTop = () => {
-      window.scrollTo(0, 0)
-    }
 
     return {
       pageName,
       heroes,
       contentTiles,
-      goToTop,
     }
   },
 }
@@ -361,27 +348,6 @@ export default {
     @include for-desktop {
       width: 24%;
     }
-  }
-}
-
-.back-to-top {
-  display: flex;
-  justify-content: flex-end;
-
-  &__content {
-    position: absolute;
-    width: calc(var(--spacer-sm) * 3.93);
-    height: calc(var(--spacer-sm) * 3.93);
-    border-style: solid;
-    border-width: 1px;
-    border-right: none;
-    border-color: var(--_c-gray-secondary);
-    background-color: var(--_c-white-primary);
-    margin-top: calc(var(--spacer-2xs) * -13);
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    cursor: pointer;
   }
 }
 </style>
