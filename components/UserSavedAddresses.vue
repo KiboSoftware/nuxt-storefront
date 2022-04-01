@@ -218,4 +218,8 @@ div {
 .shipping:last-child {
   border: none;
 }
+
+.no-shipping-address {
+  margin-bottom: var(--spacer-xs);
+}
 </style>

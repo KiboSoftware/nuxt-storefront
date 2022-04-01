@@ -25,7 +25,7 @@
             <SfButton
               :aria-pressed="isOpen.toString()"
               :aria-expanded="isOpen.toString()"
-              :class="{ 'is-open': false }"
+              :class="{ 'is-open': isOpen }"
               class="sf-button--pure sf-accordion-item__header"
               @click="accordionClick"
             >
@@ -51,7 +51,7 @@
             <SfButton
               :aria-pressed="isOpen.toString()"
               :aria-expanded="isOpen.toString()"
-              :class="{ 'is-open': false }"
+              :class="{ 'is-open': isOpen }"
               class="sf-button--pure sf-accordion-item__header"
               @click="accordionClick"
             >
@@ -85,7 +85,7 @@
             <SfButton
               :aria-pressed="isOpen.toString()"
               :aria-expanded="isOpen.toString()"
-              :class="{ 'is-open': false }"
+              :class="{ 'is-open': isOpen }"
               class="sf-button--pure sf-accordion-item__header"
               @click="accordionClick"
             >
@@ -411,6 +411,7 @@ export default defineComponent({
 .sf-accordion-item {
   ::v-deep &__content {
     padding: 0;
+    margin-bottom: var(--spacer-base);
     border: none;
   }
 

@@ -292,6 +292,6 @@ div {
 
 .same-as-shipping,
 .no-shipping-payment-method {
-  margin-bottom: var(--spacer-base);
+  margin-bottom: var(--spacer-xs);
 }
 </style>
