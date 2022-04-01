@@ -216,7 +216,6 @@ export default defineComponent({
   .sf-list {
     &__item {
       display: flex;
-      height: 3.375rem;
       margin: 0;
       padding: 0 8% 0 8%;
       border-bottom: 0.063rem solid;
@@ -294,7 +293,7 @@ export default defineComponent({
   transition: transform 150ms ease-in-out;
 
   ::v-deep .sf-menu-item {
-    height: 3.75rem;
+    height: calc(var(--spacer-xs) * 6.75);
   }
 }
 
