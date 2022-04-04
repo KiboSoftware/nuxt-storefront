@@ -134,22 +134,19 @@
           class="products__grid"
         >
           <KiboProductCard
-            v-for="(product, i) in products"
+            v-for="product in products"
             :key="productGetters.getProductId(product)"
-            :style="{ '--index': i }"
             :title="productGetters.getName(product)"
             :image="productGetters.getCoverImage(product)"
             :show-add-to-cart-button="true"
-            :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
             :score-rating="3"
             :max-rating="5"
             wishlist-icon=""
             is-in-wishlist-icon=""
             :is-in-wishlist="false"
-            :special-price="
-              productGetters.getPrice(product).special &&
-              $n(productGetters.getPrice(product).special, 'currency')
-            "
+            :regular-price="productGetters.getPrice(product).regular"
+            :special-price="productGetters.getPrice(product).special"
+            :price-range="productGetters.getPriceRange(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
             class="products__product-card"
           />

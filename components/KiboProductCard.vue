@@ -104,12 +104,21 @@
       </div>
     </slot>
     <slot name="price" v-bind="{ specialPrice, regularPrice }">
-      <SfPrice
-        v-if="regularPrice"
-        class="sf-product-card__price kpc-price"
-        :regular="regularPrice"
-        :special="specialPrice"
-      />
+      <div v-if="regularPrice">
+        <KiboPrice
+          :regular="$n(regularPrice, 'currency')"
+          :special="specialPrice && $n(specialPrice, 'currency')"
+          class="sf-product-card__price kpc-price"
+        />
+      </div>
+      <div v-if="priceRange">
+        <KiboPriceRange
+          :lower="priceRange.lower"
+          :upper="priceRange.upper"
+          :small="true"
+          class="sf-product-card__price kpc-price"
+        />
+      </div>
     </slot>
     <slot name="reviews" v-bind="{ maxRating, scoreRating }">
       <div v-if="typeof scoreRating === 'number'" class="sf-product-card__reviews">
@@ -131,7 +140,6 @@
 import { colorsValues as SF_COLORS } from "@storefront-ui/shared/variables/colors"
 
 import {
-  SfPrice,
   SfRating,
   SfIcon,
   SfButton,
@@ -150,7 +158,6 @@ import { computed, ref, defineComponent, onBeforeUnmount } from "@vue/compositio
 export default defineComponent({
   name: "KiboProductCard",
   components: {
-    SfPrice,
     SfRating,
     SfIcon,
     SfImage,
@@ -309,6 +316,10 @@ export default defineComponent({
     addToCartDisabled: {
       type: Boolean,
       default: false,
+    },
+    priceRange: {
+      type: Object,
+      default: () => {},
     },
   },
   setup(props, context) {

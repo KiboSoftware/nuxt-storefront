@@ -104,8 +104,9 @@ export default defineComponent({
 
     .outer-list {
       display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 4%;
       margin-right: calc(var(--spacer-lg) * 4);
     }
 

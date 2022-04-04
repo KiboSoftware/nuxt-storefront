@@ -1,6 +1,12 @@
 import { buildBreadcrumbs, isProductVariationsSelected } from "@/composables/helpers"
 import { Breadcrumb } from "@/pages/types"
-import { Location, Product, ProductOption, ProductOptionValue } from "@/server/types/GraphQL"
+import {
+  Location,
+  Product,
+  ProductOption,
+  ProductOptionValue,
+  ProductPriceRange,
+} from "@/server/types/GraphQL"
 import { ProductCustom } from "@/composables/types"
 import { useNuxtApp } from "#app"
 
@@ -24,6 +30,8 @@ const getPrice = (product: ProductCustom): { regular: number; special: number } 
 }
 
 const getSalePrice = (product: ProductCustom): number => product?.price?.salePrice || 0
+
+const getPriceRange = (product: ProductCustom): ProductPriceRange => product?.priceRange
 
 const getCoverImage = (product: ProductCustom): string =>
   product?.content?.productImages?.[0]?.imageUrl || ""
@@ -159,6 +167,7 @@ export const productGetters = {
   getProductTotalReviews,
   getPrice,
   getSalePrice,
+  getPriceRange,
   getDescription,
   getShortDescription,
   getSFProductGallery,

@@ -51,12 +51,19 @@
 
             <div class="product__price-and-rating">
               <div v-if="product && product.price">
-                <SfPrice
+                <KiboPrice
                   :regular="$n(productGetters.getPrice(product).regular, 'currency')"
                   :special="
                     product.price.salePrice &&
-                    $n(productGetters.getSalePrice(product).special, 'currency')
+                    $n(productGetters.getPrice(product).special, 'currency')
                   "
+                  class="kibo-collectedProduct__price"
+                />
+              </div>
+              <div v-if="product && product.priceRange && !product.price">
+                <KiboPriceRange
+                  :lower="productGetters.getPriceRange(product).lower"
+                  :upper="productGetters.getPriceRange(product).upper"
                 />
               </div>
 
@@ -265,7 +272,6 @@
 
 <script lang="ts">
 import {
-  SfPrice,
   SfRating,
   SfIcon,
   SfButton,
@@ -298,7 +304,6 @@ export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Product",
   components: {
-    SfPrice,
     SfRating,
     SfIcon,
     SfButton,
