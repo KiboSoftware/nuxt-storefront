@@ -365,6 +365,7 @@ export default defineComponent({
 
       term.value = ""
       isSearchOpen.value = false
+      isOpenSearchBar.value = false
     }
 
     const handleSearch = debounce(async (paramValue) => {
