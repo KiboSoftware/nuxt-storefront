@@ -239,6 +239,7 @@
             name="search"
             type="search"
             :placeholder="$t('Search')"
+            :value="term"
             autoComplete="off"
             @input="handleSearch"
             @keydown.enter="gotoSearchResult()"
@@ -367,6 +368,7 @@ export default defineComponent({
     }
 
     const handleSearch = debounce(async (paramValue) => {
+      if (!isOpenSearchBar.value) isOpenSearchBar.value = true
       searchSuggestionResult.value = {}
       try {
         isSearchOpen.value = true
