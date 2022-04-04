@@ -367,7 +367,6 @@ export default defineComponent({
     }
 
     const handleSearch = debounce(async (paramValue) => {
-      if (!isOpenSearchBar.value) return false
       searchSuggestionResult.value = {}
       try {
         isSearchOpen.value = true
