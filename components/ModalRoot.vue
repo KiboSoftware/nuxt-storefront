@@ -7,14 +7,6 @@
     @close="handleClose"
   >
     <template #modal-bar>
-      <!-- <SfBar
-        class="sf-modal__bar bar-heading"
-        :class="{ 'hide-bar': isSmallModal }"
-        :title="titleRef"
-        :close="true"
-        :back="false"
-        @click:close="handleClose"
-      /> -->
       <div class="modal-header">
         <div class="bar-heading" :class="{ 'hide-bar': isSmallModal }">
           {{ titleRef }}
