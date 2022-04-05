@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <header class="header">
     <KiboHamburgerMenu
       class="sf-sidebar--left smartphone-only"
       overlay
@@ -215,9 +215,20 @@
             </SfLink>
           </div>
           <div class="kibo-mobile__header-column">
-            <SfIcon size="1.25rem" @click="handleStoreLocatorClick">
-              <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
-            </SfIcon>
+            <div class="kibo-mobile__map-marker-icon" @click="handleStoreLocatorClick">
+              <SfIcon size="1.25rem">
+                <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
+              </SfIcon>
+            </div>
+            <div v-if="isStoreLocatorOpen" class="kibo-mobile__search-pointer-icon">
+              <SfIcon size="1.25rem">
+                <font-awesome-icon
+                  icon="sort-up"
+                  class="fa-icon"
+                  color="var(--_c-white-secondary)"
+                />
+              </SfIcon>
+            </div>
           </div>
           <div class="kibo-mobile__header-column">
             <SfIcon size="1.25rem" @click="gotoCart">
@@ -265,7 +276,7 @@
       >
       </KiboSearchSuggestion>
     </div>
-  </div>
+  </header>
 </template>
 
 <script lang="ts">
@@ -346,9 +357,11 @@ export default defineComponent({
     const { toggleLoginModal, isHamburgerOpen, toggleHamburger } = useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
+    const isStoreLocatorOpen = ref(false)
 
     const toggleMobileSearchBar = () => {
       isOpenSearchBar.value = !isOpenSearchBar.value
+      isStoreLocatorOpen.value = false
       nextTick(() => {
         mobileSearchRef.value.focus()
       })
@@ -442,16 +455,20 @@ export default defineComponent({
     }
 
     const handleStoreLocatorClick = () => {
-      modal.show({
-        component: StoreLocatorModal,
-        props: {
-          title: context?.root?.$t("Select Store"),
-          handleSetStore: async (selectedStore: string) => {
-            set(selectedStore)
-            await loadPurchaseLocation()
+      isStoreLocatorOpen.value = true
+      if (isStoreLocatorOpen.value) {
+        isOpenSearchBar.value = false
+        modal.show({
+          component: StoreLocatorModal,
+          props: {
+            title: context?.root?.$t("Select Store"),
+            handleSetStore: async (selectedStore: string) => {
+              set(selectedStore)
+              await loadPurchaseLocation()
+            },
           },
-        },
-      })
+        })
+      }
     }
 
     const goToOrderStatus = () => {
@@ -478,6 +495,12 @@ export default defineComponent({
     const totalItemsInCart = computed(() => {
       const count = cartGetters.getCartTotalQuantity(cart.value)
       return count ? count.toString() : null
+    })
+
+    modal.subscription.$on("close", ({ component }) => {
+      if (component === StoreLocatorModal) {
+        isStoreLocatorOpen.value = false
+      }
     })
 
     return {
@@ -516,12 +539,19 @@ export default defineComponent({
       gotoCart,
       goToOrderStatus,
       closeSearchOutsideClick,
+      isStoreLocatorOpen,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .search-overlay {
   position: fixed;
   width: 100%;
@@ -774,6 +804,8 @@ export default defineComponent({
 
   &__header-column {
     align-self: center;
+    align-items: center;
+    position: relative;
   }
 
   &__header-icon {
@@ -845,6 +877,10 @@ export default defineComponent({
 
   &__search-pointer-icon {
     height: calc(var(--spacer-2xs) * 5);
+  &__search-pointer-icon {
+    height: 1.25rem;
+    position: absolute;
+    top: 145%;
   }
 
   &__header {

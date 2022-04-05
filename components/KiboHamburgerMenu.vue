@@ -180,7 +180,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 .sf-sidebar {
   &__aside {
-    position: absolute;
+    position: fixed;
     height: calc(100% - 3.56em);
     max-width: 90%;
     width: 0;

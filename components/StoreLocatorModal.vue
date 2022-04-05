@@ -7,7 +7,7 @@
           :placeholder="$t('Enter Zip Code')"
           class="search-bar"
           aria-label="Search"
-          @keydown.enter="searchByZipCode"
+          @keydown.enter="searchByZipCode()"
         />
         <button
           :class="`color-primary sf-button sf-button--small ${
@@ -15,16 +15,19 @@
           }`"
           :aria-disabled="false"
           :link="null"
-          @click="searchByZipCode"
+          @click="searchByZipCode()"
         >
           {{ $t("Search") }}
         </button>
       </div>
-      <p>
-        <span class="current-location" @click="handleCurrentLocation">{{
-          $t("current location")
-        }}</span>
-      </p>
+      <div class="links-filter">
+        <p>
+          <span class="current-location" @click="handleCurrentLocation">{{
+            $t("current location")
+          }}</span>
+        </p>
+        <SfCheckbox :label="$t('ShowStoresWithAvailability')" name="showStoresWithAvailability" />
+      </div>
       <div class="store-count section-border">
         <p :class="getStoreCountText.color">
           {{ getStoreCountText.text }}
@@ -41,7 +44,7 @@
       </div>
       <div v-if="storeDetails.length" class="action-buttons">
         <button
-          class="color-light sf-button sf-button--small"
+          class="color-light sf-button"
           :aria-disabled="false"
           :link="null"
           @click="closeModal"
@@ -61,7 +64,7 @@
   </transition>
 </template>
 <script lang="ts">
-import { SfSearchBar } from "@storefront-ui/vue"
+import { SfSearchBar, SfCheckbox } from "@storefront-ui/vue"
 import { computed, ref, PropType } from "@vue/composition-api"
 import type { StoreLocatorModalProps } from "@/components/types/storeLocatorPropType"
 import { useCurrentLocation, useStoreLocations } from "@/composables"
@@ -72,6 +75,7 @@ export default {
   name: "StoreLocatorModal",
   components: {
     SfSearchBar,
+    SfCheckbox,
   },
   props: {
     properties: {
@@ -122,9 +126,7 @@ export default {
     }
 
     const handleSetStoreButtonStatus = computed(() => {
-      return `color-primary sf-button sf-button--small ${
-        !selectedStore.value ? "is-disabled--button" : null
-      }`
+      return `color-primary sf-button  ${!selectedStore.value ? "is-disabled--button" : null}`
     })
 
     const searchByZipCode = async () => {
@@ -173,11 +175,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: stretch;
+  gap: 1rem;
   padding: var(--spacer-lg) var(--spacer-base) var(--spacer-2xs) var(--spacer-lg);
-}
-
-.sf-button--small {
-  margin-left: 2%;
 }
 
 .search-bar {
@@ -187,15 +186,14 @@ export default {
 .current-location {
   text-decoration: underline;
   cursor: pointer;
-  font-size: var(--font-size--sm);
-  padding: var(--spacer-2xs) var(--spacer-lg);
+  font-size: var(--font-size--xs);
 }
 
 .store-count {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1px solid var(--c-light);
+  border-top: 1px solid var(--_c-gray-middle);
   padding: var(--spacer-2xs) var(--spacer-sm);
   font-size: var(--font-size--sm);
 }
@@ -210,7 +208,7 @@ export default {
 }
 
 .section-border {
-  border-bottom: 1px solid var(--c-light);
+  border-bottom: 1px solid var(--_c-gray-middle);
 }
 
 .sf-accordion-item {
@@ -236,12 +234,34 @@ export default {
 
 .action-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
   padding: var(--spacer-sm) var(--spacer-lg);
+
+  button {
+    width: 100%;
+  }
+
+  @include for-desktop {
+    width: auto;
+  }
 }
 
 .red {
   color: red;
   font-style: italic;
+}
+
+.links-filter {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+::v-deep .sf-checkbox__label {
+  font-size: var(--font-size--sm);
+  padding-top: 5px;
 }
 </style>
