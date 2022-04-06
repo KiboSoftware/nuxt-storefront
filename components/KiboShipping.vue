@@ -6,13 +6,44 @@
       class="sf-heading--left sf-heading--no-underline title"
     />
     <div class="user-addresses">
-      <UserSavedAddresses
-        :countries="countries"
-        :default-address="shippingAddress"
-        :addresses="userShippingAddresses"
-        :is-readonly="isReadonly"
-        @onSave="saveShippingAddress"
-        @validateForm="validateShippingDetails"
+      <SfLoader :loading="loadingSavedUserAddress">
+        <UserSavedAddresses
+          :countries="countries"
+          :default-address="shippingAddress"
+          :addresses="userShippingAddresses"
+          :is-readonly="isReadonly"
+          @onSave="saveShippingAddress"
+          @validateForm="validateShippingDetails"
+          @toggleAddressFormVisibility="toggleAddressFormVisibility"
+        />
+      </SfLoader>
+    </div>
+
+    <div v-if="isAddressFormOpen && isUserLoggedIn">
+      <SfCheckbox
+        name="shipping"
+        label="Save shipping address"
+        hint-message=""
+        :required="false"
+        info-message=""
+        error-message=""
+        valid
+        :disabled="false"
+        :selected="isSaveShippingAddresChecked"
+        @change="changeAddressSave"
+      />
+
+      <SfCheckbox
+        name="shipping"
+        label="Make this my default address"
+        hint-message=""
+        :required="false"
+        info-message=""
+        error-message=""
+        valid
+        :disabled="false"
+        :selected="isMakeDefaultAddresChecked"
+        @change="changeMakeDefaultAddres"
       />
     </div>
 
@@ -29,12 +60,14 @@
 </template>
 
 <script lang="ts">
-import { SfHeading } from "@storefront-ui/vue"
+import { SfHeading, SfCheckbox, SfLoader } from "@storefront-ui/vue"
 
 export default {
   name: "KiboShipping",
   components: {
     SfHeading,
+    SfCheckbox,
+    SfLoader,
   },
   props: {
     shippingAddress: {
@@ -49,11 +82,36 @@ export default {
       type: Array,
       default: () => [],
     },
+    isUserLoggedIn: {
+      type: Boolean,
+      default: false,
+    },
+    loadingSavedUserAddress: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const isReadonly = true
     const isValidShippingDetails = ref(false)
     const shippingAddress = ref({ ...props.value })
+    const isAddressFormOpen = ref(false)
+    const isSaveShippingAddresChecked = ref(false)
+    const isMakeDefaultAddresChecked = ref(false)
+
+    const toggleAddressFormVisibility = (state) => {
+      isAddressFormOpen.value = state
+    }
+
+    const changeAddressSave = (value) => {
+      isSaveShippingAddresChecked.value = value
+      context.emit("saveAddressChecked", value)
+    }
+
+    const changeMakeDefaultAddres = (value) => {
+      isMakeDefaultAddresChecked.value = value
+      context.emit("makeDefaultAddressChecked", value)
+    }
 
     const validateShippingDetails = (isValid) => {
       isValidShippingDetails.value = isValid
@@ -76,6 +134,12 @@ export default {
       saveShippingAddress,
       updateShippingDetails,
       validateShippingDetails,
+      toggleAddressFormVisibility,
+      isAddressFormOpen,
+      changeAddressSave,
+      changeMakeDefaultAddres,
+      isSaveShippingAddresChecked,
+      isMakeDefaultAddresChecked,
     }
   },
 }

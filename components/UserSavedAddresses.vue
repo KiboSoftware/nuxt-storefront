@@ -107,6 +107,8 @@ export default defineComponent({
       isNewAddress.value = true
       if (!activeAddress.value) activeAddress.value = {}
       showAddressForm.value = true
+
+      context.emit("toggleAddressFormVisibility", true)
     }
     const updateAddress = (address) => {
       isNewAddress.value = false
@@ -122,6 +124,7 @@ export default defineComponent({
     }
     const closeAddressForm = () => {
       showAddressForm.value = false
+      context.emit("toggleAddressFormVisibility", false)
     }
     const setInputAddressData = (address) => {
       activeAddress.value = { ...address }

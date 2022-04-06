@@ -14,9 +14,13 @@
           </SfStep>
           <SfStep name="Shipping">
             <KiboShipping
+              :loading-saved-user-address="loadingUserAddress"
+              :is-user-logged-in="isAuthenticated"
               :shipping-address="shippingDetails"
               :user-shipping-addresses="userShippingAddresses"
               :countries="countries"
+              @saveAddressChecked="saveAddressChecked"
+              @makeDefaultAddressChecked="makeDefaultAddressChecked"
               @saveShippingAddress="saveShippingDetails"
               @validateForm="validateShippingDetails"
             >
@@ -202,11 +206,13 @@ export default {
     const modal = nuxt.nuxt2Context.$modal
     const showCreateAccount = ref(false)
     const password = ref(null)
+    const isSaveAddressChecked = ref(false)
+    const isDefaultAddressChecked = ref(false)
     const transition = "sf-fade"
     const enableCurrentStep = ref(false)
     const enableNextStep = ref(false)
     const isAuthenticated = computed(() => {
-      return userGetters.isLoggedInUser(user.value)
+      return userGetters.isLoggedInUser(user.value) || false
     })
 
     const stepLabels = {
@@ -298,6 +304,15 @@ export default {
     // shippingDetails
     const shippingDetails = computed(() => checkout.value?.fulfillmentInfo?.fulfillmentContact)
     const updatedShippingAddress = ref({})
+
+    const saveAddressChecked = (value: boolean) => {
+      isSaveAddressChecked.value = value
+    }
+
+    const makeDefaultAddressChecked = (value: boolean) => {
+      isDefaultAddressChecked.value = value
+    }
+
     const saveShippingDetails = async (shippingAddress) => {
       if (!isValidShippingDetails.value) return
 
@@ -312,9 +327,28 @@ export default {
         },
       }
       await setShippingInfo(params)
+
+      if (isSaveAddressChecked.value) {
+        const addressData = {
+          accountId: user.value.id,
+          customerContactInput: {
+            ...checkout.value?.fulfillmentInfo?.fulfillmentContact,
+            types: [
+              {
+                name: "Shipping",
+                isPrimary: isDefaultAddressChecked.value,
+              },
+            ],
+            accountId: user.value.id,
+          },
+        }
+
+        await addUserAddress(addressData)
+        await loadUserAddresses(user.value.id)
+      }
+
       await loadShippingMethods(checkout.value?.id)
     }
-
     const isValidShippingDetails = ref(false)
     const validateShippingDetails = (isValid) => {
       isValidShippingDetails.value = isValid
@@ -584,6 +618,10 @@ export default {
       saveShippingDetails,
       updatedShippingAddress,
       userShippingAddresses,
+      saveAddressChecked,
+      makeDefaultAddressChecked,
+      isAuthenticated,
+      loadingUserAddress,
 
       shippingRates,
       saveShippingMethod,
