@@ -5,6 +5,7 @@ import {
   createAccountLoginMutation,
   updateCustomerDataMutation,
   updatePasswordMutation,
+  resetPasswordMutation,
 } from "@/lib/gql/mutations"
 import { getCurrentUser } from "@/lib/gql/queries"
 
@@ -16,6 +17,7 @@ const mockCreateAccountMutation = createAccountMutation
 const mockCreateAccountLoginMutation = createAccountLoginMutation
 const mockUpdateCustomerDataMutation = updateCustomerDataMutation
 const mockUpdatePasswordMutation = updatePasswordMutation
+const mockResetPasswordMutation = resetPasswordMutation
 
 const currentUser = {
   emailAddress: "test@email.com",
@@ -72,6 +74,8 @@ const createAccountResponse = {
 
 const createAccountLoginResponse = {}
 
+const errorResponse = { login: null, register: null, resetPassword: null }
+
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
@@ -95,6 +99,8 @@ jest.mock("#app", () => ({
           return { data: { updateCustomerAccount: updatedUser } }
         } else if (params.query === mockUpdatePasswordMutation) {
           return { data: { user: true } }
+        } else if (params.query === mockResetPasswordMutation) {
+          return { data: { resetPassword: true } }
         }
       }),
       app: {
@@ -121,13 +127,14 @@ describe("[composable] useUser", () => {
     error,
     updateCustomerPersonalData,
     changePassword,
+    resetPassword,
   } = useUser()
   test("useUser : should login using mutation ", async () => {
     const storeClientCookieSpy = jest.spyOn(cookieHelper, "storeClientCookie")
     await login({ username: "sssss", password: "abcd@only" })
     expect(storeClientCookieSpy).toHaveBeenCalled()
     expect(loading.value).toBeFalsy()
-    expect(error.value).toStrictEqual({ login: null, register: null })
+    expect(error.value).toStrictEqual(errorResponse)
     expect(isAuthenticated.value).toBeFalsy()
   })
 
@@ -158,7 +165,7 @@ describe("[composable] useUser", () => {
 
     expect(storeClientCookieSpy).toHaveBeenCalled()
     expect(loading.value).toBeFalsy()
-    expect(error.value).toStrictEqual({ login: null, register: null })
+    expect(error.value).toStrictEqual(errorResponse)
     expect(isAuthenticated.value).toBeFalsy()
   })
 
@@ -181,6 +188,18 @@ describe("[composable] useUser", () => {
     }
     await changePassword(passwordInput)
     expect(loading.value).toBeFalsy()
-    expect(error.value).toStrictEqual({ login: null, register: null })
+    expect(error.value).toStrictEqual(errorResponse)
+  })
+
+  test("useUser: should reset customer password", async () => {
+    const resetPasswordInput = {
+      emailAddress: "suman@email.com",
+      userName: "suman@email.com",
+      customerSetCode: "",
+    }
+    const res = await resetPassword(resetPasswordInput)
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toStrictEqual(errorResponse)
+    expect(res).toEqual(true)
   })
 })

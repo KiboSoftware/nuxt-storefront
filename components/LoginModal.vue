@@ -66,22 +66,33 @@
           </SfButton>
         </div>
       </div>
-      <div v-else-if="isForgotten">
+      <div v-else-if="isForgotten" class="modal-content">
         <p>{{ $t("Forgot Password") }}</p>
-        <form class="form" @submit.prevent="() => false">
+        <form class="form" @submit.prevent="handleForgotPassword()">
           <SfInput
             v-model="form.username"
             name="email"
             :label="$t('Forgot Password Modal Email')"
             class="form__element"
           />
-          <SfButton type="submit" class="sf-button--full-width form__button">
-            <SfLoader :class="{ loader: false }" :loading="false">
+          <span v-if="userError.resetPassword" class="login-error-message">
+            {{ userError.resetPassword.message }}
+          </span>
+
+          <SfLoader :class="{ loader: loading }" :loading="loading">
+            <SfButton type="submit" class="sf-button--full-width form__button reset-password">
               <div>{{ $t("Reset Password") }}</div>
-            </SfLoader>
-          </SfButton>
+            </SfButton>
+          </SfLoader>
         </form>
       </div>
+      <div v-else-if="isThankYouAfterForgotten" class="thank-you">
+        <i18n tag="p" class="thank-you__paragraph" path="forgotPasswordConfirmation">
+          <span class="thank-you__paragraph--bold">{{ userEmail }}</span>
+        </i18n>
+        <p class="thank-you__paragraph">{{ $t("Thank You Inbox") }}</p>
+      </div>
+
       <div v-else key="sign-up" class="modal-content" data-testid="signin-modal">
         <form class="form" @submit.prevent="() => false">
           <SfInput
@@ -149,7 +160,7 @@ import {
 
 import { useCart, useUiState, useUser } from "@/composables"
 import { userGetters } from "@/lib/getters"
-import { LoginFormType } from "@/components/types/login"
+import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
 
 export default {
   name: "LoginModal",
@@ -163,7 +174,7 @@ export default {
     SfLoader,
   },
   setup() {
-    const { user, login, loading, error: userError, isAuthenticated } = useUser()
+    const { user, login, resetPassword, loading, error: userError, isAuthenticated } = useUser()
     const { load: loadCart } = useCart()
 
     const { isLoginModalOpen, toggleLoginModal } = useUiState()
@@ -172,11 +183,12 @@ export default {
     const isForgotten = ref(false)
     const rememberMe = ref(false)
     const createAccount = ref(false)
+    const isThankYouAfterForgotten = ref(false)
 
     const barTitle = computed(() => {
       if (isLogin.value) {
         return "Login"
-      } else if (isForgotten.value) {
+      } else if (isForgotten.value || isThankYouAfterForgotten.value) {
         return "Reset Password"
       } else {
         return "Register Now"
@@ -223,6 +235,16 @@ export default {
       const userInput = form.value as LoginFormType
       return userInput.username && userInput.password
     })
+    const handleForgotPassword = async () => {
+      const userInput = form.value as RestPasswordFormType
+      if (userInput.username) {
+        const success = await resetPassword({ emailAddress: userInput.username })
+        if (success) {
+          isThankYouAfterForgotten.value = true
+          isForgotten.value = false
+        }
+      }
+    }
 
     return {
       form,
@@ -232,7 +254,9 @@ export default {
       isLoginModalOpen,
       toggleLoginModal,
       handleLogin,
+      handleForgotPassword,
       isForgotten,
+      isThankYouAfterForgotten,
       closeModal,
       setIsLoginValue,
       setIsForgottenValue,
@@ -342,5 +366,9 @@ export default {
 
 .remember-me {
   margin: 0 0 var(--spacer-xs) 0;
+}
+
+.reset-password {
+  margin-bottom: var(--spacer-xs);
 }
 </style>

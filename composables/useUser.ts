@@ -7,8 +7,10 @@ import {
   createAccountMutation,
   updateCustomerDataMutation,
   updatePasswordMutation,
+  resetPasswordMutation,
 } from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
+import type { ResetPasswordParams, ResetPasswordResponse } from "@/composables/types/useUser"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
@@ -22,10 +24,12 @@ export const useUser = () => {
   const error = reactive({
     login: null,
     register: null,
+    resetPassword: null,
   })
   const resetErrorValues = () => {
     error.login = null
     error.register = null
+    error.resetPassword = null
   }
 
   const load = async () => {
@@ -199,6 +203,33 @@ export const useUser = () => {
       loading.value = false
     }
   }
+  const resetPassword = async (params: ResetPasswordParams): Promise<ResetPasswordResponse> => {
+    const variables = {
+      resetPasswordInfoInput: {
+        emailAddress: params.emailAddress,
+        userName: params.emailAddress,
+        customerSetCode: "",
+      },
+    }
+    try {
+      loading.value = true
+      const response = await fetcher({
+        query: resetPasswordMutation,
+        variables,
+        headers: { "x-vol-exclude-user-claims": "true" },
+      })
+      loading.value = false
+      if (response?.data?.resetPassword) return response?.data?.resetPassword
+      else if (response.errors) {
+        error.resetPassword = response.errors[0]
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+    } finally {
+      loading.value = false
+    }
+  }
 
   // return
   return {
@@ -210,6 +241,7 @@ export const useUser = () => {
     isAuthenticated,
     updateCustomerPersonalData,
     changePassword,
+    resetPassword,
     loading: computed(() => loading.value),
     error: computed(() => error),
   }
