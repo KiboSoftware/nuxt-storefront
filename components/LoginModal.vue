@@ -80,7 +80,11 @@
           </span>
 
           <SfLoader :class="{ loader: loading }" :loading="loading">
-            <SfButton type="submit" class="sf-button--full-width form__button reset-password">
+            <SfButton
+              type="submit"
+              class="sf-button--full-width form__button color-primary reset-password"
+              :disabled="!form.username"
+            >
               <div>{{ $t("Reset Password") }}</div>
             </SfButton>
           </SfLoader>
@@ -88,7 +92,7 @@
       </div>
       <div v-else-if="isThankYouAfterForgotten" class="thank-you">
         <i18n tag="p" class="thank-you__paragraph" path="forgotPasswordConfirmation">
-          <span class="thank-you__paragraph--bold">{{ userEmail }}</span>
+          <span class="thank-you__paragraph--bold">{{ form.username }}</span>
         </i18n>
         <p class="thank-you__paragraph">{{ $t("Thank You Inbox") }}</p>
       </div>
@@ -369,6 +373,14 @@ export default {
 }
 
 .reset-password {
-  margin-bottom: var(--spacer-xs);
+  margin-bottom: var(--spacer-sm);
+}
+
+.thank-you {
+  &__paragraph {
+    &--bold {
+      font-weight: var(--font-weight--semibold);
+    }
+  }
 }
 </style>

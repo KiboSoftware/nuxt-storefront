@@ -216,7 +216,6 @@ export const useUser = () => {
       const response = await fetcher({
         query: resetPasswordMutation,
         variables,
-        headers: { "x-vol-exclude-user-claims": "true" },
       })
       loading.value = false
       if (response?.data?.resetPassword) return response?.data?.resetPassword
