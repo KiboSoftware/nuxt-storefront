@@ -22,20 +22,20 @@
     <div v-if="isAddressFormOpen && isUserLoggedIn">
       <SfCheckbox
         name="shipping"
-        label="Save shipping address"
+        :label="$t('Save shipping address')"
         hint-message=""
         :required="false"
         info-message=""
         error-message=""
         valid
         :disabled="false"
-        :selected="isSaveShippingAddresChecked"
+        :selected="isSaveShippingAddressChecked"
         @change="changeAddressSave"
       />
 
       <SfCheckbox
         name="shipping"
-        label="Make this my default address"
+        :label="$t('Make this my default address')"
         hint-message=""
         :required="false"
         info-message=""
@@ -96,7 +96,7 @@ export default {
     const isValidShippingDetails = ref(false)
     const shippingAddress = ref({ ...props.value })
     const isAddressFormOpen = ref(false)
-    const isSaveShippingAddresChecked = ref(false)
+    const isSaveShippingAddressChecked = ref(false)
     const isMakeDefaultAddresChecked = ref(false)
 
     const toggleAddressFormVisibility = (state) => {
@@ -104,7 +104,7 @@ export default {
     }
 
     const changeAddressSave = (value) => {
-      isSaveShippingAddresChecked.value = value
+      isSaveShippingAddressChecked.value = value
       context.emit("saveAddressChecked", value)
     }
 
@@ -138,7 +138,7 @@ export default {
       isAddressFormOpen,
       changeAddressSave,
       changeMakeDefaultAddres,
-      isSaveShippingAddresChecked,
+      isSaveShippingAddressChecked,
       isMakeDefaultAddresChecked,
     }
   },

@@ -261,4 +261,5 @@ export default {
   makeThisMyDefaultPayment: "Make this my default payment",
   loginToYourAccount: "or Log In To Your Account",
   Hi: "Hi, ",
+  "Make this my default address": "Make this my default address",
 }
