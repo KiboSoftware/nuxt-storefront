@@ -7,6 +7,7 @@
           :placeholder="$t('Enter Zip Code')"
           class="search-bar"
           aria-label="Search"
+          @keydown.enter="searchByZipCode"
         />
         <button
           :class="`color-primary sf-button sf-button--small ${
@@ -16,7 +17,7 @@
           :link="null"
           @click="searchByZipCode"
         >
-          Search
+          {{ $t("Search") }}
         </button>
       </div>
       <p>
