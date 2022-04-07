@@ -73,7 +73,11 @@
             v-model="form.username"
             name="email"
             :label="$t('Forgot Password Modal Email')"
+            :valid="isEmailValidated"
+            :error-message="errors.email"
             class="form__element"
+            required
+            @input="validateEmail('email', form.username)"
           />
           <span v-if="userError.resetPassword" class="login-error-message">
             {{ userError.resetPassword.message }}
@@ -83,7 +87,7 @@
             <SfButton
               type="submit"
               class="sf-button--full-width form__button color-primary reset-password"
-              :disabled="!form.username"
+              :disabled="!isEmailValidated"
             >
               <div>{{ $t("Reset Password") }}</div>
             </SfButton>
@@ -162,7 +166,7 @@ import {
   SfLoader,
 } from "@storefront-ui/vue"
 
-import { useCart, useUiState, useUser } from "@/composables"
+import { useCart, useUiState, useUser, useUiValidationSchemas } from "@/composables"
 import { userGetters } from "@/lib/getters"
 import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
 
@@ -177,7 +181,7 @@ export default {
     SfBar,
     SfLoader,
   },
-  setup() {
+  setup(_, context) {
     const { user, login, resetPassword, loading, error: userError, isAuthenticated } = useUser()
     const { load: loadCart } = useCart()
 
@@ -188,6 +192,11 @@ export default {
     const rememberMe = ref(false)
     const createAccount = ref(false)
     const isThankYouAfterForgotten = ref(false)
+    const isEmailValidated = ref(false)
+
+    const errors = ref({
+      email: "",
+    })
 
     const barTitle = computed(() => {
       if (isLogin.value) {
@@ -250,6 +259,19 @@ export default {
       }
     }
 
+    const schemaEmail = useUiValidationSchemas(context.root, "email")
+
+    const validateEmail = async (field: string, emailAddress: string) => {
+      try {
+        await schemaEmail.validateAt(field, { email: emailAddress })
+        errors.value[field] = ""
+        isEmailValidated.value = true
+      } catch (err) {
+        errors.value[field] = err.message
+        isEmailValidated.value = false
+      }
+    }
+
     return {
       form,
       userError,
@@ -271,6 +293,9 @@ export default {
       isAuthenticated,
       user,
       isLoginDisabled,
+      validateEmail,
+      isEmailValidated,
+      errors,
     }
   },
 }
