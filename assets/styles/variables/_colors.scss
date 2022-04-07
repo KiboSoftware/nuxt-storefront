@@ -3,6 +3,7 @@
   @include generate-color-variants(--_c-green-primary-disabled, #c0e3df);
   @include generate-color-variants(--_c-gray-primary, #7c7c7c);
   @include generate-color-variants(--_c-gray-middle, #cdcdcd);
+  @include generate-color-variants(--_c-gray-secondary, #c7c7c7);
   @include generate-color-variants(--_c-gray-shadow, rgba(14, 10, 10, 0.5));
   @include generate-color-variants(--c-black, #2b2b2b);
   @include generate-color-variants(--_c-white-secondary, #eaeaea);

@@ -181,25 +181,6 @@ div {
   }
 }
 
-.address-container {
-  display: flex;
-  flex-direction: row;
-
-  &__left {
-    flex: auto;
-  }
-
-  &__right {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-  }
-
-  &__edit {
-    justify-content: center;
-  }
-}
-
 .shipping-list {
   display: flex;
   flex-direction: column;
@@ -236,5 +217,9 @@ div {
 
 .shipping:last-child {
   border: none;
+}
+
+.no-shipping-address {
+  margin-bottom: var(--spacer-xs);
 }
 </style>

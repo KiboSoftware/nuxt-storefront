@@ -12,17 +12,31 @@ const getName = (category: PrCategory) => category?.content?.name
 
 const getCategoryCode = (category: PrCategory) => category?.categoryCode
 
-const getParentCategory = async (categories: PrCategory[], categoryCode: String | Number) => {
-  if (!categories) {
-    return
+const getParentCategory = (categories: PrCategory[], categoryCode: String | Number) => {
+  const parentCategoryTree = { value: [] }
+  const findCategoryByCode = (
+    category: PrCategory,
+    code: String | Number,
+    parentCategory: PrCategory[]
+  ) => {
+    if (category?.categoryCode === code) {
+      parentCategoryTree.value = parentCategory
+      return true
+    }
+    return category?.childrenCategories?.find((childCategory: PrCategory) => {
+      const found = findCategoryByCode(childCategory, code, category?.childrenCategories)
+      if (found) {
+        return true
+      }
+      return false
+    })
   }
-  for (const parent of categories) {
-    if (parent.categoryCode.toString() === categoryCode) {
-      return categories
-    } else if (parent.childrenCategories) {
-      await getParentCategory(parent.childrenCategories, categoryCode)
+  for (const rootCategory of categories) {
+    if (findCategoryByCode(rootCategory, categoryCode, categories)) {
+      break
     }
   }
+  return parentCategoryTree.value
 }
 
 export const categoryGetters = {

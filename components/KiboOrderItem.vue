@@ -56,15 +56,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.order-item-container {
-  border: none;
-  border-bottom: 1px solid var(--_c-gray-middle);
-}
-
 .order-item {
   display: flex;
-  margin: calc(var(--spacer-2xs) * 2.5) 0 calc(var(--spacer-2xs) * 2.5)
-    calc(var(--spacer-xs) * 2.88);
+  margin: calc(var(--spacer-2xs) * 2.5) 0 calc(var(--spacer-2xs) * 2.5) 0;
 
   &__left {
     display: flex;
@@ -79,7 +73,6 @@ export default defineComponent({
     flex-direction: column;
     justify-content: center;
     justify-items: flex-end;
-    flex: 1;
   }
 
   &__info {

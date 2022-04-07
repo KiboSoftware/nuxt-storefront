@@ -722,11 +722,10 @@ export default defineComponent({
 .sf-search-bar {
   &__icon {
     height: 1 rem;
-    padding-left: 0.625rem;
   }
 
   &__button {
-    width: 6%;
+    width: 5%;
   }
 }
 
