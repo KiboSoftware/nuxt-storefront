@@ -2,7 +2,7 @@
   <div class="carousel-wrapper" v-if="!loading && products.length > 0">
     <div class="header">
       <p class="title">{{ title }}</p>
-      <SfLink>{{ $t("Shop All") }}</SfLink>
+      <SfLink :link="shopAllLink">{{ $t("Shop All") }}</SfLink>
     </div>
     <div class="product-carousel-container">
       <KiboProductCard
@@ -46,9 +46,17 @@ export default {
       type: String,
       default: "",
     },
+    shopAllLink: {
+      type: String,
+      default: "",
+    },
+    carouselName: {
+      type: String,
+      default: "",
+    },
   },
   setup(props) {
-    const { search, result, loading } = useProductSearch(`top-sellers`)
+    const { search, result, loading } = useProductSearch(`product-carousel-${props.carouselName}`)
     const { getProductLink } = useUiHelpers()
     const products = computed(() => result.value?.items || [])
     const { productCodes } = props
