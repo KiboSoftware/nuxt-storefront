@@ -222,11 +222,19 @@ export default defineComponent({
   .products__grid {
     display: flex;
     flex-wrap: wrap;
-    overflow-y: auto;
+    overflow-y: scroll;
     max-height: 31.875rem;
 
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
     @include for-desktop {
-      overflow: hidden;
       gap: var(--spacer-sm);
     }
   }
@@ -269,14 +277,6 @@ export default defineComponent({
     font-size: var(--spacer-sm);
     line-height: var(--font-size--lg);
     text-align: center;
-  }
-
-  .scroll {
-    overflow: scroll;
-  }
-
-  .scroll::-webkit-scrollbar {
-    display: none;
   }
 
   .kpc-title {
