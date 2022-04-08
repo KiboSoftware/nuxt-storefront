@@ -51,18 +51,6 @@
                 {{ category.name }}</span
               >
             </SfButton>
-            <!-- <ul v-if="result.categories && result.categories.length > 0">
-            <li
-              v-for="(category, index) in result.categories"
-              :key="index"
-              class="category-list"
-              @click="
-                gotToCategory(localePath(getCatLink({ categoryCode: category.categoryCode })))
-              "
-            >
-              {{ category.name }}
-            </li>
-          </ul> -->
           </div>
           <div v-else class="no-record">
             <div v-if="!loading">No Result found......</div>
