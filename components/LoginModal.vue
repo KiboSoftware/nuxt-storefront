@@ -94,7 +94,7 @@
           </SfLoader>
         </form>
       </div>
-      <div v-else-if="isThankYouAfterForgotten" class="thank-you">
+      <div v-else-if="displayThankYouMessage" class="thank-you">
         <i18n tag="p" class="thank-you__paragraph" path="forgotPasswordConfirmation">
           <span class="thank-you__paragraph--bold">{{ form.username }}</span>
         </i18n>
@@ -191,7 +191,7 @@ export default {
     const isForgotten = ref(false)
     const rememberMe = ref(false)
     const createAccount = ref(false)
-    const isThankYouAfterForgotten = ref(false)
+    const displayThankYouMessage = ref(false)
     const isEmailValidated = ref(false)
 
     const errors = ref({
@@ -201,7 +201,7 @@ export default {
     const barTitle = computed(() => {
       if (isLogin.value) {
         return "Login"
-      } else if (isForgotten.value || isThankYouAfterForgotten.value) {
+      } else if (isForgotten.value || displayThankYouMessage.value) {
         return "Reset Password"
       } else {
         return "Register Now"
@@ -253,7 +253,7 @@ export default {
       if (userInput.username) {
         const success = await resetPassword({ emailAddress: userInput.username })
         if (success) {
-          isThankYouAfterForgotten.value = true
+          displayThankYouMessage.value = true
           isForgotten.value = false
         }
       }
@@ -282,7 +282,7 @@ export default {
       handleLogin,
       handleForgotPassword,
       isForgotten,
-      isThankYouAfterForgotten,
+      displayThankYouMessage,
       closeModal,
       setIsLoginValue,
       setIsForgottenValue,
