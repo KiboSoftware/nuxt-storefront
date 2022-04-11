@@ -12,7 +12,7 @@
 
   input.invalid {
     --input-border-color: var(--c-danger);
-}
+  }
 
   border: none;
 
@@ -96,5 +96,9 @@
         --input-label-top: 50%;
       }
     }
+  }
+
+  &.invalid > &__wrapper > input {
+    --input-border-color: var(--c-danger);
   }
 }
