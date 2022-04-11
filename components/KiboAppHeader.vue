@@ -77,7 +77,7 @@
       <div class="kibo-header">
         <div class="kibo-header__container">
           <div class="kibo-header__spacer"></div>
-          <div v-click-outside="closeSearch" class="kibo-header__search-bar">
+          <div v-click-outside="closeSearchOutsideClick" class="kibo-header__search-bar">
             <div v-show="isSearchOpen" class="search-overlay" @click="closeSearch"></div>
             <KiboSearchBar
               ref="searchBarRef"
@@ -234,16 +234,36 @@
 
       <div v-show="isOpenSearchBar" class="kibo-mobile__header-search">
         <div class="kibo-mobile__header-search__input">
-          <input ref="mobileSearchRef" name="search" type="search" :placeholder="$t('Search')" />
+          <input
+            ref="mobileSearchRef"
+            name="search"
+            type="search"
+            :placeholder="$t('Search')"
+            :value="term"
+            autoComplete="off"
+            @input="handleSearch"
+            @keydown.enter="gotoSearchResult()"
+            @keydown.esc="closeSearch"
+          />
         </div>
 
         <button
           class="sf-button sf-button--small kibo-mobile__header-search__cancel"
-          @click="isOpenSearchBar = false"
+          @click="
+            isSearchOpen = false
+            isOpenSearchBar = false
+          "
         >
           {{ $t("Cancel") }}
         </button>
       </div>
+      <KiboSearchSuggestion
+        :visible="isSearchOpen"
+        :result="searchSuggestionResult"
+        :loading="loading"
+        @closeDialog="closeSearch()"
+      >
+      </KiboSearchSuggestion>
     </div>
   </div>
 </template>
@@ -335,14 +355,21 @@ export default defineComponent({
     }
     const { search: productSearch } = useProductSearch(`product-search`)
 
+    const closeSearchOutsideClick = () => {
+      if (isMobile.value) return false
+      else closeSearch()
+    }
+
     const closeSearch = () => {
-      if (!isSearchOpen.value) return
+      if (!isSearchOpen.value) return false
 
       term.value = ""
       isSearchOpen.value = false
+      isOpenSearchBar.value = false
     }
 
     const handleSearch = debounce(async (paramValue) => {
+      if (!isOpenSearchBar.value) isOpenSearchBar.value = true
       searchSuggestionResult.value = {}
       try {
         isSearchOpen.value = true
@@ -488,6 +515,7 @@ export default defineComponent({
       toggleHamburger,
       gotoCart,
       goToOrderStatus,
+      closeSearchOutsideClick,
     }
   },
 })
@@ -530,7 +558,7 @@ export default defineComponent({
   &__search {
     top: 0;
     margin-top: var(--spacer-sm);
-    height: 2.125rem;
+    height: calc(var(--spacer-2xs) * 8.5);
   }
 
   &__bottom-link {
@@ -539,7 +567,7 @@ export default defineComponent({
   }
 
   &__account {
-    height: 3.438rem;
+    height: calc(var(--spacer-xs) * 7);
   }
 
   &__actions {
@@ -576,7 +604,7 @@ export default defineComponent({
 
 .kibo-header {
   display: flex;
-  height: 4.2rem;
+  height: calc(var(--spacer-xs) * 8.5);
   width: 100%;
   align-items: center;
   background: var(--_c-white-secondary);
@@ -602,7 +630,7 @@ export default defineComponent({
     display: flex;
     position: relative;
     flex: 2;
-    height: 2.125rem;
+    height: calc(var(--spacer-2xs) * 4.25);
   }
 
   &__icon {
@@ -629,7 +657,7 @@ export default defineComponent({
   display: flex;
   background-color: var(--_c-dark-primary);
   width: 100%;
-  height: 3.5rem;
+  height: calc(var(--spacer-xs) * 7);
 
   &__container {
     display: flex;
@@ -680,7 +708,7 @@ export default defineComponent({
 .kibo-header-container {
   background-color: var(--_c-light-secondary);
   box-shadow: 0 0.13rem var(--spacer-2xs) 0 rgba(0, 0, 0, 0.5);
-  height: 7.938rem;
+  height: calc(var(--spacer-sm) * 7.93);
 }
 
 .fa-icon {
@@ -689,7 +717,7 @@ export default defineComponent({
 
 .search-suggestion-div {
   flex: 1.5;
-  top: 2.9rem;
+  top: calc(var(--spacer-xs) * 5.75);
   position: absolute;
   z-index: 20;
   max-width: 41rem;
@@ -702,18 +730,18 @@ export default defineComponent({
   color: var(--_c-dark-primary);
   font-family: var(--font-family--primary);
   font-size: var(--font-size--sm);
-  line-height: 1.063rem;
+  line-height: calc(var(--spacer-2xs) * 4.25);
   text-align: left;
 }
 
 .side-bar-nav {
-  max-height: 12.5rem;
+  max-height: calc(var(--spacer-xl) * 5);
   overflow-y: auto;
 
   &__link {
     padding-left: 7.01%;
     border-bottom: 0.06rem solid var(--_c-gray-middle);
-    height: 3.438rem;
+    height: calc(var(--spacer-xs) * 7);
     display: flex;
     align-items: center;
   }
@@ -721,7 +749,7 @@ export default defineComponent({
 
 .sf-search-bar {
   &__icon {
-    height: 1 rem;
+    height: var(--spacer-sm);
   }
 
   &__button {
@@ -740,7 +768,7 @@ export default defineComponent({
     display: flex;
     flex-direction: row;
     background-color: var(--_c-dark-primary);
-    height: 3.438rem;
+    height: calc(var(--spacer-xs) * 7);
     justify-content: space-evenly;
   }
 
@@ -753,38 +781,38 @@ export default defineComponent({
   }
 
   &__item-count {
-    padding: 0.125rem;
-    margin-bottom: 1.438rem;
-    margin-left: -0.5rem;
+    padding: calc(var(--spacer-2xs) * 0.5);
+    margin-bottom: calc(var(--spacer-2xs) * 5.75);
+    margin-left: -var(--spacer-xs);
 
     --badge-min-width: var(--spacer-sm);
     --badge-min-height: var(--spacer-sm);
 
     justify-content: center;
-    font-size: 0.563rem;
+    font-size: calc(var(--spacer-2xs) * 2.25);
   }
 
   &__logo > .sf-image {
     object-fit: none;
-    padding-top: 0.438rem;
+    padding-top: calc(var(--spacer-2xs) * 1.75);
   }
 
   &__header-search {
-    height: 3.563rem;
+    height: calc(var(--spacer-xs) * 7.125);
     background-color: var(--_c-white-secondary);
     display: flex;
     flex-direction: row;
     align-items: center;
 
     &__input {
-      padding-left: 1.813rem;
+      padding-left: calc(var(--spacer-2xs) * 7.5);
       flex: 90%;
 
       > input {
-        height: 2.125rem;
+        height: calc(var(--spacer-2xs) * 8.5);
         width: 100%;
         border: 1px solid var(--_c-gray-middle);
-        border-radius: 0.125rem;
+        border-radius: calc(var(--spacer-2xs) * 0.5);
         text-indent: 2%;
         outline: none;
       }
@@ -804,19 +832,19 @@ export default defineComponent({
 
     &__cancel {
       flex: 10%;
-      padding-right: 1.813rem;
+      padding-right: calc(var(--spacer-2xs) * 7.5);
       background-color: var(--_c-white-secondary);
       color: var(--_c-gray-primary);
     }
   }
 
   &__search-icon {
-    height: 1.875rem;
-    margin-top: 1.875rem;
+    height: calc(var(--spacer-2xs) * 7.5);
+    margin-top: calc(var(--spacer-2xs) * 7.5);
   }
 
   &__search-pointer-icon {
-    height: 1.25rem;
+    height: calc(var(--spacer-2xs) * 5);
   }
 
   &__header {
@@ -824,8 +852,7 @@ export default defineComponent({
     flex-direction: row;
     justify-content: space-between;
     width: 100%;
-    margin-left: 1.875rem;
-    margin-right: 1.875rem;
+    margin: 0 calc(var(--spacer-2xs) * 7.5);
   }
 }
 </style>

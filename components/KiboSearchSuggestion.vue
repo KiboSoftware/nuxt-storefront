@@ -1,12 +1,12 @@
 <template>
   <div v-show="visible" class="custom-search-header">
     <div class="search-container">
-      <div class="search-product left">
+      <div class="search-container__left desktop-only">
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
-        <div class="suggestion-title"><h3>Top Suggestions</h3></div>
-        <div class="result-list">
+        <div class="search-container__title"><h3>Top Suggestions</h3></div>
+        <div class="search-container__products">
           <div v-if="result.products && result.products.length > 0" class="products__grid">
             <template v-for="(product, index) in result.products">
               <KiboProductCard
@@ -27,25 +27,31 @@
           </div>
         </div>
       </div>
-      <div class="vertical-line"></div>
-      <div class="search-category right">
+      <div class="search-container__middle desktop-only"></div>
+      <div class="search-container__right">
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
-        <div class="suggestion-title"><h3>Categories</h3></div>
-        <div class="result-list scroll">
-          <ul v-if="result.categories && result.categories.length > 0">
-            <li
-              v-for="(category, index) in result.categories"
-              :key="index"
-              class="category-list"
-              @click="
-                gotToCategory(localePath(getCatLink({ categoryCode: category.categoryCode })))
-              "
+        <div class="search-container__title"><h3>Categories</h3></div>
+        <div class="scroll">
+          <div
+            v-if="result.categories && result.categories.length > 0"
+            class="search-container__categories"
+          >
+            <SfButton
+              v-for="category in result.categories"
+              :key="'mobile-search-' + category.categoryCode"
+              class="sf-button--pure"
             >
-              {{ category.name }}
-            </li>
-          </ul>
+              <span
+                @click="
+                  gotToCategory(localePath(getCatLink({ categoryCode: category.categoryCode })))
+                "
+              >
+                {{ category.name }}</span
+              >
+            </SfButton>
+          </div>
           <div v-else class="no-record">
             <div v-if="!loading">No Result found......</div>
           </div>
@@ -56,13 +62,14 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfLoader } from "@storefront-ui/vue"
+import { SfLoader, SfButton } from "@storefront-ui/vue"
 import { useNuxtApp } from "#app"
 import { useUiHelpers } from "@/composables"
 
 export default defineComponent({
   components: {
     SfLoader,
+    SfButton,
   },
 
   props: {
@@ -118,82 +125,111 @@ export default defineComponent({
     display: flex;
     flex-wrap: wrap;
     height: 36.75rem;
-    background-color: #fff;
-    border: 0.063rem solid #cdcdcd;
-    @include for-desktop {
-      width: 100%;
+    background-color: var(--_c-light-secondary);
+    width: 100%;
+
+    &__left {
+      flex: 2;
+      width: 70vw;
     }
-  }
 
-  .search-product {
-    flex: 2;
-    width: 70vw;
-  }
-
-  .search-category {
-    flex: 1;
-    width: 30vw;
-    background-color: #fff;
-    border: 0.063rem solid #cdcdcd;
-    max-height: 36.688rem;
-    @include for-desktop {
-      border: none;
+    &__middle {
+      width: 0.063rem;
+      border-left: 0.033rem solid var(--_c-gray-middle);
+      height: 90%;
+      margin-top: calc(var(--spacer-2xs) * 5.5);
+      margin-bottom: calc(var(--spacer-2xs) * 4);
     }
-  }
 
-  .vertical-line {
-    width: 0.063rem;
-    border-left: 0.033rem solid #cdcdcd;
-    height: 90%;
-    margin-top: 1.375rem;
-    margin-bottom: 0.938rem;
-  }
+    &__right {
+      flex: 1;
+      width: 30vw;
+      background-color: var(--_c-light-secondary);
+      border: 0.063rem solid var(--_c-gray-middle);
+      max-height: 36.688rem;
+      @include for-desktop {
+        border: none;
+      }
+    }
 
-  .suggestion-title {
-    margin-top: 1.375rem;
-    padding-left: 1.25rem;
+    &__title {
+      margin-top: calc(var(--spacer-2xs) * 5.5);
+      padding-left: calc(var(--spacer-2xs) * 9);
 
-    > h3 {
-      color: #2b2b2b;
-      font-family: var(--font-family--primary);
-      font-size: 1.5rem;
-      line-height: var(--spacer-base);
+      > h3 {
+        color: var(--c-black);
+        font-size: var(--font-size--lg);
+        line-height: calc(var(--spacer-2xs) * 5.25);
+        text-align: left;
+        font-weight: 600;
+
+        @include for-desktop {
+          font-size: var(--h1-font-size);
+          line-height: var(--spacer-base);
+          font-weight: bold;
+        }
+      }
+    }
+
+    &__products {
+      margin-top: var(--spacer-lg);
+      padding-left: calc(var(--spacer-2xs) * 5.25);
+      padding-right: calc(var(--spacer-2xs) * 0.5);
       text-align: left;
-      font-weight: bold;
+    }
+
+    &__categories {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: calc(var(--spacer-2xs) * 9);
+      color: var(--c-black);
+      font-size: var(--font-size--sm);
+      line-height: calc(var(--spacer-2xs) * 4.25);
+      text-align: left;
+    }
+
+    @include for-desktop {
+      border: 0.063rem solid var(--_c-gray-middle);
+    }
+
+    @include for-mobile {
+      position: absolute;
+      z-index: 1;
     }
   }
 
   .category-list {
-    color: #2b2b2b;
-    font-family: var(--font-family--primary);
+    color: var(--c-black);
     font-size: var(--spacer-sm);
     line-height: var(--spacer-lg);
     text-align: left;
     cursor: pointer;
   }
 
-  .result-list {
-    margin-top: var(--spacer-lg);
-    padding-left: 1.313rem;
-    padding-right: 0.125rem;
-    text-align: left;
-  }
-
   .products__grid {
     display: flex;
     flex-wrap: wrap;
-    overflow-y: auto;
+    overflow-y: scroll;
     max-height: 31.875rem;
 
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
     @include for-desktop {
-      overflow: hidden;
-      gap: 1rem;
+      gap: var(--spacer-sm);
     }
   }
 
   .products__grid > * {
     margin: 0 auto;
-    padding: 1.25rem 0.625rem; //20px 10px
+    padding: calc(var(--spacer-2xs) * 5) calc(var(--spacer-2xs) * 2.5);
     @include for-desktop {
       flex: 0 0 calc(var(--spacer-base) * 4.04);
     }
@@ -225,29 +261,15 @@ export default defineComponent({
   }
 
   .no-record {
-    color: #b83c3c;
-    font-family: var(--font-family--primary);
+    color: var(--_c-red-primary);
     font-size: var(--spacer-sm);
-    line-height: 1.188rem;
+    line-height: var(--font-size--lg);
     text-align: center;
   }
 
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-
-  .scroll {
-    overflow: scroll;
-  }
-
-  .scroll::-webkit-scrollbar {
-    display: none;
-  }
-
   .kpc-title {
-    font-size: 0.48rem;
-    line-height: 0.563rem;
+    font-size: calc(var(--font-size--sm) * 0.5);
+    line-height: calc(var(--spacer-2xs) * 2.25);
     text-align: left;
   }
 }
