@@ -402,6 +402,8 @@ export default {
 }
 
 .thank-you {
+  padding: 0 var(--spacer-lg);
+
   &__paragraph {
     &--bold {
       font-weight: var(--font-weight--semibold);
