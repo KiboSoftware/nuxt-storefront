@@ -1,7 +1,7 @@
 <template>
   <div class="payment-container">
     <div class="payment-types-radio">
-      <KiboRadio
+      <SfRadio
         v-for="item in paymentMethods"
         :key="item.id"
         :label="item.name"
@@ -14,7 +14,7 @@
         <div class="sf-radio__label">
           {{ item.name }}
         </div>
-      </KiboRadio>
+      </SfRadio>
     </div>
 
     <div class="credit-card-form">
@@ -76,12 +76,10 @@
           <div class="sf-input__error-message">{{ error.cvv }}</div>
         </div>
         <SfCheckbox
-          v-if="isCheckout"
-          :selected="isCardInfoSaved"
+          v-model="creditCardFormData.card.isCardInfoSaved"
           name="isCardInfoSaved"
           :label="$t('Save payment method')"
           class="credit-card-form__checkbox"
-          @change="(value) => savePaymentToCustomerAccount(value)"
         />
       </div>
     </div>
@@ -89,66 +87,71 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
+import { SfRadio, SfCheckbox, SfIcon, SfButton } from "@storefront-ui/vue"
 import { ref } from "@nuxtjs/composition-api"
 import creditCardType from "credit-card-type"
-import { usePaymentTypes, useUiValidation } from "@/composables"
+import { usePaymentTypes, useUiValidationSchemas } from "@/composables"
 import { creditCardPaymentGetters } from "@/lib/getters"
 
 export default defineComponent({
   name: "KiboPayment",
   components: {
+    SfRadio,
     SfCheckbox,
     SfIcon,
     SfButton,
   },
   props: {
-    showPaymentMethodForm: {
-      type: Boolean,
-      default: () => false,
-    },
     value: {
       type: Object,
-      default: () => ({}),
-    },
-    isCheckout: {
-      type: Boolean,
-      default: () => false,
+      default: () => ({
+        paymentType: "",
+        card: {
+          cardType: "",
+          cardNumber: "",
+          cvv: "",
+          expiryDate: "",
+          expireMonth: 0,
+          expireYear: 0,
+          isCardInfoSaved: false,
+          paymentWorkflow: "Mozu",
+          isCardDetailsFilled: false,
+        },
+      }),
     },
   },
   setup(props, context) {
     const { loadPaymentTypes } = usePaymentTypes()
     const paymentMethods = loadPaymentTypes()
     const isCreditCardSelected = ref(false)
-    const isCardInfoSaved = ref(false)
     const creditCardFormData = computed(() => props.value || {})
     const error = ref({ cardNumber: "", expiryDate: "", cvv: "" })
     const isValidForm = ref({ cardNumber: false, expiryDate: false, cvv: false })
-
-    if (props.showPaymentMethodForm) {
-      creditCardFormData.value.paymentType = "creditcard"
-    }
 
     const selectedPaymentMethod = (fieldValue: string) => {
       creditCardFormData.value.paymentType = fieldValue
       isCreditCardSelected.value = fieldValue.toLowerCase() === "creditcard"
     }
 
-    const savePaymentToCustomerAccount = (selected) => {
-      console.log(selected)
-      creditCardFormData.value.card.isCardInfoSaved = selected
-      isCardInfoSaved.value = selected
+    const schema = useUiValidationSchemas(context.root, "payment")
+
+    const assignErrors = (errorField = "", errorMessage = "") => {
+      if (errorField) {
+        error.value[errorField] = errorMessage
+      } else {
+        Object.keys(error.value).filter((field) => (error.value[field] = errorMessage))
+      }
     }
 
-    const updatePaymentFields = (fieldName?: string) => {
-      const { isValid, message } = useUiValidation(
-        context.root,
-        fieldName,
-        creditCardFormData.value.card[fieldName]
-      )
-
-      error.value[fieldName] = isValid ? "" : message
-      isValidForm.value[fieldName] = isValid
+    const updatePaymentFields = async (fieldName?: string) => {
+      try {
+        await schema.validateAt(fieldName, creditCardFormData.value.card)
+        assignErrors(fieldName, "")
+        isValidForm.value[fieldName] = true
+      } catch (err) {
+        assignErrors(fieldName, err.message)
+        isValidForm.value[fieldName] = false
+      }
 
       creditCardFormData.value.card.isCardDetailsFilled = Object.values(isValidForm.value).every(
         (value) => value
@@ -184,8 +187,6 @@ export default defineComponent({
       isCreditCardSelected,
       updatePaymentFields,
       error,
-      isCardInfoSaved,
-      savePaymentToCustomerAccount,
     }
   },
 })
@@ -195,12 +196,8 @@ export default defineComponent({
 @import "~@storefront-ui/shared/styles/components/templates/SfPayment.scss";
 
 .sf-payment {
-  padding: var(--spacer-sm) 0;
-
   .sf-heading {
-    --heading-padding: 0;
-
-    border-bottom: none;
+    border-bottom: none !important;
 
     &__title.h2 {
       --heading-title-font-size: var(--font-size--xl);

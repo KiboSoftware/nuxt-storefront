@@ -86,7 +86,6 @@
                 <SfButton
                   class="sf-button--full-width actions__button"
                   data-testid="apply-button"
-                  :disabled="!enableNextStep"
                   @click="updateStep"
                 >
                   {{ steps[currentStep] }}
@@ -117,6 +116,18 @@
           </SfLoader>
         </transition>
       </div>
+    </div>
+    <div class="actions">
+      <SfButton
+        class="sf-button--full-width color-primary"
+        :disabled="!isTermsAndConditionsAccepted && steps[currentStep] === 'Confirm and pay'"
+        data-testid="next-button"
+        @click="updateStep"
+        >{{ steps[currentStep] }}</SfButton
+      >
+      <SfButton class="sf-button--full-width sf-button--underlined" @click="currentStep--">{{
+        $t("Go back")
+      }}</SfButton>
     </div>
   </div>
 </template>
@@ -259,7 +270,6 @@ export default {
     const isValidPersonalDetails = ref(false)
     const validatePersonalDetails = (isValid) => {
       isValidPersonalDetails.value = isValid
-      enableNextStep.value = isValid
     }
     const updatePersonalDetails = (newPersonalDetails) => {
       personalDetails.value = { ...newPersonalDetails }
@@ -308,7 +318,6 @@ export default {
     const isValidShippingDetails = ref(false)
     const validateShippingDetails = (isValid) => {
       isValidShippingDetails.value = isValid
-      enableNextStep.value = isValidShippingDetails.value && isValidShippingRates.value
     }
 
     const shippingRates = computed(() =>
@@ -347,7 +356,6 @@ export default {
     const isValidShippingRates = ref(false)
     const validateShippingRates = (isValid) => {
       isValidShippingRates.value = isValid
-      enableNextStep.value = isValidShippingDetails.value && isValidShippingRates.value
     }
 
     // billing and payment
@@ -368,11 +376,7 @@ export default {
       await savePaymentMethodToOrder(paymentAction, selectedPaymentInfo.billingAddress)
     }
 
-    const isValidPaymentDetails = ref(false)
     const saveBillingAndPayments = async (newPaymentInfo) => {
-      isValidPaymentDetails.value = newPaymentInfo.isValidPaymentForm
-      enableNextStep.value = newPaymentInfo.isValidPaymentForm
-      if (!isValidPaymentDetails.value) return
       if (newPaymentInfo.sameAsShipping) newPaymentInfo.address.id = 0
       if (isAuthenticated.value && newPaymentInfo.cardInput?.card.isCardInfoSaved) {
         await saveUserPaymentMethod(newPaymentInfo)
@@ -517,18 +521,17 @@ export default {
         case stepLabels.GO_TO_SHIPPING: {
           if (!isValidPersonalDetails.value) return
           await savePersonalDetails()
-          enableNextStep.value = false
           break
         }
 
         case stepLabels.GO_TO_PAYMENT: {
           if (!(isValidShippingDetails.value && isValidShippingRates.value)) return
-          enableNextStep.value = false
           break
         }
 
         case stepLabels.PAY_FOR_ORDER: {
-          if (!isValidPaymentDetails.value) return
+          if (!(isValidBillingDetails.value && enableCurrentStep.value)) return
+          await saveBillingDetails()
           break
         }
 

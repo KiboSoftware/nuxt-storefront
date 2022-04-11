@@ -82,8 +82,8 @@
       />
       <SfSelect
         :label="$t('Country')"
-        class="form__element form__element--half form__element--half-even form__select country"
-        required
+        :placeholder="`${$t('SelectCountry')}`"
+        class="form__element form__element--half form__element--half-even form__select"
         :valid="!errors.countryCode"
         :error-message="errors.countryCode"
         data-testid="country"
@@ -94,9 +94,6 @@
         "
         @blur="validate('countryCode')"
       >
-        <SfSelectOption key="no-country" value="">
-          {{ $t("SelectCountry") }}
-        </SfSelectOption>
         <SfSelectOption
           v-for="countryOption in countries"
           :key="countryOption"
