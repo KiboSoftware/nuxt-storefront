@@ -261,4 +261,8 @@ export default {
   makeThisMyDefaultPayment: "Make this my default payment",
   loginToYourAccount: "or Log In To Your Account",
   Hi: "Hi, ",
+  "Shop All": "Shop All",
+  "Go To My Account": "Go To My Account",
+  recentlyViewed: "Recently Viewed & Related",
+  recommendedForYou: "Recommended for you",
 }

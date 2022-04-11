@@ -1,36 +1,52 @@
 <template>
   <div>
-    <SfHero class="hero" :slider-options="{ autoplay: false }">
-      <SfHeroItem
-        v-for="(img, index) in heroes"
-        :key="index"
-        :image="img.image"
-        :title="img.title"
-        :subtitle="img.subtitle"
-        :button-text="img.buttonText"
-        :background="img.background"
-        :class="img.className"
-      >
-        <template #subtitle="{ subtitle }">
-          <div :class="{ 'display-none': !subtitle }" class="sf-hero-item__subtitle">
-            {{ subtitle }}
-          </div>
-        </template>
-        <template #title="{ title }">
-          <div :class="{ 'display-none': !title }" class="sf-hero-item__title">{{ title }}</div>
-          <div :class="{ 'display-none': !img.description }" class="sf-hero-item__description">
-            {{ img.description }}
-          </div>
-        </template>
-        <template #call-to-action="{ buttonText, link }">
-          <div v-if="buttonText" class="sf-hero-item__button">
-            <SfButton :link="link" data-testid="hero-cta-button">
-              {{ buttonText }}
-            </SfButton>
-          </div>
-        </template>
-      </SfHeroItem>
-    </SfHero>
+    <div>
+      <SfHero class="hero" :slider-options="{ autoplay: false }">
+        <SfHeroItem
+          v-for="(img, index) in heroes"
+          :key="index"
+          :image="img.image"
+          :title="img.title"
+          :subtitle="img.subtitle"
+          :button-text="img.buttonText"
+          :background="img.background"
+          :class="img.className"
+        >
+          <template #subtitle="{ subtitle }">
+            <div :class="{ 'display-none': !subtitle }" class="sf-hero-item__subtitle">
+              {{ subtitle }}
+            </div>
+          </template>
+          <template #title="{ title }">
+            <div :class="{ 'display-none': !title }" class="sf-hero-item__title">{{ title }}</div>
+            <div :class="{ 'display-none': !img.description }" class="sf-hero-item__description">
+              {{ img.description }}
+            </div>
+          </template>
+          <template #call-to-action="{ buttonText, link }">
+            <div v-if="buttonText" class="sf-hero-item__button">
+              <SfButton :link="link" data-testid="hero-cta-button">
+                {{ buttonText }}
+              </SfButton>
+            </div>
+          </template>
+        </SfHeroItem>
+      </SfHero>
+    </div>
+    <div class="product-carousels">
+      <KiboProductCarousel
+        class="carousels"
+        :title="$t('recentlyViewed')"
+        :product-codes="relatedProducts"
+        carousel-name="related-products"
+      />
+      <KiboProductCarousel
+        class="carousels"
+        :title="$t('recommendedForYou')"
+        :product-codes="recommendedProducts"
+        carousel-name="recommended-products"
+      />
+    </div>
     <div class="large-and-medium-content">
       <div class="large-content">
         <div class="large-content__header">{{ contentTiles.largeHeaderTitle }}</div>
@@ -68,9 +84,10 @@ import hoodieImg from "@/assets/images/Mobile-Homepage-Hoodie.png"
 import outdoorGearImg from "@/assets/images/Mobile-Homepage-OutdoorGear.png"
 import gymImg from "@/assets/images/Mobile-Homepage-Gym.png"
 import golfImg from "@/assets/images/Mobile-Homepage-Golf.png"
+import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
 
 export default {
-  components: { SfHero, SfButton },
+  components: { SfHero, SfButton, KiboProductCarousel },
   layout: "full-width",
   setup() {
     const pageName = "home-page"
@@ -234,10 +251,15 @@ export default {
       ],
     }
 
+    const relatedProducts = ["MS-CAM-001", "xxx", "MS-EYE-004", "MS-BTL-004", "MS-GIFT-002"]
+    const recommendedProducts = ["MS-BTL-003", "xxx", "MS-EYE-005", "MS-BTL-001", "MS-EYE-003"]
+
     return {
       pageName,
       heroes,
       contentTiles,
+      relatedProducts,
+      recommendedProducts,
     }
   },
 }
@@ -308,6 +330,7 @@ export default {
 
   @include for-desktop {
     padding: 0 2%;
+    margin-top: calc(var(--spacer-sm) * 2);
   }
 }
 
@@ -348,6 +371,24 @@ export default {
     @include for-desktop {
       width: 24%;
     }
+  }
+}
+
+.product-carousels {
+  display: block;
+  margin-top: calc(var(--spacer-sm) * 2);
+  @include for-desktop {
+    margin: 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+}
+
+.carousels {
+  width: auto;
+  @include for-desktop {
+    width: 48%;
   }
 }
 </style>

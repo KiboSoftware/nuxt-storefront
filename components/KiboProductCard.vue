@@ -387,6 +387,8 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .kibo-product-card {
+  background-color: var(--c-white);
+
   .sf-product-card__image-wrapper {
     width: 100%;
     height: calc(var(--spacer-base) * 6.25);
