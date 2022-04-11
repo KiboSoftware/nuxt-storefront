@@ -66,22 +66,41 @@
           </SfButton>
         </div>
       </div>
-      <div v-else-if="isForgotten">
+      <div v-else-if="isForgotten" class="modal-content">
         <p>{{ $t("Forgot Password") }}</p>
-        <form class="form" @submit.prevent="() => false">
+        <form class="form" @submit.prevent="handleForgotPassword()">
           <SfInput
             v-model="form.username"
             name="email"
             :label="$t('Forgot Password Modal Email')"
+            :valid="isEmailValidated"
+            :error-message="errors.email"
             class="form__element"
+            required
+            @input="validateEmail('email', form.username)"
           />
-          <SfButton type="submit" class="sf-button--full-width form__button">
-            <SfLoader :class="{ loader: false }" :loading="false">
+          <span v-if="userError.resetPassword" class="login-error-message">
+            {{ userError.resetPassword.message }}
+          </span>
+
+          <SfLoader :class="{ loader: loading }" :loading="loading">
+            <SfButton
+              type="submit"
+              class="sf-button--full-width form__button color-primary reset-password"
+              :disabled="!isEmailValidated"
+            >
               <div>{{ $t("Reset Password") }}</div>
-            </SfLoader>
-          </SfButton>
+            </SfButton>
+          </SfLoader>
         </form>
       </div>
+      <div v-else-if="displayThankYouMessage" class="thank-you">
+        <i18n tag="p" class="thank-you__paragraph" path="forgotPasswordConfirmation">
+          <span class="thank-you__paragraph--bold">{{ form.username }}</span>
+        </i18n>
+        <p class="thank-you__paragraph">{{ $t("Thank You Inbox") }}</p>
+      </div>
+
       <div v-else key="sign-up" class="modal-content" data-testid="signin-modal">
         <form class="form" @submit.prevent="() => false">
           <SfInput
@@ -147,9 +166,9 @@ import {
   SfLoader,
 } from "@storefront-ui/vue"
 
-import { useCart, useUiState, useUser } from "@/composables"
+import { useCart, useUiState, useUser, useUiValidationSchemas } from "@/composables"
 import { userGetters } from "@/lib/getters"
-import { LoginFormType } from "@/components/types/login"
+import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
 
 export default {
   name: "LoginModal",
@@ -162,8 +181,8 @@ export default {
     SfBar,
     SfLoader,
   },
-  setup() {
-    const { user, login, loading, error: userError, isAuthenticated } = useUser()
+  setup(_, context) {
+    const { user, login, resetPassword, loading, error: userError, isAuthenticated } = useUser()
     const { load: loadCart } = useCart()
 
     const { isLoginModalOpen, toggleLoginModal } = useUiState()
@@ -172,11 +191,17 @@ export default {
     const isForgotten = ref(false)
     const rememberMe = ref(false)
     const createAccount = ref(false)
+    const displayThankYouMessage = ref(false)
+    const isEmailValidated = ref(false)
+
+    const errors = ref({
+      email: "",
+    })
 
     const barTitle = computed(() => {
       if (isLogin.value) {
         return "Login"
-      } else if (isForgotten.value) {
+      } else if (isForgotten.value || displayThankYouMessage.value) {
         return "Reset Password"
       } else {
         return "Register Now"
@@ -223,6 +248,29 @@ export default {
       const userInput = form.value as LoginFormType
       return userInput.username && userInput.password
     })
+    const handleForgotPassword = async () => {
+      const userInput = form.value as RestPasswordFormType
+      if (userInput.username) {
+        const success = await resetPassword({ emailAddress: userInput.username })
+        if (success) {
+          displayThankYouMessage.value = true
+          isForgotten.value = false
+        }
+      }
+    }
+
+    const schemaEmail = useUiValidationSchemas(context.root, "email")
+
+    const validateEmail = async (field: string, emailAddress: string) => {
+      try {
+        await schemaEmail.validateAt(field, { email: emailAddress })
+        errors.value[field] = ""
+        isEmailValidated.value = true
+      } catch (err) {
+        errors.value[field] = err.message
+        isEmailValidated.value = false
+      }
+    }
 
     return {
       form,
@@ -232,7 +280,9 @@ export default {
       isLoginModalOpen,
       toggleLoginModal,
       handleLogin,
+      handleForgotPassword,
       isForgotten,
+      displayThankYouMessage,
       closeModal,
       setIsLoginValue,
       setIsForgottenValue,
@@ -243,6 +293,9 @@ export default {
       isAuthenticated,
       user,
       isLoginDisabled,
+      validateEmail,
+      isEmailValidated,
+      errors,
     }
   },
 }
@@ -342,5 +395,19 @@ export default {
 
 .remember-me {
   margin: 0 0 var(--spacer-xs) 0;
+}
+
+.reset-password {
+  margin-bottom: var(--spacer-sm);
+}
+
+.thank-you {
+  padding: 0 var(--spacer-lg);
+
+  &__paragraph {
+    &--bold {
+      font-weight: var(--font-weight--semibold);
+    }
+  }
 }
 </style>

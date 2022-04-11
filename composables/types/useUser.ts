@@ -1,3 +1,4 @@
+import { QueryResponse } from "./useCategoryTree"
 import * as GraphQLTypes from "@/server/types/GraphQL"
 
 // logInUser
@@ -26,3 +27,7 @@ export type User = {
 
 // logOutUser
 export type LogOutUserResponse = void
+
+// password-reset
+export type ResetPasswordParams = GraphQLTypes.ResetPasswordInfoInput
+export type ResetPasswordResponse = QueryResponse<"resetPassword", boolean>
