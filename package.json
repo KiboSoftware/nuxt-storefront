@@ -33,6 +33,7 @@
     ]
   },
   "dependencies": {
+    "@coddicat/vue-pinch-scroll-zoom": "^3.3.4",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@kibocommerce/graphql-client": "^1.0.3-beta.7",
     "@nuxtjs/pwa": "^3.3.5",
@@ -53,7 +54,6 @@
     "nuxt-edge": "latest",
     "nuxt-helmet": "^2.0.1",
     "nuxt-i18n": "^6.28.1",
-    "pinch-zoom-js": "^2.3.4",
     "stylelint-scss": "^3.21.0",
     "vue-i18n": "^8.26.1",
     "vue-lazy-hydration": "^2.0.0-beta.4",
@@ -80,7 +80,7 @@
     "@vue/test-utils": "^1.2.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-jest": "^27.0.5",
-    "eslint": "^8.9.0",
+    "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^3.1.0",
     "eslint-plugin-vue": "^8.2.0",
