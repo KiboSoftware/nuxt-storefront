@@ -201,9 +201,9 @@
                   :quantity-left="quantityLeft"
                   :is-valid-for-add-to-cart="isValidForAddToCart"
                   :label-add-to-cart="$t('Add to Cart')"
-                  :label-add-to-wishlist="$t('Add to Wishlist')"
+                  :label-add-to-wishlist="wishlistLabel"
                   @addItemToCart="addToCart"
-                  @addItemWishlist="addToWishList"
+                  @addItemWishlist="addItemToWishList"
                 />
               </div>
 
@@ -283,8 +283,15 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
-import { useProduct, useUiState, usePurchaseLocation, useCart } from "@/composables"
-import { productGetters } from "@/lib/getters"
+import {
+  useProduct,
+  useUiState,
+  usePurchaseLocation,
+  useCart,
+  useWishlist,
+  useUser,
+} from "@/composables"
+import { productGetters, wishlistGetters, userGetters } from "@/lib/getters"
 import { buildAddToCartInput } from "@/composables/helpers"
 import { useNuxtApp, useState } from "#app"
 
@@ -309,8 +316,18 @@ export default defineComponent({
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { cart, addItemsToCart } = useCart()
-    const { toggleAddToCartConfirmationModal } = useUiState()
+    const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
+    const { addToWishlist, isInWishlist, removeItemFromWishlist } = useWishlist()
+    const { user } = useUser()
+    const isAuthenticated = computed(() => {
+      return userGetters.isLoggedInUser(user.value)
+    })
+    const wishlistLabel = computed(() =>
+      wishlistGetters.shouldShowAddToWishlist(isInWishlist(product.value))
+        ? context.root.$t("Add to Wishlist")
+        : context.root.$t("RemovefromWishlist")
+    )
 
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
@@ -415,8 +432,14 @@ export default defineComponent({
       }
     }
 
-    const addToWishList = () => {
-      // Todo: Add to wishlist qtySelected.value
+    const addItemToWishList = async () => {
+      if (isAuthenticated.value) {
+        isInWishlist(product.value)
+          ? await removeItemFromWishlist(product.value)
+          : await addToWishlist(product.value)
+      } else {
+        toggleLoginModal()
+      }
     }
 
     const showZoomedProduct = () => {
@@ -440,7 +463,7 @@ export default defineComponent({
       quantityLeft,
       qtySelected,
       addToCart,
-      addToWishList,
+      addItemToWishList,
       selectOption,
       purchaseLocation,
       rating,
@@ -466,6 +489,7 @@ export default defineComponent({
       closeZoomedProduct,
       isProductZoomed,
       isMobile,
+      wishlistLabel,
     }
   },
 })
