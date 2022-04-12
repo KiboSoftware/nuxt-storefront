@@ -14,11 +14,11 @@
           <SfIcon class="sf-header__icon">
             <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
           </SfIcon>
-          <div class="icon-name-sidebar" v-if="!isAuthenticated">
+          <div v-if="!isAuthenticated" class="icon-name-sidebar">
             <span class="kibo-header__icon-title">{{ $t("My Account") }}</span>
             <span class="kibo-header__icon-name">{{ $t("Log In") }}</span>
           </div>
-          <div class="icon-name-sidebar" v-if="isAuthenticated">
+          <div v-if="isAuthenticated" class="icon-name-sidebar">
             <span class="kibo-header__icon-title">{{ $t("Hi") }} {{ user.firstName }}</span>
             <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
           </div>
@@ -143,11 +143,11 @@
               <SfIcon class="sf-header__icon">
                 <font-awesome-icon :icon="[accountIcon, 'user-circle']" class="fa-icon" />
               </SfIcon>
-              <div class="kibo-header__icon" v-if="!isAuthenticated">
+              <div v-if="!isAuthenticated" class="kibo-header__icon">
                 <span class="kibo-header__icon-title">{{ $t("My Account") }}</span>
                 <span class="kibo-header__icon-name">{{ $t("Log In") }}</span>
               </div>
-              <div class="kibo-header__icon" v-if="isAuthenticated">
+              <div v-if="isAuthenticated" class="kibo-header__icon">
                 <span class="kibo-header__icon-title">{{ $t("Hi") }}{{ user.firstName }}</span>
                 <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
               </div>
@@ -357,7 +357,7 @@ export default defineComponent({
     const { toggleLoginModal, isHamburgerOpen, toggleHamburger } = useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
-    const isStoreLocatorOpen = ref(false)
+    const isStoreLocatorOpen = ref()
 
     const toggleMobileSearchBar = () => {
       isOpenSearchBar.value = !isOpenSearchBar.value
@@ -455,7 +455,7 @@ export default defineComponent({
     }
 
     const handleStoreLocatorClick = () => {
-      isStoreLocatorOpen.value = true
+      isStoreLocatorOpen.value = !isStoreLocatorOpen.value
       if (isStoreLocatorOpen.value) {
         isOpenSearchBar.value = false
         modal.show({
@@ -870,13 +870,6 @@ export default defineComponent({
     }
   }
 
-  &__search-icon {
-    height: calc(var(--spacer-2xs) * 7.5);
-    margin-top: calc(var(--spacer-2xs) * 7.5);
-  }
-
-  &__search-pointer-icon {
-    height: calc(var(--spacer-2xs) * 5);
   &__search-pointer-icon {
     height: 1.25rem;
     position: absolute;
