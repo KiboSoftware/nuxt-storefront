@@ -11,6 +11,12 @@ export default defineNuxtPlugin((nuxtApp: any) => {
         props,
       })
     },
+    hide({ component, props }) {
+      this.subscription.$emit("close", {
+        component,
+        props,
+      })
+    },
   }
   nuxtApp.provide("modal", modal)
 })

@@ -265,4 +265,5 @@ export default {
   "Go To My Account": "Go To My Account",
   recentlyViewed: "Recently Viewed & Related",
   recommendedForYou: "Recommended for you",
+  ShowStoresWithAvailability: "Show Stores With Availability",
 }

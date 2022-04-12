@@ -3,29 +3,27 @@
     class="sf-modal"
     :class="{ 'mobile-small-modal': isSmallModal }"
     :visible="!!componentRef"
-    :cross="!isSmallModal"
+    :cross="false"
     @close="handleClose"
   >
     <template #modal-bar>
-      <SfBar
-        class="sf-modal__bar bar-heading"
-        :class="{ 'hide-bar': isSmallModal }"
-        :title="titleRef"
-        :close="true"
-        :back="false"
-        @click:close="handleClose"
-      />
+      <div class="modal-header">
+        <div class="bar-heading" :class="{ 'hide-bar': isSmallModal }">
+          {{ titleRef }}
+        </div>
+        <SfIcon icon="cross" size="0.875rem" color="gray-secondary" @click="handleClose()" />
+      </div>
     </template>
     <component :is="componentRef" :properties="properties" @onClose="handleClose" />
   </SfModal>
 </template>
 <script lang="ts">
-import { SfModal, SfSearchBar, SfBar } from "@storefront-ui/vue"
+import { SfModal, SfSearchBar, SfBar, SfIcon } from "@storefront-ui/vue"
 import { ref } from "@vue/composition-api"
 import { useNuxtApp } from "#app"
 
 export default {
-  components: { SfModal, SfSearchBar, SfBar },
+  components: { SfModal, SfSearchBar, SfBar, SfIcon },
   setup() {
     const componentRef = ref(null)
     const titleRef = ref("")
@@ -35,6 +33,9 @@ export default {
     const modal = nuxt.nuxt2Context.$modal
 
     const handleClose = () => {
+      modal.hide({
+        component: componentRef.value,
+      })
       componentRef.value = null
     }
 
@@ -56,12 +57,20 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 1rem 0 1rem;
+}
+
 .sf-modal {
   --modal-content-padding: 0;
 }
 
 .bar-heading {
   color: var(--_c-dark-primary);
+  font-size: var(--font-size--xl);
+  font-weight: var(--font-weight--semibold);
 }
 
 .hide-bar {
@@ -83,6 +92,20 @@ export default {
 
   ::v-deep .sf-modal__container {
     border-radius: 2%;
+    margin-top: 55px;
+    height: fit-content;
+
+    @include for-desktop {
+      margin-top: 0;
+    }
+  }
+
+  ::v-deep .sf-modal__overlay {
+    margin-top: 55px;
+
+    @include for-desktop {
+      margin-top: 0;
+    }
   }
 }
 </style>
