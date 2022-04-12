@@ -33,6 +33,7 @@
     ]
   },
   "dependencies": {
+    "@coddicat/vue-pinch-scroll-zoom": "^3.3.4",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@kibocommerce/graphql-client": "^1.0.3-beta.7",
     "@nuxtjs/pwa": "^3.3.5",
@@ -53,7 +54,6 @@
     "nuxt-edge": "latest",
     "nuxt-helmet": "^2.0.1",
     "nuxt-i18n": "^6.28.1",
-    "pinch-zoom-js": "^2.3.4",
     "stylelint-scss": "^3.21.0",
     "vue-i18n": "^8.26.1",
     "vue-lazy-hydration": "^2.0.0-beta.4",
@@ -95,7 +95,7 @@
     "stylelint": "^13.13.1",
     "stylelint-config-prettier": "^9.0.3",
     "stylelint-config-standard": "^22.0.0",
-    "ts-jest": "^27.0.3",
+    "ts-jest": "^27.1.4",
     "vue-jest": "^3.0.4"
   }
 }
