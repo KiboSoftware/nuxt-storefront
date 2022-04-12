@@ -42,6 +42,8 @@ export default defineNuxtConfig({
         "faQuestionCircle",
         "faPlusCircle",
         "faTrash",
+        "faSearchMinus",
+        "faUndo",
       ],
       regular: ["faUserCircle"],
     },

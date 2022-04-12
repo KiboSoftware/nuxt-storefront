@@ -9,19 +9,8 @@
         <div v-if="!loading" class="product">
           <div>
             <div class="product__gallery">
-              <SfIcon
-                class="product__gallery-zoom-icon smartphone-only"
-                size="18px"
-                @click="showZoomedProduct"
-              >
-                <font-awesome-icon
-                  icon="search-plus"
-                  class="fa-icon"
-                  color="var(--_c-gray-primary)"
-                />
-              </SfIcon>
               <LazyHydrate when-idle>
-                <KiboGallery
+                <KiboImageGallery
                   :images="productGallery"
                   :thumb-width="115"
                   :thumb-height="115"
@@ -267,7 +256,6 @@
 import {
   SfPrice,
   SfRating,
-  SfIcon,
   SfButton,
   SfBreadcrumbs,
   SfColor,
@@ -300,7 +288,6 @@ export default defineComponent({
   components: {
     SfPrice,
     SfRating,
-    SfIcon,
     SfButton,
     SfBreadcrumbs,
     LazyHydrate,
