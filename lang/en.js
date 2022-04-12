@@ -266,4 +266,5 @@ export default {
   recentlyViewed: "Recently Viewed & Related",
   recommendedForYou: "Recommended for you",
   ShowStoresWithAvailability: "Show Stores With Availability",
+  RemovefromWishlist: "Remove from Wishlist",
 }
