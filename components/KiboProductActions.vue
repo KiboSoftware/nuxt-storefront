@@ -10,7 +10,9 @@
           class="sf-add-to-cart__select-quantity quantity-input"
           @input="$emit('input', $event)"
         />
-        <div class="quantity-left">{{ quantityLeft }} item(s) left</div>
+        <div v-show="isValidForAddToCart" class="quantity-left">
+          {{ quantityLeft }} item(s) left
+        </div>
       </slot>
     </div>
 
@@ -19,7 +21,7 @@
         <!--@slot Custom content that will replace default Add to cart button design.-->
         <SfButton
           class="sf-add-to-cart__button"
-          :disabled="!isValidForAddToCart"
+          :disabled="!isValidForAddToCart || Number(quantityLeft) < 1"
           @click="addToCart"
         >
           {{ labelAddToCart }}

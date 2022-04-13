@@ -1,6 +1,6 @@
 import { mergeProducts } from "./helpers/mergeProduct"
 import { useState, useNuxtApp } from "#app"
-import { getProductQuery } from "@/lib/gql/queries"
+import { getProductQuery, productLocationInventoryQuery } from "@/lib/gql/queries"
 import { configureProductMutation } from "@/lib/gql/mutations"
 import type { ProductCustom, ConfigureOption } from "@/composables/types"
 import type { Maybe } from "@/server/types/GraphQL"
@@ -21,6 +21,20 @@ export const useProduct = (referenceKey: string) => {
         variables: { productCode },
       })
       product.value = response.data.product
+    } catch (error) {
+      console.error(error)
+    }
+    loading.value = false
+  }
+  const getProductLocationInventory = async (productCode: string, locationCodes: string) => {
+    try {
+      loading.value = true
+      const response = await fetcher({
+        query: productLocationInventoryQuery,
+        variables: { productCode, locationCodes },
+      })
+      loading.value = false
+      return response.data.productLocationInventory.items
     } catch (error) {
       console.error(error)
     }
@@ -69,6 +83,7 @@ export const useProduct = (referenceKey: string) => {
     product,
     configure,
     load,
+    getProductLocationInventory,
     setFulfillment,
     loading,
     error,

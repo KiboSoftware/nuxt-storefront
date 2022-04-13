@@ -161,6 +161,26 @@ const getSegregatedOptions = (product: ProductCustom) => {
 const validateAddToCart = (product: ProductCustom): boolean =>
   isProductVariationsSelected(product) && Boolean(product.fulfillmentMethod)
 
+const getItemsLeft = (
+  product: ProductCustom,
+  productLocationInventoryData: Object,
+  fulfillmentOptionValue: string
+): number => {
+  const allVariantSelected = isProductVariationsSelected(product)
+  const qtyLeft = { value: 0 }
+  if (allVariantSelected) {
+    if (fulfillmentOptionValue === "Pickup") {
+      qtyLeft.value = productLocationInventoryData[0]?.stockAvailable
+        ? productLocationInventoryData[0]?.stockAvailable
+        : 0
+    } else if (fulfillmentOptionValue === "Ship")
+      qtyLeft.value = product.inventoryInfo.onlineStockAvailable
+        ? product.inventoryInfo.onlineStockAvailable
+        : 0
+  }
+  return qtyLeft.value
+}
+
 export const productGetters = {
   getName,
   getRating,
@@ -182,4 +202,5 @@ export const productGetters = {
   getCoverImage,
   getProductId,
   validateAddToCart,
+  getItemsLeft,
 }

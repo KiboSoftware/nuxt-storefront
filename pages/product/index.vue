@@ -273,7 +273,7 @@ import {
   SfAccordion,
 } from "@storefront-ui/vue"
 
-import { defineComponent, computed, ref, onBeforeUnmount } from "@vue/composition-api"
+import { defineComponent, computed, ref, onBeforeUnmount, watch } from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
 
@@ -314,7 +314,15 @@ export default defineComponent({
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
-    const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
+    const {
+      load,
+      getProductLocationInventory,
+      product,
+      configure,
+      setFulfillment,
+      loading,
+      error,
+    } = useProduct(productCode)
     const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
@@ -328,12 +336,17 @@ export default defineComponent({
         ? context.root.$t("Add to Wishlist")
         : context.root.$t("RemovefromWishlist")
     )
+    const productLocationInventoryData = ref([])
 
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
     useAsync(async () => {
       await load(productCode)
+      productLocationInventoryData.value = await getProductLocationInventory(
+        productCode,
+        purchaseLocation?.value?.code
+      )
     }, null)
 
     const productName = computed(() => productGetters.getName(product.value))
@@ -354,6 +367,16 @@ export default defineComponent({
       productGetters.getSelectedFullfillmentOption(product.value)
     )
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
+
+    watch(
+      () => purchaseLocation.value.code,
+      async () => {
+        productLocationInventoryData.value = await getProductLocationInventory(
+          productCode,
+          purchaseLocation?.value?.code
+        )
+      }
+    )
 
     // Options section
     let shopperEnteredValues = []
@@ -417,7 +440,14 @@ export default defineComponent({
     }
 
     // Add to Cart
-    const quantityLeft = computed(() => 5)
+    const quantityLeft = computed(() => {
+      return productGetters.getItemsLeft(
+        product.value,
+        productLocationInventoryData.value,
+        selectedFulfillmentValue.value
+      )
+    })
+
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
 
     const addToCart = async () => {
