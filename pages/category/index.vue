@@ -401,7 +401,7 @@ export default {
     @include for-mobile {
       padding: 2% 0;
       position: sticky;
-      top: 55px;
+      top: calc(var(--spacer-xl) * 1.4);
       z-index: 1;
       background-color: var(--c-white);
     }

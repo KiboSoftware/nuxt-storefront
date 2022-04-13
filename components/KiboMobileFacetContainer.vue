@@ -90,7 +90,7 @@ export default defineComponent({
 .filter-by-top {
   padding: 2% 0;
   position: sticky;
-  top: 90px;
+  top: calc(var(--spacer-xl) * 2.25);
   z-index: 1;
   background-color: var(--c-white);
 }
