@@ -25,7 +25,6 @@
         </template>
         <KiboFacet :facet="facet" @selectFilter="selectFilter" />
       </SfAccordionItem>
-      <hr class="facet-hr smartphone-only" />
     </div>
   </SfAccordion>
 </template>
@@ -87,13 +86,5 @@ export default defineComponent({
     border: 1px solid var(--_c-white-secondary);
     border-width: 0 0 1px 0;
   }
-}
-
-.facet-hr {
-  margin: 0 -7.8% 0;
-  height: 1px;
-  border-width: 0;
-  color: var(--_c-white-secondary);
-  background-color: var(--_c-white-secondary);
 }
 </style>

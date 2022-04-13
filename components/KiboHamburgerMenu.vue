@@ -186,6 +186,7 @@ export default defineComponent({
     width: 0;
     top: 3.56rem;
     transition: width 1s cubic-bezier(0.22, 0.61, 0.36, 1);
+    z-index: 5;
   }
 
   &__bottom {
