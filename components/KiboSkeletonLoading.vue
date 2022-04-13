@@ -241,6 +241,58 @@ export default {
   border-radius: calc(var(--spacer-2xs) * 0.75);
 }
 
+.order-title {
+  border-radius: calc(var(--spacer-2xs) * 0.75);
+  width: calc(var(--spacer-2xl) * 2.5);
+  height: var(--spacer-base);
+}
+
+.order-filter-tile {
+  border-radius: var(--spacer-sm);
+  width: calc(var(--spacer-xl) * 2.8);
+  height: calc(var(--spacer-sm) * 1.875);
+}
+
+.filter-order-button {
+  border-radius: var(--spacer-2xs);
+  width: calc(var(--spacer-xl) * 3.7);
+  height: calc(var(--spacer-sm) * 2.125);
+}
+
+.order-item-date {
+  border-radius: calc(var(--spacer-2xs) * 0.75);
+  width: calc(var(--spacer-xl) * 2.9);
+  height: calc(var(--spacer-2xs) * 5);
+}
+
+.order-item-product-name {
+  border-radius: calc(var(--spacer-2xs) * 0.75);
+  width: calc(var(--spacer-3xl) * 1.875);
+  height: calc(var(--spacer-2xs) * 5);
+
+  @include for-desktop {
+    width: calc(var(--spacer-3xl) * 3.75);
+  }
+}
+
+.order-item-currency {
+  border-radius: calc(var(--spacer-2xs) * 0.75);
+  width: calc(var(--spacer-lg) * 1.65625);
+  height: calc(var(--spacer-2xs) * 5);
+}
+
+.order-item-status {
+  border-radius: calc(var(--spacer-2xs) * 0.75);
+  width: calc(var(--spacer-xl) * 1.825);
+  height: calc(var(--spacer-2xs) * 5);
+}
+
+.order-item-chevron {
+  border-radius: calc(var(--spacer-2xs) * 0.75);
+  width: var(--spacer-sm);
+  height: calc(var(--spacer-2xs) * 5);
+}
+
 @keyframes loading {
   100% {
     transform: translateX(100%);

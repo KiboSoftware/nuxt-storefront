@@ -10,13 +10,18 @@
       />
     </div>
     <div v-show="!isOpenOrderList" class="order-history-title">
-      <div class="header-text-weight">{{ title }}</div>
+      <div class="header-text-weight" v-if="!loading">{{ title }}</div>
+      <KiboSkeletonLoading v-if="loading" skeleton-class="order-title sk-loading" />
     </div>
     <hr v-show="isOpenOrderItem" class="filter-hr filter-hr--time-filter" />
     <div>
       <div v-show="!isOpenOrderList" class="order-history">
         <div v-show="!isOpenOrderItem">
-          <div class="history-filter">
+          <div v-if="loading" class="history-filter history-filter--loading">
+            <KiboSkeletonLoading skeleton-class="order-filter-tile sk-loading" />
+            <KiboSkeletonLoading skeleton-class="filter-order-button sk-loading" />
+          </div>
+          <div v-if="!loading" class="history-filter">
             <div class="history-filter__tiles">
               <KiboFilterTiles
                 :applied-filters="appliedFilters"
@@ -38,7 +43,29 @@
           <div>
             <hr class="filter-hr filter-hr--time-filter" />
           </div>
-          <div class="order-history__details">
+          <div v-if="loading">
+            <div v-for="i in 5" :key="i">
+              <div class="order-item">
+                <div class="order-item__left">
+                  <KiboSkeletonLoading v-if="true" skeleton-class="order-item-date sk-loading" />
+                  <KiboSkeletonLoading
+                    v-if="true"
+                    skeleton-class="order-item-product-name sk-loading"
+                  />
+                  <KiboSkeletonLoading
+                    v-if="true"
+                    skeleton-class="order-item-currency sk-loading"
+                  />
+                  <KiboSkeletonLoading v-if="true" skeleton-class="order-item-status sk-loading" />
+                </div>
+                <div class="order-item__right">
+                  <KiboSkeletonLoading v-if="true" skeleton-class="order-item-chevron sk-loading" />
+                </div>
+              </div>
+              <hr class="filter-hr" />
+            </div>
+          </div>
+          <div v-if="!loading" class="order-history__details">
             <div v-for="order in orders" :key="order.id" @click="gotoOrderDetails(order)">
               <KiboOrderItem :order="order" />
               <hr class="filter-hr" />
@@ -89,8 +116,8 @@
 import { SfBar, SfButton, SfIcon, SfFilter } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
 import { useAsync, computed, watch } from "@nuxtjs/composition-api"
-import { useUserOrder, useUiHelpers } from "@/composables"
 import { useNuxtApp } from "#app"
+import { useUserOrder, useUiHelpers } from "@/composables"
 
 export default defineComponent({
   name: "OrderHistory",
@@ -124,7 +151,7 @@ export default defineComponent({
       { label: `${currentYear - 3}`, filterValue: `Y-${currentYear - 3}`, isApplied: false },
     ])
 
-    const { result: userOrderResult, getOrders } = useUserOrder(`user-order`)
+    const { result: userOrderResult, getOrders, loading } = useUserOrder(`user-order`)
 
     const orders = computed(() => userOrderResult?.value?.items)
 
@@ -217,6 +244,7 @@ export default defineComponent({
       isOpenOrderItem,
       appliedFilters,
       selectFilter,
+      loading,
     }
   },
 })
@@ -271,6 +299,11 @@ export default defineComponent({
     display: flex;
     justify-content: left;
   }
+
+  &--loading {
+    justify-content: space-between;
+    padding-bottom: calc(var(--spacer-2xs) * 2.5);
+  }
 }
 
 .order-history-title {
@@ -301,6 +334,10 @@ export default defineComponent({
     color: var(--_c-light-secondary);
     width: 100%;
     height: var(--spacer-lg);
+
+    @include for-desktop {
+      width: 50%;
+    }
   }
 
   &__action {
@@ -347,6 +384,26 @@ export default defineComponent({
 
   @include for-desktop {
     margin: 0 auto;
+  }
+}
+
+.order-item {
+  display: flex;
+  margin: calc(var(--spacer-2xs) * 2.5) 0 calc(var(--spacer-2xs) * 2.5) 0;
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    flex: 6;
+    line-height: calc(var(--space-xs) * 2.36);
+    gap: calc(var(--spacer-2xs) * 1.25);
+  }
+
+  &__right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: flex-end;
   }
 }
 </style>
