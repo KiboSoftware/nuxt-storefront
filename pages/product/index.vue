@@ -293,7 +293,7 @@ import {
 } from "@/composables"
 import { productGetters, wishlistGetters, userGetters } from "@/lib/getters"
 import { buildAddToCartInput } from "@/composables/helpers"
-import { ComputedRef, useNuxtApp, useState } from "#app"
+import { ComputedRef, Ref, useNuxtApp } from "#app"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -462,7 +462,7 @@ export default defineComponent({
       )
     })
 
-    const qtySelected = useState(`pdp-selected-qty`, () => 1)
+    const qtySelected: Ref<number> = ref(1)
 
     const addToCart = async () => {
       const productToAdd = buildAddToCartInput(
