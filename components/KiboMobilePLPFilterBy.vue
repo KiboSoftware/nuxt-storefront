@@ -1,35 +1,38 @@
 <template>
   <KiboMobileFacetContainer
     title="Filter By"
-    :kiboFacets="facets"
-    :appliedFilters="appliedFilters"
+    :kibo-facets="facets"
+    :applied-filters="appliedFilters"
     @removeFilter="removeFilter"
     @close="close"
   >
     <template #content>
       <div key="filters">
-        <KiboFacetAccordion :kiboFacets="facets" @selectFilter="selectFilter" />
+        <KiboFacetAccordion :kibo-facets="facets" @selectFilter="selectFilter" />
       </div>
-      <div class="filter-buttons">
-        <SfButton
-          class="sf-button--small color-light smartphone-only clear"
-          @click="clearFilters()"
-          :disabled="!appliedFilters.length"
-          :class="`${!appliedFilters.length ? 'clear__is-disabled--button' : ''}`"
-        >
-          {{ $t("Clear All") }}
-        </SfButton>
-        <SfButton
-          class="sf-button--small smartphone-only view"
-          :class="`${!appliedFilters.length ? 'view__is-disabled--button' : ''}`"
-          @click="close"
-          :disabled="!appliedFilters.length"
-        >
-          {{ $t("View Results") }}
-        </SfButton>
-      </div>
-      <div v-if="totalProducts" class="total-products total-products__lower-total">
-        {{ totalProducts }} Results
+      <div class="filter-actions-bottom">
+        <hr class="facet-hr smartphone-only" />
+        <div class="filter-buttons">
+          <SfButton
+            class="sf-button--small color-light smartphone-only clear"
+            :disabled="!appliedFilters.length"
+            :class="`${!appliedFilters.length ? 'clear__is-disabled--button' : ''}`"
+            @click="clearFilters()"
+          >
+            {{ $t("Clear All") }}
+          </SfButton>
+          <SfButton
+            class="sf-button--small smartphone-only view"
+            :class="`${!appliedFilters.length ? 'view__is-disabled--button' : ''}`"
+            :disabled="!appliedFilters.length"
+            @click="close"
+          >
+            {{ $t("View Results") }}
+          </SfButton>
+        </div>
+        <div v-if="totalProducts" class="total-products total-products__lower-total">
+          {{ totalProducts }} Results
+        </div>
       </div>
     </template>
   </KiboMobileFacetContainer>
@@ -145,5 +148,21 @@ export default defineComponent({
 
     color: var(--_c-gray-middle);
   }
+}
+
+.filter-actions-bottom {
+  bottom: 0;
+  padding: 2% 0;
+  position: sticky;
+  z-index: 1;
+  background-color: var(--c-white);
+}
+
+.facet-hr {
+  margin: 0 -7.8% 0;
+  height: 1px;
+  border-width: 0;
+  color: var(--_c-white-secondary);
+  background-color: var(--_c-white-secondary);
 }
 </style>

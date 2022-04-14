@@ -397,6 +397,14 @@ export default {
 
   &.section {
     padding: 0;
+
+    @include for-mobile {
+      padding: 2% 0;
+      position: sticky;
+      top: calc(var(--spacer-xl) * 1.4);
+      z-index: 1;
+      background-color: var(--c-white);
+    }
   }
 
   &__aside,

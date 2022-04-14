@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div class="filter-by-top">
       <div class="filter-by">
         <span class="filter-by__title">{{ title }}</span>
         <SfIcon
@@ -85,5 +85,13 @@ export default defineComponent({
   @include for-desktop {
     margin: 0 auto;
   }
+}
+
+.filter-by-top {
+  padding: 2% 0;
+  position: sticky;
+  top: calc(var(--spacer-xl) * 2.25);
+  z-index: 1;
+  background-color: var(--c-white);
 }
 </style>
