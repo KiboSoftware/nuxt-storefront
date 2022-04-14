@@ -6,12 +6,13 @@
         <SfQuantitySelector
           :qty="qty"
           :max="quantityLeft"
+          :min="1"
           aria-label="Quantity"
           class="sf-add-to-cart__select-quantity quantity-input"
           @input="$emit('input', $event)"
         />
         <div v-show="isValidForAddToCart" class="quantity-left">
-          {{ quantityLeft }} item(s) left
+          {{ $tc("itemsLeft", quantityLeft) }}
         </div>
       </slot>
     </div>

@@ -293,7 +293,7 @@ import {
 } from "@/composables"
 import { productGetters, wishlistGetters, userGetters } from "@/lib/getters"
 import { buildAddToCartInput } from "@/composables/helpers"
-import { useNuxtApp, useState } from "#app"
+import { ComputedRef, useNuxtApp, useState } from "#app"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -367,14 +367,28 @@ export default defineComponent({
       productGetters.getSelectedFullfillmentOption(product.value)
     )
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
+    const productCodeOrVariationCode = computed(() => {
+      return productGetters.getVariationProductCodeOrProductCode(product.value)
+    })
+
+    const fetchProductLocationInventory = async () => {
+      productLocationInventoryData.value = await getProductLocationInventory(
+        productCodeOrVariationCode.value,
+        purchaseLocation?.value?.code
+      )
+    }
 
     watch(
       () => purchaseLocation.value.code,
-      async () => {
-        productLocationInventoryData.value = await getProductLocationInventory(
-          productCode,
-          purchaseLocation?.value?.code
-        )
+      () => {
+        fetchProductLocationInventory()
+      }
+    )
+
+    watch(
+      () => productCodeOrVariationCode.value,
+      () => {
+        fetchProductLocationInventory()
       }
     )
 
@@ -440,8 +454,8 @@ export default defineComponent({
     }
 
     // Add to Cart
-    const quantityLeft = computed(() => {
-      return productGetters.getItemsLeft(
+    const quantityLeft: ComputedRef<number> = computed(() => {
+      return productGetters.getAvailableItemCount(
         product.value,
         productLocationInventoryData.value,
         selectedFulfillmentValue.value
@@ -496,6 +510,7 @@ export default defineComponent({
       addItemToWishList,
       selectOption,
       purchaseLocation,
+      fetchProductLocationInventory,
       rating,
       totalReviews,
       qty: 1,

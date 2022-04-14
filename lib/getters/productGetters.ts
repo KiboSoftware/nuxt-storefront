@@ -80,7 +80,7 @@ const getProperties = (product: ProductCustom) => {
 const getOptionSelectedValue = (option: ProductOption) => {
   const selectedValue = option?.values?.find((value) => value?.isSelected)
   const result = selectedValue?.value || selectedValue?.stringValue || selectedValue?.isSelected
-  return result
+  return result?.toString()
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
@@ -161,7 +161,7 @@ const getSegregatedOptions = (product: ProductCustom) => {
 const validateAddToCart = (product: ProductCustom): boolean =>
   isProductVariationsSelected(product) && Boolean(product.fulfillmentMethod)
 
-const getItemsLeft = (
+const getAvailableItemCount = (
   product: ProductCustom,
   productLocationInventoryData: Object,
   fulfillmentOptionValue: string
@@ -179,6 +179,10 @@ const getItemsLeft = (
         : 0
   }
   return qtyLeft.value
+}
+const getVariationProductCodeOrProductCode = (product: ProductCustom): string => {
+  if (!product) return ""
+  return product.variationProductCode ? product.variationProductCode : product.productCode
 }
 
 export const productGetters = {
@@ -202,5 +206,6 @@ export const productGetters = {
   getCoverImage,
   getProductId,
   validateAddToCart,
-  getItemsLeft,
+  getAvailableItemCount,
+  getVariationProductCodeOrProductCode,
 }
