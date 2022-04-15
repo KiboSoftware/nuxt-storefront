@@ -78,6 +78,7 @@
             <KiboPasswordForm
               :fields="passwordFormFields"
               @input:handle-password="getPasswordValues"
+              :show-password-requirements="true"
             />
           </div>
         </transition>

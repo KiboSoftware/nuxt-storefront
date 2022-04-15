@@ -12,6 +12,14 @@
     top: var(--modal-close-top, var(--spacer-2xs));
   }
 
+  &__container {
+    z-index: 5;
+  }
+
+  &__overlay {
+    z-index: 3;
+  }
+
   .sf-bar {
     &__title {
       font-size: calc(var(--spacer-2xs) + var(--spacer-sm));

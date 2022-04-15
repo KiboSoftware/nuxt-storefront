@@ -267,4 +267,6 @@ export default {
   recommendedForYou: "Recommended for you",
   ShowStoresWithAvailability: "Show Stores With Availability",
   itemsLeft: "no items left | {n} item left | {n} items left",
+  RemovefromWishlist: "Remove from Wishlist",
+  registrationFailed: "New Account Registration Failed",
 }

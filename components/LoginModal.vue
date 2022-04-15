@@ -2,12 +2,27 @@
   <SfModal id="login" :visible="isLoginModalOpen" cross @close="closeModal">
     <template #modal-bar>
       <SfBar
-        class="sf-modal__bar bar-heading"
+        class="sf-modal__bar bar-heading desktop-only"
         :title="$t(barTitle)"
         :close="true"
         :back="false"
         @click:close="closeModal"
       />
+      <div class="smartphone-only">
+        <div class="modal-header">
+          <div class="bar-heading">
+            {{ barTitle }}
+          </div>
+          <SfIcon
+            icon="cross"
+            size="0.875rem"
+            color="#7c7c7c"
+            class="cross-icon"
+            @click="closeModal()"
+          />
+        </div>
+        <hr />
+      </div>
     </template>
     <transition name="sf-fade" mode="out-in">
       <div v-if="isLogin" key="log-in" class="modal-content" data-testid="login-modal">
@@ -49,12 +64,15 @@
           </div>
         </form>
         <SfButton
-          class="sf-button--text action-button"
+          class="sf-button--text forgot-password"
           data-testid="forgotten-password-button"
           @click="setIsForgottenValue(true)"
         >
           {{ $t("Forgot Password?") }}
         </SfButton>
+        <div class="spacer">
+          <hr class="spacer--hr" />
+        </div>
         <div class="aside">
           <SfHeading title="Don't have an account yet?" :level="3" class="aside__heading" />
           <SfButton
@@ -102,49 +120,48 @@
       </div>
 
       <div v-else key="sign-up" class="modal-content" data-testid="signin-modal">
-        <form class="form" @submit.prevent="() => false">
+        <form class="form" @submit.prevent="handleCreateAccountAndLogin()">
           <SfInput
             v-model="form.email"
             name="email"
-            label="Your email"
+            label="Email*"
             class="form__element"
             type="email"
           />
           <SfInput
             v-model="form.firstName"
             name="first-name"
-            label="First Name"
+            label="First Name*"
             class="form__element"
           />
           <SfInput
             v-model="form.lastName"
             name="last-name"
-            label="Last Name"
+            label="Last Name*"
             class="form__element"
           />
-          <SfInput
-            v-model="form.password"
-            name="password"
-            label="Password"
-            type="password"
-            class="form__element"
+          <KiboPasswordForm
+            :fields="passwordFormFields"
+            @input:handle-password="getPasswordValues"
+            :show-password-requirements="false"
           />
-          <SfCheckbox
-            v-model="createAccount"
-            name="create-account"
-            label="I want to create an account"
-            class="form__element"
-          />
+          <span v-if="userError.login" class="login-error-message">
+            {{ $t("registrationFailed") }}
+          </span>
           <SfButton
             type="submit"
-            class="sf-button--full-width form__submit"
+            class="sf-button--full-width form__submit color-primary"
             data-testid="create-acount-button"
+            :disabled="!createAccountDisabled"
           >
             {{ $t("Create an account") }}
           </SfButton>
         </form>
+        <div class="spacer">
+          <hr class="spacer--hr" />
+        </div>
         <SfButton
-          class="sf-button--text action-button"
+          class="sf-button--text login-to-account"
           data-testid="log-in-account"
           @click="setIsLoginValue(true)"
         >
@@ -164,11 +181,12 @@ import {
   SfHeading,
   SfBar,
   SfLoader,
+  SfIcon,
 } from "@storefront-ui/vue"
 
 import { useCart, useUiState, useUser, useUiValidationSchemas, useWishlist } from "@/composables"
 import { userGetters } from "@/lib/getters"
-import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
+import { LoginFormType, RestPasswordFormType, RegisterFormType } from "@/components/types/login"
 
 export default {
   name: "LoginModal",
@@ -180,9 +198,18 @@ export default {
     SfHeading,
     SfBar,
     SfLoader,
+    SfIcon,
   },
-  setup(_, context) {
-    const { user, login, resetPassword, loading, error: userError, isAuthenticated } = useUser()
+  setup(props, context) {
+    const {
+      user,
+      login,
+      createAccountAndLogin,
+      resetPassword,
+      loading,
+      error: userError,
+      isAuthenticated,
+    } = useUser()
     const { load: loadCart } = useCart()
     const { loadWishlist } = useWishlist()
 
@@ -191,13 +218,31 @@ export default {
     const isLogin = ref(false)
     const isForgotten = ref(false)
     const rememberMe = ref(false)
-    const createAccount = ref(false)
     const displayThankYouMessage = ref(false)
     const isEmailValidated = ref(false)
+    const isPasswordValidated = ref(false)
+    const password = ref({ password: "" })
 
     const errors = ref({
       email: "",
     })
+
+    const passwordFormFields = ref([
+      {
+        label: `${context.root.$t("Password")} *`,
+        id: "password",
+        value: "",
+      },
+    ])
+
+    const getPasswordValues = (fieldsData, _, isValidated) => {
+      const values = {
+        ...props.value,
+        [fieldsData[0].id]: fieldsData[0].value.trim(),
+      }
+      isPasswordValidated.value = isValidated
+      password.value = values
+    }
 
     const barTitle = computed(() => {
       if (isLogin.value) {
@@ -225,7 +270,11 @@ export default {
     }
 
     const handleForm = (fn) => async () => {
-      await fn(form.value)
+      if (fn.name === "createAccountAndLogin") {
+        await fn({ ...form.value, password: password.value.password, id: 0 })
+      } else {
+        await fn(form.value)
+      }
       const hasUserErrors = userGetters.hasUserError(userError.value)
       if (!hasUserErrors) {
         toggleLoginModal()
@@ -243,6 +292,24 @@ export default {
         await handleForm(login)()
         await loadCart()
         await loadWishlist()
+      }
+    }
+
+    const handleCreateAccountAndLogin = async () => {
+      const userInput = {
+        ...(form.value as RegisterFormType),
+        password: password.value.password,
+        id: 0,
+      }
+      if (
+        userInput.firstName &&
+        userInput.lastName &&
+        userInput.email &&
+        userInput.password &&
+        isPasswordValidated.value
+      ) {
+        await handleForm(createAccountAndLogin)()
+        await loadCart()
       }
     }
 
@@ -274,6 +341,13 @@ export default {
       }
     }
 
+    const createAccountDisabled = computed(() => {
+      const userInput = form.value as RegisterFormType
+      return (
+        userInput.firstName && userInput.lastName && userInput.email && isPasswordValidated.value
+      )
+    })
+
     return {
       form,
       userError,
@@ -290,7 +364,6 @@ export default {
       setIsForgottenValue,
       barTitle,
       rememberMe,
-      createAccount,
       login,
       isAuthenticated,
       user,
@@ -298,11 +371,27 @@ export default {
       validateEmail,
       isEmailValidated,
       errors,
+      handleCreateAccountAndLogin,
+      createAccountDisabled,
+      passwordFormFields,
+      getPasswordValues,
     }
   },
 }
 </script>
 <style lang="scss" scoped>
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--spacer-sm) var(--spacer-lg);
+}
+
+.bar-heading {
+  color: var(--_c-dark-primary);
+  font-size: var(--font-size--xl);
+  font-weight: var(--font-weight--semibold);
+}
+
 .modal-content,
 .aside {
   display: flex;
@@ -338,8 +427,12 @@ export default {
   }
 }
 
-.action-button {
-  margin: calc(var(--spacer-base) * 1.25) 0;
+.login-to-account {
+  margin: var(--spacer-xs) 0 var(--spacer-base);
+}
+
+.forgot-password {
+  margin-top: var(--spacer-sm);
 }
 
 .open-button {
@@ -347,7 +440,7 @@ export default {
 }
 
 .aside {
-  margin: 0 0 var(--spacer-sm) 0;
+  margin: 0 0 var(--spacer-base) 0;
 
   &__heading {
     --heading-title-color: var(--_c-green-primary);
@@ -374,18 +467,16 @@ export default {
 
 .login-button {
   border-radius: var(--spacer-2xs);
-  padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) 0 calc(var(--spacer-base) * 2.8);
+  padding: var(--spacer-xs) calc(var(--spacer-base) * 2.8) var(--spacer-xs)
+    calc(var(--spacer-base) * 2.8);
   align-self: center;
+  width: 100%;
 }
 
 .sf-heading {
   &__title {
     --heading-title-color: var(--_c-green-primary);
   }
-}
-
-.bar-heading {
-  color: var(--_c-dark-primary);
 }
 
 ::v-deep .sf-checkbox {
@@ -411,5 +502,29 @@ export default {
       font-weight: var(--font-weight--semibold);
     }
   }
+}
+
+::v-deep .sf-modal__container {
+  margin-top: 55px;
+  height: fit-content;
+  @include for-desktop {
+    margin-top: 0;
+  }
+}
+
+.spacer {
+  width: 100%;
+
+  &--hr {
+    margin: var(--spacer-lg) calc(var(--spacer-lg) * -1) var(--spacer-sm);
+    height: 1px;
+    border-width: 0;
+    color: var(--_c-gray-secondary);
+    background-color: var(--_c-gray-secondary);
+  }
+}
+
+.cross-icon {
+  margin-top: 3px;
 }
 </style>

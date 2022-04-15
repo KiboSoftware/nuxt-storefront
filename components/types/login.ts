@@ -6,3 +6,8 @@ export type LoginFormType = {
 export type RestPasswordFormType = {
   username: string
 }
+export type RegisterFormType = {
+  firstName: string
+  lastName: string
+  email: string
+}

@@ -60,7 +60,7 @@ const loginResponse = {
 
 const createAccountResponse = {
   account: {
-    emailAddress: "firstName@gmail.com",
+    emailAddress: "11",
     userName: null,
     firstName: "firstName",
     lastName: "lastName",
@@ -155,7 +155,7 @@ describe("[composable] useUser", () => {
     const params = {
       firstName: "firstName",
       lastName: "lastName",
-      email: "firstName@gmail.com",
+      email: "firstName11@gmail.com",
       password: "Password@1",
       acceptsMarketing: true,
       isActive: true,
