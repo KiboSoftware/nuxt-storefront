@@ -9,14 +9,40 @@
   border: 2px solid var(--_c-white-secondary);
   margin: var(--collected-product-margin, 0 0 var(--spacer-base) 0);
 
+  &__main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    @include for-desktop {
+      flex-direction: row;
+    }
+  }
+
+  &__product-details {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0;
+  }
+
+  &__product-details-content {
+    display: flex;
+  }
+
   &__link {
     display: contents;
   }
 
   &__verticalDivider {
-    height: auto;
-    width: 1px;
+    height: 1px;
+    width: 100%;
+    margin-top: 1rem;
     background: var(--_c-white-secondary);
+
+    @include for-desktop {
+      height: auto;
+      width: 1px;
+    }
   }
 
   &__info {
@@ -36,12 +62,55 @@
     margin: var(--collected-product-main-margin, 0 0 0 var(--spacer-sm));
   }
 
-  &__remove {
+  &__action-buttons {
     position: absolute;
-    right: -2%;
+    right: 2%;
+    top: 0;
   }
 
-  &__remove-button {
+  &__actions-container-mobile {
+    min-width: 193px;
+    position: absolute;
+    right: 50%;
+    top: 30%;
+    border: 1px solid #cdcdcd;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+    background: white;
+  }
+
+  &__actions-container-desktop {
+    display: none;
+
+    @include for-desktop {
+      display: flex;
+      width: auto;
+      justify-content: space-around;
+      padding-top: 0.5rem;
+    }
+  }
+
+  &__action-item-mobile {
+    height: auto;
+    width: auto;
+    padding: 1rem 0 0.5rem 1rem;
+    font-size: var(--font-size--sm);
+    cursor: pointer;
+  }
+
+  &__action-item-desktop {
+    font-size: var(--font-size--sm);
+    cursor: pointer;
+  }
+
+  &__action-item-mobile:first-child {
+    padding: 1rem 0 0.5rem 1rem;
+  }
+
+  &__action-item-mobile:last-child {
+    padding: 1rem 0 1rem 1rem;
+  }
+
+  &__action-button {
     --button-border-width: 0;
     --button-background: transparent;
     --button-color: var(--c-text);
@@ -52,6 +121,7 @@
     --button-box-shadow: none;
 
     display: inline;
+    padding: 0;
 
     &:hover {
       --button-background: transparent;
@@ -167,5 +237,13 @@
   &__details,
   &__description {
     font-size: var(--font-size--xs);
+  }
+}
+
+.more {
+  display: block;
+
+  @include for-desktop {
+    display: none;
   }
 }

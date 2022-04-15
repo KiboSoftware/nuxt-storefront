@@ -1,59 +1,83 @@
 <template>
   <div class="kibo-collectedProduct">
-    <div class="kibo-collectedProduct__image">
-      <nuxt-link :to="link" class="kibo-collectedProduct__link">
-        <SfImage :src="image" :alt="title" width="100%" height="100%" />
-      </nuxt-link>
-    </div>
-    <div class="kibo-collectedProduct__info">
-      <div class="kibo-collectedProduct__title-wrapper">
-        <component :is="componentIs" class="kibo-collectedProduct__title" :link="link ? link : ''">
-          {{ title }}
-        </component>
-      </div>
-      <div class="kibo-collectedProduct__price-wrapper">
-        <KiboPrice
-          v-if="regularPrice"
-          :regular="$n(regularPrice, 'currency')"
-          :special="specialPrice && $n(specialPrice, 'currency')"
-          class="kibo-collectedProduct__price"
-          :small="true"
-          :coupons="couponsApplied"
-        />
-      </div>
-      <div class="kibo-collectedProduct__quantitySelector-wrapper">
-        <p>{{ $t("Qty") }}</p>
-        <SfQuantitySelector
-          :qty="quantity"
-          :min="1"
-          :max="10"
-          @input="handleQuantitySelectorInput"
-        />
-      </div>
-      <div class="kibo-collectedProduct__details-wrapper">
-        <SfAccordion v-if="options.length" open="Details" show-chevron>
-          <SfAccordionItem header="Details">
-            <div v-for="(option, index) in options" :key="index">
-              <SfProperty :name="option.name" :value="option.value" class="sf-property" />
+    <div class="kibo-collectedProduct__main">
+      <div class="kibo-collectedProduct__product-details">
+        <div class="kibo-collectedProduct__product-details-content">
+          <div class="kibo-collectedProduct__image">
+            <nuxt-link :to="link" class="kibo-collectedProduct__link">
+              <SfImage :src="image" :alt="title" width="100%" height="100%" />
+            </nuxt-link>
+          </div>
+          <div class="kibo-collectedProduct__info">
+            <div class="kibo-collectedProduct__title-wrapper">
+              <component
+                :is="componentIs"
+                class="kibo-collectedProduct__title"
+                :link="link ? link : ''"
+              >
+                {{ title }}
+              </component>
             </div>
-          </SfAccordionItem>
-        </SfAccordion>
+            <div class="kibo-collectedProduct__price-wrapper">
+              <KiboPrice
+                v-if="regularPrice"
+                :regular="$n(regularPrice, 'currency')"
+                :special="specialPrice && $n(specialPrice, 'currency')"
+                class="kibo-collectedProduct__price"
+                :small="true"
+                :coupons="couponsApplied"
+              />
+            </div>
+            <div class="kibo-collectedProduct__quantitySelector-wrapper">
+              <p>{{ $t("Qty") }}</p>
+              <SfQuantitySelector
+                :qty="quantity"
+                :min="1"
+                :max="10"
+                @input="handleQuantitySelectorInput"
+              />
+            </div>
+            <div class="kibo-collectedProduct__details-wrapper">
+              <SfAccordion v-if="options.length" open="Details" show-chevron>
+                <SfAccordionItem header="Details">
+                  <div v-for="(option, index) in options" :key="index">
+                    <SfProperty :name="option.name" :value="option.value" class="sf-property" />
+                  </div>
+                </SfAccordionItem>
+              </SfAccordion>
+            </div>
+          </div>
+        </div>
+        <div class="kibo-collectedProduct__actions-container-desktop">
+          <div class="kibo-collectedProduct__action-item-desktop">{{ $t("Edit") }}</div>
+          <div class="kibo-collectedProduct__action-item-desktop">{{ $t("Save for later") }}</div>
+          <div class="kibo-collectedProduct__action-item-desktop">{{ $t("Add to Wishlist") }}</div>
+        </div>
+      </div>
+      <div class="kibo-collectedProduct__verticalDivider"></div>
+      <div class="kibo-collectedProduct__fullfilment">
+        <KiboFulfillmentOptions
+          :fulfillment-options="fulfillmentOptions"
+          :selected-option="selectedOption"
+          :is-column-display="true"
+          @changeStore="handleFulfillmentOption"
+          @radioChange="handleFulfillmentOption"
+        />
       </div>
     </div>
-    <div class="kibo-collectedProduct__verticalDivider"></div>
-    <div class="kibo-collectedProduct__fullfilment">
-      <KiboFulfillmentOptions
-        :fulfillment-options="fulfillmentOptions"
-        :selected-option="selectedOption"
-        :is-column-display="true"
-        @changeStore="handleFulfillmentOption"
-        @radioChange="handleFulfillmentOption"
-      />
-    </div>
-    <div class="kibo-collectedProduct__remove">
-      <SfButton class="kibo-collectedProduct__remove-button" @click="handleRemoveCartItem">
+    <div class="kibo-collectedProduct__action-buttons">
+      <SfButton class="kibo-collectedProduct__action-button more" @click="handleMobileActionClick">
+        <SfIcon icon="more" size="18px" />
+      </SfButton>
+      <br />
+      <SfButton class="kibo-collectedProduct__action-button" @click="handleRemoveCartItem">
         <font-awesome-icon :icon="['fas', 'trash-alt']" />
       </SfButton>
+      <div v-if="showMobileCartActions" class="kibo-collectedProduct__actions-container-mobile">
+        <div class="kibo-collectedProduct__action-item-mobile">{{ $t("Edit") }}</div>
+        <div class="kibo-collectedProduct__action-item-mobile">{{ $t("Save for later") }}</div>
+        <div class="kibo-collectedProduct__action-item-mobile">{{ $t("Add to Wishlist") }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -168,6 +192,18 @@ export default defineComponent({
     const { purchaseLocation } = usePurchaseLocation()
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
+    const showMobileCartActions = ref(false)
+
+    onMounted(() => {
+      window.addEventListener("click", function () {
+        showMobileCartActions.value = !showMobileCartActions.value
+      })
+    })
+
+    const handleMobileActionClick = (e) => {
+      e.stopPropagation()
+      showMobileCartActions.value = !showMobileCartActions.value
+    }
 
     const getInStorePickupDetails = (option) => {
       if (option?.fulfillmentMethod === "Pickup") {
@@ -255,6 +291,8 @@ export default defineComponent({
       componentIs,
       quantity,
       fulfillmentOptions,
+      showMobileCartActions,
+      handleMobileActionClick,
     }
   },
 })
