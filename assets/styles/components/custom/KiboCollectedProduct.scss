@@ -22,7 +22,7 @@
   &__product-details {
     display: flex;
     flex-direction: column;
-    padding: 0.5rem 0;
+    padding: var(--spacer-xs) 0;
   }
 
   &__product-details-content {
@@ -85,14 +85,14 @@
       display: flex;
       width: auto;
       justify-content: space-around;
-      padding-top: 0.5rem;
+      padding-top: var(--spacer-xs);
     }
   }
 
   &__action-item-mobile {
     height: auto;
     width: auto;
-    padding: 1rem 0 0.5rem 1rem;
+    padding: var(--spacer-sm) 0 var(--spacer-xs) var(--spacer-sm);
     font-size: var(--font-size--sm);
     cursor: pointer;
   }
@@ -103,11 +103,11 @@
   }
 
   &__action-item-mobile:first-child {
-    padding: 1rem 0 0.5rem 1rem;
+    padding: var(--spacer-sm) 0 var(--spacer-xs) var(--spacer-sm);
   }
 
   &__action-item-mobile:last-child {
-    padding: 1rem 0 1rem 1rem;
+    padding: var(--spacer-sm) 0 var(--spacer-sm) var(--spacer-sm);
   }
 
   &__action-button {
