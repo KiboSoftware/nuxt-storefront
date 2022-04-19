@@ -8,7 +8,7 @@ const getFulfillmentLocationCode = (checkoutItem: CrOrderItem) =>
   checkoutItem?.fulfillmentLocationCode
 const getItemDiscount = (checkoutItem: CrOrderItem) => checkoutItem?.productDiscount
 const getProductName = (checkoutItem: CrOrderItem) => checkoutItem?.product?.name
-const getProductImage = (checkoutItem: CrOrderItem) => checkoutItem?.product?.imageUrl
+const getProductImage = (checkoutItem: CrOrderItem) => checkoutItem?.product?.imageUrl || ""
 const getProductPrice = (checkoutItem: CrOrderItem) => checkoutItem?.product?.price?.price
 const getProductOptions = (checkoutItem: CrOrderItem) => checkoutItem?.product?.options
 const getProductSku = (checkoutItem: CrOrderItem) => checkoutItem?.product?.sku

@@ -91,7 +91,8 @@
           <div class="detailed-cart">
             <div class="sf-property--full-width sf-property">
               <span class="sf-property__name-noBold">{{ $t("Subtotal") }}</span>
-              <span class="sf-property__value">{{ $n(getCartItemTotalPrice, "currency") }}</span>
+              <!-- TODO: Needs to be changed the disaply value based on getCartItemPrice cartGetter -->
+              <span class="sf-property__value">{{ cartItemPrice.regular }}</span>
             </div>
             <div class="border-space"><hr class="sf-divider" /></div>
             <div class="sf-property--full-width sf-property">
@@ -99,7 +100,7 @@
                 ><b>{{ $t("Total") }}</b></span
               >
               <span class="sf-property__value"
-                ><strong>{{ $n(getCartItemTotalPrice, "currency") }}</strong></span
+                ><strong>{{ cartItemPrice.regular }}</strong></span
               >
             </div>
           </div>
@@ -152,7 +153,6 @@ export default {
     const cartItemImage = computed(() => cartGetters.getItemImage(cartItem.value))
     const cartItemOptions = computed(() => cartGetters.getItemOptions(cartItem.value))
     const cartItemPrice = computed(() => cartGetters.getItemPrice(cartItem.value))
-    const getCartItemTotalPrice = computed(() => cartGetters.getAddToCartTotalPrice(cartItem.value))
 
     const closeModal = () => {
       toggleAddToCartConfirmationModal()
@@ -173,7 +173,6 @@ export default {
       cartItemImage,
       cartItemOptions,
       cartItemPrice,
-      getCartItemTotalPrice,
     }
   },
 }
