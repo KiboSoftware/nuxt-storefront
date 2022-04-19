@@ -196,7 +196,9 @@ export default defineComponent({
 
     onMounted(() => {
       window.addEventListener("click", function () {
-        showMobileCartActions.value = !showMobileCartActions.value
+        if (showMobileCartActions.value) {
+          showMobileCartActions.value = !showMobileCartActions.value
+        }
       })
     })
 
