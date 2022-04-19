@@ -125,7 +125,7 @@
                     :key="optionVal.value"
                     :value="optionVal.value"
                   >
-                    {{ optionVal.stringValue }}
+                    {{ optionVal.stringValue || optionVal.value }}
                   </SfSelectOption>
                 </SfSelect>
               </div>
@@ -288,6 +288,7 @@ import {
   useUiState,
   usePurchaseLocation,
   useCart,
+  useProductLocationInventory,
   useWishlist,
   useUser,
 } from "@/composables"
@@ -314,15 +315,9 @@ export default defineComponent({
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
-    const {
-      load,
-      getProductLocationInventory,
-      product,
-      configure,
-      setFulfillment,
-      loading,
-      error,
-    } = useProduct(productCode)
+    const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
+
+    const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
     const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
@@ -336,17 +331,12 @@ export default defineComponent({
         ? context.root.$t("Add to Wishlist")
         : context.root.$t("RemovefromWishlist")
     )
-    const productLocationInventoryData = ref([])
-
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
     useAsync(async () => {
       await load(productCode)
-      productLocationInventoryData.value = await getProductLocationInventory(
-        productCode,
-        purchaseLocation?.value?.code
-      )
+      await loadProductLocationInventory(productCode, purchaseLocation?.value?.code)
     }, null)
 
     const productName = computed(() => productGetters.getName(product.value))
@@ -372,7 +362,7 @@ export default defineComponent({
     })
 
     const fetchProductLocationInventory = async () => {
-      productLocationInventoryData.value = await getProductLocationInventory(
+      await loadProductLocationInventory(
         productCodeOrVariationCode.value,
         purchaseLocation?.value?.code
       )
@@ -457,7 +447,7 @@ export default defineComponent({
     const quantityLeft: ComputedRef<number> = computed(() => {
       return productGetters.getAvailableItemCount(
         product.value,
-        productLocationInventoryData.value,
+        productInventory.value,
         selectedFulfillmentValue.value
       )
     })

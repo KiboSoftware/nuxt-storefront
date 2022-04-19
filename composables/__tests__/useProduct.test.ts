@@ -1,10 +1,9 @@
 import { useProduct } from "@/composables/useProduct"
-import { getProductQuery, productLocationInventoryQuery } from "@/lib/gql/queries"
+import { getProductQuery } from "@/lib/gql/queries"
 import { configureProductMutation } from "@/lib/gql/mutations/product/configureProductMutation"
 
 const mockGetProductQuery = getProductQuery
 const mockConfigureProductMutation = configureProductMutation
-const mockGetProductLocationInventory = productLocationInventoryQuery
 // getProduct
 const getProductApiResponse = {
   data: {
@@ -45,20 +44,6 @@ const configureProductResponse = {
   content: { productImages: undefined },
 }
 
-const productLocationInventoryResponse = {
-  data: {
-    productLocationInventory: {
-      items: [
-        {
-          locationCode: "kw1",
-          stockAvailable: 100,
-          softStockAvailable: null,
-        },
-      ],
-    },
-  },
-}
-
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
@@ -73,10 +58,6 @@ jest.mock("#app", () => ({
         } else if (params.query === mockConfigureProductMutation) {
           return {
             data: configureProductApiResponse.data,
-          }
-        } else if (params.query === mockGetProductLocationInventory) {
-          return {
-            data: productLocationInventoryResponse.data,
           }
         }
       }),
@@ -102,20 +83,6 @@ describe("[composable] useProduct", () => {
       productCode
     )
     expect(product.value).toEqual(configureProductResponse)
-    expect(loading.value).toBeFalsy()
-    expect(error.value).toBeFalsy()
-  })
-
-  // ProductLocationInventory
-  test("getProductLocationInventory: should fetch product location inventory", async () => {
-    const variables = { productCode: "MS-CAM-004", locationCodes: "kw1" }
-
-    const { getProductLocationInventory, loading, error } = useProduct(productCode)
-    const response = await getProductLocationInventory(
-      variables.productCode,
-      variables.locationCodes
-    )
-    expect(response).toEqual(productLocationInventoryResponse.data.productLocationInventory.items)
     expect(loading.value).toBeFalsy()
     expect(error.value).toBeFalsy()
   })
