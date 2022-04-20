@@ -5,6 +5,7 @@ import {
   createWishlistMutation,
   deleteWishListItemMutation,
 } from "@/lib/gql/mutations"
+import { Product } from "@/server/types/GraphQL"
 
 const mockedGetWishlistQuery = getWishlistQuery
 const mockedCreateWishlistMutation = createWishlistMutation
@@ -29,20 +30,7 @@ const mockedProduct = {
       ],
     },
   ],
-}
-
-jest.mock("@/composables/useUser", () => ({
-  useUser: jest.fn(() => {
-    return {
-      user: {
-        value: {
-          id: 1057,
-          firstName: "test-name",
-        },
-      },
-    }
-  }),
-}))
+} as Product
 
 const mockedWishlist = {
   customerAccountId: 1130,
@@ -80,6 +68,9 @@ jest.mock("#app", () => ({
   }),
   useNuxtApp: jest.fn().mockReturnValue({
     nuxt2Context: {
+      $config: {
+        defaultWishlistName: "default-wishlist",
+      },
       $gqlFetch: jest.fn((param) => {
         const { query, variables } = param
         if (query === mockedGetWishlistQuery) {
@@ -139,7 +130,8 @@ describe("[composable] useWishlist", () => {
   })
 
   it("addToWishlist: should add item to current wishlist", async () => {
-    await addToWishlist(mockedProduct)
+    const currentUserId = 1029
+    await addToWishlist(mockedProduct, currentUserId)
     expect(currentWishlist.value).toStrictEqual(mockedWishlist)
   })
 

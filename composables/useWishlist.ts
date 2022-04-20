@@ -1,8 +1,7 @@
 import { computed } from "@vue/composition-api"
 import { useState, useNuxtApp } from "#app"
-import { useUser } from "@/composables"
 
-import type { Maybe, Wishlist } from "@/server/types/GraphQL"
+import type { Maybe, Product, Wishlist } from "@/server/types/GraphQL"
 import { getWishlistQuery } from "@/lib/gql/queries"
 import {
   createWishlistItemMutation,
@@ -13,11 +12,11 @@ import {
 export const useWishlist = () => {
   const nuxt = useNuxtApp()
   const fetcher = nuxt.nuxt2Context.$gqlFetch
+  const defaultWishlistName = nuxt.nuxt2Context.$config.defaultWishlistName
 
   const currentWishlist = useState<Maybe<Wishlist>>(`use-wishlist-current`, () => null)
   const loading = useState<Boolean>(`use-wishlist-loading`, () => false)
   const error = useState(`use-userOrders-error`, () => null)
-  const { user } = useUser()
 
   const getWishLists = async (): Promise<Wishlist> => {
     const wishListResponse = await fetcher({
@@ -35,16 +34,14 @@ export const useWishlist = () => {
     }
   }
 
-  const addToWishlist = async (product) => {
+  const addToWishlist = async (product: Product, customerAccountId: number) => {
     try {
       if (!currentWishlist.value) {
-        const currentUser = user.value
-
-        const wishlistName = currentUser.id + "-" + currentUser.firstName
+        const wishlistName = defaultWishlistName
 
         const params = {
           wishlistInput: {
-            customerAccountId: currentUser.id,
+            customerAccountId,
             name: wishlistName,
           },
         }

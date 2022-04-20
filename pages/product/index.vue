@@ -436,7 +436,7 @@ export default defineComponent({
       if (isAuthenticated.value) {
         isInWishlist(product.value)
           ? await removeItemFromWishlist(product.value)
-          : await addToWishlist(product.value)
+          : await addToWishlist(product.value, user.value.id)
       } else {
         toggleLoginModal()
       }
