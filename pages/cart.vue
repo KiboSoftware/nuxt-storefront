@@ -206,36 +206,15 @@ export default defineComponent({
 }
 
 .detailed-cart {
+  margin: 0 -7.8%;
+
   &__main {
-    padding: 0 var(--spacer-sm);
-    @include for-desktop {
-      flex: 1;
-      padding: 0 0 0 0;
-      width: 65.74%; //860px;
-    }
+    padding: 0;
   }
 
   &__aside {
     box-sizing: border-box;
     padding: 0;
-
-    @include for-desktop {
-      width: 31.57%; //413px;
-    }
-  }
-  @include for-desktop {
-    display: flex;
-
-    &__main {
-      flex: 1;
-    }
-
-    &__aside {
-      flex: 0 0 26.8125rem;
-      order: 1;
-      margin: 0 0 0 var(--spacer-xl);
-      height: 100%;
-    }
   }
 
   &__title-wrapper {
@@ -245,6 +224,24 @@ export default defineComponent({
 
   &__title {
     font-size: var(--h1-font-size);
+  }
+
+  @include for-desktop {
+    display: flex;
+    margin: 0;
+
+    &__main {
+      flex: 1;
+      width: 65.74%; //860px;
+    }
+
+    &__aside {
+      flex: 0 0 26.8125rem;
+      order: 1;
+      margin: 0 0 0 var(--spacer-xl);
+      height: 100%;
+      width: 31.57%; //413px;
+    }
   }
 }
 

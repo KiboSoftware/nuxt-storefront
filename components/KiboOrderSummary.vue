@@ -31,6 +31,9 @@
               <SfBadge class="sf-badge--number sf-badge color-secondary tax-badge">i</SfBadge>
             </div>
           </template>
+          <template #value>
+            <KiboPrice :regular="$n(estimatedTax, 'currency')" class="sf-property__price" />
+          </template>
         </SfProperty>
       </div>
       <div class="promo-code">
