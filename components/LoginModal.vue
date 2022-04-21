@@ -166,7 +166,7 @@ import {
   SfLoader,
 } from "@storefront-ui/vue"
 
-import { useCart, useUiState, useUser, useUiValidationSchemas } from "@/composables"
+import { useCart, useUiState, useUser, useUiValidationSchemas, useWishlist } from "@/composables"
 import { userGetters } from "@/lib/getters"
 import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
 
@@ -184,6 +184,7 @@ export default {
   setup(_, context) {
     const { user, login, resetPassword, loading, error: userError, isAuthenticated } = useUser()
     const { load: loadCart } = useCart()
+    const { loadWishlist } = useWishlist()
 
     const { isLoginModalOpen, toggleLoginModal } = useUiState()
     const form = ref({})
@@ -241,6 +242,7 @@ export default {
       if (userInput.username && userInput.password) {
         await handleForm(login)()
         await loadCart()
+        await loadWishlist()
       }
     }
 
