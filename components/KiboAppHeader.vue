@@ -77,18 +77,19 @@
       <div class="kibo-header">
         <div class="kibo-header__container">
           <div class="kibo-header__spacer"></div>
-          <div v-click-outside="closeSearchOutsideClick" class="kibo-header__search-bar">
+          <!-- <div v-click-outside="closeSearchOutsideClick" class="kibo-header__search-bar"> -->
+            <div class="kibo-header__search-bar">
             <div v-show="isSearchOpen" class="search-overlay" @click="closeSearch"></div>
             <KiboSearchBar
               ref="searchBarRef"
-              :placeholder="$t('Search')"
+              :placeholder="$t('What can we help you find?')"
               aria-label="Search"
               class="sf-header__search"
               :class="{ 'search-box-on-top': isSearchOpen }"
               :value="term"
               @input="handleSearch"
-              @keydown.enter="gotoSearchResult()"
-              @keydown.esc="closeSearch"
+              @keyup.enter="gotoSearchResult()"
+              @keyup.esc="closeSearch"
             >
               <template #icon>
                 <SfButton
@@ -243,18 +244,20 @@
         </div>
       </div>
 
-      <div v-show="isOpenSearchBar" class="kibo-mobile__header-search">
+      <div v-show="isOpenSearchBar" class="kibo-mobile__header-search" :class="{ 'search-box-on-top': isSearchOpen }">
+
+        <div v-show="isSearchOpen" class="search-overlay" @click="closeSearch"></div>
         <div class="kibo-mobile__header-search__input">
           <input
             ref="mobileSearchRef"
             name="search"
             type="search"
-            :placeholder="$t('Search')"
+            :placeholder="$t('What can we help you find?')"
             :value="term"
             autoComplete="off"
             @input="handleSearch"
-            @keydown.enter="gotoSearchResult()"
-            @keydown.esc="closeSearch"
+            @keyup.enter="gotoSearchResult()"
+            @keyup.esc="closeSearch"
           />
         </div>
 
@@ -268,6 +271,7 @@
           {{ $t("Cancel") }}
         </button>
       </div>
+      <div class="search-suggestion-div">
       <KiboSearchSuggestion
         :visible="isSearchOpen"
         :result="searchSuggestionResult"
@@ -275,6 +279,7 @@
         @closeDialog="closeSearch()"
       >
       </KiboSearchSuggestion>
+      </div>
     </div>
   </header>
 </template>
@@ -399,6 +404,7 @@ export default defineComponent({
         return closeSearch()
       } else {
         term.value = ""
+        isSearchOpen.value = false
         return searchBarRef.value.$el.children[0].focus()
       }
     }
@@ -426,6 +432,17 @@ export default defineComponent({
             (newVal?.length !== oldVal?.length && isSearchOpen.value === false))
         if (shouldSearchBeOpened) {
           isSearchOpen.value = true
+        }
+      }
+    )
+
+    watch(
+      () => isSearchOpen.value,
+      () => {
+        if (isSearchOpen.value) {
+          document.body.classList.add("no-scroll")
+        } else {
+          document.body.classList.remove("no-scroll")
         }
       }
     )
@@ -612,6 +629,12 @@ export default defineComponent({
     background: var(--c-white);
     border-radius: var(--spacer-2xs);
   }
+
+  @include for-mobile {
+    .kibo-mobile__header-search__input {
+      z-index: 3;
+    }
+  }
 }
 
 .header-on-top {
@@ -746,11 +769,86 @@ export default defineComponent({
 }
 
 .search-suggestion-div {
+
+  @include for-desktop {
   flex: 1.5;
   top: calc(var(--spacer-xs) * 5.75);
   position: absolute;
   z-index: 20;
-  max-width: 41rem;
+  max-width: 41.3rem;
+  }
+
+  ::v-deep .custom-search-header {
+    .search-container {
+      @include for-desktop {
+      height: 38.75rem;
+      }
+
+      &__categories{
+        span:hover{
+          color: var(--_c-green-primary);
+        }
+      }
+    }
+
+    .products__grid {
+      overflow: auto;
+      padding-top: var(--spacer-xs);
+      padding-bottom: var(--spacer-xs);
+    }
+
+    .product_card_details {
+      .sf-product-card__image-wrapper {
+        margin-bottom: var(--spacer-sm);
+      }
+
+      .kpc-title {
+        display: flex;
+        font-size: 0.8rem;
+        font-weight: var(--font-weight--medium);
+        justify-content: center;
+        line-height: unset;
+        text-align: center;
+      }
+    }
+  }
+
+  @include for-mobile {
+    ::v-deep .custom-search-header {
+      .search-container {
+        z-index: 3;
+        height: 74vh;
+        overflow-y: auto;
+
+        &__left{
+          width: 100%;
+          flex:unset;
+        }
+
+        &__right{
+          width: 100%;
+          flex:unset;
+        }
+
+        &__products{
+          padding-left: 1rem;
+          padding-right: 1rem;
+          max-height: 25rem;
+          overflow-y: auto;
+        }
+      }
+
+      .products__grid > * {
+        width: 48%;
+        padding: 1rem 0.2rem;
+        margin: unset;
+
+        .sf-product-card__link {
+          text-align: center;
+        }
+      }
+    }
+  }
 }
 
 .icon-name-sidebar {
@@ -778,12 +876,23 @@ export default defineComponent({
 }
 
 .sf-search-bar {
+  ::v-deep &__input {
+    padding-right: var(--spacer-xl);
+    padding-left: 0;
+  }
+
   &__icon {
     height: var(--spacer-sm);
+
+    ::v-deep svg {
+      transform: unset;
+    }
   }
 
   &__button {
     width: 5%;
+    right: var(--spacer-2xs);
+    left: unset;
   }
 }
 
@@ -847,6 +956,10 @@ export default defineComponent({
         border-radius: calc(var(--spacer-2xs) * 0.5);
         text-indent: 2%;
         outline: none;
+
+         &:focus::placeholder {
+          color: transparent;
+        }
       }
 
       ::-webkit-input-placeholder {

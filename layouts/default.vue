@@ -28,4 +28,8 @@
     max-width: 81.75rem;
   }
 }
+
+.no-scroll {
+  overflow: hidden;
+}
 </style>

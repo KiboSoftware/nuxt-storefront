@@ -1,7 +1,7 @@
 <template>
   <div v-show="visible" class="custom-search-header">
     <div class="search-container">
-      <div class="search-container__left desktop-only">
+      <div class="search-container__left">
         <SfLoader v-if="loading" :class="{ loader: loading }" :loading="loading">
           <div>{{ $t("Searching......") }}</div>
         </SfLoader>
