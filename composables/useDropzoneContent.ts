@@ -47,9 +47,26 @@ export const useDropzoneContent = (referenceKey: string) => {
     loading.value = false
   }
 
+  const loadProperties = async ({ documentListName, filter }) => {
+    try {
+      loading.value = true
+      const response = await fetcher({
+        query: getDocumentsQuery,
+        variables: { documentListName, filter },
+        headers: { "x-vol-exclude-user-claims": "true" },
+      })
+      const document = response.data?.documentListDocuments?.items?.[0]
+      dropzoneContent.value = document?.properties
+    } catch (error) {
+      console.error(error)
+    }
+    loading.value = false
+  }
+
   return {
     load,
     dropzoneContent,
+    loadProperties,
     loading,
     error,
   }
