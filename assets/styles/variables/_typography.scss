@@ -1,0 +1,25 @@
+:root {
+  // font-family
+  --font-family--primary: "Roboto", sans-serif;
+  --font-family--secondary: "Raleway", sans-serif;
+  --font-size--xxs: 0.625rem; //10px
+
+  //--font-size-* will be applied from node_module scss, adding here for reference
+  // --font-size--xs: 0.75rem; //12px
+  // --font-size--sm: 0.875rem; //14px
+  // --font-size--base: 1rem; //16px
+  // --font-size--lg: 1.125rem; //18px
+
+  --font-size--xl: calc(var(--font-size--base) * 1.25); //20px
+  --font-size--2xl: calc(var(--font-size--base) * 1.375); //22px
+  --font-size--3xl: calc(var(--font-size--base) * 1.5); //24px
+  --font-size--4xl: calc(var(--font-size--base) * 1.75); //28px
+
+  // heading font-size
+  --h1-font-size: 1.75rem; //28px
+  --h2-font-size: 1.25rem; //20px
+  --h3-font-size: 1.125rem; //18px
+  --h4-font-size: 1rem; //16px
+  --h5-font-size: 0.875rem; //14px
+  --h6-font-size: 0.75rem; //12px
+}

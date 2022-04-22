@@ -1,0 +1,22 @@
+.sf-checkbox {
+  &__checkmark {
+    @include border(--checkbox-border, 1px, solid, var(--_c-gray-middle));
+
+    --checkbox-order: 0;
+    --checkbox-border-radius: 2px;
+    --checkbox-size: var(--font-size--sm);
+    @include for-mobile {
+      --checkbox-border-color: var(--_c-gray-primary);
+    }
+  }
+
+  &.is-active {        
+    --checkbox-background: var(--_c-green-primary);
+  }
+
+  input {
+    &:focus + .sf-checkbox__checkmark {
+      outline: none;
+    }
+  }
+}

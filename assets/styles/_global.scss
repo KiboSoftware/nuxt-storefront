@@ -1,0 +1,12 @@
+@import "./components/_organisms.scss";
+@import "./components/_molecules.scss";
+@import "./components/_atoms.scss";
+
+html,
+body {
+  font-family: var(--font-family--primary);
+  font-size: 1rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  margin: 0;
+}

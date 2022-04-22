@@ -1,0 +1,32 @@
+import { useCurrentLocation } from "../storeFinder/useCurrentLocation"
+import * as getCurrentUserPosition from "../storeFinder/utils/getUserCurrentPosition"
+
+jest.mock("#app", () => ({
+  useState: jest.fn((_, init) => {
+    return { value: init() }
+  }),
+}))
+
+describe("[composable] useCurrentLocation", () => {
+  const { currentLocation, loadWithNavigator, loading, error } = useCurrentLocation()
+
+  jest.spyOn(getCurrentUserPosition, "getCurrentUserPosition").mockReturnValue(
+    Promise.resolve({
+      coords: {
+        latitude: "30.242292",
+        longitude: "-97.783232",
+      },
+    })
+  )
+
+  test("loadWithNavigator: should return current location (longitude and latitude)", async () => {
+    process.browser = true
+    await loadWithNavigator()
+    expect(currentLocation.value).toStrictEqual({
+      latitude: "30.242292",
+      longitude: "-97.783232",
+    })
+    expect(loading.value).toBeFalsy()
+    expect(error.value).toBeFalsy()
+  })
+})

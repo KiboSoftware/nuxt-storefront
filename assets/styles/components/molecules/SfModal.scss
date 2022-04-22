@@ -1,0 +1,34 @@
+.sf-modal {
+  --modal-content-padding: 0;
+
+
+  &__bar {
+    background-color: var(--c-white);
+    border-bottom: 1px solid var(--_c-white-secondary);
+  }
+
+  &__close {
+    margin-right: var(--spacer-xs);
+    top: var(--modal-close-top, var(--spacer-2xs));
+  }
+
+  .sf-bar {
+    &__title {
+      font-size: calc(var(--spacer-2xs) + var(--spacer-sm));
+      line-height: var(--spacer-base);
+
+      @include for-desktop {
+        min-width: 25rem;
+      }
+
+      font-weight: var(--font-weight--bold);
+      font-family: var(--font-family--primary);
+    }
+
+    &__icon {
+      @include for-desktop {
+        display: none;
+      }
+    }
+  }
+}
