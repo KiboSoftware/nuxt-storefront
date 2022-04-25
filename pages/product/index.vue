@@ -125,7 +125,7 @@
                     :key="optionVal.value"
                     :value="optionVal.value"
                   >
-                    {{ optionVal.stringValue }}
+                    {{ optionVal.stringValue || optionVal.value }}
                   </SfSelectOption>
                 </SfSelect>
               </div>
@@ -273,7 +273,7 @@ import {
   SfAccordion,
 } from "@storefront-ui/vue"
 
-import { defineComponent, computed, ref, onBeforeUnmount } from "@vue/composition-api"
+import { defineComponent, computed, ref, onBeforeUnmount, watch } from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
 
@@ -288,12 +288,13 @@ import {
   useUiState,
   usePurchaseLocation,
   useCart,
+  useProductLocationInventory,
   useWishlist,
   useUser,
 } from "@/composables"
 import { productGetters, wishlistGetters, userGetters } from "@/lib/getters"
 import { buildAddToCartInput } from "@/composables/helpers"
-import { useNuxtApp, useState } from "#app"
+import { ComputedRef, Ref, useNuxtApp } from "#app"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -315,6 +316,8 @@ export default defineComponent({
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
+
+    const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
     const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
@@ -328,12 +331,12 @@ export default defineComponent({
         ? context.root.$t("Add to Wishlist")
         : context.root.$t("RemovefromWishlist")
     )
-
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
     useAsync(async () => {
       await load(productCode)
+      await loadProductLocationInventory(productCode, purchaseLocation?.value?.code)
     }, null)
 
     const productName = computed(() => productGetters.getName(product.value))
@@ -354,6 +357,30 @@ export default defineComponent({
       productGetters.getSelectedFullfillmentOption(product.value)
     )
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
+    const productCodeOrVariationCode = computed(() => {
+      return productGetters.getVariationProductCodeOrProductCode(product.value)
+    })
+
+    const fetchProductLocationInventory = async () => {
+      await loadProductLocationInventory(
+        productCodeOrVariationCode.value,
+        purchaseLocation?.value?.code
+      )
+    }
+
+    watch(
+      () => purchaseLocation.value.code,
+      () => {
+        fetchProductLocationInventory()
+      }
+    )
+
+    watch(
+      () => productCodeOrVariationCode.value,
+      () => {
+        fetchProductLocationInventory()
+      }
+    )
 
     // Options section
     let shopperEnteredValues = []
@@ -417,8 +444,15 @@ export default defineComponent({
     }
 
     // Add to Cart
-    const quantityLeft = computed(() => 5)
-    const qtySelected = useState(`pdp-selected-qty`, () => 1)
+    const quantityLeft: ComputedRef<number> = computed(() => {
+      return productGetters.getAvailableItemCount(
+        product.value,
+        productInventory.value,
+        selectedFulfillmentValue.value
+      )
+    })
+
+    const qtySelected: Ref<number> = ref(1)
 
     const addToCart = async () => {
       const productToAdd = buildAddToCartInput(
@@ -466,6 +500,7 @@ export default defineComponent({
       addItemToWishList,
       selectOption,
       purchaseLocation,
+      fetchProductLocationInventory,
       rating,
       totalReviews,
       qty: 1,

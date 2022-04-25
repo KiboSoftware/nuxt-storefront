@@ -4,6 +4,7 @@ export * from "./useUiState"
 
 // Product
 export * from "./useProduct"
+export * from "./useProductLocationInventory"
 
 // User
 export * from "./useUser"
