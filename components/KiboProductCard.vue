@@ -46,6 +46,25 @@
           />
         </SfColorPicker>
       </slot>
+
+        <div class="plp-badges">
+        <div class="badge-icon" v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true">
+          <img src="/productpage/hot-item-50.png" />
+        </div>
+        <div
+          class="badge-icon"
+          v-if="properties[`Mystic Tested`] && properties[`Mystic Tested`][0] === true"
+        >
+          <img src="/productpage/mystic-tested-50.png" />
+        </div>
+        <div
+          class="badge-icon"
+          v-if="properties[`Top Seller`] && properties[`Top Seller`][0] === true"
+        >
+          <img src="/productpage/top-seller-50.jpg" />
+        </div>
+      </div>
+
       <slot name="badge" v-bind="{ badgeLabel, badgeColor }">
         <SfBadge v-if="badgeLabel" class="sf-product-card__badge" :class="badgeColorClass">{{
           badgeLabel
@@ -168,6 +187,10 @@ export default defineComponent({
     SfColor,
   },
   props: {
+    properties: {
+      type: Object,
+      default: () => ({}),
+    },
     /**
      * Product image
      * It should be an url of the product
@@ -407,6 +430,18 @@ export default defineComponent({
     @include for-desktop {
       height: calc(var(--spacer-base) * 8.375);
     }
+  }
+
+  .plp-badges {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+  }
+
+  .badge-icon > img {
+    width: 35px;
   }
 
   .sf-image {
