@@ -1,6 +1,39 @@
 <template>
   <div id="category">
     <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
+
+    <SfLoader :class="{ loading }" :loading="loader">
+      <div style="overflow: hidden" v-if="banners !== undefined">
+        <SfBanner :title="banners.imageAltText" :image="definedRoute + banners.imageFileId" />
+      </div>
+    </SfLoader>
+
+    <SfLoader :class="{ loading }" :loading="subCategoryLoader">
+      <div v-if="childCategories !== undefined">
+        <SfCarousel
+          :settings="{
+            peek: 16,
+            breakpoints: { 1023: { peek: 0, perView: 2 } },
+            perView: 6,
+          }"
+        >
+          <SfCarouselItem v-for="(item, i) in childCategories[0].childrenCategories" :key="i">
+            <div class="sub-category-carousel">
+              <nuxt-link class="primary-menu" :to="localePath(getCatLink(item))">
+                <img
+                  v-if="item.content.categoryImages.length > 0"
+                  :src="item.content.categoryImages[0].imageUrl"
+                  :alt="item.content.name"
+                />
+                <img v-else src="/_nuxt/assets/images/product_placeholder.svg" />
+                <p>{{ item.content.name }}</p>
+              </nuxt-link>
+            </div>
+          </SfCarouselItem>
+        </SfCarousel>
+      </div>
+    </SfLoader>
+
     <div class="navbar section">
       <div class="navbar__main">
         <div v-if="!productSearchLoading" class="navbar__aside">
@@ -206,13 +239,17 @@ import {
   SfBreadcrumbs,
   SfProductCardHorizontal,
   SfProperty,
+  SfBanner,
+  SfLoader,
+  SfCarousel
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
-import { useUiHelpers, useFacet, useProductSearch } from "@/composables"
+import { useUiHelpers, useFacet, useProductSearch, useCategoryTree } from "@/composables"
 
-import { productGetters, facetGetters, productSearchGetters } from "@/lib/getters"
+import { productGetters, facetGetters, productSearchGetters, categoryGetters } from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
+import { useDropzoneContent } from "@/composables"
 
 export default {
   name: "Category",
@@ -224,9 +261,14 @@ export default {
     SfBreadcrumbs,
     SfProductCardHorizontal,
     SfProperty,
+    SfBanner,
+    SfLoader,
+    SfCarousel
   },
   setup(_, context) {
-    const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink } =
+    const { dropzoneContent: contentBanner, loadProperties: loadBanners } =
+      useDropzoneContent("Banners")
+    const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink, getCatLink } =
       useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const nuxt = useNuxtApp()
@@ -255,10 +297,50 @@ export default {
       loading: productSearchLoading,
     } = useProductSearch(`product-search`)
 
+    const { $route } = context.root
+    const getPageSlug = () => (!Number($route.params.categoryCode) ? 1 : $route.params.categoryCode)
+
+    const banners = ref({})
+    const definedRoute = ref("https://cdn-sb.mozu.com/29927-49696/cms/files/")
+    const loader = ref(true)
+    const subCategoryLoader = ref(true)
+    const { categories: allCategories } = useCategoryTree()
+    const megaMenuCategories = computed(() => {
+      return categoryGetters.getMegaMenuCategory(allCategories.value)
+    })
+
+    const childCategories = ref([])
+
+    const getChildCategory = () => {
+      childCategories.value = megaMenuCategories.value.filter((category) => {
+        return category.categoryId.toString() === getPageSlug().toString()
+      })
+
+      setTimeout(() => {
+        subCategoryLoader.value = false
+      }, 2000)
+    }
+
     useAsync(async () => {
+      getChildCategory()
+
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
       await productSearch(facetsFromUrl.value)
+
+      const appData = Promise.all([
+        loadBanners({
+          documentListName: "catalogContent@mozu",
+          filter: "name eq category-" + getPageSlug(),
+        }),
+      ])
+      await appData
+
+      banners.value = contentBanner.value?.dropzones[0]?.rows[0]?.columns[0]?.widgets[0]?.config
+      if (banners.value === undefined) {
+        banners.value = { imageFileId: "13908198-4a95-4231-aa73-9e1d243bf6e2" }
+      }
+      loader.value = false
     }, null)
 
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
@@ -341,6 +423,15 @@ export default {
     }
 
     return {
+      getCatLink,
+      childCategories,
+      getChildCategory,
+      megaMenuCategories,
+      contentBanner,
+      banners,
+      loader,
+      subCategoryLoader,
+      definedRoute,
       breadcrumbs,
       loading,
       getFacetsFromURL,
@@ -371,6 +462,41 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+::v-deep .sf-loader__overlay {
+  position: relative;
+  height: 250px;
+}
+
+::v-deep .sf-banner__title {
+  white-space: normal;
+  background: var(--c-light);
+  opacity: 0.75;
+  position: absolute;
+  padding: 10px;
+  margin-left: -40px;
+
+  @include for-mobile {
+    margin-left: -40px;
+    margin-top: 64%;
+    font-size: 1rem;
+  }
+}
+
+.sub-category-carousel {
+  margin: 30px 0;
+  text-align: center;
+  font-size: 0.8rem;
+
+  img {
+    width: 100px;
+    height: 100px;
+  }
+
+  p {
+    color: var(--c-black);
+  }
+}
+
 #category {
   box-sizing: border-box;
 }
@@ -568,6 +694,16 @@ export default {
     button {
       height: 2rem;
     }
+  }
+}
+
+::v-deep .products__list {
+  .sf-product-card-horizontal.products__product-card-horizontal {
+    margin-bottom: var(--spacer-base);
+  }
+
+  .sf-image {
+    object-fit: contain;
   }
 }
 
