@@ -1,4 +1,4 @@
-export const categoryInfo = /* GraphQL */`
+export const categoryInfo = /* GraphQL */ `
   fragment categoryInfo on PrCategory {
     count
     categoryId
@@ -8,6 +8,9 @@ export const categoryInfo = /* GraphQL */`
       name
       slug
       description
+      categoryImages {
+        imageUrl
+      }
     }
   }
 `

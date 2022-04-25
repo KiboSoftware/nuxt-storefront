@@ -1,394 +1,375 @@
 <template>
   <div>
+    <div class="scheduledImage" v-if="dropzoneScheduleContent !== undefined">
+      <ScheduleDropzone :productDropzone="dropzoneScheduleContent" />
+    </div>
+
     <div>
-      <SfHero class="hero" :slider-options="{ autoplay: false }">
-        <SfHeroItem
-          v-for="(img, index) in heroes"
-          :key="index"
-          :image="img.image"
-          :title="img.title"
-          :subtitle="img.subtitle"
-          :button-text="img.buttonText"
-          :background="img.background"
-          :class="img.className"
+      <KiboWidgetFactory :document-name="pageName" />
+    </div>
+
+    <SfHero v-if="dropzoneContent !== undefined" class="hero">
+      <SfHeroItem
+        v-for="(hero, index) in dropzoneContent"
+        :key="index"
+        :title="hero.title"
+        :subtitle="hero.subtitle"
+        :button-text="hero.buttonText"
+        :background="hero.background"
+        :image="hero.image"
+        :class="hero.className"
+      />
+    </SfHero>
+
+    <div>
+      <div
+        class="similar-products"
+        v-if="productDropzone !== undefined && productDropzone.dropzones[0]"
+      >
+        <SfHeading
+          :title="productDropzone.dropzones[0].rows[1].columns[0].widgets[0].config.title"
+          :level="3"
+        />
+      </div>
+
+      <SfLoader :class="{ loading }" :loading="loading">
+        <SfCarousel
+          class="carousel"
+          :settings="{
+            peek: 16,
+            breakpoints: { 1023: { peek: 0, perView: 2 } },
+          }"
         >
-          <template #subtitle="{ subtitle }">
-            <div :class="{ 'display-none': !subtitle }" class="sf-hero-item__subtitle">
-              {{ subtitle }}
-            </div>
+          <template #prev="{ go }">
+            <SfArrow aria-label="prev" class="sf-arrow--left sf-arrow--long" @click="go('prev')" />
           </template>
-          <template #title="{ title }">
-            <div :class="{ 'display-none': !title }" class="sf-hero-item__title">{{ title }}</div>
-            <div :class="{ 'display-none': !img.description }" class="sf-hero-item__description">
-              {{ img.description }}
-            </div>
+          <template #next="{ go }">
+            <SfArrow aria-label="next" class="sf-arrow--right sf-arrow--long" @click="go('next')" />
           </template>
-          <template #call-to-action="{ buttonText, link }">
-            <div v-if="buttonText" class="sf-hero-item__button">
-              <SfButton :link="link" data-testid="hero-cta-button">
-                {{ buttonText }}
-              </SfButton>
-            </div>
-          </template>
-        </SfHeroItem>
-      </SfHero>
+
+          <SfCarouselItem class="carousel__item" v-for="(product, i) in productItems" :key="i">
+            <KiboProductCard
+              :key="productGetters.getProductId(product)"
+              :score-rating="3"
+              :max-rating="5"
+              wishlist-icon=""
+              is-in-wishlist-icon=""
+              :is-in-wishlist="false"
+              :title="productGetters.getName(product)"
+              :image="productGetters.getCoverImage(product)"
+              :regular-price="productGetters.getPrice(product).regular"
+              :link="localePath(getProductLink(productGetters.getProductId(product)))"
+              image-width="12.563rem"
+              image-height="12.563rem"
+              class="products__product-card"
+            />
+          </SfCarouselItem>
+        </SfCarousel>
+      </SfLoader>
     </div>
-    <div class="product-carousels">
-      <KiboProductCarousel
-        class="carousels"
-        :title="$t('recentlyViewed')"
-        :product-codes="relatedProducts"
-        carousel-name="related-products"
-      />
-      <KiboProductCarousel
-        class="carousels"
-        :title="$t('recommendedForYou')"
-        :product-codes="recommendedProducts"
-        carousel-name="recommended-products"
-      />
-    </div>
-    <div class="large-and-medium-content">
-      <div class="large-content">
-        <div class="large-content__header">{{ contentTiles.largeHeaderTitle }}</div>
-        <div class="large-tiles">
-          <div
-            v-for="(tile, index) in contentTiles.largeTiles"
-            :key="'medium' + index"
-            class="large-tiles__tiles"
+
+    <div v-if="productDropzone !== undefined" class="shop-wrapper">
+      <template v-if="productDropzone.dropzones[0].rows[2]">
+        <hr />
+        <ul class="shop-list-wrapper">
+          <li
+            v-for="item in productDropzone.dropzones[0].rows[2].columns"
+            :key="item.id"
+            class="shop_list"
+            :style="'width:' + item.width"
           >
-            <KiboContentTile :content-tile="tile" />
-          </div>
-        </div>
-      </div>
-      <div class="medium-content">
-        <div class="medium-tiles">
-          <div
-            v-for="(tile, index) in contentTiles.mediumTiles"
-            :key="'medium' + index"
-            class="medium-tiles__tiles"
-          >
-            <KiboContentTile :content-tile="tile" />
-          </div>
-        </div>
-      </div>
+            <div class="shop_item" v-if="item.widgets[0].definitionId === 'cms-image'">
+              <img
+                style="width: 100%"
+                :src="definedRoute + item.widgets[0].config.imageFileId"
+                alt=""
+              />
+              <div>{{ item.widgets[0].config.imageAltText }}</div>
+            </div>
+            <div class="shop_item" v-else-if="item.widgets[0].definitionId === 'cms-marketing'">
+              <img
+                style="width: 100%"
+                :src="definedRoute + item.widgets[0].config.imageFileId"
+                alt=""
+              />
+              <p>{{ item.widgets[0].config.marketingSecondLine }}</p>
+              <div class="shop-btn">{{ item.widgets[0].config.marketingFirstLine }}</div>
+              <!-- <nuxt-link class="shop-btn" :to="localePath(item.widgets[0].config.marketingURL)">{{item.widgets[0].config.marketingFirstLine}}</nuxt-link> -->
+            </div>
+          </li>
+        </ul>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
-import { SfHero, SfButton } from "@storefront-ui/vue"
-import CarouselImage1 from "@/assets/images/Mobile-Homepage-HeroBanner.png"
-import nikeGearImg from "@/assets/images/Mobile-Homepage-50OffNikeGear.png"
-import runningGearImg from "@/assets/images/Mobile-Homepage-50OffRunningGear.png"
-import hoodieImg from "@/assets/images/Mobile-Homepage-Hoodie.png"
-import outdoorGearImg from "@/assets/images/Mobile-Homepage-OutdoorGear.png"
-import gymImg from "@/assets/images/Mobile-Homepage-Gym.png"
-import golfImg from "@/assets/images/Mobile-Homepage-Golf.png"
-import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
+import { useAsync } from "@nuxtjs/composition-api"
+import { SfHero, SfCarousel, SfArrow, SfLoader, SfHeading } from "@storefront-ui/vue"
+import KiboWidgetFactory from "@/components/cms/KiboWidgetFactory.vue"
+import { useDropzoneContent, useProduct } from "@/composables"
+import { productGetters } from "@/lib/getters"
+import ScheduleDropzone from "@/components/ScheduleDropzone.vue"
 
 export default {
-  components: { SfHero, SfButton, KiboProductCarousel },
-  layout: "full-width",
+  components: {
+    KiboWidgetFactory,
+    SfHero,
+    SfCarousel,
+    SfArrow,
+    SfLoader,
+    SfHeading,
+    ScheduleDropzone,
+  },
+  layout: "default",
   setup() {
     const pageName = "home-page"
-    const heroes = [
-      {
-        title: "Save upto 50%",
-        subtitle: "Check Off Your List Event",
-        description: "Shop early to get your holiday gifts on time.",
-        buttonText: "Shop Holiday Items on Sale",
-        background: "rgb(236, 239, 241)",
-        image: CarouselImage1,
-      },
-      {
-        title: "Save upto 70%",
-        subtitle: "Check Off Your List Event",
-        description: "Shop early to get your holiday gifts on time.",
-        buttonText: "Shop Holiday Items on Sale",
-        background: "rgb(236, 239, 241)",
-        image: "https://i.pinimg.com/474x/ac/0f/38/ac0f388b725f5c24d4f0b63c547be9f5.jpg",
-      },
-      {
-        title: "Save upto 30%",
-        subtitle: "Check Off Your List Event",
-        description: "Shop early to get your holiday gifts on time.",
-        buttonText: "Shop Holiday Items on Sale",
-        background: "rgb(236, 239, 241)",
-        image: "https://i.pinimg.com/736x/04/96/05/04960532dffffe5e551b3fab6015a874.jpg",
-      },
-    ]
-    const contentTiles = {
-      largeHeaderTitle: "The Latest Lineup",
-      largeTiles: [
-        {
-          imgUrl: runningGearImg,
-          content: {
-            header: "Up to 50% off running gear",
-            subHeader: "Save on selected footwear,equipment and more",
-            links: [
-              {
-                label: "TOP DEALS",
-                url: "/",
-              },
-              {
-                label: "CLUB DEALS",
-                url: "/",
-              },
-              {
-                label: "FOOTWARE DEALS",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: nikeGearImg,
-          content: {
-            header: "Up to 50% off Nike gear",
-            subHeader: "Save big on clothing and footwear from Nike",
-            links: [
-              {
-                label: "SHOP MEN'S",
-                url: "/",
-              },
-              {
-                label: "SHOP WOMEN'S",
-                url: "/",
-              },
-              {
-                label: "SHOP KID'S",
-                url: "/",
-              },
-            ],
-          },
-        },
-      ],
-      mediumTiles: [
-        {
-          imgUrl: hoodieImg,
-          content: {
-            header: "Hoodies and Fleece",
-            subHeader: "Warm wishes for everyone on your list",
-            links: [
-              {
-                label: "MEN’S",
-                url: "/",
-              },
-              {
-                label: "WOMEN'S",
-                url: "/",
-              },
-              {
-                label: "KID'S",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: outdoorGearImg,
-          content: {
-            header: "Up to 30% off outdoor gear",
-            subHeader: "Including 25% off select jackets, pants, and more",
-            links: [
-              {
-                label: "JACKETS",
-                url: "/",
-              },
-              {
-                label: "PANTS",
-                url: "/",
-              },
-              {
-                label: "FOOTWEAR",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: gymImg,
-          content: {
-            header: "Up to 40% off gym essentials",
-            subHeader: "Clothing and gear for strength and cardio",
-            links: [
-              {
-                label: "STRENGTH TRAINING",
-                url: "/",
-              },
-              {
-                label: "CARDIO WORKOUT",
-                url: "/",
-              },
-              {
-                label: "FITNESS DEALS",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: golfImg,
-          content: {
-            header: "Up to 50% off golf gear",
-            subHeader: "Save on select apparel, equipment, and more",
-            links: [
-              {
-                label: "GOLF SHIRTS",
-                url: "/",
-              },
-              {
-                label: "GOLD PANTS",
-                url: "/",
-              },
-              {
-                label: "GOLF FOOTWEAR",
-                url: "/",
-              },
-            ],
-          },
-        },
-      ],
-    }
+    const { dropzoneContent, loadProperties } = useDropzoneContent("Heros")
+    const { dropzoneContent: productDropzone, loadProperties: productContentLoad } =
+      useDropzoneContent("product-dropzone")
+    const { dropzoneContent: dropzoneScheduleContent, loadProperties: scheduleDropzonePropeties } =
+      useDropzoneContent("schedule-dropzone")
+    const { getProductLink } = useUiHelpers()
+    const { product, load } = useProduct()
 
-    const relatedProducts = ["MS-CAM-001", "xxx", "MS-EYE-004", "MS-BTL-004", "MS-GIFT-002"]
-    const recommendedProducts = ["MS-BTL-003", "xxx", "MS-EYE-005", "MS-BTL-001", "MS-EYE-003"]
+    const dropzoneProductCodes = ref([])
+    const productItems = ref([])
+    const loading = ref(true)
+    const definedRoute = ref("https://cdn-sb.mozu.com/29927-49696/cms/files/")
+
+    useAsync(async () => {
+      const appData = Promise.all([
+        loadProperties({
+          documentListName: "il-headless-content@i7d6294",
+          filter: `name eq hero-images`,
+        }),
+        productContentLoad({ documentListName: "pages@mozu", filter: `name eq homepage` }),
+        scheduleDropzonePropeties({ documentListName: "pages@mozu", filter: `name eq homepage` }),
+      ])
+      await appData
+
+  console.log(productDropzone.value.dropzones[0].rows[2])
+      dropzoneProductCodes.value =
+        productDropzone.value?.dropzones[0]?.rows[1]?.columns[0]?.widgets[0]?.config.productCodes
+
+      getFeaturedProducts(dropzoneProductCodes.value)
+    })
+
+    async function getFeaturedProducts(productsCodeArray) {
+      for (const i in productsCodeArray) {
+        await load(productsCodeArray[i])
+        productItems.value.push(product.value)
+      }
+      console.log(productItems)
+      loading.value = false
+    }
 
     return {
       pageName,
-      heroes,
-      contentTiles,
-      relatedProducts,
-      recommendedProducts,
+      dropzoneContent,
+      productDropzone,
+      product,
+      load,
+      dropzoneProductCodes,
+      getFeaturedProducts,
+      productGetters,
+      productItems,
+      loading,
+      getProductLink,
+      dropzoneScheduleContent,
+      definedRoute,
     }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-@import "~@storefront-ui/shared/styles/components/organisms/SfHero.scss";
+.scheduledImage {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
 
-::v-deep .sf-hero {
-  &__slides {
-    height: calc(85vh - 3.438rem);
+  ::v-deep img {
+    width: 100%;
+  }
+}
+
+.hero {
+  margin: var(--spacer-xl) auto var(--spacer-lg);
+
+  --hero-item-background-position: center;
+
+  ::v-deep .sf-link:hover {
+    color: var(--c-white);
   }
 
-  &-item {
-    display: flex;
+  @include for-desktop {
+    margin: var(--spacer-base) auto var(--spacer-2xl);
+    // max-width: 1240px;
+  }
+
+  .sf-hero-item {
+    &:nth-child(even) {
+      --hero-item-background-position: left;
+
+      @include for-mobile {
+        --hero-item-background-position: 30%;
+
+        ::v-deep .sf-hero-item__wrapper {
+          &.sf-button {
+            align-items: flex-end;
+            text-align: right;
+            padding: var(--spacer-sm) var(--spacer-sm) var(--spacer-sm) var(--spacer-2xl);
+          }
+        }
+
+        ::v-deep .sf-hero-item__subtitle,
+        ::v-deep .sf-hero-item__title {
+          width: 100%;
+          font-size: 0.8rem;
+        }
+      }
+    }
+
+    @include for-mobile {
+      ::v-deep .sf-hero-item__title {
+        width: 100%;
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  ::v-deep .sf-hero__control {
+    &--right,
+    &--left {
+      display: none;
+    }
+  }
+}
+
+.similar-products {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: var(--spacer-2xs);
+  margin-bottom: var(--spacer-base);
+
+  --heading-padding: 0;
+
+  border-bottom: 1px var(--c-light) solid;
+
+  h3 {
+    font-weight: var(--font-weight--semibold);
+  }
+
+  @include for-desktop {
+    border-bottom: 0;
     justify-content: center;
-    align-items: flex-end;
-
-    @include for-desktop {
-      align-items: center;
-    }
-
-    &__wrapper {
-      display: flex;
-      align-items: center;
-      background-color: var(--c-white);
-      margin: 2rem 1.5rem;
-      height: auto;
-      min-height: auto;
-      padding: var(--spacer-lg);
-      text-align: center;
-    }
-
-    &__subtitle {
-      --hero-item-subtitle-font-size: 2rem;
-      --hero-item-subtitle-font-weight: 500;
-
-      width: 100%;
-      color: var(--c-black);
-      text-transform: capitalize;
-    }
-
-    &__title {
-      --hero-item-title-font-size: 2.25rem;
-      --hero-item-title-font-weight: 700;
-
-      width: 100%;
-      color: var(--c-black);
-      text-transform: capitalize;
-    }
-
-    &__description {
-      color: var(--c-black);
-      margin-top: 0.5rem;
-    }
-
-    &__button {
-      display: flex;
-      background-color: var(--_c-green-primary);
-      margin-top: 1rem;
-    }
+    padding-bottom: 0;
   }
 }
 
-.large-and-medium-content {
-  margin-top: calc(var(--spacer-xs) * 8.75);
-  padding: 0 5.48%;
-
+.carousel {
   @include for-desktop {
-    padding: 0 2%;
-    margin-top: calc(var(--spacer-sm) * 2);
+    margin: 0;
   }
-}
 
-.large-content {
-  &__header {
-    color: var(--_c-green-primary);
-    font-size: var(--spacer-base);
-    line-height: calc(var(--spacer-2xs) * 7.125);
-    text-align: left;
+  .products__product-card {
+    padding: var(--spacer-base) var(--spacer-base);
   }
-}
 
-.large-tiles {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-top: calc(var(--spacer-2xs) * 4.5);
+  ::v-deep .kibo-product-card .sf-product-card__image-wrapper {
+    margin-bottom: var(--spacer-base);
+  }
 
-  &__tiles {
-    margin-bottom: calc(var(--spacer-2xs) * 9);
+  &__item {
+    margin: 1.375rem 0 2.5rem 0;
+    width: 25%;
 
     @include for-desktop {
-      width: 48%;
+      margin: var(--spacer-xl) 0 var(--spacer-xl) 0;
+    }
+
+    &__product {
+      --product-card-add-button-transform: translate3d(0, 30%, 0);
+    }
+  }
+
+  ::v-deep .sf-arrow--long .sf-arrow--right {
+    --arrow-icon-transform: rotate(180deg);
+
+    -webkit-transform-origin: center;
+    transform-origin: center;
+  }
+
+  ::v-deep .sf-carousel__controls {
+    width: 90%;
+    left: 5%;
+    @include for-desktop {
+      display: flex !important;
+    }
+
+    button {
+      background: none;
+      width: 45px;
+
+      &:hover {
+        background: var(--c-black);
+        border-radius: 30px;
+      }
     }
   }
 }
 
-.medium-tiles {
-  display: flex;
-  margin-top: calc(var(--spacer-2xs) * 4.5);
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  &__tiles {
-    margin-bottom: calc(var(--spacer-2xs) * 9);
-    width: 45%;
-
-    @include for-desktop {
-      width: 24%;
-    }
-  }
+::v-deep .sf-loader__overlay {
+  position: relative;
 }
 
-.product-carousels {
-  display: block;
-  margin-top: calc(var(--spacer-sm) * 2);
-  @include for-desktop {
-    margin: 0 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
+.shop-wrapper {
+  padding: 0;
+  margin: 0 auto;
+
+  .shop-list-wrapper {
+    padding: 0;
     justify-content: space-between;
-  }
-}
+    display: flex;
 
-.carousels {
-  width: auto;
-  @include for-desktop {
-    width: 48%;
+    @include for-mobile {
+      flex-wrap: wrap;
+    }
+
+    .shop_list {
+      display: inline-flex;
+      list-style: none;
+      margin: 0 var(--spacer-2xs);
+
+      @include for-mobile {
+        width: 100% !important;
+        margin: var(--spacer-xs) 0;
+      }
+    }
+
+    .shop_item {
+      border: 1px solid var(--_c-lightbg-primary);
+      box-shadow: 1px 5px 5px var(--_c-lightbg-primary);
+      box-sizing: border-box;
+      height: unset;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      background: var(--_c-gray-middle-lighten);
+      color: var(--_c-lightbg-primary);
+      text-align: center;
+      font-weight: bold;
+      overflow: hidden;
+    }
+
+    .shop-btn {
+      background: var(--_c-yellow-primary);
+      padding: 10px;
+      justify-content: center;
+      display: flex;
+    }
   }
 }
 </style>
