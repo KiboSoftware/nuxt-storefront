@@ -697,6 +697,16 @@ export default {
   }
 }
 
+::v-deep .products__list {
+  .sf-product-card-horizontal.products__product-card-horizontal {
+    margin-bottom: var(--spacer-base);
+  }
+
+  .sf-image {
+    object-fit: contain;
+  }
+}
+
 .products__grid {
   display: flex;
   flex-wrap: wrap;
