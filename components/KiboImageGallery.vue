@@ -157,7 +157,7 @@ export default {
     })
 
     const maxScale = 5
-    const minScale = 0.4
+    const minScale = 0.7
     const NumberOfPxToScroll = 136
 
     const setDimensions = (width, height) => {
@@ -183,7 +183,7 @@ export default {
     const defaultZoomState = computed(
       () =>
         ({
-          scale: 0.4,
+          scale: 0.7,
         } as PinchScrollZoomEmitData)
     )
 
@@ -307,6 +307,11 @@ export default {
 <style lang="scss">
 .pinch-scroll-zoom {
   height: 100%;
+
+  &__content{
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .title {

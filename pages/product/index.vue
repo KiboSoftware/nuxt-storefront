@@ -7,8 +7,8 @@
           <KiboPDPSkeletonLoading />
         </div>
         <div v-if="!loading" class="product">
-          <div>
-            <div class="product__gallery">
+          <div class="product__sideWrapper">
+            <div class="product__gallery smartphone-only">
               <LazyHydrate when-idle>
                 <KiboImageGallery
                   :images="productGallery"
@@ -19,6 +19,18 @@
                 />
               </LazyHydrate>
             </div>
+
+            <LazyHydrate when-idle>
+                <div class="product__gallery_product">
+                  <div
+                    v-for="(images, index) in productGallery"
+                    :key="index"
+                    class="gallery_images"
+                  >
+                    <img :src="images.big.url" :alt="images.alt" />
+                  </div>
+                </div>
+              </LazyHydrate>
 
             <div class="product-badge">
                 <div
@@ -55,11 +67,13 @@
           </div>
 
           <div class="product__info">
-            <div class="product__heading-container">
-              <h3 class="sf-heading__title h3">{{ productName }}</h3>
-            </div>
+            <div class="product__overview">
 
-            <div class="product__price-and-rating">
+              <div class="product__heading-container">
+              <h3 class="sf-heading__title h3">{{ productName }}</h3>
+              </div>
+
+              <div class="product__price-and-rating">
               <div v-if="product && product.price">
                 <KiboPrice
                   :regular="$n(productGetters.getPrice(product).regular, 'currency')"
@@ -89,9 +103,9 @@
                   {{ $t("WriteReview") }}
                 </SfButton>
               </div>
-            </div>
+              </div>
 
-            <div class="product__content">
+              <div class="product__content">
               <div class="product__description desktop-only" v-html="shortDescription"></div>
 
               <div
@@ -243,10 +257,10 @@
                 </SfButton>
               </div>
 
-              <div>
+              <!-- <div>
                 <h4 class="sf-heading__title h4">Product Information</h4>
                 <div class="product__description" v-html="description"></div>
-              </div>
+              </div> -->
 
               <div class="smartphone-only">
                 <SfAccordion
@@ -266,7 +280,43 @@
                   </SfAccordionItem>
                 </SfAccordion>
               </div>
+              </div>
+
             </div>
+
+              <div class="product__accordion">
+              <SfAccordion open="false" :multiple="true" transition="" showChevron>
+                <SfAccordionItem header="Description">
+                  <SfList>
+                    <SfListItem>
+                      <div v-html="description"></div>
+                    </SfListItem>
+                  </SfList>
+                </SfAccordionItem>
+                <SfAccordionItem header="Specification">
+                  <SfList>
+                    <SfListItem>
+                      <div></div>
+                    </SfListItem>
+                  </SfList>
+                </SfAccordionItem>
+                <SfAccordionItem header="Materials">
+                  <SfList>
+                    <SfListItem>
+                      <div></div>
+                    </SfListItem>
+                  </SfList>
+                </SfAccordionItem>
+                <SfAccordionItem header="Other Details">
+                  <SfList>
+                    <SfListItem>
+                      <div></div>
+                    </SfListItem>
+                  </SfList>
+                </SfAccordionItem>
+              </SfAccordion>
+              </div>
+
           </div>
         </div>
       </div>
@@ -520,6 +570,51 @@ export default defineComponent({
 .product {
   @include for-desktop {
     display: flex;
+    flex-direction: row;
+
+    &__sideWrapper {
+      width: 50%;
+    }
+
+    &__overview {
+      position: sticky;
+      top: 60px;
+      z-index: 8;
+      background: var(--c-white);
+      padding: 18px 0;
+    }
+  }
+
+  &__gallery_product {
+    @include for-mobile {
+      display: none;
+    }
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+
+    .gallery_images {
+      width: 100%;
+      height: 30rem;
+      justify-content: center;
+      display: flex;
+      border: 1px solid var(--_c-gray-middle-darken);
+      margin-bottom: var(--spacer-sm);
+      padding: var(--spacer-sm) 0;
+      overflow: hidden;
+
+      img {
+        height: 20rem;
+        margin: auto 0;
+        transition: transform 1s ease;
+      }
+
+      &:hover img {
+        transform: scale(1.5);
+      }
+    }
   }
 
   .product-badge {
@@ -710,7 +805,8 @@ export default defineComponent({
 }
 
 ::v-deep .sf-accordion-item {
-  width: calc(var(--spacer-4xl) * 1.05);
+  // width: calc(var(--spacer-4xl) * 1.05);
+  width: 100%;
   border: 1px solid #cdcdcd;
   background-color: #f7f7f7;
 
@@ -732,6 +828,73 @@ export default defineComponent({
 
   .is-open {
     color: #2b2b2b;
+  }
+}
+
+::v-deep .sf-chevron {
+  position: var(--chevron-position, relative);
+  display: block;
+  width: var(--chevron-size, 1.25rem);
+  height: var(--chevron-size, 1.25rem);
+  cursor: pointer;
+
+  &__bar {
+    position: absolute;
+    top: 50%;
+    background: var(--chevron-background, transparent);
+    transition: transform 300ms cubic-bezier(0.25, 1.7, 0.35, 0.8);
+
+    &::after {
+      content: "";
+      display: block;
+      width: calc(var(--chevron-size, 1.25rem) / 2);
+      height: calc(var(--chevron-size, 1.25rem) / 10);
+      background: var(--chevron-color, var(--c-black));
+    }
+
+    &--left {
+      left: calc(var(--chevron-size, 1.25rem) / 10);
+      transform: translate3d(var(--chevron-translateX, 61%), var(--chevron-translateY, 0), 0)
+        rotate(var(--chevron-rotate, 180deg));
+    }
+
+    &--right {
+      right: calc(var(--chevron-size, 1.25rem) / 10);
+      transform: translate(var(--chevron-translateX, 0), var(--chevron-translateY, 0))
+        rotate(calc(-1 * var(--chevron-rotate, 180deg)));
+    }
+  }
+
+  &--top {
+    --chevron-rotate: -45deg;
+  }
+
+  &--left {
+    .sf-chevron__bar--left {
+      --chevron-rotate: 180deg;
+      --chevron-translateX: 61%;
+      --chevron-translateY: 0;
+    }
+
+    .sf-chevron__bar--right {
+      --chevron-rotate: 180deg;
+      --chevron-translateX: 0;
+      --chevron-translateY: 0;
+    }
+  }
+
+  &--right {
+    .sf-chevron__bar--left {
+      --chevron-rotate: 90deg;
+      --chevron-translateX: 61%;
+      --chevron-translateY: 0;
+    }
+
+    .sf-chevron__bar--right {
+      --chevron-rotate: 180deg;
+      --chevron-translateX: 0;
+      --chevron-translateY: 0;
+    }
   }
 }
 
