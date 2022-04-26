@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
-    <KiboAppData />
     <KiboAppHeader />
+    <KiboAppData />
     <LoginModal />
     <ModalRoot />
     <AddToCartConfirmationModal />
@@ -26,6 +26,7 @@
   @include for-desktop {
     width: min(95vw, 81.75rem);
     max-width: 81.75rem;
+    margin-top: 180px;
   }
 }
 

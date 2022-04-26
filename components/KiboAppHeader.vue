@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <div>
     <KiboHamburgerMenu
       class="sf-sidebar--left smartphone-only"
       overlay
@@ -57,14 +57,14 @@
     <div class="desktop-only">
       <div class="kibo-top-bar">
         <div class="kibo-top-bar__container">
-          <div class="kibo-top-bar__logo">
+          <!-- <div class="kibo-top-bar__logo">
             <div class="kibo-top-bar__kibo-img">
               <SfLink link="/">
                 <SfImage v-if="logo" :src="logo" :alt="title" width="78" height="78" />
                 <h1 v-else class="sf-header__title">{{ title }}</h1>
               </SfLink>
             </div>
-          </div>
+          </div> -->
           <div class="kibo-top-bar__content"></div>
           <div class="kibo-top-bar__nav-link">
             <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
@@ -74,11 +74,20 @@
           </div>
         </div>
       </div>
-      <div class="kibo-header">
+      <div class="kibo-header" :class="{ 'desktop-header': desktopClass }">
         <div class="kibo-header__container">
+          <div class="kibo-top-bar__kibo-img">
+            <SfLink link="/">
+              <SfImage
+                v-if="dropzoneContent !== undefined"
+                :src="dropzoneContent.body"
+                :alt="dropzoneContent.title"
+              />
+            </SfLink>
+          </div>
           <div class="kibo-header__spacer"></div>
           <!-- <div v-click-outside="closeSearchOutsideClick" class="kibo-header__search-bar"> -->
-            <div class="kibo-header__search-bar">
+          <div class="kibo-header__search-bar">
             <div v-show="isSearchOpen" class="search-overlay" @click="closeSearch"></div>
             <KiboSearchBar
               ref="searchBarRef"
@@ -90,6 +99,7 @@
               @input="handleSearch"
               @keyup.enter="gotoSearchResult()"
               @keyup.esc="closeSearch"
+              v-show="!desktopClass"
             >
               <template #icon>
                 <SfButton
@@ -121,6 +131,14 @@
               >
               </KiboSearchSuggestion>
             </div>
+          </div>
+
+          <div
+            class="top-navigation kibo-mega-menu"
+            :class="{ 'top-navigation-fixed': desktopClass }"
+          >
+            <!-- // <div class="kibo-mega-menu"> -->
+            <MegaMenu />
           </div>
 
           <div class="sf-header__icons">
@@ -174,27 +192,21 @@
         </div>
       </div>
 
-      <div class="line-2"></div>
-
-      <div class="kibo-mega-menu">
-        <MegaMenu />
-      </div>
+      <!-- <div class="line-2"></div> -->
     </div>
     <div class="kibo-mobile smartphone-only">
       <div class="kibo-mobile__header-container">
         <div class="kibo-mobile__header">
-          <div class="kibo-mobile__header-column">
-            <SfIcon
-              size="1.25rem"
-              class="sf-header__icon kibo-mobile__header-icon"
-              @click="toggleHamburger"
-            >
-              <font-awesome-icon
-                :icon="['fas', isHamburgerOpen ? 'times' : 'bars']"
-                class="fa-icon"
-                color="var(--c-white)"
+          <div class="kibo-mobile__header-column logo_image_mobile">
+            <SfLink link="/">
+              <SfImage
+                :src="dropzoneContent.body"
+                :alt="title"
+                width="138"
+                height="33"
+                class="kibo-mobile__logo"
               />
-            </SfIcon>
+            </SfLink>
           </div>
           <div class="kibo-mobile__header-column">
             <div class="kibo-mobile__search-icon" @click="toggleMobileSearchBar">
@@ -211,9 +223,9 @@
             </div>
           </div>
           <div class="kibo-mobile__header-column">
-            <SfLink link="/">
+            <!-- <SfLink link="/">
               <SfImage :src="logo" :alt="title" width="33" height="33" class="kibo-mobile__logo" />
-            </SfLink>
+            </SfLink> -->
           </div>
           <div class="kibo-mobile__header-column">
             <div class="kibo-mobile__map-marker-icon" @click="handleStoreLocatorClick">
@@ -244,8 +256,11 @@
         </div>
       </div>
 
-      <div v-show="isOpenSearchBar" class="kibo-mobile__header-search" :class="{ 'search-box-on-top': isSearchOpen }">
-
+      <div
+        v-show="isOpenSearchBar"
+        class="kibo-mobile__header-search"
+        :class="{ 'search-box-on-top': isSearchOpen }"
+      >
         <div v-show="isSearchOpen" class="search-overlay" @click="closeSearch"></div>
         <div class="kibo-mobile__header-search__input">
           <input
@@ -272,16 +287,16 @@
         </button>
       </div>
       <div class="search-suggestion-div">
-      <KiboSearchSuggestion
-        :visible="isSearchOpen"
-        :result="searchSuggestionResult"
-        :loading="loading"
-        @closeDialog="closeSearch()"
-      >
-      </KiboSearchSuggestion>
+        <KiboSearchSuggestion
+          :visible="isSearchOpen"
+          :result="searchSuggestionResult"
+          :loading="loading"
+          @closeDialog="closeSearch()"
+        >
+        </KiboSearchSuggestion>
       </div>
     </div>
-  </header>
+  </div>
 </template>
 
 <script lang="ts">
@@ -294,6 +309,7 @@ import {
   watch,
   onMounted,
   nextTick,
+  onUnmounted,
 } from "@vue/composition-api"
 import { clickOutside } from "@storefront-ui/vue/src/utilities/directives/"
 import {
@@ -301,6 +317,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import debounce from "lodash.debounce"
+import { useAsync } from "@nuxtjs/composition-api"
 import { useNuxtApp } from "#app"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import {
@@ -312,6 +329,7 @@ import {
   useCategoryTree,
   useProductSearch,
   useUser,
+  useDropzoneContent,
 } from "@/composables"
 
 import {
@@ -345,6 +363,7 @@ export default defineComponent({
     const { user } = useUser()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const { cart } = useCart()
+    const desktopClass = ref(false)
 
     const searchValue = ref("")
     const isAuthenticated = computed(() => {
@@ -363,6 +382,15 @@ export default defineComponent({
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
     const isStoreLocatorOpen = ref()
+
+    const { dropzoneContent, loadProperties } = useDropzoneContent("Logo")
+
+    useAsync(async () => {
+      await loadProperties({
+        documentListName: "il-pages-template@i7d6294",
+        filter: `name eq logo`,
+      })
+    }, null)
 
     const toggleMobileSearchBar = () => {
       isOpenSearchBar.value = !isOpenSearchBar.value
@@ -494,6 +522,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      window.addEventListener("scroll", handleScroll)
       nextTick(() => {
         if (searchBarRef.value.$el) searchBarRef.value.$el.children[0].focus()
       })
@@ -518,6 +547,18 @@ export default defineComponent({
       if (component === StoreLocatorModal) {
         isStoreLocatorOpen.value = false
       }
+    })
+
+    const handleScroll = (e) => {
+      // console.log(e);
+      if (e.target.documentElement.scrollTop > 50) {
+        desktopClass.value = true
+      } else {
+        desktopClass.value = false
+      }
+    }
+    onUnmounted(() => {
+      window.removeEventListener("scroll", handleScroll)
     })
 
     return {
@@ -557,12 +598,18 @@ export default defineComponent({
       goToOrderStatus,
       closeSearchOutsideClick,
       isStoreLocatorOpen,
+      desktopClass,
+      handleScroll,
+      dropzoneContent,
     }
   },
 })
 </script>
 
 <style lang="scss" scoped>
+$box-shadow: #d3d3d3;
+$background: #fff;
+
 .header {
   position: sticky;
   top: 0;
@@ -657,10 +704,13 @@ export default defineComponent({
 
 .kibo-header {
   display: flex;
-  height: calc(var(--spacer-xs) * 8.5);
+  height: 4.2rem;
   width: 100%;
   align-items: center;
-  background: var(--_c-white-secondary);
+  position: fixed;
+  z-index: 1;
+  box-shadow: 2px 2px 2px $box-shadow;
+  background: $background;
 
   &__container {
     display: flex;
@@ -741,9 +791,10 @@ export default defineComponent({
 
   &__kibo-img {
     position: absolute;
+    margin-top: -35px;
+    z-index: 10;
     top: var(--spacer-sm);
-    left: 0;
-    z-index: 1;
+    left: -50px;
   }
 
   ::v-deep .sf-menu-item {
@@ -769,23 +820,22 @@ export default defineComponent({
 }
 
 .search-suggestion-div {
-
   @include for-desktop {
-  flex: 1.5;
-  top: calc(var(--spacer-xs) * 5.75);
-  position: absolute;
-  z-index: 20;
-  max-width: 41.3rem;
+    flex: 1.5;
+    top: calc(var(--spacer-xs) * 5.75);
+    position: absolute;
+    z-index: 20;
+    max-width: 41.3rem;
   }
 
   ::v-deep .custom-search-header {
     .search-container {
       @include for-desktop {
-      height: 38.75rem;
+        height: 38.75rem;
       }
 
-      &__categories{
-        span:hover{
+      &__categories {
+        span:hover {
           color: var(--_c-green-primary);
         }
       }
@@ -820,17 +870,17 @@ export default defineComponent({
         height: 74vh;
         overflow-y: auto;
 
-        &__left{
+        &__left {
           width: 100%;
-          flex:unset;
+          flex: unset;
         }
 
-        &__right{
+        &__right {
           width: 100%;
-          flex:unset;
+          flex: unset;
         }
 
-        &__products{
+        &__products {
           padding-left: 1rem;
           padding-right: 1rem;
           max-height: 25rem;
@@ -957,7 +1007,7 @@ export default defineComponent({
         text-indent: 2%;
         outline: none;
 
-         &:focus::placeholder {
+        &:focus::placeholder {
           color: transparent;
         }
       }
@@ -996,5 +1046,62 @@ export default defineComponent({
     width: 100%;
     margin: 0 calc(var(--spacer-2xs) * 7.5);
   }
+}
+
+::v-deep .kibo-top-bar__kibo-img {
+  .sf-image {
+    object-fit: contain;
+    width: 150px;
+    height: 100px;
+    display: flex;
+  }
+}
+
+.desktop-header {
+  top: 0;
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
+
+.top-navigation {
+  position: fixed;
+  width: 100%;
+  height: 65px;
+  margin-top: 70px;
+  border-bottom: 1px solid $box-shadow;
+  box-shadow: 0 1px 2px $box-shadow;
+  left: 0;
+  background: var(--c-white);
+}
+
+.top-navigation-fixed {
+  top: 0;
+  border: none;
+  background: transparent;
+  margin-top: 2px;
+}
+
+.sf-mega-menu {
+  border-bottom: none;
+
+  ::v-deep &__menu {
+    justify-content: center;
+    margin-left: -150px;
+  }
+}
+
+.logo-image {
+  position: absolute;
+  z-index: 9;
+  margin-top: -20px;
+  width: 150px;
+}
+
+.logo_image_mobile {
+  height: 35px;
+  width: 50%;
+  background: white;
+  text-align: center;
 }
 </style>
