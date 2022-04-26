@@ -131,7 +131,7 @@ describe("[composable] useUser", () => {
   } = useUser()
   test("useUser : should login using mutation ", async () => {
     const storeClientCookieSpy = jest.spyOn(cookieHelper, "storeClientCookie")
-    await login({ username: "sssss", password: "abcd@only" })
+    await login({ username: "ssss", password: "abcd@only" })
     expect(storeClientCookieSpy).toHaveBeenCalled()
     expect(loading.value).toBeFalsy()
     expect(error.value).toStrictEqual(errorResponse)

@@ -16,7 +16,7 @@
           <SfIcon
             icon="cross"
             size="0.875rem"
-            color="#7c7c7c"
+            color="var(--_c-gray-primary)"
             class="cross-icon"
             @click="closeModal()"
           />
@@ -31,14 +31,14 @@
             <SfInput
               v-model="form.username"
               name="email"
-              label="Email*"
+              :label="$t('Email')"
               class="form__element"
               type="email"
             />
             <SfInput
               v-model="form.password"
               name="password"
-              label="Password*"
+              :label="$t('Password')"
               type="password"
               class="form__element"
               :has-show-password="true"
@@ -124,20 +124,20 @@
           <SfInput
             v-model="form.email"
             name="email"
-            label="Email*"
+            :label="$t('Email')"
             class="form__element"
             type="email"
           />
           <SfInput
             v-model="form.firstName"
             name="first-name"
-            label="First Name*"
+            :label="$t('First Name')"
             class="form__element"
           />
           <SfInput
             v-model="form.lastName"
             name="last-name"
-            label="Last Name*"
+            :label="$t('Last Name')"
             class="form__element"
           />
           <KiboPasswordForm
@@ -229,7 +229,7 @@ export default {
 
     const passwordFormFields = ref([
       {
-        label: `${context.root.$t("Password")} *`,
+        label: `${context.root.$t("Password")}`,
         id: "password",
         value: "",
       },
