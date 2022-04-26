@@ -60,7 +60,7 @@ const loginResponse = {
 
 const createAccountResponse = {
   account: {
-    emailAddress: "11",
+    emailAddress: "firstName11@gmail.com",
     userName: null,
     firstName: "firstName",
     lastName: "lastName",
