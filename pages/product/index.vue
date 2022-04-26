@@ -650,6 +650,7 @@ export default defineComponent({
     margin: var(--spacer-sm) auto;
 
     @include for-desktop {
+      z-index: 0;
       max-width: calc(var(--spacer-4xl) * 1.833);
       margin: 0 0 0 calc(var(--spacer-2xl) * 1.1);
     }
@@ -806,7 +807,7 @@ export default defineComponent({
 
 ::v-deep .sf-accordion-item {
   // width: calc(var(--spacer-4xl) * 1.05);
-  width: 100%;
+  width: 99%;
   border: 1px solid #cdcdcd;
   background-color: #f7f7f7;
 
