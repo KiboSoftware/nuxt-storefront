@@ -20,6 +20,27 @@
               </LazyHydrate>
             </div>
 
+            <div class="product-badge">
+                <div
+                  class="product-badge__item"
+                  v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true"
+                >
+                  <img src="/productpage/hot-item-50.png" />
+                </div>
+                <div
+                  class="product-badge__item"
+                  v-if="properties[`Mystic Tested`] && properties[`Mystic Tested`][0] === true"
+                >
+                  <img src="/productpage/mystic-tested-50.png" />
+                </div>
+                <div
+                  class="product-badge__item"
+                  v-if="properties[`Top Seller`] && properties[`Top Seller`][0] === true"
+                >
+                  <img src="/productpage/top-seller-50.jpg" />
+                </div>
+              </div>
+
             <div class="product__specs desktop-only">
               <SfAccordion open="" :first-open="false" :multiple="false" transition="" show-chevron>
                 <SfAccordionItem header="Product Specs">
@@ -499,6 +520,35 @@ export default defineComponent({
 .product {
   @include for-desktop {
     display: flex;
+  }
+
+  .product-badge {
+    display: flex;
+    margin-top: 10px;
+
+    @include for-desktop {
+      position: absolute;
+      flex-direction: column;
+      align-items: flex-end;
+      margin-left: 590px;
+      top: 230px;
+
+      &__ {
+        width: 15%;
+      }
+    }
+
+    @include for-mobile {
+      position: relative;
+      flex-direction: row;
+      align-items: flex-start;
+      margin-left: 10px;
+      flex-wrap: wrap;
+
+      &__item {
+        width: 70px;
+      }
+    }
   }
 
   &__info {

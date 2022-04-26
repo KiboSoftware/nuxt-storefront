@@ -174,6 +174,7 @@
             :show-add-to-cart-button="true"
             :score-rating="3"
             :max-rating="5"
+            :properties="productGetters.getProperties(product)"
             wishlist-icon=""
             is-in-wishlist-icon=""
             :is-in-wishlist="false"
