@@ -296,11 +296,81 @@
         </KiboSearchSuggestion>
       </div>
     </div>
+
+    <!-- Mobile Primary Menu  -->
+    <div class="bottom-modal smartphone-only">
+      <SfBottomModal
+        :isOpen="isMobileMenuOpen"
+        transition="sf-fade"
+        @click:close="closePrimarymenu"
+      >
+        <template #title>
+          <div
+            class="bottom-modal__heading"
+            @click="manageBackLink"
+            v-if="selectedCategory.length > 0"
+          >
+            {{ selectedCategory[selectedCategoryCount].content.name }}
+          </div>
+          <div class="bottom-modal__static-heading" v-else>Categories</div>
+
+          <span class="sf-chevron--left sf-chevron" v-if="showSubCategory" @click="manageBackLink">
+            <span class="sf-chevron__bar sf-chevron__bar--left" />
+            <span class="sf-chevron__bar sf-chevron__bar--right" />
+          </span>
+        </template>
+
+        <div v-if="!showSubCategory">
+          <div
+            v-for="(category, index) in megaMenuCategories"
+            :key="index"
+            class="bottom-modal__category"
+          >
+            <div class="category-label">
+              <div class="category-link" @click="closePrimarymenu">
+                <SfMenuItem
+                  :label="category.content.name"
+                  :link="localePath(getCatLink(category))"
+                />
+              </div>
+              <span class="sf-chevron--right sf-chevron" @click="categorySelect(category)">
+                <span class="sf-chevron__bar sf-chevron__bar--left" />
+                <span class="sf-chevron__bar sf-chevron__bar--right" />
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="showSubCategory" class="bottom-modal__subCategory-label">
+          <div
+            v-for="(sub_category, index) in selectedCategory[selectedCategoryCount]
+              .childrenCategories"
+            :key="index"
+            class="sub-category"
+          >
+            <div class="subCategory-label">
+              <div class="subCategory-link" @click="closePrimarymenu">
+                <SfMenuItem
+                  :label="sub_category.content.name"
+                  :link="localePath(getCatLink(sub_category))"
+                />
+              </div>
+              <span class="sf-chevron--right sf-chevron" @click="categorySelect(sub_category)">
+                <span class="sf-chevron__bar sf-chevron__bar--left" />
+                <span class="sf-chevron__bar sf-chevron__bar--right" />
+              </span>
+            </div>
+          </div>
+        </div>
+      </SfBottomModal>
+    </div>
+    <!--  -->
+
   </div>
 </template>
 
 <script lang="ts">
-import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink, SfBadge } from "@storefront-ui/vue"
+import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink, SfBadge, SfBottomModal } from "@storefront-ui/vue"
 import {
   computed,
   ref,
@@ -350,9 +420,11 @@ export default defineComponent({
     SfMenuItem,
     SfLink,
     SfBadge,
+    SfBottomModal
   },
   directives: { clickOutside },
   setup(_, context) {
+    const { isMobileMenuOpen, toggleMobileMenu } = useUiState()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
 
@@ -378,10 +450,14 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal, isHamburgerOpen, toggleHamburger } = useUiState()
+    const { toggleLoginModal, isHamburgerOpen, toggleHamburger, toggleAddToCartConfirmationModal } = useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
     const isStoreLocatorOpen = ref()
+
+    const showSubCategory = ref(false)
+    const selectedCategory = ref([])
+    const selectedCategoryCount = ref(-1)
 
     const { dropzoneContent, loadProperties } = useDropzoneContent("Logo")
 
@@ -391,6 +467,32 @@ export default defineComponent({
         filter: `name eq logo`,
       })
     }, null)
+
+     const manageBackLink = () => {
+      selectedCategory.value.splice(selectedCategoryCount.value, 1)
+      selectedCategoryCount.value--
+      if (selectedCategoryCount.value === -1) {
+        showSubCategory.value = false
+        selectedCategory.value = []
+      }
+    }
+    const categorySelect = (category) => {
+      if (category.childrenCategories.length > 0) {
+        selectedCategoryCount.value++
+        selectedCategory.value[selectedCategoryCount.value] = category
+        showSubCategory.value = true
+        console.log("Selected", selectedCategory.value)
+      } else {
+        context.root.$router.push(getCatLink(category))
+        closePrimarymenu()
+      }
+    }
+    const closePrimarymenu = () => {
+      toggleMobileMenu()
+      showSubCategory.value = false
+      selectedCategoryCount.value = -1
+      selectedCategory.value = []
+    }
 
     const toggleMobileSearchBar = () => {
       isOpenSearchBar.value = !isOpenSearchBar.value
@@ -496,7 +598,8 @@ export default defineComponent({
       toggleLoginModal()
     }
     const gotoCart = () => {
-      app.router.push({ path: "/cart" })
+      toggleAddToCartConfirmationModal()
+      // app.router.push({ path: "/cart" })
     }
 
     const handleStoreLocatorClick = () => {
@@ -562,6 +665,15 @@ export default defineComponent({
     })
 
     return {
+      isMobileMenuOpen,
+      toggleMobileMenu,
+      closePrimarymenu,
+      categorySelect,
+      manageBackLink,
+      categoryGetters,
+      selectedCategory,
+      showSubCategory,
+      selectedCategoryCount,
       user,
       accountIcon,
       isMobile,
@@ -1088,6 +1200,99 @@ $background: #fff;
   ::v-deep &__menu {
     justify-content: center;
     margin-left: -150px;
+  }
+}
+
+// Primary menu modal mobile
+.bottom-modal {
+  .sf-chevron--left {
+    left: 10px;
+    top: -43px;
+  }
+
+  &__heading {
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--c-black);
+  }
+
+  &__static-heading {
+    padding: 15px;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--c-black);
+  }
+
+  ::v-deep .sf-bottom-modal {
+    z-index: 9999;
+    bottom: 3.75rem;
+
+    .sf-bottom-modal__close {
+      top: 15px;
+      display: flex;
+      background: var(--c-white);
+
+      --icon-size: 14px;
+
+      position: absolute;
+    }
+
+    .sf-bottom-modal__cancel {
+      display: none;
+    }
+
+    .sf-circle-icon__icon.sf-icon {
+      --icon-color: var(--c-black);
+    }
+
+    .sf-bottom-modal__container {
+      min-height: 400px;
+      max-height: 800px;
+      border-radius: 15px 15px 0 0;
+    }
+
+    .sf-menu-item__mobile-nav-icon {
+      display: none;
+    }
+
+    .sf-menu-item__label {
+      font-size: 17px;
+      font-weight: 500;
+    }
+  }
+
+  &__category {
+    padding: 12px 15px;
+
+    .category-label {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+
+      .category-link {
+        width: 80%;
+      }
+    }
+  }
+
+  &__subCategory-label {
+    overflow-y: auto;
+    max-height: 400px;
+
+    .sub-category {
+      padding: 12px 15px;
+
+      .subCategory-label {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        .subCategory-link {
+          width: 80%;
+        }
+      }
+    }
   }
 }
 
