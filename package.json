@@ -13,7 +13,7 @@
     "prettier:check": "prettier --check .",
     "prettier:format": "prettier --write .",
     "lint": "yarn lint:js && yarn lint:style && yarn prettier:format",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "generate-types": "graphql-codegen --config codegen.yml",
     "prebuild": "node ./.build/preBuild.js",
     "predev": "yarn prebuild"
@@ -55,6 +55,7 @@
     "nuxt-helmet": "^2.0.1",
     "nuxt-i18n": "^6.28.1",
     "stylelint-scss": "^3.21.0",
+    "vee-validate": "3",
     "vue-i18n": "^8.26.1",
     "vue-lazy-hydration": "^2.0.0-beta.4",
     "winston": "^3.3.3",

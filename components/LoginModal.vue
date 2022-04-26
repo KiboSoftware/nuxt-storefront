@@ -15,47 +15,54 @@
           <div key="sign-up" class="modal-content" data-testid="signin-modal">
             <h2 class="title">Create An Account</h2>
             <p class="textstyling">Please register below to create an account</p>
-            <form class="form" @submit.prevent="() => false">
-              <SfInput
-                v-model="form.email"
-                name="email"
-                label="Your email"
-                class="form__element"
-                type="email"
-              />
-              <SfInput
-                v-model="form.firstName"
-                name="first-name"
-                label="First Name"
-                class="form__element"
-              />
-              <SfInput
-                v-model="form.lastName"
-                name="last-name"
-                label="Last Name"
-                class="form__element"
-              />
-              <SfInput
-                v-model="form.password"
-                name="password"
-                label="Password"
-                type="password"
-                class="form__element"
-              />
-              <SfCheckbox
-                v-model="createAccount"
-                name="create-account"
-                label="Sign Up for News and Updates"
-                class="form__element"
-              />
-              <SfButton
-                type="submit"
-                class="sf-button--full-width form__submit"
-                data-testid="create-acount-button"
-              >
-                Create an account
-              </SfButton>
-            </form>
+            <ValidationObserver v-slot="{ handleSubmit }" key="sign-up">
+              <!-- todo:as of now registeration is not working so handleForm is passed , will have to write function for handling registration -->
+              <form class="form" @submit.prevent="handleSubmit(handleRegister)">
+                <ValidationProvider rules="required|email" v-slot="{ errors }">
+                  <SfInput
+                    v-model="form.email"
+                    :valid="!errors[0]"
+                    :errorMessage="errors[0]"
+                    name="email"
+                    label="Your email"
+                    class="form__element"
+                    type="email"
+                  />
+                </ValidationProvider>
+                <SfInput
+                  v-model="form.firstName"
+                  name="first-name"
+                  label="First Name"
+                  class="form__element"
+                />
+                <SfInput
+                  v-model="form.lastName"
+                  name="last-name"
+                  label="Last Name"
+                  class="form__element"
+                />
+                <SfInput
+                  v-model="form.password"
+                  name="password"
+                  label="Password"
+                  type="password"
+                  class="form__element"
+                />
+                <SfCheckbox
+                  v-model="createAccount"
+                  name="create-account"
+                  label="Sign Up for News and Updates"
+                  class="form__element"
+                />
+                <SfButton
+                  type="submit"
+                  class="sf-button--full-width form__submit"
+                  data-testid="create-acount-button"
+                >
+                  Create an account
+                </SfButton>
+              </form>
+            </ValidationObserver>
           </div>
         </div>
         <div class="centerspace">
@@ -65,39 +72,47 @@
           <div v-if="isLogin">
             <h2 class="title">Sign In</h2>
             <p class="textstyling">Please Enter your credentials to access your account</p>
-            <form class="form" @submit.prevent="handleLogin()">
-              <div class="form__content">
-                <SfInput
-                  v-model="form.username"
-                  name="email"
-                  label="Email*"
-                  class="form__element"
-                  type="email"
-                />
-                <SfInput
-                  v-model="form.password"
-                  name="password"
-                  label="Password*"
-                  type="password"
-                  class="form__element"
-                  :has-show-password="true"
-                />
-                <span v-if="userError.login" class="login-error-message">
-                  {{ userError.login.message }}
-                </span>
-
-                <SfButton
-                  type="submit"
-                  class="form__submit login-button sf-button--text-lg"
-                  data-testid="log-in-button"
-                  :disabled="loading"
-                >
-                  <SfLoader :class="{ loader: loading }" :loading="loading">
-                    <div>{{ $t("Log In") }}</div>
-                  </SfLoader>
-                </SfButton>
-              </div>
-            </form>
+            <ValidationObserver v-slot="{ handleSubmit }" key="log-in">
+              <form class="form" @submit.prevent="handleSubmit(handleLogin)">
+                <div class="form__content">
+                  <ValidationProvider v-slot="{ errors }" rules="required|email">
+                    <SfInput
+                      v-model="form.username"
+                      :valid="!errors[0]"
+                      :errorMessage="errors[0]"
+                      name="email"
+                      label="Email*"
+                      class="form__element"
+                      type="email"
+                    />
+                  </ValidationProvider>
+                  <SfInput
+                    v-model="form.password"
+                    name="password"
+                    label="Password*"
+                    type="password"
+                    class="form__element"
+                    :has-show-password="true"
+                  />
+                  <span v-if="userError.login" class="login-error-message">
+                    {{ userError.login.message }}
+                  </span>
+                  <div v-if="error.login">
+                    {{ error.login }}
+                  </div>
+                  <SfButton
+                    type="submit"
+                    class="form__submit login-button sf-button--text-lg"
+                    data-testid="log-in-button"
+                    :disabled="loading"
+                  >
+                    <SfLoader :class="{ loader: loading }" :loading="loading">
+                      <div>{{ $t("Log In") }}</div>
+                    </SfLoader>
+                  </SfButton>
+                </div>
+              </form>
+            </ValidationObserver>
             <div class="action">
               <SfButton
                 class="sf-button--text action-button"
@@ -168,9 +183,22 @@
 import { ref, watch, computed } from "@vue/composition-api"
 import { SfModal, SfInput, SfButton, SfCheckbox, SfLoader } from "@storefront-ui/vue"
 
+import { ValidationProvider, ValidationObserver, extend } from "vee-validate"
+import { required, email } from "vee-validate/dist/rules"
+
 import { useCart, useUiState, useUser, useUiValidationSchemas, useWishlist } from "@/composables"
 import { userGetters } from "@/lib/getters"
 import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
+
+extend("email", {
+  ...email,
+  message: "Invalid email",
+})
+
+extend("required", {
+  ...required,
+  message: "This field is required",
+})
 
 export default {
   name: "LoginModal",
@@ -179,6 +207,8 @@ export default {
     SfInput,
     SfButton,
     SfCheckbox,
+    ValidationProvider,
+    ValidationObserver,
     SfLoader,
   },
   setup(_, context) {
@@ -199,6 +229,16 @@ export default {
       email: "",
     })
 
+    const error = reactive({
+      login: null,
+      register: null,
+    })
+
+    const resetErrorValues = () => {
+      error.login = null
+      error.register = null
+    }
+
     const barTitle = computed(() => {
       if (isLogin.value) {
         return "Login"
@@ -212,19 +252,23 @@ export default {
     watch(isLoginModalOpen, () => {
       if (isLoginModalOpen) {
         form.value = {}
+        resetErrorValues()
       }
     })
 
     const setIsLoginValue = (value: boolean) => {
+      resetErrorValues()
       isLogin.value = value
     }
 
     const setIsForgottenValue = (value: boolean) => {
+      resetErrorValues()
       isLogin.value = !value
       isForgotten.value = value
     }
 
     const handleForm = (fn) => async () => {
+      resetErrorValues()
       await fn(form.value)
       const hasUserErrors = userGetters.hasUserError(userError.value)
       if (!hasUserErrors) {
@@ -276,6 +320,7 @@ export default {
 
     return {
       form,
+      error,
       userError,
       loading,
       isLogin,

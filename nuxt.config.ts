@@ -155,7 +155,7 @@ export default defineNuxtConfig({
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-    transpile: ["leaflet", "hammerjs"],
+    transpile: ["leaflet", "hammerjs", "vee-validate/dist/rules"],
     loaders: {
       sass: {
         implementation: require("sass"),
