@@ -1,7 +1,7 @@
 <template>
   <SfModal
     class="sf-modal"
-    :visible="isAddToCartConfirmationOpen"
+    :visible="false"
     cross
     overlay
     :persistent="false"

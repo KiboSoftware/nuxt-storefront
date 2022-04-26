@@ -2,9 +2,11 @@
   <div class="wrapper">
     <KiboAppHeader />
     <KiboAppData />
+    <BottomNavigation />
     <LoginModal />
     <ModalRoot />
     <AddToCartConfirmationModal />
+    <AtcConfirmationSidebar />
     <div class="content">
       <Nuxt />
     </div>
