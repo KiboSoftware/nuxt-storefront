@@ -1,79 +1,87 @@
 <template>
-  <div id="detailed-cart">
-    <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
-    <div class="detailed-cart__title-wrapper">
-      <h1 class="detailed-cart__title">
-        {{ $t("Shopping Cart") }} ({{ numberOfCartItems }}
-        {{ `${numberOfCartItems === 1 ? $t("Item") : $t("Items")}` }})
-      </h1>
-    </div>
-    <div v-if="cartItems.length" class="detailed-cart">
-      <div class="detailed-cart__main">
-        <transition name="sf-fade" mode="out-in">
-          <div key="detailed-cart" class="collected-product-list">
-            <transition-group name="sf-fade" tag="div">
-              <KiboCollectedProduct
-                v-for="cartItem in cartItems"
-                :key="cartItem.id"
-                v-model="cartItem.quantity"
-                :cart-item-id="cartItem.id"
-                :purchase-location="selectedLocation"
-                :image="cartItem.product.imageUrl"
-                :title="cartItem.product.name"
-                :regular-price="cartItemPrice(cartItem).regular"
-                :special-price="cartItemPrice(cartItem).special"
-                :options="cartItem.product.options"
-                :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
-                :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
-                :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
-                :coupons-applied="productAppliedCoupons(cartItem)"
-                class="sf-collected-product--detailed collected-product"
-                @click:remove="removeHandler(product)"
-              >
-              </KiboCollectedProduct>
-            </transition-group>
-          </div>
-        </transition>
+  <div>
+    <div id="detailed-cart">
+      <div v-if="dropzoneContent !== undefined">
+        <p
+          class="cartDropzone"
+          v-html="dropzoneContent.dropzones[0].rows[0].columns[0].widgets[0].config.body"
+        ></p>
       </div>
-      <div class="detailed-cart__aside">
-        <transition name="sf-fade">
-          <KiboOrderSummary
-            v-if="numberOfCartItems > 0"
-            :number-of-items="numberOfCartItems"
-            :sub-total="cartSubTotal"
-            :standard-shipping="standardShipping"
-            :estimated-tax="estimatedTax"
-            :estimated-order-total="cartTotal"
-            :is-valid-coupon="isValidCoupon"
-            :invalid-coupon-error-text="invalidCouponErrorText"
-            :applied-coupons="appliedCoupons"
-            :are-coupons-applied="areCouponsApplied"
-            @applyPromocode="applyPromocode"
-          >
-            <template #actions>
-              <SfButton class="color-primary sf-button sf-button--full-width" @click="checkout">
-                {{ $t("Checkout") }}
-              </SfButton>
-            </template>
-          </KiboOrderSummary>
-        </transition>
+      <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
+      <div class="detailed-cart__title-wrapper">
+        <h1 class="detailed-cart__title">
+          {{ $t("Shopping Cart") }} ({{ numberOfCartItems }}
+          {{ `${numberOfCartItems === 1 ? $t("Item") : $t("Items")}` }})
+        </h1>
       </div>
-    </div>
-    <div v-else key="empty-cart" class="empty-cart">
-      <SfImage
-        :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
-        alt="Empty cart"
-        class="empty-cart__image"
-      />
-      <SfHeading
-        title="Your cart is empty"
-        :level="2"
-        description="Looks like you haven’t added any items to the cart yet. Start
+      <div v-if="cartItems.length" class="detailed-cart">
+        <div class="detailed-cart__main">
+          <transition name="sf-fade" mode="out-in">
+            <div key="detailed-cart" class="collected-product-list">
+              <transition-group name="sf-fade" tag="div">
+                <KiboCollectedProduct
+                  v-for="cartItem in cartItems"
+                  :key="cartItem.id"
+                  v-model="cartItem.quantity"
+                  :cart-item-id="cartItem.id"
+                  :purchase-location="selectedLocation"
+                  :image="cartItem.product.imageUrl"
+                  :title="cartItem.product.name"
+                  :regular-price="cartItemPrice(cartItem).regular"
+                  :special-price="cartItemPrice(cartItem).special"
+                  :options="cartItem.product.options"
+                  :supported-fulfillment-types="cartItemFulfillmentOptions(cartItem)"
+                  :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
+                  :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
+                  :coupons-applied="productAppliedCoupons(cartItem)"
+                  class="sf-collected-product--detailed collected-product"
+                  @click:remove="removeHandler(product)"
+                >
+                </KiboCollectedProduct>
+              </transition-group>
+            </div>
+          </transition>
+        </div>
+        <div class="detailed-cart__aside">
+          <transition name="sf-fade">
+            <KiboOrderSummary
+              v-if="numberOfCartItems > 0"
+              :number-of-items="numberOfCartItems"
+              :sub-total="cartSubTotal"
+              :standard-shipping="standardShipping"
+              :estimated-tax="estimatedTax"
+              :estimated-order-total="cartTotal"
+              :is-valid-coupon="isValidCoupon"
+              :invalid-coupon-error-text="invalidCouponErrorText"
+              :applied-coupons="appliedCoupons"
+              :are-coupons-applied="areCouponsApplied"
+              @applyPromocode="applyPromocode"
+            >
+              <template #actions>
+                <SfButton class="color-primary sf-button sf-button--full-width" @click="checkout">
+                  {{ $t("Checkout") }}
+                </SfButton>
+              </template>
+            </KiboOrderSummary>
+          </transition>
+        </div>
+      </div>
+      <div v-else key="empty-cart" class="empty-cart">
+        <SfImage
+          :src="require('@storefront-ui/shared/icons/empty_cart.svg')"
+          alt="Empty cart"
+          class="empty-cart__image"
+        />
+        <SfHeading
+          title="Your cart is empty"
+          :level="2"
+          description="Looks like you haven’t added any items to the cart yet. Start
                 shopping to fill it in."
-      />
-      <SfButton class="sf-button--full-width color-primary empty-cart__button">{{
-        $t("Start shopping")
-      }}</SfButton>
+        />
+        <SfButton class="sf-button--full-width color-primary empty-cart__button">{{
+          $t("Start shopping")
+        }}</SfButton>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +89,7 @@
 import { SfButton, SfImage, SfHeading, SfBreadcrumbs } from "@storefront-ui/vue"
 import { useAsync } from "@nuxtjs/composition-api"
 import { defineComponent } from "@vue/composition-api"
+import { useDropzoneContent } from "@/composables"
 import { usePurchaseLocation, useCart, useUiHelpers, useStoreLocations } from "@/composables"
 
 import { cartGetters, storeLocationGetters, productGetters } from "@/lib/getters"
@@ -100,6 +109,7 @@ export default defineComponent({
     const { locations, search: searchStoreLocations } = useStoreLocations("selected-stores")
 
     const { cart, load: loadCart, applyCoupon } = useCart()
+    const { dropzoneContent, loadProperties } = useDropzoneContent("product-dropzone")
     const breadcrumbs = [
       {
         text: "Home",
@@ -170,6 +180,11 @@ export default defineComponent({
 
     const productAppliedCoupons = (cartItem) => cartGetters.getProductAppliedCoupons(cartItem)
 
+    loadProperties({
+      documentListName: "pages@mozu",
+      filter: `name eq checkout`,
+    })
+
     return {
       breadcrumbs,
       selectedLocation,
@@ -192,6 +207,7 @@ export default defineComponent({
       cartTotal,
       standardShipping,
       estimatedTax,
+      dropzoneContent,
     }
   },
 })
@@ -374,5 +390,9 @@ export default defineComponent({
 .price-container {
   display: flex;
   align-items: baseline;
+}
+
+.cartDropzone {
+  margin-top: 235px;
 }
 </style>

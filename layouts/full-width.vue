@@ -1,7 +1,7 @@
 <template>
   <div>
-    <KiboAppData />
     <KiboAppHeader />
+    <KiboAppData />
     <LoginModal />
     <ModalRoot />
     <AddToCartConfirmationModal />
