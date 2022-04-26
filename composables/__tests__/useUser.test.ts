@@ -60,7 +60,7 @@ const loginResponse = {
 
 const createAccountResponse = {
   account: {
-    emailAddress: "firstName@gmail.com",
+    emailAddress: "firstName11@gmail.com",
     userName: null,
     firstName: "firstName",
     lastName: "lastName",
@@ -131,7 +131,7 @@ describe("[composable] useUser", () => {
   } = useUser()
   test("useUser : should login using mutation ", async () => {
     const storeClientCookieSpy = jest.spyOn(cookieHelper, "storeClientCookie")
-    await login({ username: "sssss", password: "abcd@only" })
+    await login({ username: "ssss", password: "abcd@only" })
     expect(storeClientCookieSpy).toHaveBeenCalled()
     expect(loading.value).toBeFalsy()
     expect(error.value).toStrictEqual(errorResponse)
@@ -155,7 +155,7 @@ describe("[composable] useUser", () => {
     const params = {
       firstName: "firstName",
       lastName: "lastName",
-      email: "firstName@gmail.com",
+      email: "firstName11@gmail.com",
       password: "Password@1",
       acceptsMarketing: true,
       isActive: true,
