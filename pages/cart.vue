@@ -231,6 +231,11 @@ export default defineComponent({
   &__aside {
     box-sizing: border-box;
     padding: 0;
+
+    @include for-desktop {
+      position: sticky;
+      top: 80px;
+    }
   }
 
   &__title-wrapper {
@@ -394,5 +399,9 @@ export default defineComponent({
 
 .cartDropzone {
   margin-top: 235px;
+
+  .row {
+    margin-top: -95px;
+  }
 }
 </style>
