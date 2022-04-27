@@ -188,6 +188,43 @@
                 <span class="kibo-header__icon-name">{{ $t("Cart") }}</span>
               </div>
             </SfButton>
+
+            <SfButton class="sf-button--pure sf-header__action">
+              <SfIcon
+                @click.prevent="openCTA"
+                id="cta"
+                icon="info"
+                size="lg"
+                color="black"
+                viewBox="0 0 24 24"
+                :coverage="1"
+              >
+              </SfIcon>
+              <div v-if="myModel">
+                <transition name="model">
+                  <div class="modal-mask" id="modal-cta">
+                    <div class="modal-wrapper">
+                      <div class="modal-header">
+                        <div class="modal-title">
+                          CONTACT
+                          <div>
+                            <a @click.prevent="closeCTA"> &#10006;</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <p>Sunday 12pm – 6pm CST</p>
+                        <p>Monday – Friday 7am – 8pm CST</p>
+                        <p></p>
+                        <p>Saturday 10am – 6pm CST</p>
+                        <p>888-446-1788</p>
+                        <p>info@mysticoutdoors.com</p>
+                      </div>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+            </SfButton>
           </div>
         </div>
       </div>
@@ -365,12 +402,19 @@
       </SfBottomModal>
     </div>
     <!--  -->
-
   </div>
 </template>
 
 <script lang="ts">
-import { SfImage, SfIcon, SfButton, SfMenuItem, SfLink, SfBadge, SfBottomModal } from "@storefront-ui/vue"
+import {
+  SfImage,
+  SfIcon,
+  SfButton,
+  SfMenuItem,
+  SfLink,
+  SfBadge,
+  SfBottomModal,
+} from "@storefront-ui/vue"
 import {
   computed,
   ref,
@@ -420,13 +464,15 @@ export default defineComponent({
     SfMenuItem,
     SfLink,
     SfBadge,
-    SfBottomModal
+    SfBottomModal,
   },
   directives: { clickOutside },
   setup(_, context) {
     const { isMobileMenuOpen, toggleMobileMenu } = useUiState()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
+
+    const myModel = ref(false)
 
     const { categories: allCategories } = useCategoryTree()
     const { setTermForUrl, getFacetsFromURL, getCatLink } = useUiHelpers()
@@ -450,7 +496,8 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal, isHamburgerOpen, toggleHamburger, toggleAddToCartConfirmationModal } = useUiState()
+    const { toggleLoginModal, isHamburgerOpen, toggleHamburger, toggleAddToCartConfirmationModal } =
+      useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
     const isStoreLocatorOpen = ref()
@@ -468,7 +515,7 @@ export default defineComponent({
       })
     }, null)
 
-     const manageBackLink = () => {
+    const manageBackLink = () => {
       selectedCategory.value.splice(selectedCategoryCount.value, 1)
       selectedCategoryCount.value--
       if (selectedCategoryCount.value === -1) {
@@ -506,6 +553,14 @@ export default defineComponent({
     const closeSearchOutsideClick = () => {
       if (isMobile.value) return false
       else closeSearch()
+    }
+
+    const openCTA = () => {
+      myModel.value = true
+    }
+
+    const closeCTA = () => {
+      myModel.value = false
     }
 
     const closeSearch = () => {
@@ -629,6 +684,12 @@ export default defineComponent({
       nextTick(() => {
         if (searchBarRef.value.$el) searchBarRef.value.$el.children[0].focus()
       })
+
+      document.body.addEventListener("click", (e) => {
+        if (e.target.closest("#modal-cta") === null && e.target.closest("#cta") === null) {
+          closeCTA()
+        }
+      })
     })
 
     onBeforeUnmount(() => {
@@ -665,6 +726,9 @@ export default defineComponent({
     })
 
     return {
+      openCTA,
+      closeCTA,
+      myModel,
       isMobileMenuOpen,
       toggleMobileMenu,
       closePrimarymenu,
@@ -794,6 +858,41 @@ $background: #fff;
       z-index: 3;
     }
   }
+}
+
+.modal-mask {
+  position: absolute;
+  z-index: 9998;
+  margin-top: 34px;
+  right: -11px;
+  background-color: var(--c-white);
+  box-shadow: 2px 2px 2px var(--c-innerbg-primary);
+  display: flex;
+}
+
+.modal-body {
+  padding: 10px 20px;
+  text-align: left;
+}
+
+.modal-wrapper {
+  transition-duration: 224ms;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  visibility: visible;
+  max-height: 800px;
+}
+
+.modal-title {
+  color: var(--c-black);
+  background: var(--c-primary);
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-weight: bold;
+  align-items: center;
 }
 
 .header-on-top {
