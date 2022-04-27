@@ -119,15 +119,16 @@
                 </SfButton>
               </nuxt-link>
               &nbsp;
-              <nuxt-link to="/cart">
-                <SfButton
-                  v-e2e="'go-to-checkout-btn'"
-                  class="sf-button--full-width color-secondary"
-                  @click="toggleAddToCartConfirmationModal"
-                >
-                  {{ $t("Checkout") }}
-                </SfButton>
-              </nuxt-link>
+              <SfButton
+                v-e2e="'go-to-checkout-btn'"
+                class="sf-button--full-width color-secondary"
+                @click="
+                  toggleAddToCartConfirmationModal()
+                  openCheckoutOptions()
+                "
+              >
+                {{ $t("Checkout") }}
+              </SfButton>
             </div>
           </div>
 
@@ -141,6 +142,11 @@
         </transition>
       </template>
     </SfSidebar>
+    <modal ref="modalName">
+      <template v-slot:body>
+        <CheckoutOptions class="checkout-modal" @close-modal="closeTheModal()" />
+      </template>
+    </modal>
   </div>
 </template>
 <script>
@@ -154,8 +160,10 @@ import {
   SfHeading,
 } from "@storefront-ui/vue"
 import { ref, watch, computed } from "@nuxtjs/composition-api"
-import { useCart, useUiState } from "@/composables"
-import { cartGetters } from "@/lib/getters"
+import Modal from "./Modal.vue"
+import CheckoutOptions from "./CheckoutOptions.vue"
+import { useCart, useUiState, useUser } from "@/composables"
+import { cartGetters, userGetters } from "@/lib/getters"
 export default {
   name: "AtcConfirmationSidebar",
   components: {
@@ -166,13 +174,22 @@ export default {
     SfCollectedProduct,
     SfQuantitySelector,
     SfHeading,
+    Modal,
+    CheckoutOptions,
   },
-  setup() {
+  setup(__, context) {
+    const modalName = ref(null)
     const { isAddToCartConfirmationOpen, toggleAddToCartConfirmationModal } = useUiState()
     const { cart, newestCartItemId, updateCartItemQuantity, removeCartItem } = useCart()
     const product = ref({})
     const cartPrice = ref({})
     // const totalItemsInCart = ref(0)
+
+    const isAuthenticated = computed(() => {
+      return userGetters.isLoggedInUser(user.value)
+    })
+
+    const { user } = useUser()
 
     const totalItemsInCart = computed(() => {
       const count = cartGetters.getCartTotalQuantity(cart.value)
@@ -205,6 +222,19 @@ export default {
       }
     })
 
+    const closeTheModal = () => {
+      context.refs.modalName.closeModal()
+    }
+    const openCheckoutOptions = () => {
+      if (isAuthenticated.value) {
+        return context.root.$router.push({
+          path: "/checkout",
+        })
+      } else {
+        context.refs.modalName.openModal()
+      }
+    }
+
     return {
       isAddToCartConfirmationOpen,
       toggleAddToCartConfirmationModal,
@@ -218,6 +248,9 @@ export default {
       removeCartItem,
       removeProduct,
       handleQuantitySelectorInput,
+      closeTheModal,
+      openCheckoutOptions,
+      modalName,
     }
   },
 }
