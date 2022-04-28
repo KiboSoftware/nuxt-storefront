@@ -171,7 +171,8 @@
             :key="productGetters.getProductId(product)"
             :title="productGetters.getName(product)"
             :image="productGetters.getCoverImage(product)"
-            :show-add-to-cart-button="true"
+            :show-add-to-cart-button="!product.options && product.purchasableState.isPurchasable"
+            :isAddedToCart="isInCart(product)"
             :score-rating="3"
             :max-rating="5"
             :properties="productGetters.getProperties(product)"
@@ -183,6 +184,7 @@
             :price-range="productGetters.getPriceRange(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
             class="products__product-card"
+            @click:add-to-cart="addToCart(product)"
           />
         </transition-group>
         <transition-group v-else appear name="products__slide" tag="div" class="products__list">
@@ -242,15 +244,23 @@ import {
   SfProperty,
   SfBanner,
   SfLoader,
-  SfCarousel
+  SfCarousel,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
-import { useUiHelpers, useFacet, useProductSearch, useCategoryTree } from "@/composables"
+import {
+  useUiHelpers,
+  useFacet,
+  useProductSearch,
+  useCategoryTree,
+  useCart,
+  useUiState,
+} from "@/composables"
 
 import { productGetters, facetGetters, productSearchGetters, categoryGetters } from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
 import { useDropzoneContent } from "@/composables"
+import { buildAddToCartInput } from "@/composables/helpers"
 
 export default {
   name: "Category",
@@ -264,13 +274,19 @@ export default {
     SfProperty,
     SfBanner,
     SfLoader,
-    SfCarousel
+    SfCarousel,
   },
   setup(_, context) {
     const { dropzoneContent: contentBanner, loadProperties: loadBanners } =
       useDropzoneContent("Banners")
-    const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink, getCatLink } =
-      useUiHelpers()
+    const {
+      getFacetsFromURL,
+      getProductLink,
+      changeSorting,
+      changeFilters,
+      setCategoryLink,
+      getCatLink,
+    } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
@@ -286,6 +302,9 @@ export default {
     const route = useRoute()
 
     const showMobileFilters = ref(false)
+
+    const { cart, addItemsToCart } = useCart()
+    const { toggleAddToCartConfirmationModal } = useUiState()
 
     // Determining if search page using categoryCode present in URL or not
     if (!route.value.params?.categoryCode) {
@@ -320,6 +339,12 @@ export default {
       setTimeout(() => {
         subCategoryLoader.value = false
       }, 2000)
+    }
+
+    const isInCart = (product) => {
+      return (
+        cart.value?.items?.find((i) => i.product.productCode === product.productCode) !== undefined
+      )
     }
 
     useAsync(async () => {
@@ -403,6 +428,16 @@ export default {
       }
     )
 
+    const addToCart = async (product) => {
+      const productToAdd = buildAddToCartInput(product, 1, [])
+      // if (isValidForAddToCart.value) {
+      await addItemsToCart(productToAdd)
+      if (cart.value) {
+        toggleAddToCartConfirmationModal()
+      }
+      // }
+    }
+
     const changeShowItemsPerPage = async (value: number) => {
       showPerPage.value = value
       await productSearch({
@@ -424,6 +459,8 @@ export default {
     }
 
     return {
+      addToCart,
+      isInCart,
       getCatLink,
       childCategories,
       getChildCategory,

@@ -47,7 +47,7 @@
         </SfColorPicker>
       </slot>
 
-        <div class="plp-badges">
+      <div class="plp-badges">
         <div class="badge-icon" v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true">
           <img src="/productpage/hot-item-50.png" />
         </div>
@@ -423,12 +423,40 @@ export default defineComponent({
 .kibo-product-card {
   background-color: var(--c-white);
 
-  .sf-product-card__image-wrapper {
-    width: 100%;
-    height: calc(var(--spacer-base) * 6.25);
+  .sf-product-card {
+    &__image-wrapper {
+      width: 100%;
+      height: calc(var(--spacer-base) * 6.25);
 
-    @include for-desktop {
-      height: calc(var(--spacer-base) * 8.375);
+      @include for-desktop {
+        height: calc(var(--spacer-base) * 8.375);
+      }
+    }
+
+    &__add-button {
+      @include for-mobile {
+        display: none;
+      }
+
+      display: contents;
+    }
+
+    &__add-button--icons {
+      bottom: 1.5rem;
+      right: 1rem;
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: var(--c-primary);
+      border-radius: 30px;
+      opacity: 0;
+
+      .sf-icon {
+        bottom: -0.8rem;
+        right: -0.7rem;
+
+        --icon-size: 24px !important;
+      }
     }
   }
 
@@ -458,6 +486,10 @@ export default defineComponent({
 
 .kibo-product-card:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+
+  .sf-product-card__image-wrapper .sf-product-card__add-button .sf-product-card__add-button--icons {
+    opacity: 1;
+  }
 }
 
 .kpc-sf-color {
