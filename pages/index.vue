@@ -55,6 +55,8 @@
               wishlist-icon=""
               is-in-wishlist-icon=""
               :is-in-wishlist="false"
+              :show-add-to-cart-button="!product.options && product.purchasableState.isPurchasable"
+              :isAddedToCart="isInCart(product)"
               :title="productGetters.getName(product)"
               :image="productGetters.getCoverImage(product)"
               :regular-price="productGetters.getPrice(product).regular"
@@ -62,6 +64,7 @@
               image-width="12.563rem"
               image-height="12.563rem"
               class="products__product-card"
+              @click:add-to-cart="addToCart(product)"
             />
           </SfCarouselItem>
         </SfCarousel>
@@ -107,9 +110,10 @@
 import { useAsync } from "@nuxtjs/composition-api"
 import { SfHero, SfCarousel, SfArrow, SfLoader, SfHeading } from "@storefront-ui/vue"
 import KiboWidgetFactory from "@/components/cms/KiboWidgetFactory.vue"
-import { useDropzoneContent, useProduct } from "@/composables"
+import { useDropzoneContent, useProduct, useCart } from "@/composables"
 import { productGetters } from "@/lib/getters"
 import ScheduleDropzone from "@/components/ScheduleDropzone.vue"
+import { buildAddToCartInput } from "@/composables/helpers"
 
 export default {
   components: {
@@ -137,6 +141,9 @@ export default {
     const loading = ref(true)
     const definedRoute = ref("https://cdn-sb.mozu.com/29927-49696/cms/files/")
 
+    const { cart, addItemsToCart } = useCart()
+    const { toggleAddToCartConfirmationModal } = useUiState()
+
     useAsync(async () => {
       const appData = Promise.all([
         loadProperties({
@@ -148,12 +155,25 @@ export default {
       ])
       await appData
 
-  console.log(productDropzone.value.dropzones[0].rows[2])
       dropzoneProductCodes.value =
         productDropzone.value?.dropzones[0]?.rows[1]?.columns[0]?.widgets[0]?.config.productCodes
 
       getFeaturedProducts(dropzoneProductCodes.value)
     })
+
+    const isInCart = (product) => {
+      return (
+        cart.value?.items?.find((i) => i.product.productCode === product.productCode) !== undefined
+      )
+    }
+
+    const addToCart = async (product) => {
+      const productToAdd = buildAddToCartInput(product, 1, [])
+      await addItemsToCart(productToAdd)
+      if (cart.value) {
+        toggleAddToCartConfirmationModal()
+      }
+    }
 
     async function getFeaturedProducts(productsCodeArray) {
       for (const i in productsCodeArray) {
@@ -165,6 +185,8 @@ export default {
     }
 
     return {
+      isInCart,
+      addToCart,
       pageName,
       dropzoneContent,
       productDropzone,
