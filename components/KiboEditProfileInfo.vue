@@ -1,6 +1,7 @@
 <template>
   <div class="profile">
-    <p class="edit-header">{{ $t(Edit) }} {{ editableField.label }}</p>
+    <!-- {{ $t(Edit) }} -->
+    <p class="edit-header">{{ editableField.label }}</p>
     <form class="form" @submit.prevent="updateField()">
       <div v-if="editableField.id === 'name'">
         <SfInput
@@ -29,6 +30,7 @@
       </div>
       <div v-if="editableField.id === 'password'">
         <KiboPasswordForm :fields="passwordFormFields" @input:handle-password="getPasswordValues" />
+        <!-- <KiboPasswordForm :fields="passwordFormFields" @submit="updatePassword" /> -->
       </div>
       <div class="action-buttons">
         <SfButton
@@ -37,7 +39,11 @@
         >
           {{ $t("Cancel") }}
         </SfButton>
-        <SfButton type="submit" class="action-buttons__save">
+        <SfButton
+          type="submit"
+          class="action-buttons__save"
+          @click="$emit('click:cancel-edit', editableField.id)"
+        >
           {{ $t("Save") }}
         </SfButton>
       </div>
@@ -97,7 +103,7 @@ export default defineComponent({
         passwordValues.value.oldPassword = values.find(
           (value) => value.id === "currentPassword"
         ).value
-        passwordValues.value.newPassword = values.find((value) => value.id === "newPassword").value
+        passwordValues.value.newPassword = values.find((value) => value.id === "password").value
       }
     }
 
