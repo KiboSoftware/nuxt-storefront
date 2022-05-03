@@ -72,12 +72,14 @@
                     <div>
                       <span class="sf-property__name">{{ $t("Price") }}:</span>
                     </div>
-                    <!-- TODO: To be applied KiboPrice custom component instead SfPrice -->
-                    <SfPrice
+                    <KiboPrice
                       v-if="cartItem.product.price.price"
-                      :regular="cartItem.product.price.price && `$${cartItem.product.price.price}`"
+                      :regular="
+                        cartItem.product.price.price && $n(cartItem.product.price.price, 'currency')
+                      "
                       :special="
-                        cartItem.product.price.salePrice && `$${cartItem.product.price.salePrice}`
+                        cartItem.product.price.salePrice &&
+                        $n(cartItem.product.price.salePrice, 'currency')
                       "
                       class="kibo-collectedProduct__price"
                     />
@@ -89,8 +91,8 @@
           <div class="detailed-cart">
             <div class="sf-property--full-width sf-property">
               <span class="sf-property__name-noBold">{{ $t("Subtotal") }}</span>
-              <span class="sf-property__value">{{ cartItemPrice.regular }}</span>
               <!-- TODO: Needs to be changed the disaply value based on getCartItemPrice cartGetter -->
+              <span class="sf-property__value">{{ cartItemPrice.regular }}</span>
             </div>
             <div class="border-space"><hr class="sf-divider" /></div>
             <div class="sf-property--full-width sf-property">
@@ -98,7 +100,7 @@
                 ><b>{{ $t("Total") }}</b></span
               >
               <span class="sf-property__value"
-                ><b>{{ cartItemPrice.special }}</b></span
+                ><strong>{{ cartItemPrice.regular }}</strong></span
               >
             </div>
           </div>
@@ -125,7 +127,7 @@
   </SfModal>
 </template>
 <script lang="ts">
-import { SfModal, SfBar, SfImage, SfPrice, SfButton, SfIcon } from "@storefront-ui/vue"
+import { SfModal, SfBar, SfImage, SfButton, SfIcon } from "@storefront-ui/vue"
 import { computed } from "@nuxtjs/composition-api"
 import { useCart, useUiState } from "@/composables"
 import { cartGetters } from "@/lib/getters"
@@ -137,7 +139,6 @@ export default {
     SfModal,
     SfBar,
     SfImage,
-    SfPrice,
     SfButton,
     SfIcon,
   },

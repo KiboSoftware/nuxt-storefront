@@ -83,7 +83,6 @@
 </template>
 <script lang="ts">
 import {
-  SfPrice,
   SfIcon,
   SfImage,
   SfCircleIcon,
@@ -108,7 +107,6 @@ export default defineComponent({
     SfIcon,
     SfImage,
     SfCircleIcon,
-    SfPrice,
     SfQuantitySelector,
     SfLink,
     SfProperty,
