@@ -39,10 +39,13 @@
         <div v-if="!productSearchLoading" class="navbar__aside">
           <SfHeading
             :level="1"
-            :title="pageHeader"
+            :title="currentCategory"
             class="category-name sf-heading__title desktop-only"
           />
-          <SfHeading :title="pageHeader" class="category-name sf-heading__title smartphone-only" />
+          <SfHeading
+            :title="currentCategory"
+            class="category-name sf-heading__title smartphone-only"
+          />
           <div class="total-products total-products__upper-total smartphone-only">
             {{ totalProducts }} Results
           </div>
@@ -62,7 +65,7 @@
           <SfSelect
             :required="false"
             valid
-            placeholder="Best Match"
+            placeholder="Select sorting"
             :disabled="false"
             :value="facetsFromUrl.sort"
             @input="changeSorting"
@@ -130,11 +133,12 @@
     </div>
     <div
       v-if="!showMobileFilters && !productSearchLoading && appliedFilters.length"
-      class="smartphone-only"
+      class="applied-filters-container"
     >
       <KiboFilterTiles :applied-filters="appliedFilters" @removeSelectedFilter="selectFilter" />
       <div class="sf-link" @click="clearAllFilters">{{ $t("Clear All") }}</div>
     </div>
+
     <div v-if="!showMobileFilters" class="main section">
       <div class="sidebar desktop-only">
         <transition-group>
@@ -165,6 +169,7 @@
           </div>
         </transition-group>
       </div>
+
       <div v-if="!productSearchLoading" class="products">
         <transition-group
           v-if="isGridView"
@@ -411,6 +416,11 @@ export default {
           }"`
         : getCategoryFacet.value.header
     })
+
+    const currentCategory = computed(() => {
+      return result.value?.categories[0]?.content?.name
+    })
+
     const appliedFilters = computed(() => facetGetters.getSelectedFacets(facets.value) || [])
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
@@ -467,6 +477,7 @@ export default {
 
     return {
       addToCart,
+      currentCategory,
       isInCart,
       getCatLink,
       childCategories,
@@ -539,6 +550,18 @@ export default {
 
   p {
     color: var(--c-black);
+  }
+}
+
+.applied-filters-container {
+  @include for-desktop {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+
+    .sf-link:hover {
+      cursor: pointer;
+    }
   }
 }
 

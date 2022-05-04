@@ -55,8 +55,15 @@ export default defineComponent({
     border-right: 2px solid var(--c-text-muted);
     margin: 0 var(--spacer-sm) var(--spacer-sm) 0;
 
+    @include for-desktop {
+      &:hover {
+        background-color: var(--_c-gray-accent-lighten);
+      }
+    }
+
     &--padding-left {
       padding-left: var(--spacer-xs);
+      cursor: pointer;
     }
   }
 }
