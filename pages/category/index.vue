@@ -43,7 +43,9 @@
             class="category-name sf-heading__title desktop-only"
           />
           <SfHeading :title="pageHeader" class="category-name sf-heading__title smartphone-only" />
-          <div class="total-products total-products__upper-total">{{ totalProducts }} Results</div>
+          <div class="total-products total-products__upper-total smartphone-only">
+            {{ totalProducts }} Results
+          </div>
         </div>
         <div v-if="productSearchLoading" class="navbar__aside">
           <KiboSkeletonLoading
@@ -79,6 +81,11 @@
             <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
           </SfButton>
         </div>
+
+        <div class="total-products total-products__upper-total">
+          Results found: {{ totalProducts }}
+        </div>
+
         <div v-if="!showMobileFilters && productSearchLoading" class="navbar__sort">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
           <KiboSkeletonLoading skeleton-class="plp-select" />
@@ -911,7 +918,11 @@ export default {
     font-weight: bold;
   }
   @include for-desktop {
-    display: none;
+    margin-left: 50px;
+    font-family: var(--font-family--primary);
+    font-weight: var(--font-weight--normal);
+    font-size: var(--font-size--base);
+    color: var(--_c-gray-primary);
   }
 }
 
