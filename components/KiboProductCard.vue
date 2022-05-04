@@ -8,7 +8,7 @@
           data-testid="product-link"
           v-on="$listeners"
         >
-          <template v-if="Array.isArray(image)">
+          <template v-if="Array.isArray(image) && image.length > 1">
             <SfImage
               v-for="(picture, key) in image.slice(0, 2)"
               :key="key"
@@ -18,6 +18,15 @@
               :placeholder="require('@/assets/images/product_placeholder.svg')"
             />
           </template>
+
+          <SfImage
+            v-else-if="Array.isArray(image) && image.length === 1"
+            class="sf-product-card__image"
+            :src="image[0]"
+            :alt="title"
+            :placeholder="require('@/assets/images/product_placeholder.svg')"
+          />
+
           <SfImage
             v-else
             class="sf-product-card__image"
@@ -488,6 +497,14 @@ export default defineComponent({
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 
   .sf-product-card__image-wrapper .sf-product-card__add-button .sf-product-card__add-button--icons {
+    opacity: 1;
+  }
+
+  .sf-image--wrapper.sf-product-card__picture:first-child {
+    opacity: 0;
+  }
+
+  .sf-image--wrapper.sf-product-card__picture:nth-child(2n) {
     opacity: 1;
   }
 }

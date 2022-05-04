@@ -36,6 +36,9 @@ const getPriceRange = (product: ProductCustom): ProductPriceRange => product?.pr
 const getCoverImage = (product: ProductCustom): string =>
   product?.content?.productImages?.[0]?.imageUrl || ""
 
+const getAllCoverImage = (product: ProductCustom): Array<string> =>
+  product?.content?.productImages.map((item) => item.imageUrl) || []
+
 const getDescription = (product: ProductCustom): string =>
   product?.content?.productFullDescription || ""
 
@@ -180,6 +183,7 @@ export const productGetters = {
   getSelectedFullfillmentOption,
   getProductFulfillmentOptions,
   getCoverImage,
+  getAllCoverImage,
   getProductId,
   validateAddToCart,
 }
