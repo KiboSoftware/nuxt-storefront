@@ -170,7 +170,7 @@
             v-for="product in products"
             :key="productGetters.getProductId(product)"
             :title="productGetters.getName(product)"
-            :image="productGetters.getCoverImage(product)"
+            :image="productGetters.getAllCoverImage(product)"
             :show-add-to-cart-button="!product.options && product.purchasableState.isPurchasable"
             :isAddedToCart="isInCart(product)"
             :score-rating="3"
