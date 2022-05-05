@@ -8,17 +8,11 @@
       </div>
     </SfLoader>
 
-    <SfLoader :class="{ loading }" :loading="subCategoryLoader">
-      <div v-if="childCategories !== undefined">
-        <SfCarousel
-          :settings="{
-            peek: 16,
-            breakpoints: { 1023: { peek: 0, perView: 2 } },
-            perView: 6,
-          }"
-        >
-          <SfCarouselItem v-for="(item, i) in childCategories[0].childrenCategories" :key="i">
-            <div class="sub-category-carousel">
+    <div v-if="childCategories !== undefined && childCategories.length > 0">
+      <div v-if="childCategories[0].childrenCategories.length < 5">
+        <SfLoader :class="{ loading }" :loading="subCategoryLoader">
+          <div class="sub-category-img-container">
+            <div v-for="(item, i) in childCategories[0].childrenCategories" :key="i">
               <nuxt-link class="primary-menu" :to="localePath(getCatLink(item))">
                 <img
                   v-if="item.content.categoryImages.length > 0"
@@ -29,10 +23,38 @@
                 <p>{{ item.content.name }}</p>
               </nuxt-link>
             </div>
-          </SfCarouselItem>
-        </SfCarousel>
+          </div>
+        </SfLoader>
       </div>
-    </SfLoader>
+
+      <div v-else>
+        <SfLoader :class="{ loading }" :loading="subCategoryLoader">
+          <div>
+            <SfCarousel
+              :settings="{
+                peek: 16,
+                breakpoints: { 1023: { peek: 0, perView: 2 } },
+                perView: 6,
+              }"
+            >
+              <SfCarouselItem v-for="(item, i) in childCategories[0].childrenCategories" :key="i">
+                <div class="sub-category-carousel">
+                  <nuxt-link class="primary-menu" :to="localePath(getCatLink(item))">
+                    <img
+                      v-if="item.content.categoryImages.length > 0"
+                      :src="item.content.categoryImages[0].imageUrl"
+                      :alt="item.content.name"
+                    />
+                    <img v-else src="/_nuxt/assets/images/product_placeholder.svg" />
+                    <p>{{ item.content.name }}</p>
+                  </nuxt-link>
+                </div>
+              </SfCarouselItem>
+            </SfCarousel>
+          </div>
+        </SfLoader>
+      </div>
+    </div>
 
     <div class="navbar section">
       <div class="navbar__main">
@@ -355,6 +377,20 @@ export default {
         return category.categoryId.toString() === getPageSlug().toString()
       })
 
+      if (childCategories.value[0]?.childrenCategories.length > 0) {
+        for (const child in childCategories.value[0].childrenCategories) {
+          if (
+            $route.params.categoryCode.toString() ===
+            childCategories.value[0].childrenCategories[child].categoryCode
+          ) {
+            const subChildCategory = childCategories.value[0].childrenCategories[child]
+            childCategories.value = []
+            childCategories.value[0] = subChildCategory
+            break
+          }
+        }
+      }
+
       setTimeout(() => {
         subCategoryLoader.value = false
       }, 2000)
@@ -542,6 +578,27 @@ export default {
     margin-left: -40px;
     margin-top: 64%;
     font-size: 1rem;
+  }
+}
+
+.sub-category-img-container {
+  display: flex;
+  justify-content: center;
+
+  img {
+    width: 100px;
+    height: 100px;
+  }
+
+  div {
+    width: 150px;
+    margin: 10px 0;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+
+  p {
+    color: var(--c-black);
   }
 }
 
