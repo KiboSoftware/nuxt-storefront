@@ -20,6 +20,7 @@ export default {
       ])
       await appData
     })
+    // eslint-disable-next-line no-useless-return
     return
   },
 }
