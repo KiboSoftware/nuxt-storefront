@@ -216,6 +216,13 @@
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
             class="products__product-card-horizontal"
           >
+            <template #description>
+              <p
+                class="sf-product-card-horizontal__description desktop-only"
+                v-html="productGetters.getDescription(product)"
+              />
+            </template>
+
             <template #configuration>
               <SfProperty class="desktop-only" name="Size" value="XS" style="margin: 0 0 1rem 0" />
               <SfProperty class="desktop-only" name="Color" value="white" />
