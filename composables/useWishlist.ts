@@ -19,15 +19,19 @@ export const useWishlist = () => {
   const error = useState(`use-userOrders-error`, () => null)
 
   const getWishLists = async (): Promise<Wishlist> => {
+    loading.value = true
     const wishListResponse = await fetcher({
       query: getWishlistQuery,
     })
+    loading.value = false
     return wishListResponse.data.wishlists.items[0]
   }
 
   const loadWishlist = async () => {
     try {
+      loading.value = true
       currentWishlist.value = await getWishLists()
+      loading.value = false
       return currentWishlist.value?.items
     } catch (err) {
       error.value = err
@@ -36,6 +40,7 @@ export const useWishlist = () => {
 
   const addToWishlist = async (product: Product, customerAccountId: number) => {
     try {
+      loading.value = true
       if (!currentWishlist.value) {
         const wishlistName = defaultWishlistName
 
@@ -73,6 +78,7 @@ export const useWishlist = () => {
         query: createWishlistItemMutation,
         variables: params,
       })
+      loading.value = false
       if (response.data.createWishlistItem) {
         loadWishlist()
       }
@@ -82,6 +88,7 @@ export const useWishlist = () => {
   }
 
   const removeItemFromWishlist = async (product) => {
+    loading.value = true
     const removedItem = currentWishlist?.value?.items?.find((item) => {
       if (!item?.product?.variationProductCode) {
         return item.product.productCode === product.productCode
@@ -96,6 +103,7 @@ export const useWishlist = () => {
       query: deleteWishListItemMutation,
       variables: params,
     })
+    loading.value = false
     loadWishlist()
   }
 

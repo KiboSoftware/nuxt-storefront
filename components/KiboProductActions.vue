@@ -28,8 +28,24 @@
           {{ labelAddToCart }}
         </SfButton>
         <div class="kibo-add-to-wishlist-one-click-container">
-          <SfButton class="sf-add-to-wishlist__button" :disabled="disabled" @click="addToWishList">
-            {{ labelAddToWishlist }}
+          <SfButton
+            class="sf-add-to-wishlist__button"
+            :disabled="isLoadingWishlist || disabled"
+            @click="addToWishList"
+          >
+            <SfLoader
+              class="wishlist-loader"
+              :class="{ loader: isLoadingWishlist }"
+              :loading="isLoadingWishlist"
+            >
+              <SfIcon
+                :icon="isInWishlist ? 'heart_fill' : 'heart'"
+                size="22px"
+                :color="isInWishlist ? 'var(--_c-red-primary)' : ''"
+                data-test="sf-wishlist-icon-pdp"
+              />
+            </SfLoader>
+            <span class="sf-add-to-wishlist__text">{{ labelAddToWishlist }} </span>
           </SfButton>
           <SfButton
             class="color-secondary kibo-one-click-checkout__button"
@@ -45,13 +61,15 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "@vue/composition-api"
-import { SfButton, SfQuantitySelector } from "@storefront-ui/vue"
+import { SfButton, SfQuantitySelector, SfIcon, SfLoader } from "@storefront-ui/vue"
 
 export default defineComponent({
   name: "KiboProductActions",
   components: {
     SfButton,
     SfQuantitySelector,
+    SfIcon,
+    SfLoader,
   },
 
   model: {
@@ -97,6 +115,14 @@ export default defineComponent({
       type: String,
       default: "1-Click Checkout",
     },
+    isInWishlist: {
+      type: Boolean,
+      default: false,
+    },
+    isLoadingWishlist: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const addToWishList = () => {
@@ -141,6 +167,10 @@ $cart-button-width: 10.75rem; //172px
     color: var(--_c-dark-primary);
     margin-top: calc(var(--spacer-xs) * 1.5);
     width: 46%;
+  }
+
+  &__text {
+    padding-left: var(--spacer-xs);
   }
 
   @include for-desktop {
@@ -211,5 +241,11 @@ $cart-button-width: 10.75rem; //172px
   @include for-desktop {
     flex: 1;
   }
+}
+
+.wishlist-loader {
+  height: calc(var(--spacer-2xs) * 5);
+  display: flex;
+  justify-content: end;
 }
 </style>
