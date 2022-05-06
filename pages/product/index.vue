@@ -21,37 +21,33 @@
             </div>
 
             <LazyHydrate when-idle>
-                <div class="product__gallery_product">
-                  <div
-                    v-for="(images, index) in productGallery"
-                    :key="index"
-                    class="gallery_images"
-                  >
-                    <img :src="images.big.url" :alt="images.alt" />
-                  </div>
-                </div>
-              </LazyHydrate>
-
-            <div class="product-badge">
-                <div
-                  class="product-badge__item"
-                  v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true"
-                >
-                  <img src="/productpage/hot-item-50.png" />
-                </div>
-                <div
-                  class="product-badge__item"
-                  v-if="properties[`Mystic Tested`] && properties[`Mystic Tested`][0] === true"
-                >
-                  <img src="/productpage/mystic-tested-50.png" />
-                </div>
-                <div
-                  class="product-badge__item"
-                  v-if="properties[`Top Seller`] && properties[`Top Seller`][0] === true"
-                >
-                  <img src="/productpage/top-seller-50.jpg" />
+              <div class="product__gallery_product">
+                <div v-for="(images, index) in productGallery" :key="index" class="gallery_images">
+                  <img :src="images.big.url" :alt="images.alt" />
                 </div>
               </div>
+            </LazyHydrate>
+
+            <div class="product-badge">
+              <div
+                class="product-badge__item"
+                v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true"
+              >
+                <img src="/productpage/hot-item-50.png" />
+              </div>
+              <div
+                class="product-badge__item"
+                v-if="properties[`Mystic Tested`] && properties[`Mystic Tested`][0] === true"
+              >
+                <img src="/productpage/mystic-tested-50.png" />
+              </div>
+              <div
+                class="product-badge__item"
+                v-if="properties[`Top Seller`] && properties[`Top Seller`][0] === true"
+              >
+                <img src="/productpage/top-seller-50.jpg" />
+              </div>
+            </div>
 
             <div class="product__specs desktop-only">
               <SfAccordion open="" :first-open="false" :multiple="false" transition="" show-chevron>
@@ -68,223 +64,239 @@
 
           <div class="product__info">
             <div class="product__overview">
-
               <div class="product__heading-container">
-              <h3 class="sf-heading__title h3">{{ productName }}</h3>
+                <h3 class="sf-heading__title h3">{{ productName }}</h3>
               </div>
 
               <div class="product__price-and-rating">
-              <div v-if="product && product.price">
-                <KiboPrice
-                  :regular="$n(productGetters.getPrice(product).regular, 'currency')"
-                  :special="
-                    product.price.salePrice &&
-                    $n(productGetters.getPrice(product).special, 'currency')
-                  "
-                  class="kibo-collectedProduct__price"
-                />
-              </div>
-              <div v-if="product && product.priceRange && !product.price">
-                <KiboPriceRange
-                  :lower="productGetters.getPriceRange(product).lower"
-                  :upper="productGetters.getPriceRange(product).upper"
-                />
-              </div>
+                <div class="msrp" v-if="product && product.price">
+                  <span class="msrp__setMargin">MSRP : </span>
+                  <KiboPrice
+                    class="kibo-collectedProduct__price"
+                    :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+                  />
+                </div>
 
-              <div class="product__rating desktop-only">
-                <SfRating :score="3" :max="5" />
-                <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+                <div class="msrp" v-if="product && product.priceRange && !product.price">
+                  <span class="msrp__setMargin">MSRP : </span>
+                  <KiboPrice
+                    class="kibo-collectedProduct__price"
+                    :regular="$n(productGetters.getPriceRange(product).upper.price, 'currency')"
+                  />
+                </div>
 
-                <SfButton
-                  class="sf-button--text"
-                  data-testid="read-all-reviews"
-                  @click="changeTab(2)"
-                >
-                  {{ $t("WriteReview") }}
-                </SfButton>
-              </div>
+                <div v-if="product && product.price">
+                  <KiboPrice
+                    :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+                    :special="
+                      product.price.salePrice &&
+                      $n(productGetters.getPrice(product).special, 'currency')
+                    "
+                    class="kibo-collectedProduct__price"
+                  />
+                </div>
+                <div v-if="product && product.priceRange && !product.price">
+                  <KiboPriceRange
+                    :lower="productGetters.getPriceRange(product).lower"
+                    :upper="productGetters.getPriceRange(product).upper"
+                  />
+                </div>
+
+                <div class="product__rating desktop-only">
+                  <SfRating :score="3" :max="5" />
+                  <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+
+                  <SfButton
+                    class="sf-button--text"
+                    data-testid="read-all-reviews"
+                    @click="changeTab(2)"
+                  >
+                    {{ $t("WriteReview") }}
+                  </SfButton>
+                </div>
               </div>
 
               <div class="product__content">
-              <div class="product__description desktop-only" v-html="shortDescription"></div>
+                <div class="product__description desktop-only" v-html="shortDescription"></div>
 
-              <div
-                v-if="
-                  productOptions &&
-                  productOptions.colourOptions &&
-                  productOptions.colourOptions.values
-                "
-                class="product__colors"
-              >
-                <div class="product__color-label desktop-only">{{ $t("Color") }}:</div>
-
-                <SfColor
-                  v-for="(option, i) in productOptions.colourOptions.values"
-                  :key="i"
-                  data-cy="product-color_update"
-                  :color="option.value"
-                  :class="{ 'sf-color--active': option.isSelected, disabled: false }"
-                  @click="selectOption(productOptions.colourOptions.attributeFQN, option.value)"
-                />
-              </div>
-
-              <div
-                v-if="
-                  productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values
-                "
-                class="product__size"
-              >
                 <div
-                  v-for="option in productOptions.sizeOptions.values"
-                  :key="option.value"
-                  class="sf-badge"
-                  :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
-                  @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
+                  v-if="
+                    productOptions &&
+                    productOptions.colourOptions &&
+                    productOptions.colourOptions.values
+                  "
+                  class="product__colors"
                 >
-                  {{ option.value }}
-                </div>
-              </div>
+                  <div class="product__color-label desktop-only">{{ $t("Color") }}:</div>
 
-              <div v-if="productOptions && productOptions.listOptions">
-                <SfSelect
-                  v-for="option in productOptions.listOptions"
-                  :key="option.attributeFQN"
-                  data-cy="product-select_size"
-                  :value="productGetters.getOptionSelectedValue(option)"
-                  :label="productGetters.getOptionName(option)"
-                  :required="option.isRequired"
-                  @input="(value) => selectOption(option.attributeFQN, value)"
+                  <SfColor
+                    v-for="(option, i) in productOptions.colourOptions.values"
+                    :key="i"
+                    data-cy="product-color_update"
+                    :color="option.value"
+                    :class="{ 'sf-color--active': option.isSelected, disabled: false }"
+                    @click="selectOption(productOptions.colourOptions.attributeFQN, option.value)"
+                  />
+                </div>
+
+                <div
+                  v-if="
+                    productOptions &&
+                    productOptions.sizeOptions &&
+                    productOptions.sizeOptions.values
+                  "
+                  class="product__size"
                 >
-                  <SfSelectOption
-                    v-for="optionVal in option.values"
-                    :key="optionVal.value"
-                    :value="optionVal.value"
+                  <div
+                    v-for="option in productOptions.sizeOptions.values"
+                    :key="option.value"
+                    class="sf-badge"
+                    :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
+                    @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
                   >
-                    {{ optionVal.stringValue }}
-                  </SfSelectOption>
-                </SfSelect>
-              </div>
-
-              <div v-if="productOptions && productOptions.yesNoOptions">
-                <div v-for="option in productOptions.yesNoOptions" :key="option.name">
-                  <SfCheckbox
-                    :name="option.attributeFQN"
-                    :label="option.attributeDetail.name"
-                    hint-message=""
-                    :required="option.isRequired"
-                    info-message=""
-                    error-message=""
-                    valid
-                    :disabled="false"
-                    :selected="productGetters.getOptionSelectedValue(option) ? true : false"
-                    @change="
-                      (value) =>
-                        selectOption(
-                          option.attributeFQN,
-                          undefined,
-                          productGetters.getOptionSelectedValue(option) ? false : true
-                        )
-                    "
-                  />
+                    {{ option.value }}
+                  </div>
                 </div>
-              </div>
 
-              <div v-if="productOptions && productOptions.textBoxOptions">
-                <div
-                  v-for="option in productOptions.textBoxOptions"
-                  :key="option.name"
-                  class="textBoxOptions"
-                >
-                  <SfInput
-                    :label="option.attributeDetail.name"
-                    :value="option.values[0].shopperEnteredValue"
-                    :name="option.attributeFQN"
-                    type="text"
-                    valid
-                    error-message="Error message value of form input. It appears if `valid` is `false`."
+                <div v-if="productOptions && productOptions.listOptions">
+                  <SfSelect
+                    v-for="option in productOptions.listOptions"
+                    :key="option.attributeFQN"
+                    data-cy="product-select_size"
+                    :value="productGetters.getOptionSelectedValue(option)"
+                    :label="productGetters.getOptionName(option)"
                     :required="option.isRequired"
-                    :disabled="false"
-                    :has-show-password="false"
-                    @input="
-                      (shopperEnteredValue) =>
-                        updateShopperEnteredValues(
-                          option.attributeFQN,
-                          undefined,
-                          shopperEnteredValue
-                        )
-                    "
-                  />
+                    @input="(value) => selectOption(option.attributeFQN, value)"
+                  >
+                    <SfSelectOption
+                      v-for="optionVal in option.values"
+                      :key="optionVal.value"
+                      :value="optionVal.value"
+                    >
+                      {{ optionVal.stringValue }}
+                    </SfSelectOption>
+                  </SfSelect>
                 </div>
-              </div>
 
-              <SfDivider class="divider-first desktop-only" />
+                <div v-if="productOptions && productOptions.yesNoOptions">
+                  <div v-for="option in productOptions.yesNoOptions" :key="option.name">
+                    <SfCheckbox
+                      :name="option.attributeFQN"
+                      :label="option.attributeDetail.name"
+                      hint-message=""
+                      :required="option.isRequired"
+                      info-message=""
+                      error-message=""
+                      valid
+                      :disabled="false"
+                      :selected="productGetters.getOptionSelectedValue(option) ? true : false"
+                      @change="
+                        (value) =>
+                          selectOption(
+                            option.attributeFQN,
+                            undefined,
+                            productGetters.getOptionSelectedValue(option) ? false : true
+                          )
+                      "
+                    />
+                  </div>
+                </div>
 
-              <KiboFulfillmentOptions
-                class="product__fullfillment"
-                :fulfillment-options="productFulfillmentOptions"
-                :cart-item-purchase-location="purchaseLocation.name"
-                :selected-option="selectedFulfillmentValue"
-                @changeStore="handleFulfillmentOption"
-                @radioChange="handleFulfillmentOption"
-              />
+                <div v-if="productOptions && productOptions.textBoxOptions">
+                  <div
+                    v-for="option in productOptions.textBoxOptions"
+                    :key="option.name"
+                    class="textBoxOptions"
+                  >
+                    <SfInput
+                      :label="option.attributeDetail.name"
+                      :value="option.values[0].shopperEnteredValue"
+                      :name="option.attributeFQN"
+                      type="text"
+                      valid
+                      error-message="Error message value of form input. It appears if `valid` is `false`."
+                      :required="option.isRequired"
+                      :disabled="false"
+                      :has-show-password="false"
+                      @input="
+                        (shopperEnteredValue) =>
+                          updateShopperEnteredValues(
+                            option.attributeFQN,
+                            undefined,
+                            shopperEnteredValue
+                          )
+                      "
+                    />
+                  </div>
+                </div>
 
-              <SfDivider class="divider-second desktop-only" />
+                <SfDivider class="divider-first desktop-only" />
 
-              <div class="add-to-cart-wrapper">
-                <KiboProductActions
-                  v-model="qtySelected"
-                  :quantity-left="quantityLeft"
-                  :is-valid-for-add-to-cart="isValidForAddToCart"
-                  :label-add-to-cart="$t('Add to Cart')"
-                  :label-add-to-wishlist="wishlistLabel"
-                  @addItemToCart="addToCart"
-                  @addItemWishlist="addItemToWishList"
+                <KiboFulfillmentOptions
+                  class="product__fullfillment"
+                  :fulfillment-options="productFulfillmentOptions"
+                  :cart-item-purchase-location="purchaseLocation.name"
+                  :selected-option="selectedFulfillmentValue"
+                  @changeStore="handleFulfillmentOption"
+                  @radioChange="handleFulfillmentOption"
                 />
-              </div>
 
-              <SfDivider class="divider-first smartphone-only" />
+                <SfDivider class="divider-second desktop-only" />
 
-              <div class="product__rating smartphone-only">
-                <SfRating :score="3" :max="5" />
-                <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+                <div class="add-to-cart-wrapper">
+                  <KiboProductActions
+                    v-model="qtySelected"
+                    :quantity-left="quantityLeft"
+                    :is-valid-for-add-to-cart="isValidForAddToCart"
+                    :label-add-to-cart="$t('Add to Cart')"
+                    :label-add-to-wishlist="wishlistLabel"
+                    @addItemToCart="addToCart"
+                    @addItemWishlist="addItemToWishList"
+                  />
+                </div>
 
-                <SfButton
-                  class="sf-button--text"
-                  data-testid="read-all-reviews"
-                  @click="changeTab(2)"
-                >
-                  {{ $t("WriteReview") }}
-                </SfButton>
-              </div>
+                <SfDivider class="divider-first smartphone-only" />
 
-              <!-- <div>
+                <div class="product__rating smartphone-only">
+                  <SfRating :score="3" :max="5" />
+                  <a href="#" class="product__count"> ({{ totalReviews }}) </a>
+
+                  <SfButton
+                    class="sf-button--text"
+                    data-testid="read-all-reviews"
+                    @click="changeTab(2)"
+                  >
+                    {{ $t("WriteReview") }}
+                  </SfButton>
+                </div>
+
+                <!-- <div>
                 <h4 class="sf-heading__title h4">Product Information</h4>
                 <div class="product__description" v-html="description"></div>
               </div> -->
 
-              <div class="smartphone-only">
-                <SfAccordion
-                  open=""
-                  :first-open="false"
-                  :multiple="false"
-                  transition=""
-                  show-chevron
-                  class="prod-spec-mobile"
-                >
-                  <SfAccordionItem header="Product Specs">
-                    <SfList class="accordion-list">
-                      <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
-                        {{ i }}: {{ p }}
-                      </SfListItem>
-                    </SfList>
-                  </SfAccordionItem>
-                </SfAccordion>
+                <div class="smartphone-only">
+                  <SfAccordion
+                    open=""
+                    :first-open="false"
+                    :multiple="false"
+                    transition=""
+                    show-chevron
+                    class="prod-spec-mobile"
+                  >
+                    <SfAccordionItem header="Product Specs">
+                      <SfList class="accordion-list">
+                        <SfListItem v-for="(p, i) in properties" :key="i" :name="i">
+                          {{ i }}: {{ p }}
+                        </SfListItem>
+                      </SfList>
+                    </SfAccordionItem>
+                  </SfAccordion>
+                </div>
               </div>
-              </div>
-
             </div>
 
-              <div class="product__accordion">
+            <div class="product__accordion">
               <SfAccordion open="false" :multiple="true" transition="" showChevron>
                 <SfAccordionItem header="Description">
                   <SfList>
@@ -296,27 +308,26 @@
                 <SfAccordionItem header="Specification">
                   <SfList>
                     <SfListItem>
-                      <div></div>
+                      <div v-html="properties.Specifications[0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
                 <SfAccordionItem header="Materials">
                   <SfList>
                     <SfListItem>
-                      <div></div>
+                      <div v-html="properties.Materials[0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
                 <SfAccordionItem header="Other Details">
                   <SfList>
                     <SfListItem>
-                      <div></div>
+                      <div v-html="properties['Other Details'][0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
               </SfAccordion>
-              </div>
-
+            </div>
           </div>
         </div>
       </div>
@@ -802,6 +813,17 @@ export default defineComponent({
   &__gallery-zoom-icon {
     width: 80%;
     justify-content: right;
+  }
+}
+
+.msrp {
+  width: 100%;
+  display: flex;
+  margin-bottom: var(--spacer-xs);
+  align-items: baseline;
+
+  &__setMargin {
+    margin-right: var(--spacer-xs);
   }
 }
 

@@ -461,6 +461,24 @@ $dialog-background: #fff;
     }
   }
 
+  ::v-deep &__content {
+    margin-right: 2px;
+    overflow-x: hidden;
+
+    &::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px var(--_c-lightbg-primary-lighten);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--_c-gray-primary-darken);
+      outline: 1px solid var(--_c-lightbg-primary);
+    }
+  }
+
   ::v-deep &__title {
     --heading-title-color: var(--c-white);
   }
