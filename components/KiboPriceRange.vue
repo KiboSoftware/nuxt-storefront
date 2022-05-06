@@ -1,9 +1,14 @@
 <template>
   <div class="range__container">
     <div :class="lowerSalePrice && 'range__with-sale-price'">
-      <KiboPrice
+      <!-- <KiboPrice
         v-if="lowerPrice"
         :regular="$n(lowerPrice, 'currency')"
+        :special="lowerSalePrice && $n(lowerSalePrice, 'currency')"
+        :small="small"
+      /> -->
+      <KiboPrice
+        v-if="lowerPrice && lowerSalePrice"
         :special="lowerSalePrice && $n(lowerSalePrice, 'currency')"
         :small="small"
       />
@@ -75,12 +80,12 @@ export default {
     align-items: center;
   }
 
-  &__with-sale-price::before {
-    content: "(";
-  }
+  // &__with-sale-price::before {
+  //   content: "(";
+  // }
 
-  &__with-sale-price::after {
-    content: ")";
-  }
+  // &__with-sale-price::after {
+  //   content: ")";
+  // }
 }
 </style>
