@@ -298,28 +298,28 @@
 
             <div class="product__accordion">
               <SfAccordion open="false" :multiple="true" transition="" showChevron>
-                <SfAccordionItem header="Description">
+                <SfAccordionItem header="Description" v-if="description">
                   <SfList>
                     <SfListItem>
                       <div v-html="description"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
-                <SfAccordionItem header="Specification">
+                <SfAccordionItem header="Specification" v-if="properties.Specifications">
                   <SfList>
                     <SfListItem>
                       <div v-html="properties.Specifications[0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
-                <SfAccordionItem header="Materials">
+                <SfAccordionItem header="Materials" v-if="properties.Materials">
                   <SfList>
                     <SfListItem>
                       <div v-html="properties.Materials[0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
-                <SfAccordionItem header="Other Details">
+                <SfAccordionItem header="Other Details" v-if="properties['Other Details']">
                   <SfList>
                     <SfListItem>
                       <div v-html="properties['Other Details'][0]"></div>
