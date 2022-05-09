@@ -28,6 +28,31 @@
                 :coupons="couponsApplied"
               />
             </div>
+
+            <div v-if="regularPrice && !specialPrice" class="kibo-collectedProduct__total-wrapper">
+              <div>
+                Total Price :
+                <span
+                  >{{ $n(multiplyAttributes(quantity, regularPrice), "currency") }} ({{
+                    quantity
+                  }}
+                  x {{ $n(regularPrice, "currency") }})</span
+                >
+              </div>
+            </div>
+
+            <div v-if="specialPrice" class="kibo-collectedProduct__total-wrapper">
+              <div>
+                Total Price :
+                <span
+                  >{{ $n(multiplyAttributes(quantity, specialPrice), "currency") }} ({{
+                    quantity
+                  }}
+                  x {{ $n(specialPrice, "currency") }})</span
+                >
+              </div>
+            </div>
+
             <div class="kibo-collectedProduct__quantitySelector-wrapper">
               <p>{{ $t("Qty") }}</p>
               <SfQuantitySelector
@@ -207,6 +232,10 @@ export default defineComponent({
       showMobileCartActions.value = !showMobileCartActions.value
     }
 
+    const multiplyAttributes = (qty, price) => {
+      return qty * price
+    }
+
     const getInStorePickupDetails = (option) => {
       if (option?.fulfillmentMethod === "Pickup") {
         return `${context.root.$t("Available at")} ${option.fulfillmentLocation}`
@@ -286,6 +315,7 @@ export default defineComponent({
     }
 
     return {
+      multiplyAttributes,
       removeHandler,
       handleQuantitySelectorInput,
       handleRemoveCartItem,

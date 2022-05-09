@@ -69,21 +69,21 @@
               </div>
 
               <div class="product__price-and-rating">
-                <div class="msrp" v-if="product && product.price">
+                <!-- <div class="msrp" v-if="product && product.price">
                   <span class="msrp__setMargin">MSRP : </span>
                   <KiboPrice
                     class="kibo-collectedProduct__price"
                     :regular="$n(productGetters.getPrice(product).regular, 'currency')"
                   />
-                </div>
+                </div> -->
 
-                <div class="msrp" v-if="product && product.priceRange && !product.price">
+                <!-- <div class="msrp" v-if="product && product.priceRange && !product.price">
                   <span class="msrp__setMargin">MSRP : </span>
                   <KiboPrice
                     class="kibo-collectedProduct__price"
                     :regular="$n(productGetters.getPriceRange(product).upper.price, 'currency')"
                   />
-                </div>
+                </div> -->
 
                 <div v-if="product && product.price">
                   <KiboPrice
