@@ -156,6 +156,16 @@
     margin: var(--collected-product-main-margin, 0 0 0 var(--spacer-sm));
   }
 
+  &__total-wrapper{
+    flex: 1;
+    margin: var(--collected-product-main-margin, 0 var(--spacer-sm));
+    font-size: var(--font-size--sm);
+
+    span{
+      font-weight: var(--font-weight--bold);
+    }
+  }
+
   &__quantitySelector-wrapper {
     display: flex;
     align-items: center;
