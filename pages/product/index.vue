@@ -320,7 +320,7 @@ export default defineComponent({
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
 
     const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
-    const { loading: cartLoading, cart, addItemsToCart } = useCart()
+    const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const {
@@ -371,7 +371,7 @@ export default defineComponent({
     })
 
     const isLoadingWishlist = computed(() => {
-      return loadingWishlist.value || cartLoading.value
+      return loadingWishlist.value
     })
 
     const fetchProductLocationInventory = async () => {

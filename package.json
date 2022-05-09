@@ -29,7 +29,7 @@
       "yarn stylelint"
     ],
     "*.{ts,js}": [
-      "yarn test"
+      "yarn test --passWithNoTests"
     ]
   },
   "dependencies": {
