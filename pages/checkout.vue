@@ -1,128 +1,191 @@
 <template>
-  <div id="checkout">
-    <div class="checkout">
-      <div class="checkout__main">
-        <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
-          <SfStep name="Details">
-            <KiboPersonalDetails
-              :value="personalDetails"
-              @input="updatePersonalDetails"
-              @log-in="logIn"
-              @validateForm="validatePersonalDetails"
-            >
-            </KiboPersonalDetails>
-          </SfStep>
-          <SfStep name="Shipping">
-            <KiboShipping
-              :shipping-address="shippingDetails"
-              :user-shipping-addresses="userShippingAddresses"
-              :countries="countries"
-              @saveShippingAddress="saveShippingDetails"
-              @validateForm="validateShippingDetails"
-            >
-              <template #shipping-methods-form>
-                <KiboShippingMethodForm
-                  :order="checkout"
-                  :cart-item-purchase-location="purchaseLocation.name"
-                  :shipping-rates="shippingRates"
-                  @saveShippingMethod="saveShippingMethod"
-                  @handleStoreLocatorClick="handleStoreLocatorClick"
-                  @validateForm="validateShippingRates"
-                />
-              </template>
-            </KiboShipping>
-          </SfStep>
-          <SfStep name="Payment">
-            <KiboPayments
-              :countries="countries"
-              :shipping-address="updatedShippingAddress"
-              :cards="cards"
-              :is-loading-payment-methods="isLoadingPaymentMethods"
-              :user-billing-addresses="userBillingAddresses"
-              :is-checkout="true"
-              @saveBillingAndPayments="saveBillingAndPayments"
-              @onPaymentSelect="onPaymentSelect"
-            />
-          </SfStep>
-          <SfStep name="Review">
-            <KiboConfirmOrder :order="getOrder">
-              <template #others>
-                <SfCheckbox
-                  v-model="isTermsAndConditionsAccepted"
-                  name="terms"
-                  class="sf-confirm-order__totals-terms"
-                >
-                  <template #label>
-                    <div class="sf-checkbox__label">
-                      {{ $t("I agree to") }}
-                      <SfLink href="#">{{ $t("Terms and conditions") }}</SfLink>
+  <div class="checkout-top">
+    <header class="checkoutHeader">
+      <template>
+        <div>
+          <div class="header_main">
+            <nuxt-link :to="localePath('/')" class="sf-header__logo">
+              <SfImage
+                v-if="dropzoneContent !== undefined"
+                :src="dropzoneContent.body"
+                :alt="dropzoneContent.title"
+              />
+            </nuxt-link>
+            <div class="stepsclass hide-mobile desktop-only"></div>
+            <SfButton class="sf-button--pure sf-header__action">
+              <SfIcon
+                @click.prevent="openCTA"
+                id="cta"
+                icon="info"
+                size="lg"
+                color="black"
+                viewBox="0 0 24 24"
+                :coverage="1"
+              >
+                <!-- <fa icon="info-circle" class="icon-border" /> -->
+              </SfIcon>
+              <div v-if="myModel">
+                <transition name="model">
+                  <div class="modal-mask" id="modal-cta-checkout">
+                    <div class="modal-wrapper">
+                      <div class="modal-header">
+                        <div class="modal-title">
+                          CONTACT
+                          <div>
+                            <a @click.prevent="closeCTA"> &#10006;</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal-body">
+                        <p>Sunday 12pm – 6pm CST</p>
+                        <p>Monday – Friday 7am – 8pm CST</p>
+                        <p></p>
+                        <p>Saturday 10am – 6pm CST</p>
+                        <p>888-446-1788</p>
+                        <p>info@mysticoutdoors.com</p>
+                      </div>
                     </div>
-                  </template>
-                </SfCheckbox>
-              </template>
-            </KiboConfirmOrder>
-          </SfStep>
-        </SfSteps>
-      </div>
-      <div class="checkout__aside">
-        <transition name="sf-fade">
-          <SfLoader :loading="loading">
-            <KiboOrderSummary
-              v-if="currentStep <= 2"
-              :order="getOrder"
-              :order-title="$t('Order Summary')"
-              :order-title-level="3"
-              :number-of-items="numberOfItems"
-              :sub-total="checkoutSubTotal"
-              :standard-shipping="standardShipping"
-              :estimated-tax="estimatedTax"
-              :estimated-order-total="estimatedOrderTotal"
-              :is-valid-coupon="isValidCoupon"
-              :invalid-coupon-error-text="invalidCouponErrorText"
-              :applied-coupons="appliedCoupons"
-              :are-coupons-applied="areCouponsApplied"
-            >
-              <template #actions>
-                <SfButton
-                  class="sf-button--full-width actions__button"
-                  data-testid="apply-button"
-                  :disabled="!enableNextStep"
-                  @click="updateStep"
-                >
-                  {{ steps[currentStep] }}
-                </SfButton>
-                <SfButton
-                  v-if="currentStep !== 0"
-                  class="sf-button--full-width actions__button color-light"
-                  data-testid="apply-button"
-                  @click="currentStep--"
-                >
-                  {{ $t("Go Back") }}
-                </SfButton>
-              </template>
-            </KiboOrderSummary>
-            <KiboOrderReview
-              v-else
-              key="order-review"
-              :order="getOrder"
-              :user="user"
-              :review-title="$t('Order review')"
-              :review-title-level="3"
-              @click:personal-details-edit="currentStep = $event"
-              @click:shipping-details-edit="currentStep = $event"
-              @click:billing-details-edit="currentStep = $event"
-              @click:payment-details-edit="currentStep = $event"
-              @click:promo-code-apply="currentStep = $event"
-            />
-          </SfLoader>
-        </transition>
+                  </div>
+                </transition>
+              </div>
+            </SfButton>
+          </div>
+        </div>
+      </template>
+    </header>
+    <div id="checkout">
+      <div class="checkout">
+        <div class="checkout__main">
+          <SfSteps>
+            <SfStep name="Details">
+              <KiboPersonalDetails
+                :value="personalDetails"
+                @input="updatePersonalDetails"
+                @log-in="logIn"
+                @validateForm="validatePersonalDetails"
+              >
+              </KiboPersonalDetails>
+            </SfStep>
+            <SfStep name="Shipping">
+              <KiboShipping
+                :shipping-address="shippingDetails"
+                :user-shipping-addresses="userShippingAddresses"
+                :countries="countries"
+                @saveShippingAddress="saveShippingDetails"
+                @validateForm="validateShippingDetails"
+              >
+                <template #shipping-methods-form>
+                  <KiboShippingMethodForm
+                    :order="checkout"
+                    :cart-item-purchase-location="purchaseLocation.name"
+                    :shipping-rates="shippingRates"
+                    @saveShippingMethod="saveShippingMethod"
+                    @handleStoreLocatorClick="handleStoreLocatorClick"
+                    @validateForm="validateShippingRates"
+                  />
+                </template>
+              </KiboShipping>
+            </SfStep>
+            <SfStep name="Payment">
+              <KiboPayments
+                :countries="countries"
+                :shipping-address="updatedShippingAddress"
+                :cards="cards"
+                :is-loading-payment-methods="isLoadingPaymentMethods"
+                :user-billing-addresses="userBillingAddresses"
+                :is-checkout="true"
+                @saveBillingAndPayments="saveBillingAndPayments"
+                @onPaymentSelect="onPaymentSelect"
+              />
+            </SfStep>
+            <SfStep name="Review">
+              <KiboConfirmOrder :order="getOrder">
+                <template #others>
+                  <SfCheckbox
+                    v-model="isTermsAndConditionsAccepted"
+                    name="terms"
+                    class="sf-confirm-order__totals-terms"
+                  >
+                    <template #label>
+                      <div class="sf-checkbox__label">
+                        {{ $t("I agree to") }}
+                        <SfLink href="#">{{ $t("Terms and conditions") }}</SfLink>
+                      </div>
+                    </template>
+                  </SfCheckbox>
+                </template>
+              </KiboConfirmOrder>
+            </SfStep>
+          </SfSteps>
+        </div>
+        <div class="checkout__aside">
+          <transition name="sf-fade">
+            <SfLoader :loading="loading">
+              <KiboOrderSummary
+                v-if="currentStep <= 2"
+                :order="getOrder"
+                :order-title="$t('Order Summary')"
+                :order-title-level="3"
+                :number-of-items="numberOfItems"
+                :sub-total="checkoutSubTotal"
+                :standard-shipping="standardShipping"
+                :estimated-tax="estimatedTax"
+                :estimated-order-total="estimatedOrderTotal"
+                :is-valid-coupon="isValidCoupon"
+                :invalid-coupon-error-text="invalidCouponErrorText"
+                :applied-coupons="appliedCoupons"
+                :are-coupons-applied="areCouponsApplied"
+              >
+                <template #actions>
+                  <SfButton
+                    class="sf-button--full-width actions__button"
+                    data-testid="apply-button"
+                    :disabled="!enableNextStep"
+                    @click="updateStep"
+                  >
+                    {{ steps[currentStep] }}
+                  </SfButton>
+                  <SfButton
+                    v-if="currentStep !== 0"
+                    class="sf-button--full-width actions__button color-light"
+                    data-testid="apply-button"
+                    @click="currentStep--"
+                  >
+                    {{ $t("Go Back") }}
+                  </SfButton>
+                </template>
+              </KiboOrderSummary>
+              <KiboOrderReview
+                v-else
+                key="order-review"
+                :order="getOrder"
+                :user="user"
+                :review-title="$t('Order review')"
+                :review-title-level="3"
+                @click:personal-details-edit="currentStep = $event"
+                @click:shipping-details-edit="currentStep = $event"
+                @click:billing-details-edit="currentStep = $event"
+                @click:payment-details-edit="currentStep = $event"
+                @click:promo-code-apply="currentStep = $event"
+              />
+            </SfLoader>
+          </transition>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { SfSteps, SfButton, SfLoader, SfCheckbox, SfLink } from "@storefront-ui/vue"
+import {
+  SfSteps,
+  SfButton,
+  SfLoader,
+  SfCheckbox,
+  SfLink,
+  SfImage,
+  SfIcon,
+} from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
 import { useNuxtApp } from "#app"
 import {
@@ -135,6 +198,7 @@ import {
   usePurchaseLocation,
   useUserAddresses,
   useCustomerCreditCards,
+  useDropzoneContent,
 } from "@/composables"
 import { buildPaymentMethodInput } from "@/composables/helpers"
 import {
@@ -155,8 +219,11 @@ export default {
     SfLoader,
     SfCheckbox,
     SfLink,
+    SfImage,
+    SfIcon,
   },
   setup(_, context) {
+    const myModel = ref(false)
     const nuxt = useNuxtApp()
     const countries = nuxt.nuxt2Context.$config.countries
     const { locale } = context.root.$i18n
@@ -197,6 +264,15 @@ export default {
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
+
+    const { dropzoneContent, loadProperties } = useDropzoneContent("Logo")
+
+    useAsync(async () => {
+      await loadProperties({
+        documentListName: "il-pages-template@i7d6294",
+        filter: `name eq logo`,
+      })
+    }, null)
 
     const stepLabels = {
       GO_TO_SHIPPING: context?.root?.$t("Go to Shipping"),
@@ -552,7 +628,19 @@ export default {
       currentStep.value = value
     }
 
+    const openCTA = () => {
+      myModel.value = true
+    }
+
+    const closeCTA = () => {
+      myModel.value = false
+    }
+
     return {
+      dropzoneContent,
+      myModel,
+      openCTA,
+      closeCTA,
       countries,
       currentStep,
       steps,
@@ -624,6 +712,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$steps-step-color: #e8e4e4;
+$sf-step-color: #000;
+$checkoutHeader: #d3d3d3;
+$checkoutBackground: #fff;
+
 #checkout {
   box-sizing: border-box;
   @include for-desktop {
@@ -653,6 +746,8 @@ export default {
       flex: 1;
       padding: var(--spacer-xl) 0 0 0;
       width: 65.74%; //860px;
+      margin-top: -124px;
+      margin-left: 60px;
     }
   }
 
@@ -701,12 +796,6 @@ export default {
 .form {
   &__checkbox {
     width: 100%;
-  }
-}
-
-::v-deep .sf-steps {
-  &__content {
-    padding: 0;
   }
 }
 
@@ -814,5 +903,116 @@ export default {
   &__title {
     --heading-title-font-weight: var(--font-weight--medium);
   }
+}
+
+.stepsclass {
+  float: left;
+  display: flex;
+  margin-left: 100px;
+}
+
+.header_main {
+  margin: auto;
+  width: 1240px;
+  height: 54px;
+}
+
+.checkoutHeader {
+  @include for-desktop {
+    box-shadow: 2px 3px 3px $checkoutHeader;
+    background: $checkoutBackground;
+  }
+
+  position: absolute;
+  width: 100%;
+  left: 0;
+  margin-top: -84px;
+
+  @include for-mobile {
+    position: fixed;
+    top: 0;
+    background-color: var(--c-white);
+    z-index: 9999;
+  }
+}
+
+.checkout-top {
+  margin-top: -100px;
+}
+
+::v-deep .sf-steps {
+  &__header {
+    margin-left: 100px;
+    column-gap: 30px;
+    margin-top: 22px;
+  }
+
+  &__progress {
+    background: none;
+  }
+
+  &__step.current {
+    color: $sf-step-color;
+
+    --steps-step-after-background: none;
+
+    font-weight: 700;
+  }
+
+  &__content {
+    padding: 0;
+  }
+}
+
+.sf-header {
+  &__logo {
+    position: relative;
+    display: flex;
+    flex: 10%;
+    margin-left: -80px;
+    top: 13px;
+    width: 10px;
+  }
+
+  &__action {
+    float: right;
+    margin-top: -26px;
+    margin-left: 300px;
+  }
+}
+
+.modal-mask {
+  position: absolute;
+  z-index: 9998;
+  margin-top: 34px;
+  right: -11px;
+  background-color: var(--c-white);
+  box-shadow: 2px 2px 2px var(--c-innerbg-primary);
+  display: flex;
+}
+
+.modal-body {
+  padding: 10px 20px;
+  text-align: left;
+}
+
+.modal-wrapper {
+  transition-duration: 224ms;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  visibility: visible;
+  max-height: 800px;
+}
+
+.modal-title {
+  color: var(--c-black);
+  background: var(--c-primary);
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 18px;
+  font-size: 1rem;
+  font-weight: bold;
+  align-items: center;
 }
 </style>

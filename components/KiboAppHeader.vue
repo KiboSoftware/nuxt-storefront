@@ -55,7 +55,7 @@
     </KiboHamburgerMenu>
 
     <div class="desktop-only">
-      <div class="kibo-top-bar">
+      <div class="kibo-top-bar" v-if="!checkoutSteps.includes($route.path)">
         <div class="kibo-top-bar__container">
           <!-- <div class="kibo-top-bar__logo">
             <div class="kibo-top-bar__kibo-img">
@@ -65,16 +65,25 @@
               </SfLink>
             </div>
           </div> -->
-          <div class="kibo-top-bar__content"></div>
-          <div class="kibo-top-bar__nav-link">
+          <div class="kibo-top-bar__content">
+            <nuxt-link :to="localePath('/c/CampHike')" class="sf-header__logo">
+              <div v-if="promobaner !== undefined" v-html="promobaner.body"></div>
+            </nuxt-link>
+          </div>
+          <!-- <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div> -->
+          <!-- <div class="kibo-top-bar__nav-link" >
             <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
             <div><SfMenuItem label="Nav Link 2" /></div>
             <div><SfMenuItem label="Nav Link 3" /></div>
             <div><SfMenuItem label="Nav Link 4" /></div>
-          </div>
+          </div> -->
         </div>
       </div>
-      <div class="kibo-header" :class="{ 'desktop-header': desktopClass }">
+      <div
+        class="kibo-header"
+        :class="{ 'desktop-header': desktopClass }"
+        v-if="!checkoutSteps.includes($route.path)"
+      >
         <div class="kibo-header__container">
           <div class="kibo-top-bar__kibo-img">
             <SfLink link="/">
@@ -232,6 +241,11 @@
       <!-- <div class="line-2"></div> -->
     </div>
     <div class="kibo-mobile smartphone-only">
+      <div class="kibo-top-bar__content">
+        <nuxt-link :to="localePath('/c/CampHike')" class="sf-header__logo">
+          <div v-if="promobaner !== undefined" v-html="promobaner.body"></div>
+        </nuxt-link>
+      </div>
       <div class="kibo-mobile__header-container">
         <div class="kibo-mobile__header">
           <div class="kibo-mobile__header-column logo_image_mobile">
@@ -468,6 +482,7 @@ export default defineComponent({
   },
   directives: { clickOutside },
   setup(_, context) {
+    const checkoutSteps = ["/Checkout", "/checkout"]
     const { isMobileMenuOpen, toggleMobileMenu } = useUiState()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
@@ -505,6 +520,8 @@ export default defineComponent({
     const showSubCategory = ref(false)
     const selectedCategory = ref([])
     const selectedCategoryCount = ref(-1)
+    const { dropzoneContent: promobaner, loadProperties: loadPromoBaner } =
+      useDropzoneContent("promobaner")
 
     const { dropzoneContent, loadProperties } = useDropzoneContent("Logo")
 
@@ -512,6 +529,10 @@ export default defineComponent({
       await loadProperties({
         documentListName: "il-pages-template@i7d6294",
         filter: `name eq logo`,
+      })
+      await loadPromoBaner({
+        documentListName: "il-pages-template@i7d6294",
+        filter: `name eq promobaner`,
       })
     }, null)
 
@@ -777,6 +798,8 @@ export default defineComponent({
       desktopClass,
       handleScroll,
       dropzoneContent,
+      checkoutSteps,
+      promobaner,
     }
   },
 })
@@ -969,7 +992,7 @@ $background: #fff;
 
 .kibo-top-bar {
   display: flex;
-  background-color: var(--_c-dark-primary);
+  background-color: #000;
   width: 100%;
   height: calc(var(--spacer-xs) * 7);
 
@@ -986,8 +1009,7 @@ $background: #fff;
   }
 
   &__content {
-    display: flex;
-    flex: 55%;
+    flex: 1000%;
   }
 
   &__nav-link {
@@ -1010,6 +1032,7 @@ $background: #fff;
 
   ::v-deep .sf-menu-item {
     &__label {
+      margin-top: 13px;
       color: var(--menu-item-label-color, var(--_c-light-secondary));
     }
   }
