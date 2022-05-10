@@ -69,21 +69,34 @@
               </div>
 
               <div class="product__price-and-rating">
-                <!-- <div class="msrp" v-if="product && product.price">
+                <div class="msrp" v-if="product && product.price && product.price.msrp">
                   <span class="msrp__setMargin">MSRP : </span>
                   <KiboPrice
                     class="kibo-collectedProduct__price"
-                    :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+                    :regular="$n(product.price.msrp, 'currency')"
                   />
-                </div> -->
+                </div>
 
-                <!-- <div class="msrp" v-if="product && product.priceRange && !product.price">
+                <div
+                  class="msrp"
+                  v-if="
+                    product &&
+                    product.priceRange &&
+                    !product.price &&
+                    product.priceRange.lower.msrp !== null
+                  "
+                >
                   <span class="msrp__setMargin">MSRP : </span>
                   <KiboPrice
                     class="kibo-collectedProduct__price"
-                    :regular="$n(productGetters.getPriceRange(product).upper.price, 'currency')"
+                    :regular="$n(product.priceRange.lower.msrp, 'currency')"
                   />
-                </div> -->
+                  -
+                  <KiboPrice
+                    class="kibo-collectedProduct__price"
+                    :regular="$n(product.priceRange.upper.msrp, 'currency')"
+                  />
+                </div>
 
                 <div v-if="product && product.price">
                   <KiboPrice
@@ -298,28 +311,28 @@
 
             <div class="product__accordion">
               <SfAccordion open="false" :multiple="true" transition="" showChevron>
-                <SfAccordionItem header="Description">
+                <SfAccordionItem header="Description" v-if="description">
                   <SfList>
                     <SfListItem>
                       <div v-html="description"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
-                <SfAccordionItem header="Specification">
+                <SfAccordionItem header="Specification" v-if="properties.Specifications">
                   <SfList>
                     <SfListItem>
                       <div v-html="properties.Specifications[0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
-                <SfAccordionItem header="Materials">
+                <SfAccordionItem header="Materials" v-if="properties.Materials">
                   <SfList>
                     <SfListItem>
                       <div v-html="properties.Materials[0]"></div>
                     </SfListItem>
                   </SfList>
                 </SfAccordionItem>
-                <SfAccordionItem header="Other Details">
+                <SfAccordionItem header="Other Details" v-if="properties['Other Details']">
                   <SfList>
                     <SfListItem>
                       <div v-html="properties['Other Details'][0]"></div>
@@ -824,6 +837,10 @@ export default defineComponent({
 
   &__setMargin {
     margin-right: var(--spacer-xs);
+  }
+
+  ::v-deep .kibo-collectedProduct__price {
+    margin: 0 var(--spacer-xs);
   }
 }
 
