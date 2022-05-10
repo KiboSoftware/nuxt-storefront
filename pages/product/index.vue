@@ -69,21 +69,34 @@
               </div>
 
               <div class="product__price-and-rating">
-                <!-- <div class="msrp" v-if="product && product.price">
+                <div class="msrp" v-if="product && product.price && product.price.msrp">
                   <span class="msrp__setMargin">MSRP : </span>
                   <KiboPrice
                     class="kibo-collectedProduct__price"
-                    :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+                    :regular="$n(product.price.msrp, 'currency')"
                   />
-                </div> -->
+                </div>
 
-                <!-- <div class="msrp" v-if="product && product.priceRange && !product.price">
+                <div
+                  class="msrp"
+                  v-if="
+                    product &&
+                    product.priceRange &&
+                    !product.price &&
+                    product.priceRange.lower.msrp !== null
+                  "
+                >
                   <span class="msrp__setMargin">MSRP : </span>
                   <KiboPrice
                     class="kibo-collectedProduct__price"
-                    :regular="$n(productGetters.getPriceRange(product).upper.price, 'currency')"
+                    :regular="$n(product.priceRange.lower.msrp, 'currency')"
                   />
-                </div> -->
+                  -
+                  <KiboPrice
+                    class="kibo-collectedProduct__price"
+                    :regular="$n(product.priceRange.upper.msrp, 'currency')"
+                  />
+                </div>
 
                 <div v-if="product && product.price">
                   <KiboPrice
@@ -824,6 +837,10 @@ export default defineComponent({
 
   &__setMargin {
     margin-right: var(--spacer-xs);
+  }
+
+  ::v-deep .kibo-collectedProduct__price {
+    margin: 0 var(--spacer-xs);
   }
 }
 

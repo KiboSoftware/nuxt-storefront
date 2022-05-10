@@ -1,4 +1,4 @@
-export const configureProductMutation = /* GraphQL */`
+export const configureProductMutation = /* GraphQL */ `
   mutation configureProduct(
     $productCode: String!
     $selectedOptions: ProductOptionSelectionsInput!
@@ -16,6 +16,7 @@ export const configureProductMutation = /* GraphQL */`
       price {
         salePrice
         price
+        msrp
       }
       productImages {
         imageUrl
