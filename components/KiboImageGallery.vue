@@ -103,7 +103,7 @@
         <div class="thumbnail__dots-container">
           <div
             v-for="(image, i) in images"
-            :key="image.mobile.url"
+            :key="'thumbnail' + image.mobile.url"
             class="thumbnail__dots"
             :class="selectedImage.index === i && 'thumbnail__dots--selected'"
             @click="
