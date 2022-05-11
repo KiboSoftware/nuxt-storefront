@@ -1,0 +1,832 @@
+<template>
+  <div class="product">
+    <LazyHydrate when-idle>
+      <SfGallery
+        :images="productGallery"
+        class="product__gallery"
+        :outsideZoom="false"
+        :enableZoom="true"
+        :sliderOptions="{ type: 'slider', autoplay: false, rewind: false, gap: 0 }"
+        :current="1"
+      />
+    </LazyHydrate>
+
+    <div class="product__info">
+      <div class="product__header">
+        <SfHeading
+          :title="productName"
+          :level="3"
+          class="sf-heading--no-underline sf-heading--left"
+        />
+        <!-- <SfButton
+            class="sf-button--pure sf-header__action on_wishList"
+            v-if="isAuthenticated && isPurchasable"
+            @click="
+              !isInWishlist({ product })
+                ? addItemToWishlist({ product })
+                : removeItemFromWishlist({ product })
+            "
+          >
+            <SfIcon
+              class="sf-header__icon"
+              :icon="currentWishlistIcon"
+              size="1.25rem"
+              data-test="sf-wishlist-icon"
+            />
+          </SfButton> -->
+        <SfIcon
+          icon="drag"
+          size="xxl"
+          color="var(--c-text-disabled)"
+          class="product__drag-icon smartphone-only"
+        />
+      </div>
+      <div class="product__price-and-rating">
+        <div class="product__price">
+          <!-- <div
+              v-if="productGetters.getProductMsrp(product).msrp"
+              class="product__msrp"
+            >
+              MSRP :
+              <span
+                v-html="
+                  $n(productGetters.getProductMsrp(product).msrp, 'currency')
+                "
+              ></span>
+            </div> -->
+
+          <div v-if="product && product.price">
+            <KiboPrice
+              :regular="$n(productGetters.getPrice(product).regular, 'currency')"
+              :special="
+                product.price.salePrice && $n(productGetters.getPrice(product).special, 'currency')
+              "
+              class="kibo-collectedProduct__price"
+            />
+          </div>
+          <div v-if="product && product.priceRange && !product.price">
+            <KiboPriceRange
+              :lower="productGetters.getPriceRange(product).lower"
+              :upper="productGetters.getPriceRange(product).upper"
+            />
+          </div>
+        </div>
+
+        <div>
+          <div class="product__rating">
+            <SfRating :score="3" :max="5" />
+            <a v-if="!!totalReviews" href="#" class="product__count"> ({{ totalReviews }}) </a>
+          </div>
+          <SfButton data-cy="product-btn_read-all" class="sf-button--text">{{
+            $t("Read all reviews")
+          }}</SfButton>
+        </div>
+      </div>
+      <div>
+        <p
+          v-if="shortDescription"
+          class="product__description desktop-only"
+          v-html="shortDescription"
+        ></p>
+
+        <SfButton
+          @click="moreDetailLink(product)"
+          data-cy="product-btn_size-guide"
+          class="sf-button--text desktop-only product__guide"
+        >
+          {{ $t("More Details") }}
+        </SfButton>
+
+        <div v-if="productOptions && productOptions.sizeOptions">
+          <SfSelect
+            data-cy="product-select_size"
+            v-if="productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values"
+            :value="size"
+            label="Select size"
+            class="sf-select--underlined product__select-size"
+            :required="true"
+            @input="(size) => selectOption(productOptions.sizeOptions.attributeFQN, size)"
+          >
+            <SfSelectOption
+              v-for="size in productOptions.sizeOptions.values"
+              :key="size.value"
+              :value="size.value"
+            >
+              {{ size.value }}
+            </SfSelectOption>
+          </SfSelect>
+        </div>
+
+        <div v-if="productOptions && productOptions.listOptions">
+          <SfSelect
+            v-for="(option, index) in productOptions.listOptions"
+            :key="index"
+            data-cy="product-select_size"
+            :value="productGetters.getOptionSelectedValue(option)"
+            :label="productGetters.getOptionName(option)"
+            :required="option.isRequired"
+            @input="(value) => selectOption(option.attributeFQN, value)"
+          >
+            <SfSelectOption
+              v-for="optionVal in option.values"
+              :key="optionVal.value"
+              :value="optionVal.value"
+            >
+              {{ optionVal.stringValue }}
+            </SfSelectOption>
+          </SfSelect>
+        </div>
+
+        <div
+          v-if="
+            productOptions && productOptions.colourOptions && productOptions.colourOptions.values
+          "
+          class="product__colors"
+        >
+          <div class="product__color-label desktop-only">{{ $t("Color") }}:</div>
+
+          <SfColor
+            v-for="(option, i) in productOptions.colourOptions.values"
+            :key="i"
+            data-cy="product-color_update"
+            :color="option.value"
+            :class="{ 'sf-color--active': option.isSelected, disabled: false }"
+            @click="selectOption(productOptions.colourOptions.attributeFQN, option.value)"
+          />
+        </div>
+
+        <SfDivider class="divider-first desktop-only" />
+
+        <KiboFulfillmentOptions
+          class="product__fullfillment"
+          :fulfillment-options="productFulfillmentOptions"
+          :cart-item-purchase-location="purchaseLocation.name"
+          :selected-option="selectedFulfillmentValue"
+          @changeStore="handleFulfillmentOption"
+          @radioChange="handleFulfillmentOption"
+        />
+
+        <SfDivider class="divider-second desktop-only" />
+
+        <div class="add-to-cart-wrapper">
+          <KiboProductActions
+            v-model="qtySelected"
+            :quantity-left="quantityLeft"
+            :is-valid-for-add-to-cart="isValidForAddToCart"
+            :label-add-to-cart="$t('Add to Cart')"
+            @addItemToCart="addToCart"
+          />
+        </div>
+
+        <!-- 
+            
+          
+          <div
+            v-if="options.color && options.color.length > 1"
+            class="product__colors desktop-only"
+          >
+            <p class="product__color-label">{{ $t('Color') }}:</p>
+            <SfColor
+              data-cy="product-color_update"
+              v-for="(color, i) in options.color"
+              :key="i"
+              :color="color"
+              class="product__color"
+              @click="updateFilter({ color })"
+            />
+          </div>
+          <SfAddToCart
+            data-cy="product-cart_add"
+            :stock="stock"
+            v-model="qty"
+            :disabled="loading || !isPurchasable"
+            :canAddToCart="stock > 0"
+            class="product__add-to-cart"
+            @click="addItemToCart(product, qty)"
+          /> -->
+      </div>
+
+      <!-- <div
+          class="unavailable-product"
+          v-if="product.isActive && !isPurchasable"
+        >
+          Unavailable !!
+        </div> -->
+    </div>
+  </div>
+</template>
+<script>
+import {
+  SfHeading,
+  SfRating,
+  SfSelect,
+  SfGallery,
+  SfIcon,
+  SfButton,
+  SfColor,
+  SfDivider,
+} from "@storefront-ui/vue"
+import { ref, computed } from "@vue/composition-api"
+import { useAsync } from "@nuxtjs/composition-api"
+import LazyHydrate from "vue-lazy-hydration"
+// import QuickViewModal from '../components/QuickViewModal.vue';
+import { useUiHelpers, useProduct, useCart, useUiState } from "@/composables"
+
+import { buildAddToCartInput } from "@/composables/helpers"
+import { productGetters } from "@/lib/getters"
+import { useState, useNuxtApp } from "#app"
+import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
+
+export default {
+  name: "Quickview",
+  transition: "fade",
+  //   components:{
+  //      QuickViewModal
+  //   },
+
+  //   props: {
+
+  //     wishlistIcon: {
+  //       type: [String, Array, Boolean],
+
+  //       default: 'heart'
+  //     },
+
+  //     isOnWishlistIcon: {
+  //       type: [String, Array],
+
+  //       default: 'heart_fill'
+  //     }
+  //   },
+
+  props: ["productObj"],
+  setup(props, context) {
+    const Oldproduct = ref(props.productObj)
+    const { getProductLink } = useUiHelpers()
+
+    const { cart, addItemsToCart } = useCart()
+    const { toggleAddToCartConfirmationModal } = useUiState()
+    const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
+    const qtySelected = useState(`pdp-selected-qty`, () => 1)
+    const quantityLeft = computed(() => 5)
+
+    // console.log('OLDPRODUCT', Oldproduct)
+
+    //  const productCode = Oldproduct.value.productCode;
+    const productCode = props.productObj.productCode
+    console.log("ProductCode", productCode)
+    const { load, product, configure, setFulfillment } = useProduct(productCode)
+
+    const nuxt = useNuxtApp()
+    const modal = nuxt.nuxt2Context.$modal
+
+    useAsync(async () => {
+      console.log("Async productcode", productCode)
+      await load(productCode)
+      console.log(product.value)
+    }, null)
+
+    // console.log(product, productGetters.getName(product.value))
+    const productName = computed(() => productGetters.getName(Oldproduct.value))
+    const totalReviews = computed(() => productGetters.getProductTotalReviews())
+    const shortDescription = computed(() => productGetters.getShortDescription(Oldproduct.value))
+    const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
+    const productGallery = computed(() => productGetters.getSFProductGallery(Oldproduct.value))
+    const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
+    const productFulfillmentOptions = computed(() =>
+      productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
+    )
+    const selectedFulfillmentValue = computed(() =>
+      productGetters.getSelectedFullfillmentOption(product.value)
+    )
+    console.log("Valid", isValidForAddToCart.value)
+    console.log("productOptions", productOptions)
+
+    const moreDetailLink = (product) => {
+      document.querySelector("body").classList.remove("overflow-hidden")
+      return (window.location.href = getProductLink(productGetters.getProductId(product)))
+    }
+
+    const handleFulfillmentOption = (selectedFulfillmentValue, shouldOpenModal) => {
+      if (!shouldOpenModal) {
+        setFulfillment(selectedFulfillmentValue, purchaseLocation?.value?.code)
+      } else {
+        modal.show({
+          component: StoreLocatorModal,
+          props: {
+            title: context?.root?.$t("Select Store"),
+            handleSetStore: async (selectedStore) => {
+              set(selectedStore)
+              await loadPurchaseLocation()
+              setFulfillment(selectedFulfillmentValue, purchaseLocation.value?.code)
+            },
+          },
+        })
+      }
+    }
+
+    let shopperEnteredValues = []
+
+    const selectOption = async (attributeFQN, value, shopperEnteredValue) => {
+      updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
+      console.log(attributeFQN, value, shopperEnteredValue, product.value?.productCode)
+      await configure(shopperEnteredValues, product.value?.productCode)
+    }
+
+    const updateShopperEnteredValues = (attributeFQN, value, shopperEnteredValue) => {
+      const itemToBeUpdated = shopperEnteredValues.find(
+        (item) => item.attributeFQN === attributeFQN
+      )
+
+      if (itemToBeUpdated) {
+        itemToBeUpdated.value = value
+        itemToBeUpdated.shopperEnteredValue = shopperEnteredValue
+      } else {
+        const itemToBeAdded = {
+          attributeFQN,
+          value,
+          shopperEnteredValue,
+        }
+
+        shopperEnteredValues.push(itemToBeAdded)
+      }
+
+      shopperEnteredValues = [
+        ...shopperEnteredValues.filter((item) => item.shopperEnteredValue !== false),
+      ]
+    }
+
+    const addToCart = async () => {
+      const productToAdd = buildAddToCartInput(
+        product.value,
+        qtySelected.value,
+        shopperEnteredValues
+      )
+      if (isValidForAddToCart.value) {
+        await addItemsToCart(productToAdd)
+        if (cart.value) toggleAddToCartConfirmationModal()
+      }
+    }
+
+    return {
+      Oldproduct,
+      productName,
+      productCode,
+      shortDescription,
+      product,
+      productGetters,
+      productGallery,
+      totalReviews,
+      getProductLink,
+      moreDetailLink,
+      productOptions,
+      selectOption,
+      updateShopperEnteredValues,
+      addToCart,
+      isValidForAddToCart,
+      qtySelected,
+      quantityLeft,
+      handleFulfillmentOption,
+      productFulfillmentOptions,
+      purchaseLocation,
+      selectedFulfillmentValue,
+    }
+  },
+  components: {
+    SfColor,
+    SfHeading,
+    SfRating,
+    SfSelect,
+    SfGallery,
+    SfIcon,
+    SfButton,
+    LazyHydrate,
+    SfDivider,
+  },
+  data() {
+    return {}
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+#product {
+  box-sizing: border-box;
+
+  @include for-desktop {
+    max-width: 1272px;
+    margin: 0 auto;
+  }
+}
+
+.product {
+  @include for-desktop {
+    display: flex;
+    flex-direction: row;
+  }
+
+  ::v-deep .sf-image {
+    height: 50px !important;
+  }
+
+  &__info {
+    //margin: var(--spacer-sm) auto;
+    @include for-desktop {
+      max-width: 39rem;
+      margin-left: -40px;
+      padding: 40px;
+      width: 50%;
+      margin-top: -45px !important;
+    }
+  }
+
+  &__header {
+    --heading-title-color: var(--c-link);
+    --heading-title-font-weight: var(--font-weight--bold);
+    --heading-padding: 0;
+
+    margin: 0 var(--spacer-sm);
+    display: flex;
+    justify-content: space-between;
+
+    @include for-desktop {
+      --heading-title-font-weight: var(--font-weight--semibold);
+
+      margin: 0 auto;
+    }
+  }
+
+  &__drag-icon {
+    animation: moveicon 1s ease-in-out infinite;
+  }
+
+  &__price-and-rating {
+    margin: 0 var(--spacer-sm) var(--spacer-base);
+    align-items: center;
+
+    @include for-desktop {
+      display: flex;
+      justify-content: space-between;
+      margin: var(--spacer-sm) 0 var(--spacer-lg) 0;
+    }
+  }
+
+  &__price {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__msrp {
+    margin-bottom: 5px;
+  }
+
+  &__rating {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin: var(--spacer-xs) 0 var(--spacer-xs);
+  }
+
+  &__count {
+    @include font(
+      --count-font,
+      var(--font-weight--normal),
+      var(--font-size--sm),
+      1.4,
+      var(--font-family--secondary)
+    );
+
+    color: var(--c-text);
+    text-decoration: none;
+    margin: 0 0 0 var(--spacer-xs);
+  }
+
+  &__description {
+    max-height: 100px;
+    overflow: auto;
+
+    @include font(
+      --product-description-font,
+      var(--font-weight--light),
+      var(--font-size--base),
+      1.6,
+      var(--font-family--primary)
+    );
+  }
+
+  &__select-size {
+    margin: 0 var(--spacer-sm);
+    @include for-desktop {
+      margin: 0;
+    }
+  }
+
+  &__colors {
+    @include font(
+      --product-color-font,
+      var(--font-weight--normal),
+      var(--font-size--lg),
+      1.6,
+      var(--font-family--secondary)
+    );
+
+    display: flex;
+    align-items: center;
+    margin-top: -20px;
+  }
+
+  &__color-label {
+    margin: 0 var(--spacer-lg) 0 0;
+  }
+
+  &__color {
+    margin: 0 var(--spacer-2xs);
+  }
+
+  &__add-to-cart {
+    @include for-desktop {
+      position: absolute;
+      width: 20%;
+      bottom: 30px;
+    }
+  }
+
+  &__guide,
+  &__compare,
+  &__save {
+    display: block;
+    margin: var(--spacer-xl) 0 var(--spacer-base) auto;
+  }
+
+  &__compare {
+    margin-top: 0;
+  }
+
+  &__tabs {
+    margin: var(--spacer-lg) auto var(--spacer-2xl);
+
+    --tabs-title-font-size: var(--font-size--lg);
+
+    @include for-desktop {
+      margin-top: var(--spacer-xs);
+    }
+  }
+
+  &__property {
+    margin: var(--spacer-base) 0;
+
+    &__button {
+      --button-font-size: var(--font-size--base);
+    }
+  }
+
+  &__review {
+    padding-bottom: 24px;
+    border-bottom: var(--c-light) solid 1px;
+    margin-bottom: var(--spacer-base);
+  }
+
+  &__additional-info {
+    color: var(--c-link);
+
+    @include font(
+      --additional-info-font,
+      var(--font-weight--light),
+      var(--font-size--sm),
+      1.6,
+      var(--font-family--primary)
+    );
+
+    &__title {
+      font-weight: var(--font-weight--normal);
+      font-size: var(--font-size--base);
+      margin: 0 0 var(--spacer-sm);
+
+      &:not(:first-child) {
+        margin-top: 3.5rem;
+      }
+    }
+
+    &__paragraph {
+      margin: 0;
+    }
+  }
+
+  &__gallery {
+    flex: 1;
+
+    ::v-deep .sf-image {
+      object-fit: contain;
+    }
+
+    @include for-mobile {
+      ::v-deep .sf-image {
+        object-fit: contain;
+      }
+    }
+  }
+}
+
+// .sf-add-to-cart {
+//   ::v-deep &__button {
+//     background-color: var(--c-primary);
+
+//     &:hover {
+//       background-color: var(--_c-gray-primary);
+//     }
+//   }
+// }
+
+// .breadcrumbs {
+//   margin: var(--spacer-base) auto var(--spacer-lg);
+// }
+
+@keyframes moveicon {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(0, 30%, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.sf-circle-icon {
+  --icon-color: var(--c-white);
+  --button-padding: 0;
+  --icon-size: 1.5rem;
+  --button-size: 3.25rem;
+  --button-background: var(--c-primary);
+  --button-border-radius: 100%;
+
+  position: var(--circle-icon-position, relative);
+
+  --button-box-shadow: 0 0 0 0.3125rem var(--c-primary);
+
+  ::v-deep &:hover {
+    --button-background: var(--c-primary);
+    --button-box-shadow-opacity: 0.3;
+  }
+}
+
+.product-badge {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 10px;
+  margin-left: 640px;
+
+  &__ {
+    width: 15%;
+  }
+}
+
+// .sf-price {
+//   @include font(
+//     --input-label-font,
+//     var(--font-weight--normal),
+//     var(--font-size--lg),
+//     1,
+//     var(--font-family--secondary)
+//   );
+
+//   text-decoration: none;
+
+//   &__special {
+//     color: var(--_c-red-primary);
+//   }
+
+//   &__old {
+//     margin: 0 var(--spacer-xs) 0 0;
+//     text-decoration: line-through;
+//   }
+// }
+
+// .accordion {
+//   margin: 0 0 var(--spacer-xs) 0;
+
+//   &__item {
+//     display: flex;
+//     align-items: flex-start;
+//   }
+
+//   &__content {
+//     flex: 1;
+//   }
+// }
+
+::v-deep .product-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 30px !important ;
+  margin-top: -13px !important;
+  padding: var(--tabs-title-padding, var(--spacer-xs));
+  background: var(--tabs-title-background);
+  color: var(--tabs-title-color);
+  transition: color 150ms ease-in-out;
+
+  @include font(
+    --tabs-title-font,
+    var(--font-weight--normal),
+    var(--font-size--base),
+    1.4,
+    var(--font-family--secondary)
+  );
+
+  &__content {
+    width: 100%;
+  }
+}
+
+// .description-hr {
+//   @include border(--tabs-title-border, 0 0 1px 0, solid, var(--c-light));
+// }
+
+// .description-others {
+//   margin-left: 40px;
+// }
+
+.unavailable-product {
+  display: flex;
+  flex-direction: column;
+  margin-left: 25px;
+  margin-top: 5px;
+  color: var(--_c-red-primary);
+}
+
+// .long-description{
+//     max-height: 100px;
+//     overflow-y: auto;
+// }
+
+::v-deep .sf-gallery {
+  &__thumbs {
+    height: 450px;
+    overflow: auto;
+    margin-top: -10px;
+    margin-left: 20px;
+  }
+
+  &__item {
+    flex: 0 0 var(--gallery-thumb-width, 5rem) !important;
+    border: 3px solid var(--c-light);
+    top: 0;
+
+    ::v-deep &__thumb {
+      height: 50px !important;
+
+      ::v-deep &__img {
+        flex: 0 0 var(--gallery-thumb-width, 5rem) !important;
+      }
+    }
+
+    &--selected {
+      border: 1px solid var(--c-light);
+      box-shadow: 0 3px 3px var(--c-light);
+      border-radius: 10px;
+    }
+  }
+}
+
+::v-deep .glide {
+  &__slide--active {
+    .sf-gallery {
+      &__big-image {
+        .sf-image {
+          height: 450px !important;
+        }
+      }
+    }
+  }
+}
+
+::v-deep .sf-select__label {
+  padding-left: 0;
+}
+
+::v-deep .sf-divider {
+  margin: 0;
+}
+
+.divider-first {
+  margin-bottom: var(--spacer-xs);
+}
+
+.divider-second {
+  margin-top: var(--spacer-xs);
+}
+
+.add-to-cart-wrapper {
+  margin: var(--spacer-sm) 0;
+}
+
+::v-deep .kibo-add-to-wishlist-one-click-container {
+  display: none;
+}
+</style>
