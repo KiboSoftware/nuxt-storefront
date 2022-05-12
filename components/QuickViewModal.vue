@@ -86,7 +86,8 @@ export default {
   }
 
   &__close {
-    margin-left: 72rem;
+    position: absolute;
+    right: 10px;
     font-weight: 700;
     cursor: pointer;
     width: 30px;

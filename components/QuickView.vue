@@ -18,22 +18,6 @@
           :level="3"
           class="sf-heading--no-underline sf-heading--left"
         />
-        <!-- <SfButton
-            class="sf-button--pure sf-header__action on_wishList"
-            v-if="isAuthenticated && isPurchasable"
-            @click="
-              !isInWishlist({ product })
-                ? addItemToWishlist({ product })
-                : removeItemFromWishlist({ product })
-            "
-          >
-            <SfIcon
-              class="sf-header__icon"
-              :icon="currentWishlistIcon"
-              size="1.25rem"
-              data-test="sf-wishlist-icon"
-            />
-          </SfButton> -->
         <SfIcon
           icon="drag"
           size="xxl"
@@ -43,17 +27,34 @@
       </div>
       <div class="product__price-and-rating">
         <div class="product__price">
-          <!-- <div
-              v-if="productGetters.getProductMsrp(product).msrp"
-              class="product__msrp"
-            >
-              MSRP :
-              <span
-                v-html="
-                  $n(productGetters.getProductMsrp(product).msrp, 'currency')
-                "
-              ></span>
-            </div> -->
+          <div class="msrp" v-if="product && product.price && product.price.msrp">
+            <span class="msrp__setMargin">MSRP : </span>
+            <KiboPrice
+              class="kibo-collectedProduct__price"
+              :regular="$n(product.price.msrp, 'currency')"
+            />
+          </div>
+
+          <div
+            class="msrp"
+            v-if="
+              product &&
+              product.priceRange &&
+              !product.price &&
+              product.priceRange.lower.msrp !== null
+            "
+          >
+            <span class="msrp__setMargin">MSRP : </span>
+            <KiboPrice
+              class="kibo-collectedProduct__price"
+              :regular="$n(product.priceRange.lower.msrp, 'currency')"
+            />
+            -
+            <KiboPrice
+              class="kibo-collectedProduct__price"
+              :regular="$n(product.priceRange.upper.msrp, 'currency')"
+            />
+          </div>
 
           <div v-if="product && product.price">
             <KiboPrice
@@ -101,7 +102,7 @@
           <SfSelect
             data-cy="product-select_size"
             v-if="productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values"
-            :value="size"
+            :value="selectedSize"
             label="Select size"
             class="sf-select--underlined product__select-size"
             :required="true"
@@ -177,38 +178,11 @@
             @addItemToCart="addToCart"
           />
         </div>
-
-        <!-- 
-            
-          
-          <div
-            v-if="options.color && options.color.length > 1"
-            class="product__colors desktop-only"
-          >
-            <p class="product__color-label">{{ $t('Color') }}:</p>
-            <SfColor
-              data-cy="product-color_update"
-              v-for="(color, i) in options.color"
-              :key="i"
-              :color="color"
-              class="product__color"
-              @click="updateFilter({ color })"
-            />
-          </div>
-          <SfAddToCart
-            data-cy="product-cart_add"
-            :stock="stock"
-            v-model="qty"
-            :disabled="loading || !isPurchasable"
-            :canAddToCart="stock > 0"
-            class="product__add-to-cart"
-            @click="addItemToCart(product, qty)"
-          /> -->
       </div>
 
       <!-- <div
           class="unavailable-product"
-          v-if="product.isActive && !isPurchasable"
+          v-if="isProductAvailable"
         >
           Unavailable !!
         </div> -->
@@ -229,7 +203,6 @@ import {
 import { ref, computed } from "@vue/composition-api"
 import { useAsync } from "@nuxtjs/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
-// import QuickViewModal from '../components/QuickViewModal.vue';
 import { useUiHelpers, useProduct, useCart, useUiState } from "@/composables"
 
 import { buildAddToCartInput } from "@/composables/helpers"
@@ -240,28 +213,9 @@ import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 export default {
   name: "Quickview",
   transition: "fade",
-  //   components:{
-  //      QuickViewModal
-  //   },
-
-  //   props: {
-
-  //     wishlistIcon: {
-  //       type: [String, Array, Boolean],
-
-  //       default: 'heart'
-  //     },
-
-  //     isOnWishlistIcon: {
-  //       type: [String, Array],
-
-  //       default: 'heart_fill'
-  //     }
-  //   },
-
   props: ["productObj"],
   setup(props, context) {
-    const Oldproduct = ref(props.productObj)
+    const productCopy = ref(props.productObj)
     const { getProductLink } = useUiHelpers()
 
     const { cart, addItemsToCart } = useCart()
@@ -270,28 +224,22 @@ export default {
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
     const quantityLeft = computed(() => 5)
 
-    // console.log('OLDPRODUCT', Oldproduct)
-
-    //  const productCode = Oldproduct.value.productCode;
     const productCode = props.productObj.productCode
-    console.log("ProductCode", productCode)
     const { load, product, configure, setFulfillment } = useProduct(productCode)
 
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
+    const selectedSize = ref("")
 
     useAsync(async () => {
-      console.log("Async productcode", productCode)
       await load(productCode)
-      console.log(product.value)
     }, null)
 
-    // console.log(product, productGetters.getName(product.value))
-    const productName = computed(() => productGetters.getName(Oldproduct.value))
+    const productName = computed(() => productGetters.getName(productCopy.value))
     const totalReviews = computed(() => productGetters.getProductTotalReviews())
-    const shortDescription = computed(() => productGetters.getShortDescription(Oldproduct.value))
+    const shortDescription = computed(() => productGetters.getShortDescription(productCopy.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
-    const productGallery = computed(() => productGetters.getSFProductGallery(Oldproduct.value))
+    const productGallery = computed(() => productGetters.getSFProductGallery(productCopy.value))
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
     const productFulfillmentOptions = computed(() =>
       productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
@@ -299,8 +247,8 @@ export default {
     const selectedFulfillmentValue = computed(() =>
       productGetters.getSelectedFullfillmentOption(product.value)
     )
-    console.log("Valid", isValidForAddToCart.value)
-    console.log("productOptions", productOptions)
+
+    const isProductAvailable = ref(false)
 
     const moreDetailLink = (product) => {
       document.querySelector("body").classList.remove("overflow-hidden")
@@ -323,14 +271,21 @@ export default {
           },
         })
       }
+
+      if (isValidForAddToCart.value === false) isProductAvailable.value = true
+      else isProductAvailable.value = false
     }
 
     let shopperEnteredValues = []
 
     const selectOption = async (attributeFQN, value, shopperEnteredValue) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
-      console.log(attributeFQN, value, shopperEnteredValue, product.value?.productCode)
+      if (attributeFQN === "tenant~size") selectedSize.value = value
+
       await configure(shopperEnteredValues, product.value?.productCode)
+
+      if (isValidForAddToCart.value === false) isProductAvailable.value = true
+      else isProductAvailable.value = false
     }
 
     const updateShopperEnteredValues = (attributeFQN, value, shopperEnteredValue) => {
@@ -369,7 +324,9 @@ export default {
     }
 
     return {
-      Oldproduct,
+      productCopy,
+      selectedSize,
+      isProductAvailable,
       productName,
       productCode,
       shortDescription,
@@ -627,98 +584,20 @@ export default {
   }
 }
 
-// .sf-add-to-cart {
-//   ::v-deep &__button {
-//     background-color: var(--c-primary);
-
-//     &:hover {
-//       background-color: var(--_c-gray-primary);
-//     }
-//   }
-// }
-
-// .breadcrumbs {
-//   margin: var(--spacer-base) auto var(--spacer-lg);
-// }
-
-@keyframes moveicon {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-
-  50% {
-    transform: translate3d(0, 30%, 0);
-  }
-
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-.sf-circle-icon {
-  --icon-color: var(--c-white);
-  --button-padding: 0;
-  --icon-size: 1.5rem;
-  --button-size: 3.25rem;
-  --button-background: var(--c-primary);
-  --button-border-radius: 100%;
-
-  position: var(--circle-icon-position, relative);
-
-  --button-box-shadow: 0 0 0 0.3125rem var(--c-primary);
-
-  ::v-deep &:hover {
-    --button-background: var(--c-primary);
-    --button-box-shadow-opacity: 0.3;
-  }
-}
-
-.product-badge {
-  position: absolute;
+.msrp {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-top: 10px;
-  margin-left: 640px;
+  margin-bottom: var(--spacer-xs);
+  align-items: baseline;
 
-  &__ {
-    width: 15%;
+  &__setMargin {
+    margin-right: var(--spacer-xs);
+  }
+
+  ::v-deep .kibo-collectedProduct__price {
+    margin: 0 var(--spacer-xs);
   }
 }
-
-// .sf-price {
-//   @include font(
-//     --input-label-font,
-//     var(--font-weight--normal),
-//     var(--font-size--lg),
-//     1,
-//     var(--font-family--secondary)
-//   );
-
-//   text-decoration: none;
-
-//   &__special {
-//     color: var(--_c-red-primary);
-//   }
-
-//   &__old {
-//     margin: 0 var(--spacer-xs) 0 0;
-//     text-decoration: line-through;
-//   }
-// }
-
-// .accordion {
-//   margin: 0 0 var(--spacer-xs) 0;
-
-//   &__item {
-//     display: flex;
-//     align-items: flex-start;
-//   }
-
-//   &__content {
-//     flex: 1;
-//   }
-// }
 
 ::v-deep .product-info {
   display: flex;
@@ -744,14 +623,6 @@ export default {
   }
 }
 
-// .description-hr {
-//   @include border(--tabs-title-border, 0 0 1px 0, solid, var(--c-light));
-// }
-
-// .description-others {
-//   margin-left: 40px;
-// }
-
 .unavailable-product {
   display: flex;
   flex-direction: column;
@@ -759,11 +630,6 @@ export default {
   margin-top: 5px;
   color: var(--_c-red-primary);
 }
-
-// .long-description{
-//     max-height: 100px;
-//     overflow-y: auto;
-// }
 
 ::v-deep .sf-gallery {
   &__thumbs {
@@ -804,6 +670,11 @@ export default {
       }
     }
   }
+}
+
+::v-deep .sf-image--wrapper {
+  display: flex;
+  justify-content: center;
 }
 
 ::v-deep .sf-select__label {

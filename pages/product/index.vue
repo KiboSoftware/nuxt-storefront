@@ -409,7 +409,6 @@ export default defineComponent({
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
-    console.log("Product-code", productCode)
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
@@ -441,11 +440,8 @@ export default defineComponent({
     const rating = computed(() => productGetters.getRating(product.value))
     const totalReviews = computed(() => productGetters.getProductTotalReviews())
     const properties = computed(() => productGetters.getProperties(product.value))
-    console.log("properties", properties)
     const options = computed(() => productGetters.getOptions(product.value))
-    console.log("options", options)
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
-    console.log("productOptions", productOptions)
     const productFulfillmentOptions = computed(() =>
       productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
     )
@@ -453,7 +449,6 @@ export default defineComponent({
       productGetters.getSelectedFullfillmentOption(product.value)
     )
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
-    console.log("Valid", product.value, isValidForAddToCart)
 
     // Options section
     let shopperEnteredValues = []
@@ -491,7 +486,6 @@ export default defineComponent({
       shopperEnteredValue: string
     ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
-      console.log(attributeFQN, value, shopperEnteredValue, product.value?.productCode)
       await configure(shopperEnteredValues, product.value?.productCode)
     }
 
