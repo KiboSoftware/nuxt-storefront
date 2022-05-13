@@ -202,6 +202,7 @@
         >
           <KiboProductCard
             v-for="product in products"
+            :product="product"
             :key="productGetters.getProductId(product)"
             :title="productGetters.getName(product)"
             :image="productGetters.getAllCoverImage(product)"
@@ -860,7 +861,7 @@ export default {
 .products__grid > * {
   margin: 0 auto;
   flex: 0 0 calc(var(--spacer-base) * 5.41); //130px
-  padding: 20px 10px 20px 10px;
+  padding: 20px 10px 10px 10px;
   @include for-desktop {
     flex: 0 0 calc(var(--spacer-base) * 8.375); //201px
   }

@@ -56,7 +56,7 @@
         </SfColorPicker>
       </slot>
 
-      <div class="plp-badges">
+      <div class="plp-badges" v-if="properties">
         <div class="badge-icon" v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true">
           <img src="/productpage/hot-item-50.png" />
         </div>
@@ -162,6 +162,17 @@
         </SfButton>
       </div>
     </slot>
+
+    <button class="quick-view-btn btn btn-info" @click="$refs.modalName.openModal()">
+      Quick View
+    </button>
+
+    <QuickViewModal ref="modalName">
+      <template v-slot:header> </template>
+      <template v-slot:body>
+        <Quickview :productObj="product" />
+      </template>
+    </QuickViewModal>
   </div>
 </template>
 <script lang="ts">
@@ -182,6 +193,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer"
 import { computed, ref, defineComponent, onBeforeUnmount } from "@vue/composition-api"
+import Quickview from "~/components/Quickview.vue"
 
 export default defineComponent({
   name: "KiboProductCard",
@@ -194,10 +206,17 @@ export default defineComponent({
     SfButton,
     SfColorPicker,
     SfColor,
+    Quickview,
   },
   props: {
     properties: {
       type: Object,
+      default: () => ({}),
+    },
+
+    product: {
+      type: Object,
+      // default: {}
       default: () => ({}),
     },
     /**
@@ -493,6 +512,27 @@ export default defineComponent({
   }
 }
 
+.quick-view-btn {
+  @include for-desktop {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    opacity: 0;
+    border: none;
+    padding: 8px;
+    background: var(--_c-light-secondary);
+    box-shadow: 0 2px 3px var(--_c-gray-middle-lighten);
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--c-black);
+    cursor: pointer;
+  }
+
+  @include for-mobile {
+    display: none;
+  }
+}
+
 .kibo-product-card:hover {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 
@@ -506,6 +546,14 @@ export default defineComponent({
 
   .sf-image--wrapper.sf-product-card__picture:nth-child(2n) {
     opacity: 1;
+  }
+
+  .quick-view-btn {
+    opacity: 1;
+
+    @include for-mobile {
+      display: none;
+    }
   }
 }
 

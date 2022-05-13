@@ -77,6 +77,16 @@ export default {
   display: none;
 }
 
+@include for-desktop {
+  ::v-deep .sf-modal__container {
+    z-index: 999;
+  }
+
+  ::v-deep .sf-modal__overlay {
+    z-index: 999;
+  }
+}
+
 @include for-mobile {
   .mobile-small-modal {
     --modal-width: 90%;

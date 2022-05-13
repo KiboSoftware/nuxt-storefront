@@ -145,7 +145,8 @@ export default defineComponent({
     const standardShipping = computed(() => cartGetters.getShippingPrice(cart.value))
     const estimatedTax = computed(() => cartGetters.getTaxTotal(cart.value))
 
-    const numberOfCartItems = computed(() => cartItems.value.length)
+    // const numberOfCartItems = computed(() => cartItems.value.length)
+    const numberOfCartItems = computed(() => cartGetters.getCartTotalQuantity(cart.value))
 
     const cartItemFulfillmentLocation = (cartItem) =>
       cartGetters.getFulfillmentLocation(cartItem, locations.value)
