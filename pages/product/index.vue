@@ -166,6 +166,7 @@
                     class="sf-badge"
                     :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
                     @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
+                    placeholder="Select size"
                   >
                     {{ option.value }}
                   </div>
@@ -180,6 +181,7 @@
                     :label="productGetters.getOptionName(option)"
                     :required="option.isRequired"
                     @input="(value) => selectOption(option.attributeFQN, value)"
+                    placeholder="Select variant"
                   >
                     <SfSelectOption
                       v-for="optionVal in option.values"
@@ -511,6 +513,12 @@ export default defineComponent({
       }
     }
 
+    onMounted(() => {
+      setTimeout(() => {
+        handleFulfillmentOption("Ship", false)
+      }, 1500)
+    })
+
     // Add to Cart
     const quantityLeft = computed(() => 5)
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
@@ -639,6 +647,16 @@ export default defineComponent({
         transform: scale(1.5);
       }
     }
+  }
+
+  ::v-deep .sf-select__label {
+    padding-left: 0;
+    margin: var(--spacer-xs) 0;
+    font-size: 0.9rem;
+  }
+
+  ::v-deep .sf-select__dropdown {
+    margin-top: var(--spacer-xs);
   }
 
   .product-badge {

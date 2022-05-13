@@ -107,6 +107,7 @@
             class="sf-select--underlined product__select-size"
             :required="true"
             @input="(size) => selectOption(productOptions.sizeOptions.attributeFQN, size)"
+            placeholder="Select size"
           >
             <SfSelectOption
               v-for="size in productOptions.sizeOptions.values"
@@ -127,6 +128,7 @@
             :label="productGetters.getOptionName(option)"
             :required="option.isRequired"
             @input="(value) => selectOption(option.attributeFQN, value)"
+            placeholder="Select variant"
           >
             <SfSelectOption
               v-for="optionVal in option.values"
@@ -249,6 +251,12 @@ export default {
     )
 
     const isProductAvailable = ref(false)
+
+    onMounted(() => {
+      setTimeout(() => {
+        handleFulfillmentOption("Ship", false)
+      }, 1500)
+    })
 
     const moreDetailLink = (product) => {
       document.querySelector("body").classList.remove("overflow-hidden")

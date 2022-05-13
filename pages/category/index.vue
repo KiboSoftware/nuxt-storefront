@@ -3,7 +3,7 @@
     <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
 
     <SfLoader :class="{ loading }" :loading="loader">
-      <div style="overflow: hidden" v-if="banners !== undefined">
+      <div class="banner" v-if="banners !== undefined">
         <SfBanner :title="banners.imageAltText" :image="definedRoute + banners.imageFileId" />
       </div>
     </SfLoader>
@@ -419,9 +419,6 @@ export default {
       await appData
 
       banners.value = contentBanner.value?.dropzones[0]?.rows[0]?.columns[0]?.widgets[0]?.config
-      if (banners.value === undefined) {
-        banners.value = { imageFileId: "13908198-4a95-4231-aa73-9e1d243bf6e2" }
-      }
       loader.value = false
     }, null)
 
@@ -565,6 +562,10 @@ export default {
 ::v-deep .sf-loader__overlay {
   position: relative;
   height: 250px;
+}
+
+.banner {
+  overflow: hidden;
 }
 
 ::v-deep .sf-banner__title {
