@@ -1,5 +1,15 @@
 <template>
   <div id="order-history-container">
+    <nuxt-link to="/my-account">
+      <div class="back-link">
+        <span class="sf-chevron--left sf-chevron">
+          <span class="sf-chevron__bar sf-chevron__bar--left" />
+          <span class="sf-chevron__bar sf-chevron__bar--right" />
+        </span>
+        My Account
+      </div>
+    </nuxt-link>
+
     <div>
       <SfBar
         :title="barTitle"
@@ -250,6 +260,17 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+.back-link {
+  color: var(--c-black);
+  font-weight: 500;
+  display: flex;
+  font-size: 1.2rem;
+}
+
+a.nuxt-link-active:link {
+  text-decoration: none;
+}
+
 #order-history-container {
   box-sizing: border-box;
   margin: var(--spacer-xs) auto;
