@@ -193,7 +193,7 @@ import {
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer"
 import { computed, ref, defineComponent, onBeforeUnmount } from "@vue/composition-api"
-import Quickview from "~/components/Quickview.vue"
+import Quickview from "@/components/Quickview.vue"
 
 export default defineComponent({
   name: "KiboProductCard",
