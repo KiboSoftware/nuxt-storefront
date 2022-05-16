@@ -1,5 +1,5 @@
 import { useProduct } from "@/composables/useProduct"
-import { getProductQuery } from "@/lib/gql/queries/product/getProduct"
+import { getProductQuery } from "@/lib/gql/queries"
 import { configureProductMutation } from "@/lib/gql/mutations/product/configureProductMutation"
 
 const mockGetProductQuery = getProductQuery
@@ -43,6 +43,7 @@ const configureProductResponse = {
   options: [{ attributeFQN: "tenant~color" }, { attributeFQN: "tenant~size" }],
   content: { productImages: undefined },
 }
+
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
     return { value: init() }
