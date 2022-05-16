@@ -56,7 +56,7 @@
     <div id="checkout">
       <div class="checkout">
         <div class="checkout__main">
-          <SfSteps>
+          <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
             <SfStep name="Details">
               <KiboPersonalDetails
                 :value="personalDetails"
