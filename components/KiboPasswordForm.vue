@@ -12,7 +12,7 @@
       :error-message="field.id === 'confirmPassword' ? $t(`Password doesn't match`) : ''"
       @input="(value) => handlePassword(value, field.id)"
     />
-    <div class="password-requirements">
+    <div v-if="showPasswordRequirementsVisible" class="password-requirements">
       <div class="password-requirements__header">{{ $t("Password Requirements") }}</div>
       <SfCharacteristic
         v-for="(req, key) in requirements"
@@ -63,9 +63,14 @@ export default defineComponent({
       type: Object,
       default: () => {},
     },
+    showPasswordRequirements: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const userValues = computed(() => props.user)
+    const showPasswordRequirementsVisible = ref(props.showPasswordRequirements)
 
     const requirements = ref([
       {
@@ -96,13 +101,18 @@ export default defineComponent({
       requirements.value.forEach((requirement) => {
         requirement.isValid = !errors.includes(requirement.label)
       })
+      return requirements.value.every((requirement) => requirement.isValid)
     }
     const handlePassword = async (value, inputType) => {
+      const isPasswordValidated = ref(false)
+      if (!showPasswordRequirementsVisible.value) {
+        showPasswordRequirementsVisible.value = true
+      }
       props.fields.find((field) => field.id === inputType).value = value
       if (inputType === "password") {
         try {
           await schema.validate({ password: value }, { abortEarly: false })
-          validatePassword()
+          isPasswordValidated.value = validatePassword()
         } catch (err) {
           validatePassword(err.inner.map((error) => error.message))
         }
@@ -111,7 +121,12 @@ export default defineComponent({
         isConfirmPasswordSame.value =
           value === props.fields.find((field) => field.id === "password").value
       }
-      context.emit("input:handle-password", props.fields, isConfirmPasswordSame.value)
+      context.emit(
+        "input:handle-password",
+        props.fields,
+        isConfirmPasswordSame.value,
+        isPasswordValidated.value
+      )
     }
 
     return {
@@ -119,6 +134,7 @@ export default defineComponent({
       handlePassword,
       requirements,
       isConfirmPasswordSame,
+      showPasswordRequirementsVisible,
     }
   },
 })

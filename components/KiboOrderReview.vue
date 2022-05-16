@@ -90,21 +90,13 @@
         </div>
       </slot>
       <div class="promo-code">
-        <SfInput
-          v-model="promoCode"
-          name="promoCode"
-          :placeholder="$t('Enter Promo Code')"
-          class="sf-input--filled promo-code-input"
-          type="text"
+        <KiboApplyCoupon
+          :is-valid-coupon="isValidCoupon"
+          :invalid-coupon-error-text="invalidCouponErrorText"
+          :are-coupons-applied="areCouponsApplied"
+          :applied-coupons="appliedCoupons"
+          @applyPromocode="applyPromocode"
         />
-
-        <SfButton
-          class="promo-code-button"
-          data-testid="apply-button"
-          @click="$emit('click:apply-code')"
-        >
-          {{ $t("Apply") }}
-        </SfButton>
       </div>
 
       <div class="sf-order-review__characteristics">
@@ -124,7 +116,7 @@
   </div>
 </template>
 <script>
-import { SfButton, SfCharacteristic, SfInput } from "@storefront-ui/vue"
+import { SfButton, SfCharacteristic } from "@storefront-ui/vue"
 import { defineComponent, ref, computed } from "@vue/composition-api"
 import { shopperContactGetters, creditCardPaymentGetters, userGetters } from "@/lib/getters"
 
@@ -133,7 +125,6 @@ export default defineComponent({
   components: {
     SfButton,
     SfCharacteristic,
-    SfInput,
   },
   props: {
     reviewTitle: {
@@ -158,6 +149,21 @@ export default defineComponent({
         },
       ],
     },
+    isValidCoupon: {
+      type: Boolean,
+    },
+    invalidCouponErrorText: {
+      type: String,
+      default: "",
+    },
+    appliedCoupons: {
+      type: Array,
+      default: () => [],
+    },
+    areCouponsApplied: {
+      type: Boolean,
+      default: null,
+    },
   },
 
   setup(props) {
@@ -176,6 +182,8 @@ export default defineComponent({
 
     const payments = computed(() => creditCardPaymentGetters.getPaymentMethods(order.payments))
 
+    const applyPromocode = (couponApplied) => context.emit("applyPromocode", couponApplied)
+
     return {
       promoCode,
       userEmail,
@@ -183,6 +191,7 @@ export default defineComponent({
       shipping,
       billing,
       payments,
+      applyPromocode,
     }
   },
 })
