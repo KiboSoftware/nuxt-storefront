@@ -2,12 +2,11 @@ import { computed, reactive } from "@vue/composition-api"
 import { storeClientCookie, removeClientCookie } from "./helpers/cookieHelper"
 import { getCurrentUser } from "@/lib/gql/queries"
 import {
-  createAccountLoginMutation,
   loginMutation,
-  createAccountMutation,
   updateCustomerDataMutation,
   updatePasswordMutation,
   resetPasswordMutation,
+  createAccountAndLoginMutation,
 } from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
 import type { ResetPasswordParams, ResetPasswordResponse } from "@/composables/types/useUser"
@@ -98,45 +97,29 @@ export const useUser = () => {
 
   // CreateAccount
   const createAccountAndLogin = async (params) => {
-    const { email, firstName, lastName, password, acceptsMarketing, isActive, id } = params
+    const { email, firstName, lastName, password, id } = params
 
-    const createAccountMutationVars = {
-      createAccountInput: {
-        emailAddress: email,
-        firstName,
-        lastName,
-        acceptsMarketing,
-        isActive,
-        id,
+    const createAccountAndLoginMutationVars = {
+      customerAccountAndAuthInfoInput: {
+        account: {
+          id,
+          userName: email,
+          emailAddress: email,
+          firstName,
+          lastName,
+        },
+        password,
       },
     }
-
     try {
       loading.value = true
-
       const customerAccountResponse = await fetcher({
-        query: createAccountMutation,
-        variables: createAccountMutationVars,
+        query: createAccountAndLoginMutation,
+        variables: createAccountAndLoginMutationVars,
       })
 
-      const accountId = customerAccountResponse.data?.account?.id
-
-      if (accountId) {
-        const createAccountLoginMutationVars = {
-          id: accountId,
-          createAccountLoginInput: {
-            emailAddress: email,
-            username: email,
-            password,
-          },
-        }
-
-        const response = await fetcher({
-          query: createAccountLoginMutation,
-          variables: createAccountLoginMutationVars,
-        })
-
-        const account = response?.data?.account
+      if (customerAccountResponse?.data?.account) {
+        const account = customerAccountResponse?.data?.account
 
         // set cookie
         const cookie = {
