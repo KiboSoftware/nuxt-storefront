@@ -29,8 +29,11 @@
         />
       </div>
       <div v-if="editableField.id === 'password'">
-        <KiboPasswordForm :fields="passwordFormFields" @input:handle-password="getPasswordValues" />
-        <!-- <KiboPasswordForm :fields="passwordFormFields" @submit="updatePassword" /> -->
+        <KiboPasswordForm
+          :fields="passwordFormFields"
+          @input:handle-password="getPasswordValues"
+          :show-password-requirements="true"
+        />
       </div>
       <div class="action-buttons">
         <SfButton
@@ -94,8 +97,8 @@ export default defineComponent({
       newPassword: "",
     })
 
-    const getPasswordValues = (values, isValid) => {
-      if (isValid) {
+    const getPasswordValues = (values, isConfirmPasswordMatching) => {
+      if (isConfirmPasswordMatching) {
         passwordValues.value.oldPassword = values.find(
           (value) => value.id === "currentPassword"
         ).value
