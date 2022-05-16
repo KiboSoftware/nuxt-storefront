@@ -17,14 +17,14 @@
             <p class="textstyling">Please register below to create an account</p>
             <ValidationObserver v-slot="{ handleSubmit }" key="sign-up">
               <!-- todo:as of now registeration is not working so handleForm is passed , will have to write function for handling registration -->
-              <form class="form" @submit.prevent="handleSubmit(handleRegister)">
+              <form class="form" @submit.prevent="handleSubmit(handleCreateAccountAndLogin)">
                 <ValidationProvider rules="required|email" v-slot="{ errors }">
                   <SfInput
                     v-model="form.email"
                     :valid="!errors[0]"
                     :errorMessage="errors[0]"
                     name="email"
-                    label="Your email"
+                    :label="$t('Email')"
                     class="form__element"
                     type="email"
                   />
@@ -32,22 +32,23 @@
                 <SfInput
                   v-model="form.firstName"
                   name="first-name"
-                  label="First Name"
+                  :label="$t('First Name')"
                   class="form__element"
                 />
                 <SfInput
                   v-model="form.lastName"
                   name="last-name"
-                  label="Last Name"
+                  :label="$t('Last Name')"
                   class="form__element"
                 />
-                <SfInput
-                  v-model="form.password"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  class="form__element"
+                <KiboPasswordForm
+                  :fields="passwordFormFields"
+                  @input:handle-password="getPasswordValues"
+                  :show-password-requirements="false"
                 />
+                <span v-if="userError.login" class="login-error-message">
+                  {{ $t("registrationFailed") }}
+                </span>
                 <SfCheckbox
                   v-model="createAccount"
                   name="create-account"
@@ -56,10 +57,11 @@
                 />
                 <SfButton
                   type="submit"
-                  class="sf-button--full-width form__submit"
+                  class="sf-button--full-width form__submit color-primary"
                   data-testid="create-acount-button"
+                  :disabled="!createAccountDisabled"
                 >
-                  Create an account
+                  {{ $t("Create an account") }}
                 </SfButton>
               </form>
             </ValidationObserver>
@@ -81,7 +83,7 @@
                       :valid="!errors[0]"
                       :errorMessage="errors[0]"
                       name="email"
-                      label="Email*"
+                      :label="$t('Email')"
                       class="form__element"
                       type="email"
                     />
@@ -89,7 +91,7 @@
                   <SfInput
                     v-model="form.password"
                     name="password"
-                    label="Password*"
+                    :label="$t('Password')"
                     type="password"
                     class="form__element"
                     :has-show-password="true"
@@ -100,11 +102,12 @@
                   <div v-if="error.login">
                     {{ error.login }}
                   </div>
+
                   <SfButton
                     type="submit"
-                    class="form__submit login-button sf-button--text-lg"
+                    class="form__submit login-button sf-button--text-lg color-primary"
                     data-testid="log-in-button"
-                    :disabled="loading"
+                    :disabled="!isLoginDisabled"
                   >
                     <SfLoader :class="{ loader: loading }" :loading="loading">
                       <div>{{ $t("Log In") }}</div>
@@ -294,6 +297,27 @@ export default {
       const userInput = form.value as LoginFormType
       return userInput.username && userInput.password
     })
+
+    // todo:add this function based on headless changes
+
+    const handleCreateAccountAndLogin = async () => {
+      // const userInput = {
+      //   ...(form.value as RegisterFormType),
+      //   password: password.value.password,
+      //   id: 0,
+      // }
+      // if (
+      //   userInput.firstName &&
+      //   userInput.lastName &&
+      //   userInput.email &&
+      //   userInput.password &&
+      //   isPasswordValidated.value
+      // ) {
+      //   await handleForm(createAccountAndLogin)()
+      //   await loadCart()
+      // }
+    }
+
     const handleForgotPassword = async () => {
       const userInput = form.value as RestPasswordFormType
       if (userInput.username) {
@@ -343,6 +367,7 @@ export default {
       validateEmail,
       isEmailValidated,
       errors,
+      handleCreateAccountAndLogin,
     }
   },
 }
