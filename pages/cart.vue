@@ -25,7 +25,7 @@
                   v-model="cartItem.quantity"
                   :cart-item-id="cartItem.id"
                   :purchase-location="selectedLocation"
-                  :image="cartItem.product.imageUrl"
+                  :image="cartItem.product.imageUrl || ''"
                   :title="cartItem.product.name"
                   :regular-price="cartItemPrice(cartItem).regular"
                   :special-price="cartItemPrice(cartItem).special"

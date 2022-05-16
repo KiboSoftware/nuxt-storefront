@@ -81,6 +81,16 @@ export const productImageGroup = /* GraphQL */ `
     }
   }
 `
+export const productInventoryInfo = /* GraphQL */ `
+  fragment productInventoryInfo on Product {
+    inventoryInfo {
+      manageStock
+      onlineLocationCode
+      onlineSoftStockAvailable
+      onlineStockAvailable
+    }
+  }
+`
 export const productInfo = /* GraphQL */ `
   fragment productInfo on Product {
     fulfillmentTypesSupported
@@ -114,10 +124,12 @@ export const productInfo = /* GraphQL */ `
     ...productContent
     ...productOptions
     ...productImageGroup
+    ...productInventoryInfo
   }
   ${productPrices}
   ${productAttributes}
   ${productContent}
   ${productOptions}
   ${productImageGroup}
+  ${productInventoryInfo}
 `
