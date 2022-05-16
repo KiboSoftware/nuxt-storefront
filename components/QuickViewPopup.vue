@@ -259,6 +259,7 @@ export default {
     })
 
     const moreDetailLink = (product) => {
+      document.documentElement.style.overflow = "auto"
       document.querySelector("body").classList.remove("overflow-hidden")
       return (window.location.href = getProductLink(productGetters.getProductId(product)))
     }
