@@ -706,6 +706,6 @@ export default {
 }
 
 ::v-deep .kibo-add-to-wishlist-one-click-container {
-  display: none;
+  display: none !important;
 }
 </style>
