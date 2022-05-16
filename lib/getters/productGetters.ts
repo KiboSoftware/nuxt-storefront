@@ -83,7 +83,7 @@ const getProperties = (product: ProductCustom) => {
 const getOptionSelectedValue = (option: ProductOption) => {
   const selectedValue = option?.values?.find((value) => value?.isSelected)
   const result = selectedValue?.value || selectedValue?.stringValue || selectedValue?.isSelected
-  return result
+  return result?.toString()
 }
 export const getOptionName = (option: ProductOption): string => option?.attributeDetail?.name || ""
 export const getOptions = (product: Product) => product?.options
@@ -164,6 +164,30 @@ const getSegregatedOptions = (product: ProductCustom) => {
 const validateAddToCart = (product: ProductCustom): boolean =>
   isProductVariationsSelected(product) && Boolean(product.fulfillmentMethod)
 
+const getAvailableItemCount = (
+  product: ProductCustom,
+  productLocationInventoryData: Object,
+  fulfillmentOptionValue: string
+): number => {
+  const allVariantSelected = isProductVariationsSelected(product)
+  const qtyLeft = { value: 0 }
+  if (allVariantSelected) {
+    if (fulfillmentOptionValue === "Pickup") {
+      qtyLeft.value = productLocationInventoryData[0]?.stockAvailable
+        ? productLocationInventoryData[0]?.stockAvailable
+        : 0
+    } else if (fulfillmentOptionValue === "Ship")
+      qtyLeft.value = product.inventoryInfo.onlineStockAvailable
+        ? product.inventoryInfo.onlineStockAvailable
+        : 0
+  }
+  return qtyLeft.value
+}
+const getVariationProductCodeOrProductCode = (product: ProductCustom): string => {
+  if (!product) return ""
+  return product.variationProductCode ? product.variationProductCode : product.productCode
+}
+
 export const productGetters = {
   getName,
   getRating,
@@ -186,4 +210,6 @@ export const productGetters = {
   getAllCoverImage,
   getProductId,
   validateAddToCart,
+  getAvailableItemCount,
+  getVariationProductCodeOrProductCode,
 }
