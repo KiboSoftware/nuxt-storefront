@@ -23,6 +23,9 @@
     display: flex;
     flex-direction: column;
     padding: var(--spacer-xs) 0;
+     @include for-desktop {
+      width: 60%;
+     }
   }
 
   &__product-details-content {

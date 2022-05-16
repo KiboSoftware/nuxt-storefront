@@ -194,6 +194,7 @@ import {
 } from "@storefront-ui/vue/src/utilities/mobile-observer"
 import { computed, ref, defineComponent, onBeforeUnmount } from "@vue/composition-api"
 import Quickview from "@/components/QuickViewPopup.vue"
+import QuickViewModal from "@/components/QuickViewModal.vue"
 
 export default defineComponent({
   name: "KiboProductCard",
@@ -207,6 +208,7 @@ export default defineComponent({
     SfColorPicker,
     SfColor,
     Quickview,
+    QuickViewModal,
   },
   props: {
     properties: {
