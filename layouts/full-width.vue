@@ -6,6 +6,7 @@
     <ModalRoot />
     <AddToCartConfirmationModal />
     <AtcConfirmationSidebar />
+    <CartSidebar />
     <div>
       <Nuxt />
     </div>

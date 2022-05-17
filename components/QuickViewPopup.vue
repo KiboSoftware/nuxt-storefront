@@ -221,7 +221,7 @@ export default {
     const { getProductLink } = useUiHelpers()
 
     const { cart, addItemsToCart } = useCart()
-    const { toggleAddToCartConfirmationModal } = useUiState()
+    const { toggleCartSidebar } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const qtySelected = useState(`pdp-selected-qty`, () => 1)
     const quantityLeft = computed(() => 5)
@@ -328,7 +328,7 @@ export default {
       )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
-        if (cart.value) toggleAddToCartConfirmationModal()
+        if (cart.value) toggleCartSidebar()
       }
     }
 

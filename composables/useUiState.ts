@@ -9,6 +9,7 @@ const state = reactive({
   isMobileMenuOpen: false,
   isAddToCartConfirmationOpen: false,
   isHamburgerOpen: false,
+  isCartSidebarOpen: false,
 })
 
 export const useUiState = () => {
@@ -27,6 +28,12 @@ export const useUiState = () => {
   const toggleLoginModal = () => {
     if (state.isMobileMenuOpen) toggleMobileMenu()
     state.isLoginModalOpen = !state.isLoginModalOpen
+  }
+
+  const isCartSidebarOpen = computed(() => state.isCartSidebarOpen)
+  const toggleCartSidebar = () => {
+    if (state.isMobileMenuOpen) toggleMobileMenu()
+    state.isCartSidebarOpen = !state.isCartSidebarOpen
   }
 
   const isAddToCartConfirmationOpen = computed(() => state.isAddToCartConfirmationOpen)
@@ -76,5 +83,7 @@ export const useUiState = () => {
     toggleHamburger,
     isAddToCartConfirmationOpen,
     toggleAddToCartConfirmationModal,
+    isCartSidebarOpen,
+    toggleCartSidebar,
   }
 }

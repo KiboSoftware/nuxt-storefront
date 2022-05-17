@@ -1,20 +1,11 @@
 <template>
   <div id="cart">
     <SfSidebar
-      :visible="isAddToCartConfirmationOpen"
-      title="My cart"
+      :visible="isCartSidebarOpen"
+      title="Item added to cart"
       class="sf-sidebar--right"
-      @close="toggleAddToCartConfirmationModal"
+      @close="toggleCartSidebar"
     >
-      <template #content-top>
-        <SfProperty
-          v-if="totalItemsInCart"
-          class="sf-property--large cart-summary desktop-only"
-          name="Total items"
-          :value="totalItemsInCart"
-        />
-      </template>
-
       <div key="my-cart" class="my-cart" v-if="product && totalItemsInCart > 0">
         <div class="collected-product-list" v-for="(item, index) in product" :key="index">
           <SfCollectedProduct
@@ -113,7 +104,7 @@
                 <SfButton
                   v-e2e="'go-to-checkout-btn'"
                   class="sf-button--full-width color-secondary"
-                  @click="toggleAddToCartConfirmationModal"
+                  @click="toggleCartSidebar"
                 >
                   {{ $t("View Cart") }}
                 </SfButton>
@@ -123,7 +114,7 @@
                 v-e2e="'go-to-checkout-btn'"
                 class="sf-button--full-width color-secondary"
                 @click="
-                  toggleAddToCartConfirmationModal()
+                  toggleCartSidebar()
                   openCheckoutOptions()
                 "
               >
@@ -133,11 +124,9 @@
           </div>
 
           <div v-else>
-            <SfButton
-              class="sf-button--full-width color-secondary"
-              @click="toggleAddToCartConfirmationModal"
-              >{{ $t("Go back shopping") }}</SfButton
-            >
+            <SfButton class="sf-button--full-width color-secondary" @click="toggleCartSidebar">{{
+              $t("Go back shopping")
+            }}</SfButton>
           </div>
         </transition>
       </template>
@@ -179,7 +168,7 @@ export default {
   },
   setup(__, context) {
     const modalName = ref(null)
-    const { isAddToCartConfirmationOpen, toggleAddToCartConfirmationModal } = useUiState()
+    const { isCartSidebarOpen, toggleCartSidebar } = useUiState()
     const { cart, newestCartItemId, updateCartItemQuantity, removeCartItem } = useCart()
     const product = ref({})
     const cartPrice = ref({})
@@ -189,6 +178,8 @@ export default {
       return userGetters.isLoggedInUser(user.value)
     })
 
+    const cartItem = computed(() => cartGetters.getCartItem(cart.value, newestCartItemId.value))
+
     const { user } = useUser()
 
     const totalItemsInCart = computed(() => {
@@ -196,9 +187,8 @@ export default {
       return count ? count.toString() : null
     })
 
-    const cartItem = computed(() => cartGetters.getCartItem(cart.value, newestCartItemId.value))
-
     const removeProduct = async (productId) => {
+      toggleCartSidebar()
       await removeCartItem(productId)
     }
 
@@ -206,14 +196,32 @@ export default {
       await updateCartItemQuantity(product.id, Number($event))
     }
 
-    watch(cart, () => {
-      if (cart.value !== null) {
-        const item = cart.value.items
+    watch(newestCartItemId, () => {
+      if (cartItem.value) {
+        const item = []
+        item[0] = cartItem.value
         product.value = item || {}
         cartPrice.value = {
           subtotal: cart.value.subtotal,
           taxTotal: cart.value.taxTotal,
           total: cart.value.total,
+        }
+      }
+    })
+
+    watch(cart, () => {
+      if (cart.value !== null && newestCartItemId.value) {
+        const addedItem = cart.value.items?.find((item) => item.id === newestCartItemId.value)
+
+        if (addedItem) {
+          const item = []
+          item[0] = addedItem
+          product.value = item || {}
+          cartPrice.value = {
+            subtotal: cart.value.subtotal,
+            taxTotal: cart.value.taxTotal,
+            total: cart.value.total,
+          }
         }
       }
     })
@@ -232,8 +240,8 @@ export default {
     }
 
     return {
-      isAddToCartConfirmationOpen,
-      toggleAddToCartConfirmationModal,
+      isCartSidebarOpen,
+      toggleCartSidebar,
       cartItem,
       product,
       cart,
@@ -374,11 +382,6 @@ $dialog-background: #fff;
   &:hover {
     --cp-save-opacity: 1;
     --cp-compare-opacity: 1;
-    // @include for-desktop {
-    //   .collected-product__properties {
-    //     display: none;
-    //   }
-    // }
   }
 }
 
@@ -452,7 +455,7 @@ $dialog-background: #fff;
 .sf-sidebar {
   @include for-desktop {
     ::v-deep &__top {
-      background-color: var(--c-white);
+      background-color: var(--c-primary);
       margin-bottom: var(--spacer-lg);
     }
   }
