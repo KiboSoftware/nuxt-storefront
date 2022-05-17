@@ -424,7 +424,7 @@ export default defineComponent({
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
     const { cart, addItemsToCart } = useCart()
-    const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
+    const { toggleCartSidebar, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const { addToWishlist, isInWishlist, removeItemFromWishlist } = useWishlist()
     const { user } = useUser()
@@ -577,7 +577,7 @@ export default defineComponent({
       )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
-        if (cart.value) toggleAddToCartConfirmationModal()
+        if (cart.value) toggleCartSidebar()
       }
     }
 

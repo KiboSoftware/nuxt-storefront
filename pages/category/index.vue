@@ -346,7 +346,7 @@ export default {
     const showMobileFilters = ref(false)
 
     const { cart, addItemsToCart } = useCart()
-    const { toggleAddToCartConfirmationModal } = useUiState()
+    const { toggleCartSidebar } = useUiState()
 
     // Determining if search page using categoryCode present in URL or not
     if (!route.value.params?.categoryCode) {
@@ -491,7 +491,7 @@ export default {
       // if (isValidForAddToCart.value) {
       await addItemsToCart(productToAdd)
       if (cart.value) {
-        toggleAddToCartConfirmationModal()
+        toggleCartSidebar()
       }
       // }
     }
