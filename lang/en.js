@@ -151,6 +151,7 @@ export default {
   Register: "Register",
   "Password Changed": "Password successfuly changed. You can now go back to homepage and sign in.",
   Password: "Password*",
+  "New Password": "New Password*",
   "Repeat Password": "Repeat Password",
   "Forgot Password Modal Email": "Email you are using to sign in:",
   forgotPasswordConfirmation:

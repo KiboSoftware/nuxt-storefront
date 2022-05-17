@@ -7,9 +7,11 @@ import {
   updatePasswordMutation,
   resetPasswordMutation,
   createAccountAndLoginMutation,
+  getUserNameQuery,
 } from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
 import type { ResetPasswordParams, ResetPasswordResponse } from "@/composables/types/useUser"
+import type { CustomQuery, GetUserNameParams, GetUserNameResponse } from "@/server/types/Api"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
@@ -24,11 +26,15 @@ export const useUser = () => {
     login: null,
     register: null,
     resetPassword: null,
+    setNewPassword: null,
+    getUserName: null,
   })
   const resetErrorValues = () => {
     error.login = null
     error.register = null
     error.resetPassword = null
+    error.setNewPassword = null
+    error.getUserName = null
   }
 
   const load = async () => {
@@ -213,6 +219,36 @@ export const useUser = () => {
     }
   }
 
+  const getUserName = async (
+    params: GetUserNameParams,
+    customQuery?: CustomQuery
+  ): Promise<GetUserNameResponse> => {
+    try {
+      // Get user name
+
+      const variables = { ...params, ...customQuery }
+
+      loading.value = true
+      const response = await fetcher({
+        query: getUserNameQuery,
+        variables,
+        headers: { "x-vol-exclude-user-claims": "true" },
+      })
+      loading.value = false
+      resetErrorValues()
+      if (response?.data?.customerAccounts) {
+        return response?.data?.customerAccounts?.items[0]?.userName
+      } else if (response.errors) {
+        error.getUserName = response.errors[0]
+      }
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+    } finally {
+      loading.value = false
+    }
+  }
+
   // return
   return {
     user,
@@ -224,6 +260,7 @@ export const useUser = () => {
     updateCustomerPersonalData,
     changePassword,
     resetPassword,
+    getUserName,
     loading: computed(() => loading.value),
     error: computed(() => error),
   }
