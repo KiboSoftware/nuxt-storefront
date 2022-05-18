@@ -43,8 +43,8 @@
                 />
                 <KiboPasswordForm
                   :fields="passwordFormFields"
-                  @input:handle-password="getPasswordValues"
                   :show-password-requirements="false"
+                  @input:handle-password="getPasswordValues"
                 />
                 <span v-if="userError.login" class="login-error-message">
                   {{ $t("registrationFailed") }}
@@ -191,7 +191,7 @@ import { required, email } from "vee-validate/dist/rules"
 
 import { useCart, useUiState, useUser, useUiValidationSchemas, useWishlist } from "@/composables"
 import { userGetters } from "@/lib/getters"
-import { LoginFormType, RestPasswordFormType } from "@/components/types/login"
+import { LoginFormType, RestPasswordFormType, RegisterFormType } from "@/components/types/login"
 
 extend("email", {
   ...email,
@@ -214,8 +214,16 @@ export default {
     ValidationObserver,
     SfLoader,
   },
-  setup(_, context) {
-    const { user, login, resetPassword, loading, error: userError, isAuthenticated } = useUser()
+  setup(props, context) {
+    const {
+      user,
+      login,
+      createAccountAndLogin,
+      resetPassword,
+      loading,
+      error: userError,
+      isAuthenticated,
+    } = useUser()
     const { load: loadCart } = useCart()
     const { loadWishlist } = useWishlist()
 
@@ -227,6 +235,9 @@ export default {
     const createAccount = ref(false)
     const displayThankYouMessage = ref(false)
     const isEmailValidated = ref(false)
+
+    const isPasswordValidated = ref(false)
+    const password = ref({ password: "" })
 
     const errors = ref({
       email: "",
@@ -240,6 +251,23 @@ export default {
     const resetErrorValues = () => {
       error.login = null
       error.register = null
+    }
+
+    const passwordFormFields = ref([
+      {
+        label: `${context.root.$t("Password")}`,
+        id: "password",
+        value: "",
+      },
+    ])
+
+    const getPasswordValues = (fieldsData, _, isValidated) => {
+      const values = {
+        ...props.value,
+        [fieldsData[0].id]: fieldsData[0].value.trim(),
+      }
+      isPasswordValidated.value = isValidated
+      password.value = values
     }
 
     const barTitle = computed(() => {
@@ -272,7 +300,11 @@ export default {
 
     const handleForm = (fn) => async () => {
       resetErrorValues()
-      await fn(form.value)
+      if (fn.name === "createAccountAndLogin") {
+        await fn({ ...form.value, password: password.value.password, id: 0 })
+      } else {
+        await fn(form.value)
+      }
       const hasUserErrors = userGetters.hasUserError(userError.value)
       if (!hasUserErrors) {
         toggleLoginModal()
@@ -293,31 +325,28 @@ export default {
       }
     }
 
+    const handleCreateAccountAndLogin = async () => {
+      const userInput = {
+        ...(form.value as RegisterFormType),
+        password: password.value.password,
+        id: 0,
+      }
+      if (
+        userInput.firstName &&
+        userInput.lastName &&
+        userInput.email &&
+        userInput.password &&
+        isPasswordValidated.value
+      ) {
+        await handleForm(createAccountAndLogin)()
+        await loadCart()
+      }
+    }
+
     const isLoginDisabled = computed(() => {
       const userInput = form.value as LoginFormType
       return userInput.username && userInput.password
     })
-
-    // todo:add this function based on headless changes
-
-    const handleCreateAccountAndLogin = async () => {
-      // const userInput = {
-      //   ...(form.value as RegisterFormType),
-      //   password: password.value.password,
-      //   id: 0,
-      // }
-      // if (
-      //   userInput.firstName &&
-      //   userInput.lastName &&
-      //   userInput.email &&
-      //   userInput.password &&
-      //   isPasswordValidated.value
-      // ) {
-      //   await handleForm(createAccountAndLogin)()
-      //   await loadCart()
-      // }
-    }
-
     const handleForgotPassword = async () => {
       const userInput = form.value as RestPasswordFormType
       if (userInput.username) {
@@ -328,6 +357,13 @@ export default {
         }
       }
     }
+
+    const createAccountDisabled = computed(() => {
+      const userInput = form.value as RegisterFormType
+      return (
+        userInput.firstName && userInput.lastName && userInput.email && isPasswordValidated.value
+      )
+    })
 
     const schemaEmail = useUiValidationSchemas(context.root, "email")
 
@@ -359,7 +395,6 @@ export default {
       setIsForgottenValue,
       barTitle,
       rememberMe,
-      createAccount,
       login,
       isAuthenticated,
       user,
@@ -367,7 +402,11 @@ export default {
       validateEmail,
       isEmailValidated,
       errors,
+      createAccount,
       handleCreateAccountAndLogin,
+      createAccountDisabled,
+      passwordFormFields,
+      getPasswordValues,
     }
   },
 }
