@@ -58,6 +58,11 @@ export default {
   left: 0;
   z-index: 9;
 
+  @include for-mobile {
+    top: 50px;
+    left: -850px;
+  }
+
   &__backdrop {
     background-color: #0004;
     position: fixed;
