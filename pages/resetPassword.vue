@@ -10,8 +10,8 @@
           :show-password-requirements="true"
           @input:handle-password="getPasswordValues"
         />
-        <div v-if="passwordError || forgotPasswordError.setNew" class="error-msg">
-          {{ passwordError || forgotPasswordError.setNew.message }}
+        <div v-if="errorData || forgotPasswordError.setNew" class="error-msg">
+          {{ errorData || forgotPasswordError.setNew.message }}
         </div>
         <SfButton
           type="submit"
@@ -56,7 +56,7 @@ export default {
   },
   middleware({ route, redirect }) {
     // If the user don't have token values
-    if (!route.query.t || !route.query.t) {
+    if (!route.query.u || !route.query.t) {
       return redirect("/")
     }
   },
@@ -70,7 +70,7 @@ export default {
     } = useForgotPassword()
     const { loading: userLoading, getUserName } = useUser()
 
-    const passwordError = ref(false)
+    const errorData = ref(false)
     const isValidated = ref(false)
     const showResetPasswordForm = ref(true)
     const newPassword = ref("")
@@ -104,16 +104,16 @@ export default {
     }
 
     const setNew = async () => {
-      passwordError.value = false
+      errorData.value = false
       if (!isValidated.value) {
-        passwordError.value = "Passwords requirments not fulfilled or "
+        errorData.value = "All requirments not fulfilled or invalid"
         return
       }
       const userNameParams = { filter: `userId eq ${userId}` }
       const userName = await getUserName(userNameParams)
 
       if (!userName) {
-        passwordError.value = "Invalid action !!"
+        errorData.value = "Invalid action !!"
         return
       }
 
@@ -124,7 +124,7 @@ export default {
       })
 
       if (!response?.data?.updatePassword) {
-        passwordError.value = response.errors[0].message
+        errorData.value = response.errors[0].message
       }
     }
 
@@ -133,7 +133,7 @@ export default {
       setNew,
       isLoading,
       forgotPasswordError,
-      passwordError,
+      errorData,
       showResetPasswordForm,
       passwordFormFields,
       getPasswordValues,
