@@ -113,6 +113,7 @@ export default defineComponent({
         try {
           await schema.validate({ password: value }, { abortEarly: false })
           isPasswordValidated.value = validatePassword()
+          showPasswordRequirementsVisible.value = false
         } catch (err) {
           validatePassword(err.inner.map((error) => error.message))
         }
@@ -141,12 +142,13 @@ export default defineComponent({
 </script>
 <style lang="scss">
 .password-requirements {
-  margin-bottom: var(--spacer-base);
+  margin-bottom: 5%;
 
   &__header {
     font-size: var(--font-size--base);
     font-weight: var(--font-weight--semibold);
-    margin-bottom: var(--spacer-sm);
+    // margin-bottom: var(--spacer-sm);
+    margin-bottom: 0.5%;
   }
 
   &__details {

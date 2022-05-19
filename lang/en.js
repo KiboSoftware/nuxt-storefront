@@ -226,7 +226,7 @@ export default {
   "Password length check": "at least eight characters long",
   "Password number check": "at least one number",
   "Password capital letter check": "at least one capital letter",
-  "Password special character check": "at least one special character such as !@#$%^&*",
+  "Password special character check": "at least one special character - !@#$%^&*",
   "Password doesn't match": "Password doesn't match",
   Pickup: "Pickup",
   "Shipment Details": "Shipment Details",
