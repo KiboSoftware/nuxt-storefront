@@ -5,12 +5,10 @@ import {
   loginMutation,
   updateCustomerDataMutation,
   updatePasswordMutation,
-  resetPasswordMutation,
   createAccountAndLoginMutation,
   getUserNameQuery,
 } from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
-import type { ResetPasswordParams, ResetPasswordResponse } from "@/composables/types/useUser"
 import type { CustomQuery, GetUserNameParams, GetUserNameResponse } from "@/server/types/Api"
 import { useState, useNuxtApp } from "#app"
 
@@ -25,15 +23,11 @@ export const useUser = () => {
   const error = reactive({
     login: null,
     register: null,
-    resetPassword: null,
-    setNewPassword: null,
     getUserName: null,
   })
   const resetErrorValues = () => {
     error.login = null
     error.register = null
-    error.resetPassword = null
-    error.setNewPassword = null
     error.getUserName = null
   }
 
@@ -192,33 +186,6 @@ export const useUser = () => {
       loading.value = false
     }
   }
-  const resetPassword = async (params: ResetPasswordParams): Promise<ResetPasswordResponse> => {
-    const variables = {
-      resetPasswordInfoInput: {
-        emailAddress: params.emailAddress,
-        userName: params.emailAddress,
-        customerSetCode: "",
-      },
-    }
-    try {
-      loading.value = true
-      const response = await fetcher({
-        query: resetPasswordMutation,
-        variables,
-      })
-      loading.value = false
-      if (response?.data?.resetPassword) return response?.data?.resetPassword
-      else if (response.errors) {
-        error.resetPassword = response.errors[0]
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
-    } finally {
-      loading.value = false
-    }
-  }
-
   const getUserName = async (
     params: GetUserNameParams,
     customQuery?: CustomQuery
@@ -259,7 +226,6 @@ export const useUser = () => {
     isAuthenticated,
     updateCustomerPersonalData,
     changePassword,
-    resetPassword,
     getUserName,
     loading: computed(() => loading.value),
     error: computed(() => error),

@@ -97,15 +97,15 @@
             required
             @input="validateEmail('email', form.username)"
           />
-          <span v-if="userError.resetPassword" class="login-error-message">
-            {{ userError.resetPassword.message }}
+          <span v-if="forgotPasswordError.resetPassword" class="login-error-message">
+            {{ forgotPasswordError.resetPassword.message }}
           </span>
 
-          <SfLoader :class="{ loader: loading }" :loading="loading">
+          <SfLoader :class="{ loader: forgotPasswordLoading }" :loading="forgotPasswordLoading">
             <SfButton
               type="submit"
               class="sf-button--full-width form__button color-primary reset-password"
-              :disabled="!isEmailValidated"
+              :disabled="!isEmailValidated || forgotPasswordLoading"
             >
               <div>{{ $t("submit") }}</div>
             </SfButton>
@@ -194,7 +194,14 @@ import {
   SfIcon,
 } from "@storefront-ui/vue"
 
-import { useCart, useUiState, useUser, useUiValidationSchemas, useWishlist } from "@/composables"
+import {
+  useCart,
+  useUiState,
+  useUser,
+  useUiValidationSchemas,
+  useWishlist,
+  useForgotPassword,
+} from "@/composables"
 import { userGetters } from "@/lib/getters"
 import { LoginFormType, RestPasswordFormType, RegisterFormType } from "@/components/types/login"
 
@@ -215,11 +222,17 @@ export default {
       user,
       login,
       createAccountAndLogin,
-      resetPassword,
       loading,
       error: userError,
       isAuthenticated,
     } = useUser()
+
+    const {
+      resetPassword,
+      loading: forgotPasswordLoading,
+      error: forgotPasswordError,
+    } = useForgotPassword()
+
     const { load: loadCart } = useCart()
     const { loadWishlist } = useWishlist()
 
@@ -387,6 +400,8 @@ export default {
       createAccountDisabled,
       passwordFormFields,
       getPasswordValues,
+      forgotPasswordLoading,
+      forgotPasswordError,
     }
   },
 }
