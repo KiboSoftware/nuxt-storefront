@@ -294,6 +294,8 @@
                   </SfButton>
                 </div>
 
+                <div class="unavailable-product" v-if="isProductAvailable">Out of Stock!</div>
+
                 <!-- <div>
                 <h4 class="sf-heading__title h4">Product Information</h4>
                 <div class="product__description" v-html="description"></div>
@@ -440,6 +442,8 @@ export default defineComponent({
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
 
+    const isProductAvailable = ref(false)
+
     useAsync(async () => {
       await load(productCode)
       await loadProductLocationInventory(productCode, purchaseLocation?.value?.code)
@@ -525,6 +529,10 @@ export default defineComponent({
     ) => {
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
+
+      if (isValidForAddToCart.value === false || quantityLeft.value === 0)
+        isProductAvailable.value = true
+      else isProductAvailable.value = false
     }
 
     // handle Fullfillment Options radio click and change store
@@ -547,6 +555,13 @@ export default defineComponent({
           },
         })
       }
+
+      setTimeout(() => {
+        if (productOptions.value === undefined) {
+          if (isValidForAddToCart.value === false) isProductAvailable.value = true
+          else isProductAvailable.value = false
+        }
+      }, 500)
     }
 
     onMounted(() => {
@@ -606,6 +621,7 @@ export default defineComponent({
     })
 
     return {
+      isProductAvailable,
       loading,
       error,
       current: 1,
@@ -934,6 +950,14 @@ export default defineComponent({
   .is-open {
     color: #2b2b2b;
   }
+}
+
+.unavailable-product {
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--spacer-sm);
+  margin-top: var(--spacer-xs);
+  color: var(--_c-red-primary);
 }
 
 ::v-deep .sf-chevron {
