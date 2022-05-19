@@ -955,8 +955,8 @@ export default defineComponent({
 .unavailable-product {
   display: flex;
   flex-direction: column;
-  margin-left: 25px;
-  margin-top: 5px;
+  margin-left: var(--spacer-sm);
+  margin-top: var(--spacer-xs);
   color: var(--_c-red-primary);
 }
 
