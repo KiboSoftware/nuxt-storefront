@@ -182,12 +182,7 @@
         </div>
       </div>
 
-      <!-- <div
-          class="unavailable-product"
-          v-if="isProductAvailable"
-        >
-          Unavailable !!
-        </div> -->
+      <div class="unavailable-product" v-if="isProductAvailable">Out of Stock!</div>
     </div>
   </div>
 </template>
@@ -202,14 +197,20 @@ import {
   SfColor,
   SfDivider,
 } from "@storefront-ui/vue"
-import { ref, computed } from "@vue/composition-api"
+import { ref, computed, watch } from "@vue/composition-api"
 import { useAsync } from "@nuxtjs/composition-api"
 import LazyHydrate from "vue-lazy-hydration"
-import { useUiHelpers, useProduct, useCart, useUiState } from "@/composables"
+import {
+  useUiHelpers,
+  useProduct,
+  useCart,
+  useProductLocationInventory,
+  useUiState,
+} from "@/composables"
 
 import { buildAddToCartInput } from "@/composables/helpers"
 import { productGetters } from "@/lib/getters"
-import { useState, useNuxtApp } from "#app"
+import { useNuxtApp, ComputedRef, Ref } from "#app"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 
 export default {
@@ -223,8 +224,9 @@ export default {
     const { cart, addItemsToCart } = useCart()
     const { toggleCartSidebar } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
-    const qtySelected = useState(`pdp-selected-qty`, () => 1)
-    const quantityLeft = computed(() => 5)
+    const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
+    // const qtySelected = useState(`pdp-selected-qty`, () => 1)
+    // const quantityLeft = computed(() => 5)
 
     const productCode = props.productObj.productCode
     const { load, product, configure, setFulfillment } = useProduct(productCode)
@@ -235,6 +237,7 @@ export default {
 
     useAsync(async () => {
       await load(productCode)
+      await loadProductLocationInventory(productCode, purchaseLocation?.value?.code)
     }, null)
 
     const productName = computed(() => productGetters.getName(productCopy.value))
@@ -250,6 +253,10 @@ export default {
       productGetters.getSelectedFullfillmentOption(product.value)
     )
 
+    const productCodeOrVariationCode = computed(() => {
+      return productGetters.getVariationProductCodeOrProductCode(product.value)
+    })
+
     const isProductAvailable = ref(false)
 
     onMounted(() => {
@@ -257,6 +264,37 @@ export default {
         handleFulfillmentOption("Ship", false)
       }, 1500)
     })
+
+    const fetchProductLocationInventory = async () => {
+      await loadProductLocationInventory(
+        productCodeOrVariationCode.value,
+        purchaseLocation?.value?.code
+      )
+    }
+
+    watch(
+      () => purchaseLocation.value.code,
+      () => {
+        fetchProductLocationInventory()
+      }
+    )
+
+    watch(
+      () => productCodeOrVariationCode.value,
+      () => {
+        fetchProductLocationInventory()
+      }
+    )
+
+    const quantityLeft: ComputedRef<number> = computed(() => {
+      return productGetters.getAvailableItemCount(
+        product.value,
+        productInventory.value,
+        selectedFulfillmentValue.value
+      )
+    })
+
+    const qtySelected: Ref<number> = ref(1)
 
     const moreDetailLink = (product) => {
       document.documentElement.style.overflow = "auto"
@@ -281,8 +319,12 @@ export default {
         })
       }
 
-      if (isValidForAddToCart.value === false) isProductAvailable.value = true
-      else isProductAvailable.value = false
+      setTimeout(() => {
+        if (productOptions.value === undefined) {
+          if (isValidForAddToCart.value === false) isProductAvailable.value = true
+          else isProductAvailable.value = false
+        }
+      }, 500)
     }
 
     let shopperEnteredValues = []
@@ -293,7 +335,10 @@ export default {
 
       await configure(shopperEnteredValues, product.value?.productCode)
 
-      if (isValidForAddToCart.value === false) isProductAvailable.value = true
+      console.log("QuantityLeft", quantityLeft)
+
+      if (isValidForAddToCart.value === false || quantityLeft.value === 0)
+        isProductAvailable.value = true
       else isProductAvailable.value = false
     }
 
