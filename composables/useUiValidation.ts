@@ -8,7 +8,7 @@ const handleAddressFormSchema = (contextRoot) => {
     lastNameOrSurname: yup.string().required(requiredMessage),
     address: yup.object({
       address1: yup.string().required(requiredMessage),
-      address2: yup.string().required(requiredMessage),
+      // address2: yup.string().required(requiredMessage),
       cityOrTown: yup.string().required(requiredMessage),
       stateOrProvince: yup.string().required(requiredMessage),
       postalOrZipCode: yup

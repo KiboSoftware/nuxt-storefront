@@ -40,12 +40,8 @@
         :label="$t('Apt')"
         name="apartment"
         class="form__element"
-        required
-        :valid="!errors.address2"
-        :error-message="errors.address2"
         :value="addressDetails.address && addressDetails.address.address2"
         @input="updateField('address2', $event)"
-        @blur="validate('address2')"
       />
       <SfInput
         :label="$t('City')"
@@ -181,7 +177,7 @@ export default {
       firstName: "",
       lastNameOrSurname: "",
       address1: "",
-      address2: "",
+
       cityOrTown: "",
       stateOrProvince: "",
       postalOrZipCode: "",
