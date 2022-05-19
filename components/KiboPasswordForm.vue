@@ -8,6 +8,7 @@
       :value="field.value"
       class="form__element"
       type="password"
+      :has-show-password="true"
       :valid="isConfirmPasswordSame === null || isConfirmPasswordSame"
       :error-message="field.id === 'confirmPassword' ? $t(`Password doesn't match`) : ''"
       @input="(value) => handlePassword(value, field.id)"

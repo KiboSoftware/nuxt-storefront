@@ -24,15 +24,24 @@
       </form>
     </div>
     <div v-else>
-      <p>{{ $t("Password Changed") }}</p>
+      <div class="reset-email-sent">
+        <SfIcon size="2rem">
+          <font-awesome-icon
+            icon="check-circle"
+            class="fa-icon"
+            color="var(--_c-dark-green-secondary)"
+          />
+        </SfIcon>
+        <p class="reset-email-sent__header">{{ $t("Password Changed") }}</p>
+      </div>
       <SfButton class="sf-button--text" link="/">
-        {{ $t("Back to home") }}
+        {{ $t("Log in now") }}
       </SfButton>
     </div>
   </SfModal>
 </template>
 <script>
-import { SfModal, SfButton, SfBar } from "@storefront-ui/vue"
+import { SfModal, SfButton, SfBar, SfIcon } from "@storefront-ui/vue"
 import { ref, computed } from "@vue/composition-api"
 import { forgotPasswordGetters } from "@/lib/getters"
 import { useUser, useForgotPassword } from "@/composables"
@@ -43,6 +52,7 @@ export default {
     SfButton,
     SfModal,
     SfBar,
+    SfIcon,
   },
   middleware({ route, redirect }) {
     // If the user don't have token values
@@ -210,5 +220,20 @@ export default {
 
 .error-msg {
   color: var(--_c-red-primary);
+}
+
+.reset-email-sent {
+  display: flex;
+  align-items: center;
+
+  &__header {
+    font-size: var(--font-size--xl);
+    font-weight: var(--font-weight--bold);
+    color: var(--_c-dark-green-secondary);
+  }
+}
+
+.svg-inline--fa.fa-w-16 {
+  width: var(--spacer-base);
 }
 </style>
