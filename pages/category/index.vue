@@ -141,11 +141,12 @@
             :show-add-to-cart-button="true"
             :score-rating="3"
             :max-rating="5"
-            wishlist-icon="heart"
-            is-in-wishlist-icon="heart_fill"
             :is-in-wishlist="isInWishlist(product)"
             :regular-price="productGetters.getPrice(product).regular"
-            :special-price="productGetters.getPrice(product).special"
+            :special-price="
+              productGetters.getPrice(product).special &&
+              $n(productGetters.getPrice(product).special, 'currency')
+            "
             :price-range="productGetters.getPriceRange(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
             :is-purchasable="productGetters.getIsPurchasable(product)"
