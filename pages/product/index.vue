@@ -28,7 +28,7 @@
               </div>
             </LazyHydrate>
 
-            <div class="product-badge">
+            <div class="product-badge" v-if="properties">
               <div
                 class="product-badge__item"
                 v-if="properties[`Hot Item`] && properties[`Hot Item`][0] === true"
@@ -301,7 +301,7 @@
                 <div class="product__description" v-html="description"></div>
               </div> -->
 
-                <div class="smartphone-only">
+                <div class="smartphone-only" v-if="properties">
                   <SfAccordion
                     open=""
                     :first-open="false"
@@ -322,7 +322,7 @@
               </div>
             </div>
 
-            <div class="product__accordion">
+            <div class="product__accordion" v-if="properties">
               <SfAccordion open="false" :multiple="true" transition="" showChevron>
                 <SfAccordionItem header="Description" v-if="description">
                   <SfList>
