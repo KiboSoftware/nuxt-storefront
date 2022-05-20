@@ -61,13 +61,10 @@
         <div v-if="!productSearchLoading" class="navbar__aside">
           <SfHeading
             :level="1"
-            :title="currentCategory"
+            :title="pageHeader"
             class="category-name sf-heading__title desktop-only"
           />
-          <SfHeading
-            :title="currentCategory"
-            class="category-name sf-heading__title smartphone-only"
-          />
+          <SfHeading :title="pageHeader" class="category-name sf-heading__title smartphone-only" />
           <div class="total-products total-products__upper-total smartphone-only">
             {{ totalProducts }} Results
           </div>
@@ -404,7 +401,7 @@ export default {
     }
 
     useAsync(async () => {
-      getChildCategory()
+      if ($route.params.categoryCode) getChildCategory()
 
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
@@ -418,7 +415,10 @@ export default {
       ])
       await appData
 
-      banners.value = contentBanner.value?.dropzones[0]?.rows[0]?.columns[0]?.widgets[0]?.config
+      if ($route.params.categoryCode)
+        banners.value = contentBanner.value?.dropzones[0]?.rows[0]?.columns[0]?.widgets[0]?.config
+      else banners.value = undefined
+
       loader.value = false
     }, null)
 
@@ -458,9 +458,9 @@ export default {
         : getCategoryFacet.value.header
     })
 
-    const currentCategory = computed(() => {
-      return result.value?.categories[0]?.content?.name
-    })
+    // const currentCategory = computed(() => {
+    //   return result.value?.categories[0]?.content?.name
+    // })
 
     const appliedFilters = computed(() => facetGetters.getSelectedFacets(facets.value) || [])
     const selectFilter = (filterValue) => {
@@ -518,7 +518,6 @@ export default {
 
     return {
       addToCart,
-      currentCategory,
       isInCart,
       getCatLink,
       childCategories,

@@ -43,7 +43,10 @@
             </template>
           </SfCollectedProduct>
         </div>
-        <!-- <CartRecommendations :product-codes="recommendedProductCodes" /> -->
+        <CartRecommendations
+          :product-codes="recommendedProductCodes"
+          @close-modal="toggleCartSidebar"
+        />
       </div>
 
       <div v-else key="empty-cart" class="empty-cart">
@@ -153,6 +156,7 @@ import Modal from "./Modal.vue"
 import CheckoutOptions from "./CheckoutOptions.vue"
 import { useCart, useUiState, useUser } from "@/composables"
 import { cartGetters, userGetters } from "@/lib/getters"
+import CartRecommendations from "@/components/CartRecommendations.vue"
 export default {
   name: "AtcConfirmationSidebar",
   components: {
@@ -165,6 +169,7 @@ export default {
     SfHeading,
     Modal,
     CheckoutOptions,
+    CartRecommendations,
   },
   setup(__, context) {
     const modalName = ref(null)
@@ -172,6 +177,7 @@ export default {
     const { cart, newestCartItemId, updateCartItemQuantity, removeCartItem } = useCart()
     const product = ref({})
     const cartPrice = ref({})
+    const recommendedProductCodes = ref([])
     // const totalItemsInCart = ref(0)
 
     const isAuthenticated = computed(() => {
@@ -212,7 +218,6 @@ export default {
     watch(cart, () => {
       if (cart.value !== null && newestCartItemId.value) {
         const addedItem = cart.value.items?.find((item) => item.id === newestCartItemId.value)
-
         if (addedItem) {
           const item = []
           item[0] = addedItem
@@ -222,6 +227,11 @@ export default {
             taxTotal: cart.value.taxTotal,
             total: cart.value.total,
           }
+
+          recommendedProductCodes.value =
+            addedItem?.product?.properties
+              ?.filter((prop) => prop.attributeFQN === "tenant~product-crosssell")[0]
+              ?.values?.map((val) => val.value) || []
         }
       }
     })
@@ -255,6 +265,7 @@ export default {
       closeTheModal,
       openCheckoutOptions,
       modalName,
+      recommendedProductCodes,
     }
   },
 }
