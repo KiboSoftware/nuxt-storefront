@@ -16,6 +16,7 @@
               <SfIcon
                 @click.prevent="openCTA"
                 id="cta"
+                v-if="!isMobile"
                 icon="info"
                 size="lg"
                 color="black"
@@ -24,7 +25,7 @@
               >
                 <!-- <fa icon="info-circle" class="icon-border" /> -->
               </SfIcon>
-              <div v-if="myModel">
+              <div v-if="myModel && !isMobile">
                 <transition name="model">
                   <div class="modal-mask" id="modal-cta-checkout">
                     <div class="modal-wrapper">
@@ -119,11 +120,34 @@
           </SfSteps>
         </div>
         <div class="checkout__aside">
+          <div
+            class="orderSummary-header smartphone-only"
+            @click="showOrderSummary = !showOrderSummary"
+          >
+            <SfHeading
+              :level="3"
+              :title="$t('Order summary')"
+              class="sf-heading--left sf-heading--no-underline title"
+            />
+            <span class="sf-chevron--top sf-chevron" v-if="!showOrderSummary">
+              <span class="sf-chevron__bar sf-chevron__bar--left" />
+              <span class="sf-chevron__bar sf-chevron__bar--right" />
+            </span>
+
+            <span class="sf-chevron" v-else>
+              <span class="sf-chevron__bar sf-chevron__bar--left" />
+              <span class="sf-chevron__bar sf-chevron__bar--right" />
+            </span>
+          </div>
+
           <transition name="sf-fade">
             <SfLoader :loading="loading">
               <KiboOrderSummary
-                v-if="currentStep <= 2"
+                v-if="showOrderSummary"
                 :order="getOrder"
+                key="order-summary"
+                :isMobile="true"
+                @modalStatus="changeModalStatus"
                 :order-title="$t('Order Summary')"
                 :order-title-level="3"
                 :number-of-items="numberOfItems"
@@ -136,7 +160,7 @@
                 :applied-coupons="appliedCoupons"
                 :are-coupons-applied="areCouponsApplied"
               >
-                <template #actions>
+                <!-- <template #actions>
                   <SfButton
                     class="sf-button--full-width actions__button"
                     data-testid="apply-button"
@@ -153,9 +177,55 @@
                   >
                     {{ $t("Go Back") }}
                   </SfButton>
-                </template>
+                </template> -->
               </KiboOrderSummary>
-              <KiboOrderReview
+              <div class="desktop-only">
+                <KiboOrderSummary
+                  :order="getOrder"
+                  key="order-summary"
+                  :isMobile="false"
+                  @modalStatus="changeModalStatus"
+                  :order-title="$t('Order Summary')"
+                  :order-title-level="3"
+                  :number-of-items="numberOfItems"
+                  :sub-total="checkoutSubTotal"
+                  :standard-shipping="standardShipping"
+                  :estimated-tax="estimatedTax"
+                  :estimated-order-total="estimatedOrderTotal"
+                  :is-valid-coupon="isValidCoupon"
+                  :invalid-coupon-error-text="invalidCouponErrorText"
+                  :applied-coupons="appliedCoupons"
+                  :are-coupons-applied="areCouponsApplied"
+                >
+                  <template #actions>
+                    <SfButton
+                      class="sf-button--full-width actions__button"
+                      data-testid="apply-button"
+                      :disabled="!enableNextStep"
+                      @click="updateStep"
+                    >
+                      {{ steps[currentStep] }}
+                    </SfButton>
+                    <SfButton
+                      v-if="currentStep === 0"
+                      class="sf-button--full-width actions__button"
+                      data-testid="apply-button"
+                      @click="gotocart()"
+                    >
+                      View Cart
+                    </SfButton>
+                    <SfButton
+                      v-if="currentStep !== 0"
+                      class="sf-button--full-width actions__button color-light"
+                      data-testid="apply-button"
+                      @click="currentStep--"
+                    >
+                      {{ $t("Go Back") }}
+                    </SfButton>
+                  </template>
+                </KiboOrderSummary>
+              </div>
+              <!-- <KiboOrderReview
                 v-else
                 key="order-review"
                 :order="getOrder"
@@ -171,9 +241,58 @@
                 @click:billing-details-edit="currentStep = $event"
                 @click:payment-details-edit="currentStep = $event"
                 @click:promo-code-apply="currentStep = $event"
-              />
+              /> -->
             </SfLoader>
           </transition>
+          <template>
+            <div class="mobileActionButton smartphone-only">
+              <SfButton
+                v-if="currentStep === 0"
+                class="sf-button--full-width actions__button"
+                data-testid="apply-button"
+                :disabled="!enableNextStep"
+                @click="gotocart()"
+              >
+                View Cart
+              </SfButton>
+              <SfButton
+                class="sf-button--full-width actions__button"
+                data-testid="apply-button"
+                :disabled="!enableNextStep"
+                @click="updateStep"
+              >
+                {{ steps[currentStep] }}
+              </SfButton>
+              <SfButton
+                v-if="currentStep !== 0"
+                class="sf-button--full-width actions__button color-light"
+                data-testid="apply-button"
+                @click="currentStep--"
+              >
+                {{ $t("Go Back") }}
+              </SfButton>
+            </div>
+          </template>
+          <!-- <template>
+               <div class="actionButton desktop-only" >
+                  <SfButton
+                    class="sf-button--full-width actions__button"
+                    data-testid="apply-button"
+                    :disabled="!enableNextStep"
+                    @click="updateStep"
+                  >
+                    {{ steps[currentStep] }}
+                  </SfButton><br>
+                  <SfButton
+                    v-if="currentStep !== 0"
+                    class="sf-button--full-width actions__button color-light"
+                    data-testid="apply-button"
+                    @click="currentStep--"
+                  >
+                    {{ $t("Go Back") }}
+                  </SfButton>
+               </div>
+                </template> -->
         </div>
       </div>
     </div>
@@ -181,6 +300,7 @@
 </template>
 
 <script lang="ts">
+import { onBeforeUnmount } from "@vue/composition-api"
 import {
   SfSteps,
   SfButton,
@@ -189,8 +309,13 @@ import {
   SfLink,
   SfImage,
   SfIcon,
+  SfHeading,
 } from "@storefront-ui/vue"
 import { useAsync, computed, ref } from "@nuxtjs/composition-api"
+import {
+  mapMobileObserver,
+  unMapMobileObserver,
+} from "@storefront-ui/vue/src/utilities/mobile-observer.js"
 import { useNuxtApp } from "#app"
 import {
   useCheckout,
@@ -225,10 +350,12 @@ export default {
     SfLink,
     SfImage,
     SfIcon,
+    SfHeading,
   },
   setup(_, context) {
     const myModel = ref(false)
     const nuxt = useNuxtApp()
+    const app = nuxt.nuxt2Context.app
     const countries = nuxt.nuxt2Context.$config.countries
     const { locale } = context.root.$i18n
     const currencyCode = context.root.$i18n.getNumberFormat(locale)?.currency?.currency
@@ -270,6 +397,7 @@ export default {
     })
 
     const { dropzoneContent, loadProperties } = useDropzoneContent("Logo")
+    const isMobile = computed(() => mapMobileObserver().isMobile.get())
 
     useAsync(async () => {
       await loadProperties({
@@ -277,6 +405,10 @@ export default {
         filter: `name eq logo`,
       })
     }, null)
+
+    onBeforeUnmount(() => {
+      unMapMobileObserver()
+    })
 
     const stepLabels = {
       GO_TO_SHIPPING: context?.root?.$t("Go to Shipping"),
@@ -306,6 +438,7 @@ export default {
     const standardShipping = computed(() => checkoutGetters.getShippingTotal(getOrder.value))
     const estimatedTax = computed(() => checkoutGetters.getTaxTotal(getOrder.value))
     const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(getOrder.value))
+    const showOrderSummary = ref(false)
 
     const logIn = () => {
       toggleLoginModal()
@@ -564,6 +697,10 @@ export default {
       await setBillingInfo(params)
     }
 
+    const changeModalStatus = (value) => {
+      showOrderSummary.value = value
+    }
+
     const createUserAccount = async () => {
       const params = {
         ...personalDetails.value,
@@ -591,6 +728,7 @@ export default {
 
     // others
     const updateStep = async (selectedStep: number) => {
+      changeModalStatus(false)
       const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1 // // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
 
       switch (steps[currentStep.value]) {
@@ -640,7 +778,15 @@ export default {
       myModel.value = false
     }
 
+    const gotocart = () => {
+      app.router.push({ path: "/Cart" })
+    }
+
     return {
+      gotocart,
+      showOrderSummary,
+      changeModalStatus,
+      isMobile,
       dropzoneContent,
       myModel,
       openCTA,
@@ -744,7 +890,7 @@ $checkoutBackground: #fff;
 
   &__main {
     ::v-deep .sf-steps__step.is-done {
-      --steps-step-color: var(--c-primary);
+      // --steps-step-color: var(--c-primary);
     }
     @include for-desktop {
       flex: 1;
@@ -759,7 +905,7 @@ $checkoutBackground: #fff;
     @include for-desktop {
       flex: 0 0 26.8125rem;
       width: 31.57%; //413px;
-      margin-top: calc(var(--spacer-base) * 1.5);
+      // margin-top: calc(var(--spacer-base) * 1.5);
     }
 
     &-order {
@@ -907,6 +1053,11 @@ $checkoutBackground: #fff;
   &__title {
     --heading-title-font-weight: var(--font-weight--medium);
   }
+
+  @include for-mobile {
+    margin-left: 34px;
+    margin-top: 22px;
+  }
 }
 
 .stepsclass {
@@ -976,6 +1127,11 @@ $checkoutBackground: #fff;
     margin-left: -80px;
     top: 13px;
     width: 10px;
+
+    @include for-mobile {
+      margin-top: 75px;
+      margin-left: 28px;
+    }
   }
 
   &__action {
@@ -1018,5 +1174,54 @@ $checkoutBackground: #fff;
   font-size: 1rem;
   font-weight: bold;
   align-items: center;
+}
+
+.sf-badge.color-secondary {
+  --badge-background: none;
+}
+
+.orderSummary-header {
+  display: flex;
+  justify-content: space-between;
+  bottom: 2.3rem;
+  position: fixed;
+  width: 100%;
+  background: var(--c-white);
+  left: 0;
+  height: 50px;
+
+  .sf-chevron {
+    top: 13px;
+    right: 15px;
+  }
+
+  .title-orderSummary {
+    padding-left: 3%;
+    margin: var(--spacer-xs) 0 0 0;
+
+    --heading-title-font-weight: var(--font-weight--bold);
+
+    .sf-heading__title.h3 {
+      font-size: var(--h4-font-size);
+    }
+  }
+}
+
+.actionButton {
+  position: absolute;
+  width: 250px;
+  left: 10%;
+  bottom: 0;
+  border: 1px solid;
+}
+
+.mobileActionButton {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+  height: 42px;
 }
 </style>

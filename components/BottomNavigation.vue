@@ -1,5 +1,8 @@
 <template>
-  <SfBottomNavigation class="navigation-bottom smartphone-only">
+  <SfBottomNavigation
+    class="navigation-bottom smartphone-only"
+    v-if="!checkoutSteps.includes($route.path)"
+  >
     <!-- <nuxt-link to="/">
       <SfBottomNavigationItem
         :class="$route.path == '/' ? 'sf-bottom-navigation__item--active' : ''"
@@ -11,8 +14,17 @@
     </nuxt-link> -->
     <SfBottomNavigationItem icon="menu" size="20px" label="Menu" @click="toggleMobileMenu" />
     <SfBottomNavigationItem icon="heart" size="20px" label="Wishlist" />
-    <SfBottomNavigationItem icon="profile" size="20px" label="Account" @click="handleAccountClick" />
-    <SfBottomNavigationItem label="Basket" icon="add_to_cart" @click="toggleAddToCartConfirmationModal">
+    <SfBottomNavigationItem
+      icon="profile"
+      size="20px"
+      label="Account"
+      @click="handleAccountClick"
+    />
+    <SfBottomNavigationItem
+      label="Basket"
+      icon="add_to_cart"
+      @click="toggleAddToCartConfirmationModal"
+    >
       <!-- Cart icon removed -->
       <!-- <template #icon>
         <SfCircleIcon aria-label="Add to cart">
@@ -24,7 +36,6 @@
           />
         </SfCircleIcon>
       </template> -->
-      
     </SfBottomNavigationItem>
   </SfBottomNavigation>
 </template>
@@ -50,6 +61,8 @@ export default {
     const app = nuxt.nuxt2Context.app
     const { user } = useUser()
 
+    const checkoutSteps = ["/Checkout", "/checkout"]
+
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
@@ -62,6 +75,7 @@ export default {
     }
 
     return {
+      checkoutSteps,
       isMobileMenuOpen,
       toggleMobileMenu,
       handleAccountClick,

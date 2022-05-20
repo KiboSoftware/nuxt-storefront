@@ -241,12 +241,12 @@
       <!-- <div class="line-2"></div> -->
     </div>
     <div class="kibo-mobile smartphone-only">
-      <div class="kibo-top-bar__content">
+      <div class="kibo-top-bar__content" v-if="!checkoutSteps.includes($route.path)">
         <nuxt-link :to="localePath('/c/CampHike')" class="sf-header__logo">
           <div v-if="promobaner !== undefined" v-html="promobaner.body"></div>
         </nuxt-link>
       </div>
-      <div class="kibo-mobile__header-container">
+      <div class="kibo-mobile__header-container" v-if="!checkoutSteps.includes($route.path)">
         <div class="kibo-mobile__header">
           <div class="kibo-mobile__header-column logo_image_mobile">
             <SfLink link="/">

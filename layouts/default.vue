@@ -31,6 +31,10 @@
     max-width: 81.75rem;
     margin-top: 180px;
   }
+
+  @include for-mobile {
+    overflow-x: hidden;
+  }
 }
 
 .no-scroll {
