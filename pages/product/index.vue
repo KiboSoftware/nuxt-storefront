@@ -201,7 +201,9 @@
                   :quantity-left="quantityLeft"
                   :is-valid-for-add-to-cart="isValidForAddToCart"
                   :label-add-to-cart="$t('Add to Cart')"
-                  :label-add-to-wishlist="wishlistLabel"
+                  :label-add-to-wishlist="$t('Wishlist')"
+                  :is-in-wishlist="isInWishlist(product)"
+                  :is-loading-wishlist="isLoadingWishlist"
                   @addItemToCart="addToCart"
                   @addItemWishlist="addItemToWishList"
                 />
@@ -321,7 +323,13 @@ export default defineComponent({
     const { cart, addItemsToCart } = useCart()
     const { toggleAddToCartConfirmationModal, toggleLoginModal } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
-    const { addToWishlist, isInWishlist, removeItemFromWishlist } = useWishlist()
+    const {
+      loading: loadingWishlist,
+      loadWishlist,
+      addToWishlist,
+      isInWishlist,
+      removeItemFromWishlist,
+    } = useWishlist()
     const { user } = useUser()
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
@@ -337,6 +345,7 @@ export default defineComponent({
     useAsync(async () => {
       await load(productCode)
       await loadProductLocationInventory(productCode, purchaseLocation?.value?.code)
+      await loadWishlist()
     }, null)
 
     const productName = computed(() => productGetters.getName(product.value))
@@ -359,6 +368,10 @@ export default defineComponent({
     const isValidForAddToCart = computed(() => productGetters.validateAddToCart(product.value))
     const productCodeOrVariationCode = computed(() => {
       return productGetters.getVariationProductCodeOrProductCode(product.value)
+    })
+
+    const isLoadingWishlist = computed(() => {
+      return loadingWishlist.value
     })
 
     const fetchProductLocationInventory = async () => {
@@ -525,6 +538,8 @@ export default defineComponent({
       isProductZoomed,
       isMobile,
       wishlistLabel,
+      isLoadingWishlist,
+      isInWishlist,
     }
   },
 })

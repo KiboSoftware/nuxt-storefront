@@ -269,4 +269,5 @@ export default {
   itemsLeft: "no items left | {n} item left | {n} items left",
   RemovefromWishlist: "Remove from Wishlist",
   registrationFailed: "New Account Registration Failed",
+  Wishlist: "Wishlist",
 }

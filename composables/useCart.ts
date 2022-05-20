@@ -1,3 +1,4 @@
+import { computed } from "@vue/composition-api"
 import { useNuxtApp, useState } from "#app"
 import { getCartQuery } from "@/lib/gql/queries"
 import {
@@ -148,7 +149,7 @@ export const useCart = () => {
   }
 
   return {
-    loading,
+    loading: computed(() => loading.value),
     addItemsToCart,
     updateCartItemQuantity,
     removeCartItem,
