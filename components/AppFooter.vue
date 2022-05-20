@@ -1,41 +1,43 @@
 <template>
-  <div v-if="dropzoneContent !== undefined">
-    <SfFooter :column="3" multiple class="footer">
-      <SfFooterColumn>
-        <p v-html="dropzoneContent.dropzones[3].rows[0].columns[0].widgets[0].config.body"></p>
-      </SfFooterColumn>
-      <SfFooterColumn>
-        <p v-html="dropzoneContent.dropzones[3].rows[0].columns[1].widgets[0].config.body"></p>
-      </SfFooterColumn>
-      <SfFooterColumn>
-        <p v-html="dropzoneContent.dropzones[3].rows[0].columns[2].widgets[0].config.body"></p>
-      </SfFooterColumn>
-      <SfFooterColumn>
-        <p v-html="dropzoneContent.dropzones[4].rows[0].columns[0].widgets[0].config.body"></p>
-      </SfFooterColumn>
-      <SfFooter :column="2" multiple class="footer">
+  <div v-if="!checkoutSteps.includes($route.path)">
+    <div v-if="dropzoneContent !== undefined">
+      <SfFooter :column="3" multiple class="footer">
         <SfFooterColumn>
-          <p
-            v-html="
-              dropzoneContent.dropzones[4].rows[0].columns[1].rows[0].columns[0].widgets[0].config
-                .body
-            "
-          ></p>
+          <p v-html="dropzoneContent.dropzones[3].rows[0].columns[0].widgets[0].config.body"></p>
         </SfFooterColumn>
         <SfFooterColumn>
-          <p
-            v-html="
-              dropzoneContent.dropzones[4].rows[0].columns[1].rows[0].columns[1].widgets[0].config
-                .body
-            "
-          ></p>
+          <p v-html="dropzoneContent.dropzones[3].rows[0].columns[1].widgets[0].config.body"></p>
         </SfFooterColumn>
+        <SfFooterColumn>
+          <p v-html="dropzoneContent.dropzones[3].rows[0].columns[2].widgets[0].config.body"></p>
+        </SfFooterColumn>
+        <SfFooterColumn>
+          <p v-html="dropzoneContent.dropzones[4].rows[0].columns[0].widgets[0].config.body"></p>
+        </SfFooterColumn>
+        <SfFooter :column="2" multiple class="footer">
+          <SfFooterColumn>
+            <p
+              v-html="
+                dropzoneContent.dropzones[4].rows[0].columns[1].rows[0].columns[0].widgets[0].config
+                  .body
+              "
+            ></p>
+          </SfFooterColumn>
+          <SfFooterColumn>
+            <p
+              v-html="
+                dropzoneContent.dropzones[4].rows[0].columns[1].rows[0].columns[1].widgets[0].config
+                  .body
+              "
+            ></p>
+          </SfFooterColumn>
+        </SfFooter>
       </SfFooter>
-    </SfFooter>
-    <div class="copyrighttext">
-      <p>
-        <fa icon="copyright" />"2022"Mystic Outdoor v2. All Rights reserved. Kibo Software, Inc.
-      </p>
+      <div class="copyrighttext">
+        <p>
+          <fa icon="copyright" />"2022"Mystic Outdoor v2. All Rights reserved. Kibo Software, Inc.
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -50,6 +52,7 @@ export default {
   },
   setup() {
     const { dropzoneContent, loadProperties } = useDropzoneContent("Footer")
+    const checkoutSteps = ["/Checkout", "/checkout"]
 
     useAsync(async () => {
       await Promise.all([
@@ -61,6 +64,7 @@ export default {
     })
     return {
       dropzoneContent,
+      checkoutSteps,
     }
   },
 }

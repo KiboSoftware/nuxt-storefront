@@ -1,6 +1,6 @@
 <template>
   <div class="sf-personal-details">
-    <div class="log-in">
+    <!-- <div class="log-in">
       <SfButton
         class="log-in__button sf-button--full-width color-secondary"
         data-testid="login-button"
@@ -8,10 +8,10 @@
         >{{ $t("Log into your account") }}</SfButton
       >
       <p class="log-in__info">{{ $t("or fill the details below") }}</p>
-    </div>
+    </div> -->
     <SfHeading
       :title="$t('Personal details')"
-      :level="2"
+      :level="3"
       class="sf-heading--left sf-heading--no-underline title"
     />
     <div class="form">
@@ -26,19 +26,6 @@
         @input="updateField('email', $event)"
         @blur="validateEmail('email')"
       />
-      <div class="info">
-        <p class="info__heading">
-          {{ $t("Enjoy your free account") }}
-        </p>
-        <SfCharacteristic
-          v-for="(characteristic, key) in characteristics"
-          :key="key"
-          :description="characteristic.description"
-          :icon="characteristic.icon"
-          :size-icon="characteristic.size"
-          class="info__characteristic"
-        />
-      </div>
 
       <div class="account-info">
         <SfCheckbox
@@ -81,6 +68,19 @@
               :show-password-requirements="true"
             />
           </div>
+          <div class="info">
+            <p class="info__heading">
+              {{ $t("Enjoy your free account") }}
+            </p>
+            <SfCharacteristic
+              v-for="(characteristic, key) in characteristics"
+              :key="key"
+              :description="characteristic.description"
+              :icon="characteristic.icon"
+              :size-icon="characteristic.size"
+              class="info__characteristic"
+            />
+          </div>
         </transition>
       </div>
     </div>
@@ -88,7 +88,7 @@
 </template>
 
 <script lang="ts">
-import { SfInput, SfCheckbox, SfButton, SfHeading, SfCharacteristic } from "@storefront-ui/vue"
+import { SfInput, SfCheckbox, SfHeading, SfCharacteristic } from "@storefront-ui/vue"
 import { useUiValidationSchemas } from "@/composables"
 
 export default {
@@ -96,7 +96,6 @@ export default {
   components: {
     SfInput,
     SfCheckbox,
-    SfButton,
     SfHeading,
     SfCharacteristic,
   },
@@ -252,15 +251,45 @@ export default {
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfPersonalDetails.scss";
 
+.sf-personal-details {
+  @include for-mobile {
+    margin-top: 70px;
+  }
+}
+
 .info {
   width: 100%;
 }
 
+.form {
+  margin-top: -35px;
+}
+
 .account-info {
+  margin-top: -70px;
   width: 100%;
+
+  @include for-mobile {
+    margin-top: -35px;
+  }
 }
 
 .account-info > * {
   max-width: calc(var(--spacer-base) * 15.45);
+}
+
+// .sf-heading__title.h2 {
+//   margin-left: -600px;
+// }
+
+.sf-personal-details .info {
+  display: initial;
+}
+
+.sf-personal-details .title {
+  margin-left: -660px;
+  @include for-mobile {
+    margin-left: -193px;
+  }
 }
 </style>

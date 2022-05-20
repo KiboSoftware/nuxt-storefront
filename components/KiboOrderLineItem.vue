@@ -12,19 +12,45 @@
           {{ checkoutLineItemGetters.getProductName(item) }}
         </div>
 
+        <div class="item-content__props">
+          <span class="price"
+            >{{ $t("Price") }}: ${{ checkoutLineItemGetters.getProductPrice(item) }}</span
+          >
+        </div>
         <div
           v-for="option in checkoutLineItemGetters.getProductOptions(item)"
           :key="option.attributeFQN"
           class="item-content__props"
         >
-          <span class="title"> {{ option.name }}: </span> {{ option.value }} <br />
+          <!-- {{option.name}}
+        <div v-if= "option.name != '' "> -->
+          <span class="option"> {{ option.name }}: {{ option.value }} </span><br />
+          <!-- </div> -->
+          <!-- <div v-else>
+             <span class="title"> {{ option.name }}: NA  </span><br />
+         </div> -->
         </div>
 
-        <div class="item-content__props">
-          <span class="title">{{ $t("Price") }}: </span> ${{
-            checkoutLineItemGetters.getProductPrice(item)
-          }}
+        <!-- <div v-else>
+         <div
+          :key="option.attributeFQN"
+          class="item-content__props"
+        >
+          <span class="title"> {{ color }}: NA  </span><br />
+           <span class="title">{{ Size }}: NA  </span><br />
         </div>
+        </div> -->
+
+        <!-- <template>
+              <div class="collected-product__properties">
+                <SfProperty
+                  v-for="(attribute, key) in cartGetters.getItemAttributes(item, ['color', 'size'])"
+                  :key="key"
+                  :name="key"
+                  :value="attribute"
+                />
+              </div>
+            </template> -->
       </div>
     </div>
   </div>
@@ -63,8 +89,8 @@ export default {
     --image-height: calc(var(--spacer-base) * 5.04);
 
     @include for-desktop {
-      --image-width: calc(var(--spacer-base) * 6.7);
-      --image-height: calc(var(--spacer-base) * 6.7);
+      --image-width: calc(var(--spacer-base) * 4.95);
+      --image-height: calc(var(--spacer-base) * 2.5);
     }
 
     .sf-image {
@@ -82,12 +108,15 @@ export default {
     }
 
     &__props {
-      padding: 2px 0 2px 0;
+      margin-top: 1px;
+      padding: 0 83px 2px 0;
       font-size: var(--font-size--sm);
 
       .title {
         font-weight: bold;
         font-size: var(--font-size--sm);
+        margin-top: -37px;
+        margin-left: 6px;
       }
     }
   }

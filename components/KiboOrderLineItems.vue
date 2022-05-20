@@ -11,10 +11,10 @@
         </div>
         <slot name="ship-sub-section" />
 
-        <div v-for="(item, index) in shipItems" :key="index" class="order-shipment__item">
+        <!-- <div v-for="(item, index) in shipItems" :key="index" class="order-shipment__item">
           <KiboOrderLineItem :item="item" />
           <hr v-if="index != shipItems.length - 1" class="line-item-spacer" />
-        </div>
+        </div> -->
         <div>
           <div class="shipping-address">{{ $t("Shipping Address") }}</div>
           <UserAddressView :address="address" />
@@ -33,7 +33,7 @@
         <slot name="pickup-sub-section" />
 
         <div v-for="(item, index) in pickupItems" :key="index" class="item">
-          <KiboOrderLineItem :item="item" />
+          <!-- <KiboOrderLineItem :item="item" /> -->
           <KiboStoreAddress :item="item" />
           <hr v-if="index != pickupItems.length - 1" class="line-item-spacer" />
         </div>
