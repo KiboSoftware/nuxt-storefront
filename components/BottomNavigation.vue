@@ -26,29 +26,39 @@
       @click="toggleAddToCartConfirmationModal"
     >
       <!-- Cart icon removed -->
-      <!-- <template #icon>
-        <SfCircleIcon aria-label="Add to cart">
-          <SfIcon
-            icon="add_to_cart"
-            color="white"
-            size="25px"
-            :style="{ margin: '0 0 0 -2px' }"
-          />
-        </SfCircleIcon>
-      </template> -->
+      <template #icon>
+        <!-- <SfCircleIcon aria-label="Add to cart">
+            <SfIcon
+              icon="add_to_cart"
+              color="white"
+              size="25px"
+              :style="{ margin: '0 0 0 -2px' }"
+            />
+          </SfCircleIcon> -->
+
+        <div class="kibo-mobile__header-column">
+          <SfIcon style="font-size: 1.1rem">
+            <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
+              totalItemsInCart
+            }}</SfBadge>
+            <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
+          </SfIcon>
+        </div>
+      </template>
     </SfBottomNavigationItem>
   </SfBottomNavigation>
 </template>
 
 <script>
-import { SfBottomNavigation } from "@storefront-ui/vue"
-import { useUiState, useUser } from "@/composables"
-import { userGetters } from "@/lib/getters"
+import { SfBottomNavigation, SfBadge } from "@storefront-ui/vue"
+import { useUiState, useUser, useCart } from "@/composables"
+import { userGetters, cartGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 
 export default {
   components: {
     SfBottomNavigation,
+    SfBadge,
   },
   setup() {
     const {
@@ -60,6 +70,8 @@ export default {
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { user } = useUser()
+
+    const { cart } = useCart()
 
     const checkoutSteps = ["/Checkout", "/checkout"]
 
@@ -74,6 +86,11 @@ export default {
       toggleLoginModal()
     }
 
+    const totalItemsInCart = computed(() => {
+      const count = cartGetters.getCartTotalQuantity(cart.value)
+      return count ? count.toString() : null
+    })
+
     return {
       checkoutSteps,
       isMobileMenuOpen,
@@ -82,6 +99,7 @@ export default {
       isAuthenticated,
       user,
       toggleAddToCartConfirmationModal,
+      totalItemsInCart,
     }
   },
 }
@@ -116,6 +134,30 @@ export default {
     .sf-icon-path {
       --icon-color: var(--c-white);
     }
+  }
+}
+
+.kibo-mobile {
+  &__header-column {
+    align-self: center;
+    align-items: center;
+    position: relative;
+  }
+
+  &__header-icon {
+    z-index: 2;
+  }
+
+  &__item-count {
+    --badge-min-width: var(--spacer-sm);
+    --badge-min-height: var(--spacer-sm);
+
+    justify-content: center;
+    font-size: calc(var(--spacer-2xs) * 2.25);
+    right: -13px;
+    top: -7px;
+    position: absolute;
+    margin-top: 2px;
   }
 }
 </style>
