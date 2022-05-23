@@ -332,7 +332,7 @@ export default {
     const facetsFromUrl = ref({
       categoryCode: "",
       page: null,
-      itemsPerPage: 20,
+      itemsPerPage: 12,
       phrase: "",
       filters: [],
       sort: "",

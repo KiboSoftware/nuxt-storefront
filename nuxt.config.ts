@@ -139,7 +139,7 @@ export default defineNuxtConfig({
     ],
     storeLocationCookie: LOCATION_COOKIE,
     productListing: {
-      itemsPerPage: [20, 40, 60],
+      itemsPerPage: [12, 24, 36],
       sortOptions: [
         { value: "Default", id: "" },
         { value: "Price: Low to High", id: "price asc" },
