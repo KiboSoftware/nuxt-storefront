@@ -32,7 +32,7 @@
         v-if="showDefaultCheckbox && showAddressForm"
         v-model="isDefaultAddress"
         name="is-default"
-        :label="$t('makeThisMyDefaultPayment')"
+        :label="$t('makeThisMyDefaultAddress')"
         class="form__checkbox"
       />
     </div>
