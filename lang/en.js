@@ -258,6 +258,7 @@ export default {
   enterOrderNumber: "Enter your order number",
   "Billing Email": "Billing Email",
   enterValidEmailAddress: "Enter a valid billing email address",
+  makeThisMyDefaultAddress: "Make this my default address",
   makeThisMyDefaultPayment: "Make this my default payment",
   loginToYourAccount: "or Log In To Your Account",
   Hi: "Hi, ",
