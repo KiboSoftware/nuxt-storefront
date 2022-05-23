@@ -46,7 +46,7 @@
                   :show-password-requirements="false"
                   @input:handle-password="getPasswordValues"
                 />
-                <span v-if="userError.login" class="login-error-message">
+                <span v-if="userError.login" class="login-error-message error">
                   {{ $t("registrationFailed") }}
                 </span>
                 <SfCheckbox
@@ -96,7 +96,7 @@
                     class="form__element"
                     :has-show-password="true"
                   />
-                  <span v-if="userError.login" class="login-error-message">
+                  <span v-if="userError.login" class="login-error-message error">
                     {{ userError.login.message }}
                   </span>
                   <div v-if="error.login">
@@ -146,7 +146,7 @@
                 required
                 @input="validateEmail('email', form.username)"
               />
-              <span v-if="userError.resetPassword" class="login-error-message">
+              <span v-if="userError.resetPassword" class="login-error-message error">
                 {{ userError.resetPassword.message }}
               </span>
 
@@ -300,9 +300,13 @@ export default {
 
     const handleForm = (fn) => async () => {
       resetErrorValues()
+      console.log("fn.name", fn.name)
+      console.log("typeof fn.name", typeof fn.name)
       if (fn.name === "createAccountAndLogin") {
+        console.log("inside handle form if")
         await fn({ ...form.value, password: password.value.password, id: 0 })
       } else {
+        console.log("inside handle form else")
         await fn(form.value)
       }
       const hasUserErrors = userGetters.hasUserError(userError.value)
