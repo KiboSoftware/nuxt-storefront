@@ -1,144 +1,152 @@
 <template>
-  <div class="kibo-product-card" data-testid="product-card">
-    <div class="sf-product-card__image-wrapper">
-      <slot name="image" v-bind="{ image, title, link, imageHeight, imageWidth }">
-        <SfButton
-          :link="link"
-          class="sf-button--pure sf-product-card__link"
-          data-testid="product-link"
-          v-on="$listeners"
-        >
-          <template v-if="Array.isArray(image)">
+  <div>
+    <slot name="removed-item" />
+    <div
+      class="kibo-product-card"
+      :class="{ 'removed-item': isRemovedItem }"
+      data-testid="product-card"
+    >
+      <div class="sf-product-card__image-wrapper">
+        <slot name="image" v-bind="{ image, title, link, imageHeight, imageWidth }">
+          <SfButton
+            :link="link"
+            class="sf-button--pure sf-product-card__link"
+            data-testid="product-link"
+            v-on="$listeners"
+          >
+            <template v-if="Array.isArray(image)">
+              <SfImage
+                v-for="(picture, key) in image.slice(0, 2)"
+                :key="key"
+                :src="picture"
+                class="sf-product-card__picture"
+                :alt="title"
+                :placeholder="require('@/assets/images/product_placeholder.svg')"
+              />
+            </template>
             <SfImage
-              v-for="(picture, key) in image.slice(0, 2)"
-              :key="key"
-              :src="picture"
-              class="sf-product-card__picture"
+              v-else
+              class="sf-product-card__image"
+              :src="image"
               :alt="title"
               :placeholder="require('@/assets/images/product_placeholder.svg')"
+              @click="closeSearchDialog()"
             />
-          </template>
-          <SfImage
-            v-else
-            class="sf-product-card__image"
-            :src="image"
-            :alt="title"
-            :placeholder="require('@/assets/images/product_placeholder.svg')"
-            @click="closeSearchDialog()"
-          />
-        </SfButton>
-      </slot>
-      <slot name="colors" v-bind="{ colors }">
-        <SfColorPicker
-          v-if="colors.length"
-          class="sf-product-card__colors kpc-sf-color-picker"
-          label=""
-          :is-open="!isMobile || openColorPicker"
-          @click:toggle="toggleColorPicker"
-        >
-          <SfColor
-            v-for="(color, i) in colors"
-            :key="color.value"
-            :color="color.color"
-            :selected="color.selected"
-            class="sf-product-card__color kpc-sf-color"
-            @click="handleSelectedColor(i)"
-          />
-        </SfColorPicker>
-      </slot>
-      <slot name="badge" v-bind="{ badgeLabel, badgeColor }">
-        <SfBadge v-if="badgeLabel" class="sf-product-card__badge" :class="badgeColorClass">{{
-          badgeLabel
-        }}</SfBadge>
-      </slot>
-      <SfButton
-        v-if="isPurchasable"
-        :aria-label="`${ariaLabel} ${title}`"
-        :class="wishlistIconClasses"
-        data-testid="product-wishlist-button"
-        @click="toggleIsInWishlist"
-      >
-        <slot name="wishlist-icon" v-bind="{ currentWishlistIcon }">
-          <SfIcon
-            :icon="currentWishlistIcon"
-            :color="isInWishlist ? 'var(--_c-red-primary)' : ''"
-            size="22px"
-            data-test="sf-wishlist-icon-pdp"
-          />
+          </SfButton>
         </slot>
-      </SfButton>
-      <template v-if="showAddToCartButton">
-        <slot
-          name="add-to-cart"
-          v-bind="{
-            isAddedToCart,
-            showAddedToCartBadge,
-            isAddingToCart,
-            title,
-          }"
-        >
-          <SfCircleIcon
-            class="sf-product-card__add-button"
-            :aria-label="`Add to Cart ${title}`"
-            :has-badge="showAddedToCartBadge"
-            :disabled="addToCartDisabled"
-            data-testid="product-add-icon"
-            @click="onAddToCart"
+        <slot name="colors" v-bind="{ colors }">
+          <SfColorPicker
+            v-if="colors.length"
+            class="sf-product-card__colors kpc-sf-color-picker"
+            label=""
+            :is-open="!isMobile || openColorPicker"
+            @click:toggle="toggleColorPicker"
           >
-            <div class="sf-product-card__add-button--icons">
-              <transition v-if="!isAddingToCart && !isAddedToCart" name="sf-pulse" mode="out-in">
-                <slot name="add-to-cart-icon">
-                  <SfIcon key="add_to_cart" icon="add_to_cart" size="20px" color="white" />
-                </slot>
-              </transition>
-              <transition v-else name="sf-pulse" mode="out-in">
-                <slot name="adding-to-cart-icon">
-                  <SfIcon key="added_to_cart" icon="added_to_cart" size="20px" color="white" />
-                </slot>
-              </transition>
-            </div>
-          </SfCircleIcon>
+            <SfColor
+              v-for="(color, i) in colors"
+              :key="color.value"
+              :color="color.color"
+              :selected="color.selected"
+              class="sf-product-card__color kpc-sf-color"
+              @click="handleSelectedColor(i)"
+            />
+          </SfColorPicker>
         </slot>
-      </template>
-    </div>
-    <slot name="title" v-bind="{ title, link }">
-      <div>
-        <nuxt-link :to="link" class="kpc-title" @click="closeSearchDialog()">
-          {{ title }}</nuxt-link
-        >
-      </div>
-    </slot>
-    <slot name="price" v-bind="{ specialPrice, regularPrice }">
-      <div v-if="regularPrice">
-        <KiboPrice
-          :regular="$n(regularPrice, 'currency')"
-          :special="specialPrice && $n(specialPrice, 'currency')"
-          class="sf-product-card__price kpc-price"
-        />
-      </div>
-      <div v-if="priceRange">
-        <KiboPriceRange
-          :lower="priceRange.lower"
-          :upper="priceRange.upper"
-          :small="true"
-          class="sf-product-card__price kpc-price"
-        />
-      </div>
-    </slot>
-    <slot name="reviews" v-bind="{ maxRating, scoreRating }">
-      <div v-if="typeof scoreRating === 'number'" class="sf-product-card__reviews">
-        <SfRating class="sf-product-card__rating" :max="maxRating" :score="scoreRating" />
+        <slot name="badge" v-bind="{ badgeLabel, badgeColor }">
+          <SfBadge v-if="badgeLabel" class="sf-product-card__badge" :class="badgeColorClass">{{
+            badgeLabel
+          }}</SfBadge>
+        </slot>
         <SfButton
-          v-if="reviewsCount"
-          :aria-label="`Read ${reviewsCount} reviews about ${title}`"
-          class="sf-button--pure sf-product-card__reviews-count"
-          data-testid="product-review-button"
-          @click="$emit('click:reviews')"
+          v-if="isPurchasable"
+          :aria-label="`${ariaLabel} ${title}`"
+          :class="wishlistIconClasses"
+          data-testid="product-wishlist-button"
+          @click="toggleIsInWishlist"
         >
-          ({{ reviewsCount }})
+          <slot name="wishlist-icon" v-bind="{ currentWishlistIcon }">
+            <SfIcon
+              :icon="currentWishlistIcon"
+              :color="isInWishlist ? 'var(--_c-red-primary)' : ''"
+              size="22px"
+              data-test="sf-wishlist-icon-pdp"
+            />
+          </slot>
         </SfButton>
+        <template v-if="showAddToCartButton">
+          <slot
+            name="add-to-cart"
+            v-bind="{
+              isAddedToCart,
+              showAddedToCartBadge,
+              isAddingToCart,
+              title,
+            }"
+          >
+            <SfCircleIcon
+              class="sf-product-card__add-button"
+              :aria-label="`Add to Cart ${title}`"
+              :has-badge="showAddedToCartBadge"
+              :disabled="addToCartDisabled"
+              data-testid="product-add-icon"
+              @click="onAddToCart"
+            >
+              <div class="sf-product-card__add-button--icons">
+                <transition v-if="!isAddingToCart && !isAddedToCart" name="sf-pulse" mode="out-in">
+                  <slot name="add-to-cart-icon">
+                    <SfIcon key="add_to_cart" icon="add_to_cart" size="20px" color="white" />
+                  </slot>
+                </transition>
+                <transition v-else name="sf-pulse" mode="out-in">
+                  <slot name="adding-to-cart-icon">
+                    <SfIcon key="added_to_cart" icon="added_to_cart" size="20px" color="white" />
+                  </slot>
+                </transition>
+              </div>
+            </SfCircleIcon>
+          </slot>
+        </template>
       </div>
-    </slot>
+      <slot name="title" v-bind="{ title, link }">
+        <div>
+          <nuxt-link :to="link" class="kpc-title" @click="closeSearchDialog()">
+            {{ title }}</nuxt-link
+          >
+        </div>
+      </slot>
+      <slot name="price" v-bind="{ specialPrice, regularPrice }">
+        <div v-if="regularPrice">
+          <KiboPrice
+            :regular="$n(regularPrice, 'currency')"
+            :special="specialPrice && $n(specialPrice, 'currency')"
+            class="sf-product-card__price kpc-price"
+          />
+        </div>
+        <div v-if="priceRange">
+          <KiboPriceRange
+            :lower="priceRange.lower"
+            :upper="priceRange.upper"
+            :small="true"
+            class="sf-product-card__price kpc-price"
+          />
+        </div>
+      </slot>
+      <slot name="reviews" v-bind="{ maxRating, scoreRating }">
+        <div v-if="typeof scoreRating === 'number'" class="sf-product-card__reviews">
+          <SfRating class="sf-product-card__rating" :max="maxRating" :score="scoreRating" />
+          <SfButton
+            v-if="reviewsCount"
+            :aria-label="`Read ${reviewsCount} reviews about ${title}`"
+            class="sf-button--pure sf-product-card__reviews-count"
+            data-testid="product-review-button"
+            @click="$emit('click:reviews')"
+          >
+            ({{ reviewsCount }})
+          </SfButton>
+        </div>
+      </slot>
+    </div>
+    <slot name="shop-item-btn" />
   </div>
 </template>
 <script lang="ts">
@@ -330,6 +338,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    isRemovedItem: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const isAddingToCart = ref(false)
@@ -487,5 +499,18 @@ export default defineComponent({
     height: calc(var(--spacer-base) * 8.375);
     width: calc(var(--spacer-base) * 8.375);
   }
+}
+
+.removed-from-wishlist {
+  position: absolute;
+  margin-left: 67px;
+  margin-top: 88px;
+  z-index: 2;
+  font-weight: bold;
+}
+
+.removed-item {
+  opacity: 0.15;
+  pointer-events: none;
 }
 </style>

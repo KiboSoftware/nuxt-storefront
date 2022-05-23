@@ -270,4 +270,6 @@ export default {
   RemovefromWishlist: "Remove from Wishlist",
   registrationFailed: "New Account Registration Failed",
   Wishlist: "Wishlist",
+  shopNow: "Shop Now",
+  removed: "Removed!",
 }

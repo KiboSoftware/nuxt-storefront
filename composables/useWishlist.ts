@@ -99,14 +99,18 @@ export const useWishlist = () => {
       wishlistId: currentWishlist?.value?.id,
       wishlistItemId: removedItem?.id,
     }
-    await fetcher({
+    const response = await fetcher({
       query: deleteWishListItemMutation,
       variables: params,
     })
     loading.value = false
-    loadWishlist()
+    return response.data
   }
 
+  const removeItemAndLoadWishlist = async (product) => {
+    await removeItemFromWishlist(product)
+    loadWishlist()
+  }
   const isInWishlist = (product) => {
     if (currentWishlist.value) {
       const items = currentWishlist.value?.items?.some((wishListItems) => {
@@ -125,6 +129,7 @@ export const useWishlist = () => {
     loadWishlist,
     addToWishlist,
     removeItemFromWishlist,
+    removeItemAndLoadWishlist,
     isInWishlist,
     loading: computed(() => loading.value),
     error: computed(() => error),

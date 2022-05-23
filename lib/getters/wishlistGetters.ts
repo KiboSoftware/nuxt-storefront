@@ -4,6 +4,8 @@ const getItems = (wishlist: Wishlist) => wishlist?.items.map((item) => item.prod
 
 const getItemName = (product: CrProductInput): string => product?.name
 
+const getItemId = (product: CrProductInput): string => product?.productCode || ""
+
 const getItemImage = (product: CrProductInput): string => product?.imageUrl
 
 const getItemPrice = (product: CrProductInput) => {
@@ -66,6 +68,7 @@ const shouldShowAddToWishlist = (isInWishlist: boolean) => {
 export const wishlistGetters = {
   getItems,
   getTotals,
+  getItemId,
   getItemName,
   getItemImage,
   getItemPrice,
