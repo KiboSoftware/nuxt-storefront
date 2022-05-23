@@ -104,7 +104,7 @@ export const useWishlist = () => {
       variables: params,
     })
     loading.value = false
-    return response.data
+    return response?.data
   }
 
   const removeItemAndLoadWishlist = async (product) => {

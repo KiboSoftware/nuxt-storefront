@@ -24,7 +24,6 @@
               productGetters.getPrice(product).special &&
               $n(productGetters.getPrice(product).special, 'currency')
             "
-            :link="localePath(getProductLink(wishlistGetters.getItemId(product)))"
             :is-purchasable="true"
             class="products__product-card"
             :is-removed-item="product.productCode === removedProduct.productCode"
@@ -56,25 +55,26 @@
 </template>
 <script lang="ts">
 import { SfIcon, SfButton } from "@storefront-ui/vue"
-import { useAsync, computed, ref } from "@nuxtjs/composition-api"
+import { useAsync, computed, ref, defineComponent } from "@nuxtjs/composition-api"
 import { useUiHelpers, useWishlist } from "@/composables"
-
 import { productGetters, wishlistGetters } from "@/lib/getters"
+import authenticated from "~~/middleware/authenticated"
 
-export default {
-  name: "Category",
+export default defineComponent({
+  name: "Wishlist",
   components: {
     SfIcon,
     SfButton,
   },
+  middleware: [authenticated],
   setup() {
     const { getProductLink } = useUiHelpers()
     const { loadWishlist, currentWishlist, removeItemFromWishlist, loading } = useWishlist()
-    const products = computed(() => wishlistGetters.getItems(currentWishlist?.value))
     const removedProduct = ref({})
+    const products = computed(() => wishlistGetters.getItems(currentWishlist?.value))
+
     const removeItemFromWishList = async (item) => {
       const response = await removeItemFromWishlist(item)
-      console.log("remove item response : ", response)
       if (response?.deleteWishlistItem) {
         removedProduct.value = item
         setTimeout(() => {
@@ -97,7 +97,7 @@ export default {
       removeItemFromWishList,
     }
   },
-}
+})
 </script>
 <style lang="scss" scoped>
 .wishlist {

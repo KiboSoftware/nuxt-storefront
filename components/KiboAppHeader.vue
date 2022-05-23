@@ -479,7 +479,10 @@ export default defineComponent({
       app.router.push({ path: "/order-status" })
     }
     const goToWishlist = () => {
-      app.router.push({ path: "/wishlist" })
+      if (isAuthenticated.value) {
+        return app.router.push({ path: "/wishlist" })
+      }
+      toggleLoginModal()
     }
 
     onMounted(() => {
