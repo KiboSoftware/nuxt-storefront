@@ -294,7 +294,7 @@
               </SfIcon>
             </div>
           </div>
-          <div class="kibo-mobile__header-column">
+          <!-- <div class="kibo-mobile__header-column">
             <SfIcon size="1.25rem" @click="gotoCart">
               <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
               <SfBadge
@@ -303,7 +303,7 @@
                 >{{ totalItemsInCart }}</SfBadge
               >
             </SfIcon>
-          </div>
+          </div> -->
         </div>
       </div>
 
