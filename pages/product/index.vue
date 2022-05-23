@@ -43,8 +43,8 @@
                 <KiboPrice
                   :regular="$n(productGetters.getPrice(product).regular, 'currency')"
                   :special="
-                    productGetters.getSalePrice(product) &&
-                    $n(productGetters.getSalePrice(product), 'currency')
+                    product.price.salePrice &&
+                    $n(productGetters.getPrice(product).special, 'currency')
                   "
                   class="kibo-collectedProduct__price"
                 />
@@ -204,6 +204,7 @@
                   :label-add-to-wishlist="$t('Wishlist')"
                   :is-in-wishlist="isInWishlist(product)"
                   :is-loading-wishlist="isLoadingWishlist"
+                  :is-purchasable="productGetters.getIsPurchasable(product)"
                   @addItemToCart="addToCart"
                   @addItemWishlist="addItemToWishList"
                 />

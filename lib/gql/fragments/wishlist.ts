@@ -9,6 +9,7 @@ fragment wishlistItem on WishlistItem {
       name
       description
       imageUrl
+      variationProductCode
       options {
         attributeFQN
         name

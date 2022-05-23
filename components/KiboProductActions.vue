@@ -29,8 +29,8 @@
         </SfButton>
         <div class="kibo-add-to-wishlist-one-click-container">
           <SfButton
-            class="sf-add-to-wishlist__button"
-            :disabled="isLoadingWishlist || disabled"
+            class="sf-add-to-wishlist__button color-light"
+            :disabled="isLoadingWishlist || disabled || !isPurchasable"
             @click="addToWishList"
           >
             <SfLoader
@@ -123,6 +123,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    isPurchasable: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const addToWishList = () => {
@@ -162,9 +166,7 @@ $cart-button-width: 10.75rem; //172px
 
 .sf-add-to-wishlist {
   &__button {
-    background-color: var(--_c-white-primary);
     border: 1px solid var(--_c-gray-middle);
-    color: var(--_c-dark-primary);
     margin-top: calc(var(--spacer-xs) * 1.5);
     width: 46%;
   }

@@ -141,14 +141,17 @@
             :show-add-to-cart-button="true"
             :score-rating="3"
             :max-rating="5"
-            wishlist-icon=""
-            is-in-wishlist-icon=""
-            :is-in-wishlist="false"
+            :is-in-wishlist="isInWishlist(product)"
             :regular-price="productGetters.getPrice(product).regular"
-            :special-price="productGetters.getPrice(product).special"
+            :special-price="
+              productGetters.getPrice(product).special &&
+              $n(productGetters.getPrice(product).special, 'currency')
+            "
             :price-range="productGetters.getPriceRange(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
+            :is-purchasable="productGetters.getIsPurchasable(product)"
             class="products__product-card"
+            @click:wishlist="addItemToWishList(product)"
           />
         </transition-group>
         <transition-group v-else appear name="products__slide" tag="div" class="products__list">
@@ -208,9 +211,9 @@ import {
   SfProperty,
 } from "@storefront-ui/vue"
 import { useAsync, computed, useRoute, watch, ref } from "@nuxtjs/composition-api"
-import { useUiHelpers, useFacet, useProductSearch } from "@/composables"
+import { useUiHelpers, useFacet, useProductSearch, useWishlist, useUiState } from "@/composables"
 
-import { productGetters, facetGetters, productSearchGetters } from "@/lib/getters"
+import { productGetters, facetGetters, productSearchGetters, userGetters } from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
 
@@ -226,9 +229,12 @@ export default {
     SfProperty,
   },
   setup(_, context) {
+    const { user } = useUser()
     const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink } =
       useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
+    const { loadWishlist, addToWishlist, isInWishlist, removeItemFromWishlist } = useWishlist()
+    const { toggleLoginModal } = useUiState()
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
     const facetsFromUrl = ref({
@@ -259,6 +265,7 @@ export default {
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
       await productSearch(facetsFromUrl.value)
+      await loadWishlist()
     }, null)
 
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
@@ -297,6 +304,11 @@ export default {
         : getCategoryFacet.value.header
     })
     const appliedFilters = computed(() => facetGetters.getSelectedFacets(facets.value) || [])
+
+    const isAuthenticated = computed(() => {
+      return userGetters.isLoggedInUser(user.value)
+    })
+
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
       const filters = qs.filters?.split(",") || []
@@ -340,6 +352,16 @@ export default {
       showMobileFilters.value = !showMobileFilters.value
     }
 
+    const addItemToWishList = async (product) => {
+      if (isAuthenticated.value) {
+        isInWishlist(product)
+          ? await removeItemFromWishlist(product)
+          : await addToWishlist(product, user.value.id)
+      } else {
+        toggleLoginModal()
+      }
+    }
+
     return {
       breadcrumbs,
       loading,
@@ -366,6 +388,8 @@ export default {
       appliedFilters,
       clearAllFilters,
       filterByToggle,
+      isInWishlist,
+      addItemToWishList,
     }
   },
 }
