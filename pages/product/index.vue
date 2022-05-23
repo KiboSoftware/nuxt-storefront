@@ -381,7 +381,14 @@ import {
   SfAccordion,
 } from "@storefront-ui/vue"
 
-import { defineComponent, computed, ref, onBeforeUnmount, watch } from "@vue/composition-api"
+import {
+  defineComponent,
+  computed,
+  ref,
+  onBeforeUnmount,
+  watch,
+  onMounted,
+} from "@vue/composition-api"
 
 import LazyHydrate from "vue-lazy-hydration"
 
