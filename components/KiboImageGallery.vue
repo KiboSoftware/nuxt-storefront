@@ -121,6 +121,7 @@
 </template>
 
 <script lang="ts">
+import { computed, ref, onMounted } from "@vue/composition-api"
 import { SfIcon, SfImage, SfChevron } from "@storefront-ui/vue"
 import PinchScrollZoom, { PinchScrollZoomEmitData } from "@coddicat/vue-pinch-scroll-zoom"
 import { ProductImage } from "@/server/types/GraphQL"
@@ -308,7 +309,7 @@ export default {
 .pinch-scroll-zoom {
   height: 100%;
 
-  &__content{
+  &__content {
     display: flex;
     justify-content: center;
   }
@@ -436,14 +437,16 @@ export default {
     }
 
     &__container {
-      width: 100%;
-      height: 596px;
+      width: 85%;
+      // height: 596px;
+      height: 450px;
       position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
       border: none;
+      margin: 0 auto;
 
       @include for-desktop {
         width: 90%;
