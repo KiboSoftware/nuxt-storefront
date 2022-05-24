@@ -300,13 +300,9 @@ export default {
 
     const handleForm = (fn) => async () => {
       resetErrorValues()
-      console.log("fn.name", fn.name)
-      console.log("typeof fn.name", typeof fn.name)
       if (fn.name === "createAccountAndLogin") {
-        console.log("inside handle form if")
         await fn({ ...form.value, password: password.value.password, id: 0 })
       } else {
-        console.log("inside handle form else")
         await fn(form.value)
       }
       const hasUserErrors = userGetters.hasUserError(userError.value)
