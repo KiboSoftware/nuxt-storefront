@@ -114,10 +114,9 @@
         </SfAccordionItem>
         <div class="vertical-space vertical-space--hr"></div>
       </SfAccordion>
-      <div class="order-header-border">
+      <!-- <div class="order-header-border">
         <div class="header-text-font">{{ $t("Order Details") }}</div>
-      </div>
-      <div class="vertical-space vertical-space--hr"></div>
+      </div> -->
     </div>
     <div class="order-history">
       <SfButton
@@ -129,7 +128,8 @@
         <SfChevron class="sf-chevron--right" />
       </SfButton>
     </div>
-    <div class="vertical-space"></div>
+    <!-- <div class="vertical-space"></div> -->
+    <div class="vertical-space vertical-space--hr"></div>
     <div>
       <div class="spacer">
         <span class="profile-logout" @click="changeActivePage('Log out')">{{ $t("Log out") }}</span>
