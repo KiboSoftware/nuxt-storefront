@@ -42,7 +42,11 @@
         >
           {{ $t("Cancel") }}
         </SfButton>
-        <SfButton type="submit" class="action-buttons__save">
+        <SfButton
+          type="submit"
+          class="action-buttons__save"
+          @click="$emit('click:cancel-edit', editableField.id)"
+        >
           {{ $t("Save") }}
         </SfButton>
       </div>
@@ -112,6 +116,7 @@ export default defineComponent({
         context.emit("click:cancel-edit", props.editableField.id)
       } else {
         await updateCustomerPersonalData(userValues.value)
+        context.emit("click:cancel-edit", props.editableField.id)
       }
     }
 
