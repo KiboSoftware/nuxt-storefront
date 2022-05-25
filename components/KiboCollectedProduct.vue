@@ -1,6 +1,5 @@
 <template>
   <div class="kibo-collectedProduct">
-    {{ iswishlistLoading }}
     <div class="kibo-collectedProduct__main">
       <div class="kibo-collectedProduct__product-details">
         <div class="kibo-collectedProduct__product-details-content">

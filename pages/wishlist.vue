@@ -8,6 +8,7 @@
         <div class="wishlist__header-text">Wishlist</div>
       </div>
       <hr class="hr-wishlist" />
+      <div class="wishlist-item-count">{{ $tc("wishlistItemCount", noOfItems) }}</div>
       <div class="wishlist__content">
         <transition-group appear name="products__slide" tag="div" class="products__grid">
           <KiboProductCard
@@ -72,6 +73,7 @@ export default defineComponent({
     const { loadWishlist, currentWishlist, removeItemFromWishlist, loading } = useWishlist()
     const removedProduct = ref({})
     const products = computed(() => wishlistGetters.getItems(currentWishlist?.value))
+    const noOfItems = computed(() => products.value?.length || 0)
 
     const removeItemFromWishList = async (item) => {
       const response = await removeItemFromWishlist(item)
@@ -95,6 +97,7 @@ export default defineComponent({
       getProductLink,
       removedProduct,
       removeItemFromWishList,
+      noOfItems,
     }
   },
 })
@@ -125,7 +128,7 @@ export default defineComponent({
   color: var(--_c-green-primary);
   background-color: var(--_c-green-primary);
   margin-left: 0;
-  height: 1px;
+  height: 2px;
   border-width: 0;
 
   @include for-mobile {
@@ -174,5 +177,12 @@ export default defineComponent({
   &__action {
     width: 100%;
   }
+}
+
+.wishlist-item-count {
+  color: var(--_c-gray-primary);
+  font-size: var(--font-size--sm);
+  padding: var(--spacer-sm) 0;
+  padding-left: 6.18%;
 }
 </style>
