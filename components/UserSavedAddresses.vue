@@ -46,10 +46,10 @@
       </SfIcon>
       {{ $t("Add New Address") }}
     </SfButton>
-    <div v-if="showAddressForm" class="action-buttons">
+    <div v-if="showAddressForm" class="action-buttons-adr">
       <SfButton class="color-light" @click="closeAddressForm">
-        {{ $t("Cancel") }}
-      </SfButton>
+        {{ $t("Cancel") }} </SfButton
+      >&nbsp;&nbsp;
       <SfButton class="color-primary" :disabled="!isValidShippingDetails" @click="saveAddress">
         {{ $t("Save") }}
       </SfButton>
@@ -172,17 +172,19 @@ div {
 .action-button {
   height: calc(var(--spacer-2xs) * 10.5);
   background: var(--c-black);
-  width: 100%;
+  margin-top: 25px;
+  width: 50%;
   max-width: calc(var(--spacer-base) * 15.66);
   @include for-desktop {
-    width: 70%;
+    width: 50%;
     max-width: calc(var(--spacer-base) * 17.54);
   }
 }
 
 .shipping-list {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  //flex-direction: column;
   gap: calc(var(--spacer-2xs) * 5);
 }
 
@@ -207,7 +209,8 @@ div {
 }
 
 .shipping {
-  border-bottom: 1px solid var(--_c-white-secondary);
+  width: 45%;
+  border: 1px solid var(--_c-white-secondary);
 
   &__content {
     padding-bottom: var(--spacer-xs);
@@ -215,10 +218,14 @@ div {
 }
 
 .shipping:last-child {
-  border: none;
+  //border: none;
 }
 
 .no-shipping-address {
   margin-bottom: var(--spacer-xs);
+}
+
+.action-buttons-adr {
+  display: flex;
 }
 </style>

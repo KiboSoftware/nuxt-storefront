@@ -28,7 +28,7 @@
       <SfInput
         :label="$t('Street Address')"
         name="streetName"
-        class="form__element"
+        class="form__element form__element--half"
         required
         :valid="!errors.address1"
         :error-message="errors.address1"
@@ -39,7 +39,7 @@
       <SfInput
         :label="$t('Apt')"
         name="apartment"
-        class="form__element"
+        class="form__element form__element--half form__element--half-even"
         :value="addressDetails.address && addressDetails.address.address2"
         @input="updateField('address2', $event)"
       />
@@ -241,4 +241,248 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/templates/SfPayment.scss";
+
+::v-deep .sf-input {
+  &__bar {
+    display: none;
+  }
+
+  input {
+    border: 2px solid var(--c-black);
+    border-radius: 4px;
+    width: 98%;
+    margin: auto;
+    padding: var(--spacer-xs) var(--spacer-2xs);
+  }
+  // input {
+  //   width: 98%;
+  //   margin: auto;
+  // }
+  &__label {
+    position: absolute;
+    margin-left: 5%;
+    color: var(--c-black);
+  }
+
+  &__error-message {
+    margin-left: 5%;
+  }
+}
+
+.form {
+  @include for-mobile {
+    .sf-input.form__element.form__element--half:nth-child(1) {
+      display: inline-flex;
+      flex-wrap: wrap;
+      width: 48%;
+    }
+
+    .sf-input.form__element.form__element--half:nth-child(2) {
+      display: inline-flex;
+      flex-wrap: wrap;
+      width: 49%;
+    }
+
+    .sf-select.form__element.form__element--half {
+      display: inline-flex;
+      flex-wrap: wrap;
+      width: 49%;
+    }
+
+    ::v-deep .sf-input__error-message {
+      min-height: unset;
+    }
+  }
+
+  // .form__element {
+  //   margin: 0 0 var(--spacer-xs) 0;
+  //   align-items: baseline;
+  // }
+
+  --button-width: auto;
+
+  &__select {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    --select-option-font-size: var(--font-size--lg);
+
+    ::v-deep .sf-select__dropdown {
+      font-size: var(--font-size--lg);
+      margin: 2%;
+      color: var(--c-text);
+      font-family: var(--font-family--secondary);
+      font-weight: var(--font-weight--normal);
+      border: 2px solid var(--c-black);
+      border-radius: 4px;
+      padding: var(--spacer-xs) var(--spacer-2xs);
+      height: unset;
+    }
+
+    ::v-deep .sf-select__label {
+      position: absolute;
+      margin-left: 10%;
+      top: -4%;
+    }
+  }
+
+  ::v-deep .sf-input {
+    &__bar {
+      display: none;
+    }
+
+    input {
+      border: 2px solid var(--c-black);
+      border-radius: 4px;
+      padding: var(--spacer-xs) var(--spacer-2xs);
+      padding-top: 15px;
+      margin: 0 0 2px 0;
+      font-size: var(--font-size--base);
+      font-family: var(--font-family--secondary);
+      color: var(--c-link);
+    }
+  }
+
+  @include for-desktop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    --button-width: auto;
+  }
+
+  &__form-button {
+    @include for-desktop {
+      float: right;
+    }
+
+    @include for-mobile {
+      z-index: 9999;
+      text-align: center;
+      position: fixed;
+      bottom: 0;
+      padding-left: 15%;
+      padding-right: 20%;
+      background: var(--c-white);
+    }
+  }
+
+  @include for-desktop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  &__element {
+    // margin: -30px 0 var(--spacer-xs) 0;
+    align-items: baseline;
+
+    @include for-desktop {
+      margin: -5px 0 var(--spacer-xs) 0 !important;
+      flex: 0 0 100%;
+    }
+
+    @include for-mobile {
+      margin: 1px 0 var(--spacer-xs) 0 !important;
+      flex: 0 0 100%;
+    }
+
+    &--half {
+      padding-top: 0;
+      @include for-mobile {
+        padding-bottom: 0;
+        height: auto;
+        flex: 1 1 50%;
+      }
+
+      @include for-desktop {
+        flex: 1 1 50%;
+      }
+
+      &-even {
+        padding-top: 0;
+        @include for-mobile {
+          flex: 1 1 50%;
+          padding-bottom: 0;
+          height: auto;
+        }
+
+        @include for-desktop {
+          flex: 1 1 50%;
+          padding: 0 0 0 var(--spacer-xl);
+        }
+      }
+    }
+  }
+
+  &__action {
+    @include for-desktop {
+      flex: 0 0 100%;
+      display: flex;
+      padding-bottom: var(--spacer-xl);
+    }
+
+    @include for-mobile {
+      display: flex;
+      flex-direction: row-reverse;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 9999;
+      background: var(--c-white);
+      padding-bottom: var(--spacer-xs);
+      padding-top: var(--spacer-xs);
+      box-shadow: 2px 0 4px var(--c-black);
+    }
+  }
+
+  &__action-button {
+    &--secondary {
+      @include for-desktop {
+        order: -1;
+        text-align: left;
+      }
+    }
+
+    &--add-address {
+      @include for-desktop {
+        margin: 0 0 var(--spacer-lg) 0;
+        width: auto;
+        display: inline-flexbox;
+      }
+    }
+
+    &--button-display {
+      display: inline-block;
+      margin: 10px 5px;
+    }
+  }
+
+  &__back-button {
+    width: 100%;
+    margin: var(--spacer-sm) 0 var(--spacer-xl);
+
+    @include for-mobile {
+      margin: 0;
+      background: var(--c-light);
+    }
+
+    &:hover {
+      color: var(--c-white);
+    }
+  }
+
+  &__display-button {
+    display: inline-block;
+    margin: 50px;
+  }
+}
+
+.parent-form {
+  margin-bottom: 150px;
+  height: auto;
+}
 </style>
