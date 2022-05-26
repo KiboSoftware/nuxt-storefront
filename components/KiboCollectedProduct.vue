@@ -75,8 +75,20 @@
         </div>
         <div class="kibo-collectedProduct__actions-container-desktop">
           <div class="kibo-collectedProduct__action-item-desktop">{{ $t("Edit") }}</div>
-          <div class="kibo-collectedProduct__action-item-desktop">{{ $t("Save for later") }}</div>
-          <div class="kibo-collectedProduct__action-item-desktop">{{ $t("Add to Wishlist") }}</div>
+          <div
+            class="kibo-collectedProduct__action-item-desktop"
+            :class="{ 'disable-action': iswishlistLoading }"
+            @click="addItemToWishList(productItem, true)"
+          >
+            {{ $t("Save for later") }}
+          </div>
+          <div
+            class="kibo-collectedProduct__action-item-desktop"
+            :class="{ 'disable-action': iswishlistLoading }"
+            @click="addItemToWishList(productItem, false)"
+          >
+            {{ $t("Add to Wishlist") }}
+          </div>
         </div>
       </div>
       <div class="kibo-collectedProduct__verticalDivider"></div>
@@ -100,8 +112,20 @@
       </SfButton>
       <div v-if="showMobileCartActions" class="kibo-collectedProduct__actions-container-mobile">
         <div class="kibo-collectedProduct__action-item-mobile">{{ $t("Edit") }}</div>
-        <div class="kibo-collectedProduct__action-item-mobile">{{ $t("Save for later") }}</div>
-        <div class="kibo-collectedProduct__action-item-mobile">{{ $t("Add to Wishlist") }}</div>
+        <div
+          class="kibo-collectedProduct__action-item-mobile"
+          :class="{ 'disable-action': iswishlistLoading }"
+          @click="addItemToWishList(productItem, true)"
+        >
+          {{ $t("Save for later") }}
+        </div>
+        <div
+          class="kibo-collectedProduct__action-item-mobile"
+          :class="{ 'disable-action': iswishlistLoading }"
+          @click="addItemToWishList(productItem, false)"
+        >
+          {{ $t("Add to Wishlist") }}
+        </div>
       </div>
     </div>
   </div>
@@ -120,9 +144,11 @@ import {
 } from "@storefront-ui/vue"
 import { defineComponent, computed } from "@vue/composition-api"
 import { Fulfillment } from "@/components/types/fulfillment"
+import type { Product } from "@/server/types/GraphQL"
 import KiboFulfillmentOptions from "@/components/KiboFulfillmentOptions.vue"
-import { useCart, usePurchaseLocation } from "@/composables"
+import { useUser, useCart, usePurchaseLocation, useWishlist, useUiState } from "@/composables"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
+import { userGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 
 export default defineComponent({
@@ -209,20 +235,38 @@ export default defineComponent({
       type: Array,
       default: null,
     },
+    productItem: {
+      type: Object,
+      default: () => {},
+    },
   },
   setup(props, context) {
-    const { cart, updateCartItemQuantity, removeCartItem, updateCartItem } = useCart()
+    const { user } = useUser()
+    const {
+      loading: cartLoading,
+      cart,
+      updateCartItemQuantity,
+      removeCartItem,
+      updateCartItem,
+    } = useCart()
     const { purchaseLocation } = usePurchaseLocation()
+    const { toggleLoginModal } = useUiState()
+    const { loading: wishlistLoading, loadWishlist, addToWishlist, isInWishlist } = useWishlist()
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
     const showMobileCartActions = ref(false)
 
-    onMounted(() => {
+    onMounted(async () => {
       window.addEventListener("click", function () {
         if (showMobileCartActions.value) {
           showMobileCartActions.value = !showMobileCartActions.value
         }
       })
+      await loadWishlist()
+    })
+
+    const isAuthenticated = computed(() => {
+      return userGetters.isLoggedInUser(user.value)
     })
 
     const handleMobileActionClick = (e) => {
@@ -258,6 +302,10 @@ export default defineComponent({
         details: getFulfillmentDetails(type),
       }))
     )
+
+    const iswishlistLoading = computed(() => {
+      return wishlistLoading.value || cartLoading.value
+    })
 
     const removeHandler = () => context.emit("click:remove")
 
@@ -312,6 +360,15 @@ export default defineComponent({
       }
     }
 
+    const addItemToWishList = async (product: Product, isRemoveFromCart: Boolean) => {
+      if (isAuthenticated.value) {
+        if (!isInWishlist(product)) await addToWishlist(product, user.value.id)
+        if (isRemoveFromCart) await handleRemoveCartItem()
+      } else {
+        toggleLoginModal()
+      }
+    }
+
     return {
       multiplyAttributes,
       removeHandler,
@@ -323,6 +380,8 @@ export default defineComponent({
       fulfillmentOptions,
       showMobileCartActions,
       handleMobileActionClick,
+      addItemToWishList,
+      iswishlistLoading,
     }
   },
 })
@@ -335,5 +394,10 @@ export default defineComponent({
     object-fit: contain;
     background: var(--c-white);
   }
+}
+
+.disable-action {
+  pointer-events: none;
+  opacity: 0.4;
 }
 </style>
