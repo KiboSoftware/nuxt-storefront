@@ -37,7 +37,7 @@
           </div>
           <div class="side-bar-nav__link">
             <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
-              <span class="burger-bottom-link"> Nav Link 2</span>
+              <span class="burger-bottom-link"> {{ $t("Wishlist") }}</span>
             </SfButton>
           </div>
           <div class="side-bar-nav__link">
@@ -73,7 +73,7 @@
           <!-- <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div> -->
           <!-- <div class="kibo-top-bar__nav-link" >
             <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
-            <div><SfMenuItem label="Nav Link 2" /></div>
+            <div><SfMenuItem :label="$t('Wishlist')" /></div>
             <div><SfMenuItem label="Nav Link 3" /></div>
             <div><SfMenuItem label="Nav Link 4" /></div>
           </div> -->

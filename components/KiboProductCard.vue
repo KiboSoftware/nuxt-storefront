@@ -80,14 +80,19 @@
         }}</SfBadge>
       </slot>
       <SfButton
-        v-if="wishlistIcon !== false"
+        v-if="isPurchasable"
         :aria-label="`${ariaLabel} ${title}`"
         :class="wishlistIconClasses"
         data-testid="product-wishlist-button"
         @click="toggleIsInWishlist"
       >
         <slot name="wishlist-icon" v-bind="{ currentWishlistIcon }">
-          <SfIcon :icon="currentWishlistIcon" size="22px" data-test="sf-wishlist-icon" />
+          <SfIcon
+            :icon="currentWishlistIcon"
+            :color="isInWishlist ? 'var(--_c-red-primary)' : ''"
+            size="22px"
+            data-test="sf-wishlist-icon-pdp"
+          />
         </slot>
       </SfButton>
       <template v-if="showAddToCartButton">
@@ -374,6 +379,10 @@ export default defineComponent({
       type: Object,
       default: () => {},
     },
+    isPurchasable: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const isAddingToCart = ref(false)
@@ -461,6 +470,11 @@ export default defineComponent({
       @include for-desktop {
         height: calc(var(--spacer-base) * 8.375);
       }
+    }
+
+    &__wishlist-icon {
+      top: calc(-1 * var(--spacer-sm));
+      right: calc(-1 * var(--spacer-2xs));
     }
 
     &__add-button {

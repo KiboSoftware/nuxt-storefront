@@ -34,6 +34,7 @@
                   :selected-option="getCartItemSelectedFulfillmentOption(cartItem)"
                   :link="localePath(getProductLink(productGetters.getProductId(cartItem.product)))"
                   :coupons-applied="productAppliedCoupons(cartItem)"
+                  :product-item="cartItem.product"
                   class="sf-collected-product--detailed collected-product"
                   @click:remove="removeHandler(product)"
                 >
