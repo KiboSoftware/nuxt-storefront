@@ -208,15 +208,15 @@
             :score-rating="3"
             :max-rating="5"
             :properties="productGetters.getProperties(product)"
-            wishlist-icon=""
-            is-in-wishlist-icon=""
-            :is-in-wishlist="false"
+            :is-in-wishlist="isInWishlist(product)"
             :regular-price="productGetters.getPrice(product).regular"
             :special-price="productGetters.getPrice(product).special"
             :price-range="productGetters.getPriceRange(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
+            :is-purchasable="productGetters.getIsPurchasable(product)"
             class="products__product-card"
             @click:add-to-cart="addToCart(product)"
+            @click:wishlist="addItemToWishList(product)"
           />
         </transition-group>
         <transition-group v-else appear name="products__slide" tag="div" class="products__list">
@@ -292,10 +292,17 @@ import {
   useProductSearch,
   useCategoryTree,
   useCart,
+  useWishlist,
   useUiState,
 } from "@/composables"
 
-import { productGetters, facetGetters, productSearchGetters, categoryGetters } from "@/lib/getters"
+import {
+  productGetters,
+  facetGetters,
+  productSearchGetters,
+  categoryGetters,
+  userGetters,
+} from "@/lib/getters"
 
 import { useNuxtApp } from "#app"
 import { useDropzoneContent } from "@/composables"
@@ -316,6 +323,7 @@ export default {
     SfCarousel,
   },
   setup(_, context) {
+    const { user } = useUser()
     const { dropzoneContent: contentBanner, loadProperties: loadBanners } =
       useDropzoneContent("Banners")
     const {
@@ -327,6 +335,8 @@ export default {
       getCatLink,
     } = useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
+    const { loadWishlist, addToWishlist, isInWishlist, removeItemFromWishlist } = useWishlist()
+    const { toggleLoginModal } = useUiState()
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
     const facetsFromUrl = ref({
@@ -406,6 +416,7 @@ export default {
       facetsFromUrl.value = getFacetsFromURL(isSearchPage.value)
       await search(facetsFromUrl.value)
       await productSearch(facetsFromUrl.value)
+      await loadWishlist()
 
       const appData = Promise.all([
         loadBanners({
@@ -463,6 +474,11 @@ export default {
     // })
 
     const appliedFilters = computed(() => facetGetters.getSelectedFacets(facets.value) || [])
+
+    const isAuthenticated = computed(() => {
+      return userGetters.isLoggedInUser(user.value)
+    })
+
     const selectFilter = (filterValue) => {
       const qs = route.value?.query as { filters: string }
       const filters = qs.filters?.split(",") || []
@@ -516,6 +532,16 @@ export default {
       showMobileFilters.value = !showMobileFilters.value
     }
 
+    const addItemToWishList = async (product) => {
+      if (isAuthenticated.value) {
+        isInWishlist(product)
+          ? await removeItemFromWishlist(product)
+          : await addToWishlist(product, user.value.id)
+      } else {
+        toggleLoginModal()
+      }
+    }
+
     return {
       addToCart,
       isInCart,
@@ -553,6 +579,8 @@ export default {
       appliedFilters,
       clearAllFilters,
       filterByToggle,
+      isInWishlist,
+      addItemToWishList,
     }
   },
 }
