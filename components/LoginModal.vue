@@ -298,18 +298,20 @@ export default {
       isForgotten.value = value
     }
 
-    const handleForm = (fn) => async () => {
-      resetErrorValues()
-      if (fn.name === "createAccountAndLogin") {
-        await fn({ ...form.value, password: password.value.password, id: 0 })
-      } else {
-        await fn(form.value)
+    const handleForm =
+      (fn, fnName = "") =>
+      async () => {
+        resetErrorValues()
+        if (fnName.toLowerCase() === "createaccountandlogin") {
+          await fn({ ...form.value, password: password.value.password, id: 0 })
+        } else {
+          await fn(form.value)
+        }
+        const hasUserErrors = userGetters.hasUserError(userError.value)
+        if (!hasUserErrors) {
+          toggleLoginModal()
+        }
       }
-      const hasUserErrors = userGetters.hasUserError(userError.value)
-      if (!hasUserErrors) {
-        toggleLoginModal()
-      }
-    }
 
     const closeModal = () => {
       setIsForgottenValue(false)
@@ -338,7 +340,7 @@ export default {
         userInput.password &&
         isPasswordValidated.value
       ) {
-        await handleForm(createAccountAndLogin)()
+        await handleForm(createAccountAndLogin, "createAccountAndLogin")()
         await loadCart()
       }
     }
