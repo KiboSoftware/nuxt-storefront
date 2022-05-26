@@ -44,7 +44,7 @@ export default {
       if (isAuthenticated.value) {
         console.log("inside authentication check")
         return context.root.$router.push({
-          path: "/checkout/shipping",
+          path: "/Checkout",
         })
       } else {
         console.log("returned false")

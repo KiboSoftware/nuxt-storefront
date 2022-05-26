@@ -11,7 +11,7 @@
     </div> -->
     <SfHeading
       :title="$t('Personal details')"
-      :level="3"
+      :level="2"
       class="sf-heading--left sf-heading--no-underline title"
     />
     <div class="form">
@@ -291,5 +291,10 @@ export default {
   @include for-mobile {
     margin-left: -193px;
   }
+}
+
+.sf-heading__title.h2 {
+  font-size: 20px !important;
+  text-align: left;
 }
 </style>

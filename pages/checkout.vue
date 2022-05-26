@@ -57,9 +57,14 @@
     <div id="checkout">
       <div class="checkout">
         <div class="checkout__main">
-          <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
+          <SfSteps
+            :active="isAuthenticated ? logState : currentStep"
+            :steps="steps"
+            @change="updateStep"
+          >
             <SfStep name="Details">
               <KiboPersonalDetails
+                :style="{ color: isAuthenticated ? '#ddd' : '' }"
                 :value="personalDetails"
                 @input="updatePersonalDetails"
                 @log-in="logIn"
@@ -215,12 +220,20 @@
                       View Cart
                     </SfButton>
                     <SfButton
-                      v-if="currentStep !== 0"
+                      v-if="currentStep !== 0 && !isAuthenticated"
                       class="sf-button--full-width actions__button color-light"
                       data-testid="apply-button"
                       @click="currentStep--"
                     >
                       {{ $t("Go Back") }}
+                    </SfButton>
+                    <SfButton
+                      v-if="currentStep == 1 && isAuthenticated"
+                      class="sf-button--full-width actions__button color-light"
+                      data-testid="apply-button"
+                      @click="gotocart()"
+                    >
+                      View Cart
                     </SfButton>
                   </template>
                 </KiboOrderSummary>
@@ -361,6 +374,7 @@ export default {
     const currencyCode = context.root.$i18n.getNumberFormat(locale)?.currency?.currency
 
     const currentStep = ref(0)
+    const logState = ref(1)
     const { cart } = useCart()
     const {
       checkout,
@@ -502,6 +516,7 @@ export default {
     const shippingDetails = computed(() => checkout.value?.fulfillmentInfo?.fulfillmentContact)
     const updatedShippingAddress = ref({})
     const saveShippingDetails = async (shippingAddress) => {
+      console.log("abc", shippingAddress)
       if (!isValidShippingDetails.value) return
 
       updatedShippingAddress.value = { ...shippingAddress.address }
@@ -727,6 +742,7 @@ export default {
     })
 
     // others
+
     const updateStep = async (selectedStep: number) => {
       changeModalStatus(false)
       const nextStep = typeof selectedStep === "number" ? selectedStep : currentStep.value + 1 // // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
@@ -783,6 +799,7 @@ export default {
     }
 
     return {
+      logState,
       gotocart,
       showOrderSummary,
       changeModalStatus,
@@ -846,6 +863,7 @@ export default {
       cards,
       isLoadingPaymentMethods,
       onPaymentSelect,
+      isAuthenticated,
     }
   },
   watch: {
@@ -1217,7 +1235,7 @@ $checkoutBackground: #fff;
 
 .mobileActionButton {
   display: flex;
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;

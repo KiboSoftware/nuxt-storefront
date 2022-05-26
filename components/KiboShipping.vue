@@ -1,10 +1,6 @@
 <template>
   <div class="sf-shipping" data-testid="shipping">
-    <SfHeading
-      :title="$t('Shipping')"
-      :level="2"
-      class="sf-heading--left sf-heading--no-underline title"
-    />
+    <SfHeading :title="$t('Shipping')" :level="2" class="abc" />
     <div class="user-addresses">
       <UserSavedAddresses
         :countries="countries"
@@ -83,6 +79,10 @@ export default {
 
 <style lang="scss" scoped>
 .sf-shipping {
+  @include for-mobile {
+    margin-top: 56px;
+  }
+
   padding: calc(var(--spacer-base) * 1.66) 0;
 
   .user-addresses {
@@ -92,5 +92,18 @@ export default {
   .shipping-method-title {
     padding: calc(var(--spacer-base) * 0.41) 0 calc(var(--spacer-base) * 0.83) 0;
   }
+}
+
+.sf-personal-details .title {
+  position: absolute !important;
+  left: 163px !important;
+  @include for-mobile {
+    margin-left: -250px !important;
+  }
+}
+
+.sf-heading__title.h2 {
+  font-size: 20px !important;
+  text-align: left;
 }
 </style>

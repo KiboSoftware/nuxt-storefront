@@ -34,6 +34,9 @@
 
   @include for-mobile {
     overflow-x: hidden;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 10px;
   }
 }
 
