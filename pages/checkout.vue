@@ -192,6 +192,7 @@
                   @modalStatus="changeModalStatus"
                   :order-title="$t('Order Summary')"
                   :order-title-level="3"
+                  :selected-shipping-price="selectedShippingMethodPrice"
                   :number-of-items="numberOfItems"
                   :sub-total="checkoutSubTotal"
                   :standard-shipping="standardShipping"
@@ -453,6 +454,7 @@ export default {
     const estimatedTax = computed(() => checkoutGetters.getTaxTotal(getOrder.value))
     const estimatedOrderTotal = computed(() => checkoutGetters.getTotal(getOrder.value))
     const showOrderSummary = ref(false)
+    const selectedShippingMethodPrice = ref(0)
 
     const logIn = () => {
       toggleLoginModal()
@@ -516,7 +518,6 @@ export default {
     const shippingDetails = computed(() => checkout.value?.fulfillmentInfo?.fulfillmentContact)
     const updatedShippingAddress = ref({})
     const saveShippingDetails = async (shippingAddress) => {
-      console.log("abc", shippingAddress)
       if (!isValidShippingDetails.value) return
 
       updatedShippingAddress.value = { ...shippingAddress.address }
@@ -542,6 +543,7 @@ export default {
     const shippingRates = computed(() =>
       shippingMethodGetters.getShippingRates(shippingMethods.value)
     )
+
     const saveShippingMethod = async (shippingRates) => {
       const params = {
         orderId: checkout.value?.id,
@@ -554,6 +556,7 @@ export default {
         shippingMethodCode: shippingRates.shippingMethodCode,
         shippingMethodName: shippingRates.shippingMethodName,
       }
+      selectedShippingMethodPrice.value = shippingRates.price
 
       await setShippingInfo(params)
       await loadShippingMethods(checkout.value?.id)
@@ -864,6 +867,7 @@ export default {
       isLoadingPaymentMethods,
       onPaymentSelect,
       isAuthenticated,
+      selectedShippingMethodPrice,
     }
   },
   watch: {
@@ -907,9 +911,6 @@ $checkoutBackground: #fff;
   }
 
   &__main {
-    ::v-deep .sf-steps__step.is-done {
-      // --steps-step-color: var(--c-primary);
-    }
     @include for-desktop {
       flex: 1;
       padding: var(--spacer-xl) 0 0 0;
