@@ -72,11 +72,11 @@ export default {
     const updateField = (shippingMethodCode) => {
       selectedShippingMethodCode.value = shippingMethodCode
 
-      const { shippingMethodName } = props.shippingRates.find(
+      const { shippingMethodName, price } = props.shippingRates.find(
         (rate) => rate.shippingMethodCode === shippingMethodCode
       )
 
-      context.emit("saveShippingMethod", { shippingMethodCode, shippingMethodName })
+      context.emit("saveShippingMethod", { shippingMethodCode, shippingMethodName, price })
     }
 
     const handleStoreLocatorClick = () => {

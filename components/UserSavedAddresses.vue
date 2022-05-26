@@ -47,8 +47,7 @@
       {{ $t("Add New Address") }}
     </SfButton>
     <div v-if="showAddressForm" class="action-buttons-adr">
-      <SfButton class="color-light" @click="closeAddressForm">
-        {{ $t("Cancel") }} </SfButton
+      <SfButton class="color-light" @click="closeAddressForm"> {{ $t("Cancel") }} </SfButton
       >&nbsp;&nbsp;
       <SfButton class="color-primary" :disabled="!isValidShippingDetails" @click="saveAddress">
         {{ $t("Save") }}
@@ -215,10 +214,6 @@ div {
   &__content {
     padding-bottom: var(--spacer-xs);
   }
-}
-
-.shipping:last-child {
-  //border: none;
 }
 
 .no-shipping-address {

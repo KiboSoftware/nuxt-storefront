@@ -13,13 +13,25 @@
               <KiboPrice :regular="$n(subTotal, 'currency')" class="sf-property__price" />
             </template>
           </SfProperty>
-          <SfProperty
+          <!-- <SfProperty
             :name="properties.standardShipping"
             :value="$n(standardShipping, 'currency')"
             class="sf-property--full-width sf-property--large sf-order-summary__property"
           >
             <template #value>
               <KiboPrice :regular="$n(standardShipping, 'currency')" class="sf-property__price" />
+            </template>
+          </SfProperty> -->
+          <SfProperty
+            :name="selectedShippingPrice === 0 ? $t('Standard Shipping') : $t('Shipping Charges')"
+            :value="$n(selectedShippingPrice, 'currency')"
+            class="sf-property--full-width sf-property--large sf-order-summary__property"
+          >
+            <template #value>
+              <KiboPrice
+                :regular="$n(selectedShippingPrice, 'currency')"
+                class="sf-property__price"
+              />
             </template>
           </SfProperty>
           <SfProperty
@@ -57,12 +69,16 @@
                 <KiboPrice
                   :regular="
                     $n(
-                      estimatedOrderTotal !== subTotal ? subTotal : estimatedOrderTotal,
+                      estimatedOrderTotal !== subTotal
+                        ? subTotal + selectedShippingPrice
+                        : estimatedOrderTotal + selectedShippingPrice,
                       'currency'
                     )
                   "
                   :special="
-                    estimatedOrderTotal !== subTotal ? $n(estimatedOrderTotal, 'currency') : null
+                    estimatedOrderTotal !== subTotal
+                      ? $n(estimatedOrderTotal + selectedShippingPrice, 'currency')
+                      : null
                   "
                   class="sf-property__price"
                 />
@@ -110,12 +126,15 @@
               </template>
             </SfProperty>
             <SfProperty
-              :name="properties.standardShipping"
-              :value="$n(standardShipping, 'currency')"
+              :name="selectedShippingPrice === 0 ? $t('Standard Shipping') : $t('Shipping Charges')"
+              :value="$n(selectedShippingPrice, 'currency')"
               class="sf-property--full-width sf-property--large sf-order-summary__property"
             >
               <template #value>
-                <KiboPrice :regular="$n(standardShipping, 'currency')" class="sf-property__price" />
+                <KiboPrice
+                  :regular="$n(selectedShippingPrice, 'currency')"
+                  class="sf-property__price"
+                />
               </template>
             </SfProperty>
             <SfProperty
@@ -153,12 +172,16 @@
                   <KiboPrice
                     :regular="
                       $n(
-                        estimatedOrderTotal !== subTotal ? subTotal : estimatedOrderTotal,
+                        estimatedOrderTotal !== subTotal
+                          ? subTotal + selectedShippingPrice
+                          : estimatedOrderTotal + selectedShippingPrice,
                         'currency'
                       )
                     "
                     :special="
-                      estimatedOrderTotal !== subTotal ? $n(estimatedOrderTotal, 'currency') : null
+                      estimatedOrderTotal !== subTotal
+                        ? $n(estimatedOrderTotal + selectedShippingPrice, 'currency')
+                        : null
                     "
                     class="sf-property__price"
                   />
@@ -247,6 +270,10 @@ export default {
     isMobile: {
       type: Boolean,
       default: false,
+    },
+    selectedShippingPrice: {
+      type: Number,
+      default: 0,
     },
   },
   setup(props, context) {
