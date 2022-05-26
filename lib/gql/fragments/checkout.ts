@@ -34,6 +34,7 @@ export const checkoutLineItemFragment = /* GraphQL */ `
     subtotal
     discountTotal
     quantity
+    expectedDeliveryDate
     product {
       ...checkoutItemProductFragment
     }

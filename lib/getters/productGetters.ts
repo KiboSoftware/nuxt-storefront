@@ -188,6 +188,10 @@ const getVariationProductCodeOrProductCode = (product: ProductCustom): string =>
   return product.variationProductCode ? product.variationProductCode : product.productCode
 }
 
+export const getIsPurchasable = (product: Product): boolean => {
+  return product?.purchasableState?.isPurchasable || false
+}
+
 export const productGetters = {
   getName,
   getRating,
@@ -212,4 +216,5 @@ export const productGetters = {
   validateAddToCart,
   getAvailableItemCount,
   getVariationProductCodeOrProductCode,
+  getIsPurchasable,
 }
