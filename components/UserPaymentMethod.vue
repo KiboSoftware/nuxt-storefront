@@ -303,4 +303,9 @@ div {
 .no-shipping-payment-method {
   margin-bottom: var(--spacer-xs);
 }
+
+.sf-heading__title.h2 {
+  font-size: 20px !important;
+  text-align: left;
+}
 </style>

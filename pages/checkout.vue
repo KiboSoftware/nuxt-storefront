@@ -57,11 +57,7 @@
     <div id="checkout">
       <div class="checkout">
         <div class="checkout__main">
-          <SfSteps
-            :active="isAuthenticated ? logState : currentStep"
-            :steps="steps"
-            @change="updateStep"
-          >
+          <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
             <SfStep name="Details">
               <KiboPersonalDetails
                 :style="{ color: isAuthenticated ? '#ddd' : '' }"
@@ -735,6 +731,7 @@ export default {
       populatePersonalDetails()
 
       if (user.value?.id) {
+        currentStep.value = currentStep.value + 1
         await loadUserAddresses(user.value?.id)
         await loadCard(user.value.id)
       }

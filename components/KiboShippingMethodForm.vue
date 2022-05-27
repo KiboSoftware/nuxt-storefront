@@ -5,6 +5,7 @@
         <template #ship-sub-section>
           <div class="rates order-shipment__section">
             <SfSelect
+              class="dropdown"
               :value="selectedShippingMethodCode"
               :placeholder="$t('Select Shipping Option')"
               data-testid="rates"
@@ -157,5 +158,9 @@ export default {
       margin: 0;
     }
   }
+}
+
+::v-deep .sf-select__dropdown {
+  width: 80%;
 }
 </style>
