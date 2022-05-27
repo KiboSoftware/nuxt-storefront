@@ -59,7 +59,7 @@ import { SfIcon, SfButton } from "@storefront-ui/vue"
 import { useAsync, computed, ref, defineComponent } from "@nuxtjs/composition-api"
 import { useUiHelpers, useWishlist } from "@/composables"
 import { productGetters, wishlistGetters } from "@/lib/getters"
-import authenticated from "~~/middleware/authenticated"
+import authenticated from "@/middleware/authenticated"
 
 export default defineComponent({
   name: "Wishlist",
