@@ -36,7 +36,7 @@
             />
           </SfCircleIcon> -->
 
-        <div class="kibo-mobile__header-column">
+        <div class="kibo-mobile__header-column" v-if="totalItemsInCart > 0">
           <SfIcon style="font-size: 1.1rem">
             <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
               totalItemsInCart
