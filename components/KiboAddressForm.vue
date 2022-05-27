@@ -336,11 +336,15 @@ export default {
       border: 2px solid var(--c-black);
       border-radius: 4px;
       padding: var(--spacer-xs) var(--spacer-2xs);
-      padding-top: 15px;
+      padding-top: 24px;
       margin: 0 0 2px 0;
       font-size: var(--font-size--base);
       font-family: var(--font-family--secondary);
       color: var(--c-link);
+    }
+
+    &__label {
+      top: 6px;
     }
   }
 
