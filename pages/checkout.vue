@@ -153,6 +153,7 @@
                 :order-title-level="3"
                 :number-of-items="numberOfItems"
                 :sub-total="checkoutSubTotal"
+                :selected-shipping-price="selectedShippingMethodPrice"
                 :standard-shipping="standardShipping"
                 :estimated-tax="estimatedTax"
                 :estimated-order-total="estimatedOrderTotal"
