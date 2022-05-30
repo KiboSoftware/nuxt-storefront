@@ -1085,6 +1085,24 @@ export default defineComponent({
   @include for-desktop {
     margin: var(--spacer-sm) 0 var(--spacer-xs) 0;
   }
+
+  @include for-mobile {
+    ::v-deep button.sf-add-to-cart__button.sf-button {
+      position: fixed;
+      display: flex;
+      bottom: 3.6rem;
+      left: 0;
+      right: 0;
+      box-shadow: 0 0 3px var(--c-black);
+      z-index: 9;
+      height: 3rem;
+      width: 100%;
+    }
+
+    ::v-deep button.sf-add-to-cart__button.sf-button.is-disabled--button {
+      color: var(--c-black);
+    }
+  }
 }
 
 .h4 {
