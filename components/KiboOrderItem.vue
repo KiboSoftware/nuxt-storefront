@@ -3,6 +3,7 @@
     <div class="order-item-container">
       <div class="order-item">
         <div class="order-item__left">
+          <div class="order-item__info">{{ orderNumber }}</div>
           <div class="order-item__info">{{ submittedDate }}</div>
           <div class="order-item__description">{{ productNames }}</div>
           <div class="order-item__info">{{ $n(orderTotal, "currency") }}</div>
@@ -33,6 +34,9 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const orderNumber = computed(() => {
+      return orderGetters.getOrderNumber(props.order)
+    })
     const submittedDate = computed(() => {
       return orderGetters.getSubmittedDate(props.order)
     })
@@ -46,6 +50,7 @@ export default defineComponent({
       return orderGetters.getOrderStatus(props.order)
     })
     return {
+      orderNumber,
       submittedDate,
       productNames,
       orderTotal,
