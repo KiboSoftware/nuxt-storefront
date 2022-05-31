@@ -68,7 +68,7 @@
           <div class="kibo-top-bar__content"></div>
           <div class="kibo-top-bar__nav-link">
             <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
-            <div><SfMenuItem :label="$t('Wishlist')" /></div>
+            <div><SfMenuItem label="Nav Link 2" /></div>
             <div><SfMenuItem label="Nav Link 3" /></div>
             <div><SfMenuItem label="Nav Link 4" /></div>
           </div>

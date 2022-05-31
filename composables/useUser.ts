@@ -5,11 +5,11 @@ import {
   loginMutation,
   updateCustomerDataMutation,
   updatePasswordMutation,
-  resetPasswordMutation,
   createAccountAndLoginMutation,
+  getUserNameQuery,
 } from "@/lib/gql/mutations"
 import type { Maybe, CustomerUserAuthInfoInput, CustomerAccount } from "@/server/types/GraphQL"
-import type { ResetPasswordParams, ResetPasswordResponse } from "@/composables/types/useUser"
+import type { CustomQuery, GetUserNameParams, GetUserNameResponse } from "@/server/types/Api"
 import { useState, useNuxtApp } from "#app"
 
 export const useUser = () => {
@@ -23,12 +23,12 @@ export const useUser = () => {
   const error = reactive({
     login: null,
     register: null,
-    resetPassword: null,
+    getUserName: null,
   })
   const resetErrorValues = () => {
     error.login = null
     error.register = null
-    error.resetPassword = null
+    error.getUserName = null
   }
 
   const load = async () => {
@@ -186,24 +186,27 @@ export const useUser = () => {
       loading.value = false
     }
   }
-  const resetPassword = async (params: ResetPasswordParams): Promise<ResetPasswordResponse> => {
-    const variables = {
-      resetPasswordInfoInput: {
-        emailAddress: params.emailAddress,
-        userName: params.emailAddress,
-        customerSetCode: "",
-      },
-    }
+  const getUserName = async (
+    params: GetUserNameParams,
+    customQuery?: CustomQuery
+  ): Promise<GetUserNameResponse> => {
     try {
+      // Get user name
+
+      const variables = { ...params, ...customQuery }
+
       loading.value = true
       const response = await fetcher({
-        query: resetPasswordMutation,
+        query: getUserNameQuery,
         variables,
+        headers: { "x-vol-exclude-user-claims": "true" },
       })
       loading.value = false
-      if (response?.data?.resetPassword) return response?.data?.resetPassword
-      else if (response.errors) {
-        error.resetPassword = response.errors[0]
+      resetErrorValues()
+      if (response?.data?.customerAccounts) {
+        return response?.data?.customerAccounts?.items[0]?.userName
+      } else if (response.errors) {
+        error.getUserName = response.errors[0]
       }
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -223,7 +226,7 @@ export const useUser = () => {
     isAuthenticated,
     updateCustomerPersonalData,
     changePassword,
-    resetPassword,
+    getUserName,
     loading: computed(() => loading.value),
     error: computed(() => error),
   }

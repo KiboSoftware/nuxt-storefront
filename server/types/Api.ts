@@ -45,3 +45,10 @@ export type UpdateUserAddressResponse = QueryResponse<"customerContact", GraphQL
 // deleteUserAddress
 export type DeleteUserAddressParams = GraphQL.MutationDeleteCustomerAccountContactArgs
 export type DeleteUserAddressResponse = QueryResponse<"user", boolean>
+
+// password-getUserName
+export type GetUserNameParams = GraphQL.QueryCustomerAccountsArgs
+export type GetUserNameResponse = QueryResponse<
+  "customerAccounts",
+  GraphQL.CustomerAccountCollection
+>

@@ -195,6 +195,11 @@ export default defineNuxtConfig({
         path: "/pages/:pageName",
         component: resolve(__dirname, "pages/cms-page.vue"),
       })
+      routes.push({
+        name: "forgot_password",
+        path: "/user/resetPasswordConfirm",
+        component: resolve(__dirname, "pages/resetPassword"),
+      })
     },
     middleware: [],
   },

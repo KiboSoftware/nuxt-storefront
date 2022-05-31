@@ -97,22 +97,32 @@
             required
             @input="validateEmail('email', form.username)"
           />
-          <span v-if="userError.resetPassword" class="login-error-message">
-            {{ userError.resetPassword.message }}
+          <span v-if="forgotPasswordError.resetPassword" class="login-error-message">
+            {{ forgotPasswordError.resetPassword.message }}
           </span>
 
-          <SfLoader :class="{ loader: loading }" :loading="loading">
+          <SfLoader :class="{ loader: forgotPasswordLoading }" :loading="forgotPasswordLoading">
             <SfButton
               type="submit"
               class="sf-button--full-width form__button color-primary reset-password"
-              :disabled="!isEmailValidated"
+              :disabled="!isEmailValidated || forgotPasswordLoading"
             >
-              <div>{{ $t("Reset Password") }}</div>
+              <div>{{ $t("submit") }}</div>
             </SfButton>
           </SfLoader>
         </form>
       </div>
       <div v-else-if="displayThankYouMessage" class="thank-you">
+        <div class="reset-email-sent">
+          <SfIcon size="2rem">
+            <font-awesome-icon
+              icon="check-circle"
+              class="fa-icon"
+              color="var(--_c-dark-green-secondary)"
+            />
+          </SfIcon>
+          <div class="reset-email-sent__header">{{ $t("Email Sent") }}</div>
+        </div>
         <i18n tag="p" class="thank-you__paragraph" path="forgotPasswordConfirmation">
           <span class="thank-you__paragraph--bold">{{ form.username }}</span>
         </i18n>
@@ -184,7 +194,14 @@ import {
   SfIcon,
 } from "@storefront-ui/vue"
 
-import { useCart, useUiState, useUser, useUiValidationSchemas, useWishlist } from "@/composables"
+import {
+  useCart,
+  useUiState,
+  useUser,
+  useUiValidationSchemas,
+  useWishlist,
+  useForgotPassword,
+} from "@/composables"
 import { userGetters } from "@/lib/getters"
 import { LoginFormType, RestPasswordFormType, RegisterFormType } from "@/components/types/login"
 
@@ -205,11 +222,17 @@ export default {
       user,
       login,
       createAccountAndLogin,
-      resetPassword,
       loading,
       error: userError,
       isAuthenticated,
     } = useUser()
+
+    const {
+      resetPassword,
+      loading: forgotPasswordLoading,
+      error: forgotPasswordError,
+    } = useForgotPassword()
+
     const { load: loadCart } = useCart()
     const { loadWishlist } = useWishlist()
 
@@ -377,6 +400,8 @@ export default {
       createAccountDisabled,
       passwordFormFields,
       getPasswordValues,
+      forgotPasswordLoading,
+      forgotPasswordError,
     }
   },
 }
@@ -391,7 +416,7 @@ export default {
 .bar-heading {
   color: var(--_c-dark-primary);
   font-size: var(--font-size--xl);
-  font-weight: var(--font-weight--semibold);
+  font-weight: var(--font-weight--bold);
 }
 
 .modal-content,
@@ -527,6 +552,21 @@ export default {
 }
 
 .cross-icon {
-  margin-top: 3px;
+  margin-top: var(--spacer-2xs);
+}
+
+.reset-email-sent {
+  display: flex;
+  align-items: center;
+
+  &__header {
+    font-size: var(--font-size--xl);
+    font-weight: var(--font-weight--bold);
+    color: var(--_c-dark-green-secondary);
+  }
+}
+
+.svg-inline--fa.fa-w-16 {
+  width: var(--spacer-base);
 }
 </style>

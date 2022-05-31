@@ -8,6 +8,7 @@ export * from "./useProductLocationInventory"
 
 // User
 export * from "./useUser"
+export * from "./useForgotPassword"
 
 // Cart
 export * from "./useCart"

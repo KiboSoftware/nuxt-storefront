@@ -8,6 +8,7 @@
       :value="field.value"
       class="form__element"
       type="password"
+      :has-show-password="true"
       :valid="isConfirmPasswordSame === null || isConfirmPasswordSame"
       :error-message="field.id === 'confirmPassword' ? $t(`Password doesn't match`) : ''"
       @input="(value) => handlePassword(value, field.id)"
@@ -96,6 +97,7 @@ export default defineComponent({
     ])
 
     const isConfirmPasswordSame = ref(null)
+    const isPasswordValidated = ref(false)
     const schema = useUiValidationSchemas(context.root, "password")
     const validatePassword = (errors = []) => {
       requirements.value.forEach((requirement) => {
@@ -104,7 +106,6 @@ export default defineComponent({
       return requirements.value.every((requirement) => requirement.isValid)
     }
     const handlePassword = async (value, inputType) => {
-      const isPasswordValidated = ref(false)
       if (!showPasswordRequirementsVisible.value) {
         showPasswordRequirementsVisible.value = true
       }
