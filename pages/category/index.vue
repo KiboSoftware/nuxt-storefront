@@ -233,7 +233,7 @@ export default {
     const { getFacetsFromURL, getProductLink, changeSorting, changeFilters, setCategoryLink } =
       useUiHelpers()
     const { result, search, loading } = useFacet(`category-listing`)
-    const { loadWishlist, addToWishlist, isInWishlist, removeItemFromWishlist } = useWishlist()
+    const { loadWishlist, addToWishlist, isInWishlist, removeItemAndLoadWishlist } = useWishlist()
     const { toggleLoginModal } = useUiState()
     const nuxt = useNuxtApp()
     const { sortOptions } = nuxt.nuxt2Context.$config.productListing
@@ -355,7 +355,7 @@ export default {
     const addItemToWishList = async (product) => {
       if (isAuthenticated.value) {
         isInWishlist(product)
-          ? await removeItemFromWishlist(product)
+          ? await removeItemAndLoadWishlist(product)
           : await addToWishlist(product, user.value.id)
       } else {
         toggleLoginModal()

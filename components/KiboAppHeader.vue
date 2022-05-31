@@ -36,7 +36,10 @@
             </SfButton>
           </div>
           <div class="side-bar-nav__link">
-            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
+            <SfButton
+              class="sf-button--pure sf-header__action sf-header__bottom-link"
+              @click="goToWishlist"
+            >
               <span class="burger-bottom-link"> {{ $t("Wishlist") }}</span>
             </SfButton>
           </div>
@@ -68,7 +71,7 @@
           <div class="kibo-top-bar__content"></div>
           <div class="kibo-top-bar__nav-link">
             <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
-            <div><SfMenuItem :label="$t('Wishlist')" /></div>
+            <div><SfMenuItem label="Wishlist" @click="goToWishlist" /></div>
             <div><SfMenuItem label="Nav Link 3" /></div>
             <div><SfMenuItem label="Nav Link 4" /></div>
           </div>
@@ -475,6 +478,12 @@ export default defineComponent({
       if (isMobile.value) toggleHamburger()
       app.router.push({ path: "/order-status" })
     }
+    const goToWishlist = () => {
+      if (isAuthenticated.value) {
+        return app.router.push({ path: "/wishlist" })
+      }
+      toggleLoginModal()
+    }
 
     onMounted(() => {
       nextTick(() => {
@@ -538,6 +547,7 @@ export default defineComponent({
       toggleHamburger,
       gotoCart,
       goToOrderStatus,
+      goToWishlist,
       closeSearchOutsideClick,
       isStoreLocatorOpen,
     }

@@ -121,7 +121,7 @@ jest.mock("#app", () => ({
 }))
 
 describe("[composable] useWishlist", () => {
-  const { currentWishlist, loadWishlist, addToWishlist, removeItemFromWishlist, isInWishlist } =
+  const { currentWishlist, loadWishlist, addToWishlist, removeItemAndLoadWishlist, isInWishlist } =
     useWishlist()
 
   it("load: should load current wishlist", async () => {
@@ -135,8 +135,8 @@ describe("[composable] useWishlist", () => {
     expect(currentWishlist.value).toStrictEqual(mockedWishlist)
   })
 
-  it("removeItemFromWishlist: should remove item from current wishlist using current wishlist id", async () => {
-    await removeItemFromWishlist(mockedProduct)
+  it("removeItemAndLoadWishlist: should remove item from current wishlist using current wishlist id", async () => {
+    await removeItemAndLoadWishlist(mockedProduct)
     expect(currentWishlist.value).toStrictEqual(mockedWishlist)
   })
 
