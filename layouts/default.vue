@@ -8,6 +8,7 @@
     <AddToCartConfirmationModal />
     <AtcConfirmationSidebar />
     <CartSidebar />
+    <WishlistSidebar />
     <div class="content">
       <Nuxt />
     </div>
