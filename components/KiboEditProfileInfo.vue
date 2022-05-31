@@ -101,7 +101,7 @@ export default defineComponent({
         passwordValues.value.oldPassword = values.find(
           (value) => value.id === "currentPassword"
         ).value
-        passwordValues.value.newPassword = values.find((value) => value.id === "newPassword").value
+        passwordValues.value.newPassword = values.find((value) => value.id === "password").value
       }
     }
 
