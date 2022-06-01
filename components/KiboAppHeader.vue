@@ -180,6 +180,16 @@
                 <span class="kibo-header__icon-name">{{ $t("Go To My Account") }}</span>
               </div>
             </SfButton>
+
+            <SfButton class="sf-button--pure sf-header__action" @click="toggleWishlistSidebar">
+              <SfIcon icon="heart_fill"> </SfIcon>
+              <SfBadge
+                v-if="totalItemsInWishlist"
+                class="sf-badge--number sf-badge--cart-count sf-badge cart-badge wishlist-badge"
+                >{{ totalItemsInWishlist }}</SfBadge
+              >
+            </SfButton>
+
             <SfButton
               v-e2e="'app-header-cart'"
               class="sf-button--pure sf-header__action"
@@ -466,6 +476,7 @@ import {
   searchSuggestionGetters,
   cartGetters,
   categoryGetters,
+  wishlistGetters,
 } from "@/lib/getters"
 
 import * as logo from "@/assets/images/kibo_logo.png"
@@ -484,6 +495,7 @@ export default defineComponent({
   setup(_, context) {
     const checkoutSteps = ["/Checkout", "/checkout"]
     const { isMobileMenuOpen, toggleMobileMenu } = useUiState()
+    const { currentWishlist, loadWishlist } = useWishlist()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
 
@@ -511,8 +523,17 @@ export default defineComponent({
       return isAuthenticated.value ? "fas" : "far"
     })
 
-    const { toggleLoginModal, isHamburgerOpen, toggleHamburger, toggleAddToCartConfirmationModal } =
-      useUiState()
+    const totalItemsInWishlist = computed(() =>
+      wishlistGetters.getTotalItems(currentWishlist.value)
+    )
+
+    const {
+      toggleLoginModal,
+      isHamburgerOpen,
+      toggleHamburger,
+      toggleAddToCartConfirmationModal,
+      toggleWishlistSidebar,
+    } = useUiState()
     const searchSuggestionResult = ref({})
     const isOpenSearchBar = ref(false)
     const isStoreLocatorOpen = ref()
@@ -534,6 +555,7 @@ export default defineComponent({
         documentListName: "il-pages-template@i7d6294",
         filter: `name eq promobaner`,
       })
+      await loadWishlist()
     }, null)
 
     const manageBackLink = () => {
@@ -549,7 +571,6 @@ export default defineComponent({
         selectedCategoryCount.value++
         selectedCategory.value[selectedCategoryCount.value] = category
         showSubCategory.value = true
-        console.log("Selected", selectedCategory.value)
       } else {
         context.root.$router.push(getCatLink(category))
         closePrimarymenu()
@@ -735,7 +756,6 @@ export default defineComponent({
     })
 
     const handleScroll = (e) => {
-      // console.log(e);
       if (e.target.documentElement.scrollTop > 50) {
         desktopClass.value = true
       } else {
@@ -800,6 +820,8 @@ export default defineComponent({
       dropzoneContent,
       checkoutSteps,
       promobaner,
+      totalItemsInWishlist,
+      toggleWishlistSidebar,
     }
   },
 })
@@ -934,6 +956,10 @@ $background: #fff;
   position: absolute;
   background: var(--_c-green-primary);
   color: var(--c-white);
+}
+
+.wishlist-badge {
+  right: -12px;
 }
 
 .kibo-header {
