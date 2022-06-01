@@ -92,7 +92,7 @@
         <div class="cart-review">
           <div v-for="(item, index) in shipItems" :key="index">
             <KiboOrderLineItem :item="item" class="cart-review-product" />
-            <hr v-if="index != shipItems.length - 1" class="line-item-spacer" />
+            <!-- <hr v-if="index != shipItems.length - 1" class="line-item-spacer" /> -->
           </div>
           <div v-for="(item, index) in pickupItems" :key="index">
             <KiboOrderLineItem :item="item" class="cart-review-product" />

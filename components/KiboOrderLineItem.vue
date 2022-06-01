@@ -17,20 +17,39 @@
             >{{ $t("Price") }}: ${{ checkoutLineItemGetters.getProductPrice(item) }}</span
           >
         </div>
+        <!-- <div v-for="(option, index) in cartItemOptions" :key="index">
+          <div class="sf-property">
+            <div>
+              <span class="sf-property__name">{{ option.name }}:</span>
+            </div>
+            <div>
+              <span class="sf-property__value"> {{ option.value }}</span>
+            </div>
+          </div>
+        </div> -->
+
         <div
           v-for="option in checkoutLineItemGetters.getProductOptions(item)"
           :key="option.attributeFQN"
           class="item-content__props"
         >
-          <!-- {{option.name}}
-        <div v-if= "option.name != '' "> -->
-          <span class="option"> {{ option.name }}: {{ option.value }} </span><br />
-          <!-- </div> -->
-          <!-- <div v-else>
-             <span class="title"> {{ option.name }}: NA  </span><br />
-         </div> -->
+          <div v-if="option !== []">
+            <span class="option"> {{ option.name }}: {{ option.value }} </span><br />
+          </div>
+          <div v-else><span class="title"> Size : NA </span><br /></div>
         </div>
 
+        <div v-for="(items, index) in cartItems" :key="index" class="item-content__props">
+          <span v-if="checkoutLineItemGetters.getProductName(item) === items.product.name">
+            Qty : {{ items.quantity }}
+          </span>
+        </div>
+
+        <div v-for="(items, index) in cartItems" :key="index" class="item-content__props">
+          <span v-if="checkoutLineItemGetters.getProductName(item) === items.product.name">
+            Shipment : {{ items.fulfillmentMethod }}
+          </span>
+        </div>
         <!-- <div v-else>
          <div
           :key="option.attributeFQN"
@@ -57,7 +76,9 @@
 </template>
 <script lang="ts">
 import { SfImage } from "@storefront-ui/vue"
+import { useAsync } from "@nuxtjs/composition-api"
 import { checkoutLineItemGetters } from "@/lib/getters"
+import { cartGetters } from "@/lib/getters"
 
 export default {
   name: "OrderLineItem",
@@ -71,8 +92,19 @@ export default {
     },
   },
   setup() {
+    const { cart, load: loadCart, newestCartItemId } = useCart()
+    const cartItem = computed(() => cartGetters.getCartItem(cart.value, newestCartItemId.value))
+    const cartItemOptions = computed(() => cartGetters.getItemOptions(cartItem.value))
+
+    useAsync(async () => {
+      await loadCart()
+    }, null)
+    const cartItems = computed(() => cartGetters.getItems(cart.value))
+
     return {
       checkoutLineItemGetters,
+      cartItems,
+      cartItemOptions,
     }
   },
 }
@@ -82,7 +114,7 @@ export default {
 .productRow {
   display: flex;
   flex-direction: row;
-  padding: var(--spacer-base) 0;
+  padding: 10px;
 
   ::v-deep .sf-image--wrapper {
     --image-width: calc(var(--spacer-base) * 5.04);
@@ -90,7 +122,7 @@ export default {
 
     @include for-desktop {
       --image-width: calc(var(--spacer-base) * 4.95);
-      --image-height: calc(var(--spacer-base) * 2.5);
+      --image-height: calc(var(--spacer-base) * 3.5);
     }
 
     .sf-image {
@@ -109,7 +141,7 @@ export default {
 
     &__props {
       margin-top: 1px;
-      padding: 0 83px 2px 0;
+      padding: 0 83px -4px 0;
       font-size: var(--font-size--sm);
 
       .title {
