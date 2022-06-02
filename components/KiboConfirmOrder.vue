@@ -97,4 +97,11 @@ export default {
 .tax-badge {
   position: absolute;
 }
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
 </style>

@@ -4,9 +4,9 @@
       <div v-if="shipItems && shipItems.length > 0">
         <div class="order-shipment__title">
           <slot name="ship-title">
-            <h3 class="sf-heading__title h3">
+            <h4 class="sf-heading__title h3">
               {{ $t("Shiping to home") }}
-            </h3>
+            </h4>
           </slot>
         </div>
         <slot name="ship-sub-section" />
@@ -25,9 +25,9 @@
       <div v-if="pickupItems && pickupItems.length > 0">
         <div class="order-shipment__title">
           <slot name="pickup-title">
-            <h3 class="sf-heading__title h3">
+            <h4 class="sf-heading__title h3">
               {{ $t("Pickup In Store") }}
-            </h3>
+            </h4>
           </slot>
         </div>
         <slot name="pickup-sub-section" />
@@ -74,7 +74,7 @@ export default {
 .order-shipment {
   &__title,
   &__section {
-    padding-top: var(--spacer-base);
+    padding-top: var(--spacer-2xs);
 
     h3 {
       font-weight: var(--font-weight--semibold);
@@ -111,6 +111,7 @@ export default {
 .shipping-address {
   font-weight: bold;
   padding-bottom: var(--spacer-sm);
+  padding-top: var(--spacer-xs);
 }
 
 .line-item-spacer {
@@ -124,5 +125,11 @@ export default {
     width: 100%;
     margin: var(--spacer-sm) auto 0;
   }
+}
+
+.sf-heading__title.h3 {
+  font-size: larger;
+
+  --heading-title-font-weight: var(--font-weight--bold);
 }
 </style>
