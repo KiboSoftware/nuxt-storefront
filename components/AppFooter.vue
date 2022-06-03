@@ -121,6 +121,10 @@ $background: #000;
   }
 }
 
+.footer_title {
+  color: var(--c-primary) !important;
+}
+
 .copyrighttext {
   position: relative;
   overflow: hidden;

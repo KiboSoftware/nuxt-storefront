@@ -318,6 +318,7 @@ export default {
       border-radius: 4px;
       padding: var(--spacer-xs) var(--spacer-2xs);
       height: unset;
+      width: 98%;
     }
 
     ::v-deep .sf-select__label {

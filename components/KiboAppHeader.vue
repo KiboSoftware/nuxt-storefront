@@ -1314,6 +1314,9 @@ $background: #fff;
     width: 150px;
     height: 100px;
     display: flex;
+    @media screen and (min-width: 1024px) {
+      padding-left: 25%;
+    }
   }
 }
 
