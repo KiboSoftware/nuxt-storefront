@@ -621,7 +621,7 @@ input[type="submit"]:hover {
   // font-family: 'Roboto Condensed';
   background-color: var(--c-primary);
   color: var(--c-black);
-  line-height: 1.4;
+  line-height: 1;
   width: 100%;
   font-size: 14px;
   padding-left: 0;
@@ -697,5 +697,9 @@ input[type="submit"]:hover {
 .error {
   font-size: 1rem;
   color: var(--_c-red-primary-lighten);
+}
+
+::v-deep .sf-icon.color-gray-secondary {
+  --icon-color: var(--c-black);
 }
 </style>
