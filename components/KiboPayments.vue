@@ -112,4 +112,15 @@ export default {
     padding: calc(var(--spacer-base) * 0.83) 0;
   }
 }
+
+.sf-heading__title.h2 {
+  margin-top: 18px;
+  margin-left: -600px;
+  font-size: 20px !important;
+  text-align: left !important;
+  @include for-mobile {
+    margin-top: 77px;
+    margin-left: -180px;
+  }
+}
 </style>

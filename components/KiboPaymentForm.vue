@@ -222,6 +222,10 @@ export default defineComponent({
     display: flex;
     background-color: var(--_c-white-primary);
     margin-bottom: var(--spacer-lg);
+    column-gap: 75px;
+    @include for-mobile {
+      display: block;
+    }
   }
 
   .payment-method {
@@ -234,13 +238,14 @@ export default defineComponent({
 
     .sf-radio {
       &__label {
-        font-size: var(--font-size--base);
+        font-size: 14px;
       }
     }
   }
 
   .credit-card-form {
     &__element {
+      width: 80%;
       margin: 0 0 var(--spacer-base) 0;
       display: block;
 

@@ -10,6 +10,14 @@ export const usePaymentTypes = () => {
       id: "creditcard",
       name: "Credit / Debit Card",
     },
+    {
+      id: "Check By Mail",
+      name: "Check By Mail",
+    },
+    {
+      id: "Paypal",
+      name: "Paypal",
+    },
   ])
 
   const loadPaymentTypes = () => paymentTypes

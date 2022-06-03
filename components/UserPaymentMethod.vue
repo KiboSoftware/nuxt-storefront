@@ -32,8 +32,18 @@
       @input="setInputCardData"
     />
 
+    <SfButton v-if="!showPaymentMethodForm" class="action-button" @click="addNewPaymentMethod()">
+      <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
+        <font-awesome-icon
+          icon="plus-circle"
+          class="fa-icon"
+          color="var(--_c-dark-white-secondary)"
+        />
+      </SfIcon>
+      {{ $t("Add New Card") }}
+    </SfButton>
+
     <KiboAddressForm
-      v-show="showPaymentMethodForm"
       :key="activeAddress.id"
       :value="activeAddress"
       :countries="countries"
@@ -65,17 +75,7 @@
       />
     </div>
 
-    <SfButton v-if="!showPaymentMethodForm" class="action-button" @click="addNewPaymentMethod()">
-      <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
-        <font-awesome-icon
-          icon="plus-circle"
-          class="fa-icon"
-          color="var(--_c-dark-white-secondary)"
-        />
-      </SfIcon>
-      {{ $t("Add New Card") }}
-    </SfButton>
-    <div v-if="showPaymentMethodForm" class="action-buttons">
+    <div v-if="showPaymentMethodForm" class="action-btn">
       <SfButton class="color-light" @click="closePaymentMethodForm">
         {{ $t("Cancel") }}
       </SfButton>
@@ -278,6 +278,7 @@ div {
   gap: calc(var(--spacer-xl) / 8);
 
   @include for-desktop {
+    display: flex;
     max-width: calc(var(--spacer-base) * 17.54);
   }
 }
@@ -307,5 +308,11 @@ div {
 .sf-heading__title.h2 {
   font-size: 20px !important;
   text-align: left;
+}
+
+.action-btn {
+  display: flex;
+  column-gap: 10px;
+  margin-bottom: 80px !important;
 }
 </style>
