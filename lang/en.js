@@ -271,4 +271,7 @@ export default {
   RemovefromWishlist: "Remove from Wishlist",
   registrationFailed: "New Account Registration Failed",
   Wishlist: "Wishlist",
+  wishlistItemCount: "No wishlist items | {n} item | {n} items",
+  shopNow: "Shop Now",
+  removed: "Removed!",
 }
