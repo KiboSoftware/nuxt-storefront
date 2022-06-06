@@ -1,4 +1,6 @@
 <template>
+  <!-- <div> -->
+  <!-- <slot name="removed-item" /> -->
   <div class="kibo-product-card" data-testid="product-card">
     <div class="sf-product-card__image-wrapper">
       <slot name="image" v-bind="{ image, title, link, imageHeight, imageWidth }">
@@ -179,6 +181,7 @@
       </template>
     </QuickViewModal>
   </div>
+  <!-- </div> -->
 </template>
 <script lang="ts">
 import { colorsValues as SF_COLORS } from "@storefront-ui/shared/variables/colors"
@@ -380,6 +383,10 @@ export default defineComponent({
       default: () => {},
     },
     isPurchasable: {
+      type: Boolean,
+      default: false,
+    },
+    isRemovedItem: {
       type: Boolean,
       default: false,
     },
@@ -623,5 +630,18 @@ export default defineComponent({
     height: calc(var(--spacer-base) * 8.375);
     width: calc(var(--spacer-base) * 8.375);
   }
+}
+
+.removed-from-wishlist {
+  position: absolute;
+  margin-left: 67px;
+  margin-top: 88px;
+  z-index: 2;
+  font-weight: bold;
+}
+
+.removed-item {
+  opacity: 0.15;
+  pointer-events: none;
 }
 </style>
