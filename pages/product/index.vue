@@ -443,7 +443,7 @@ export default defineComponent({
       loadWishlist,
       addToWishlist,
       isInWishlist,
-      removeItemFromWishlist,
+      removeItemAndLoadWishlist,
     } = useWishlist()
     const { user } = useUser()
     const isAuthenticated = computed(() => {
@@ -620,7 +620,7 @@ export default defineComponent({
     const addItemToWishList = async () => {
       if (isAuthenticated.value) {
         isInWishlist(product.value)
-          ? await removeItemFromWishlist(product.value)
+          ? await removeItemAndLoadWishlist(product.value)
           : await addToWishlist(product.value, user.value.id)
       } else {
         toggleLoginModal()

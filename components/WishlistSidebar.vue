@@ -38,7 +38,7 @@
                 "
                 image-width="200"
                 image-height="200"
-                @click:remove="removeItemFromWishlist(product)"
+                @click:remove="removeItemAndLoadWishlist(product)"
                 class="collected-product"
               >
                 <template #configuration>
@@ -71,7 +71,7 @@
         </div>
         <div v-else class="empty-wishlist" key="empty-wishlist">
           <div class="empty-wishlist__banner">
-            <SfImage src="/icons/empty-cart.svg" alt="Empty bag" class="empty-wishlist__icon" />
+            <!-- <SfImage src="/icons/empty-cart.svg" alt="Empty bag" class="empty-wishlist__icon" /> -->
             <SfHeading
               title="Your bag is empty"
               description="Looks like you haven’t added any items to the bag yet. Start
@@ -98,7 +98,6 @@ import {
   SfProperty,
   SfPrice,
   SfCollectedProduct,
-  SfImage,
 } from "@storefront-ui/vue"
 import { computed, useAsync } from "@nuxtjs/composition-api"
 import { useUser, useWishlist, useUiState } from "@/composables"
@@ -114,11 +113,11 @@ export default {
     SfProperty,
     SfPrice,
     SfCollectedProduct,
-    SfImage,
   },
   setup() {
     const { isWishlistSidebarOpen, toggleWishlistSidebar } = useUiState()
-    const { currentWishlist, removeItemFromWishlist, loadWishlist } = useWishlist()
+    const { currentWishlist, removeItemFromWishlist, loadWishlist, removeItemAndLoadWishlist } =
+      useWishlist()
     const { isAuthenticated } = useUser()
     const products = computed(() => wishlistGetters.getItems(currentWishlist.value))
     const totals = computed(() => wishlistGetters.getTotals(currentWishlist.value))
@@ -133,6 +132,7 @@ export default {
       isAuthenticated,
       products,
       removeItemFromWishlist,
+      removeItemAndLoadWishlist,
       isWishlistSidebarOpen,
       toggleWishlistSidebar,
       totals,
