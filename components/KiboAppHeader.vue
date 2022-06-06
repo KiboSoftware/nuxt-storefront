@@ -36,7 +36,10 @@
             </SfButton>
           </div>
           <div class="side-bar-nav__link">
-            <SfButton class="sf-button--pure sf-header__action sf-header__bottom-link">
+            <SfButton
+              class="sf-button--pure sf-header__action sf-header__bottom-link"
+              @click="goToWishlist"
+            >
               <span class="burger-bottom-link"> {{ $t("Wishlist") }}</span>
             </SfButton>
           </div>
@@ -71,12 +74,12 @@
             </nuxt-link>
           </div>
           <!-- <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div> -->
-          <!-- <div class="kibo-top-bar__nav-link" >
-            <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
-            <div><SfMenuItem :label="$t('Wishlist')" /></div>
-            <div><SfMenuItem label="Nav Link 3" /></div>
-            <div><SfMenuItem label="Nav Link 4" /></div>
-          </div> -->
+          <div class="kibo-top-bar__nav-link">
+            <!-- <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div> -->
+            <!-- <div><SfMenuItem label="Wishlist" @click="goToWishlist" /></div> -->
+            <!-- <div><SfMenuItem label="Nav Link 3" /></div>
+            <div><SfMenuItem label="Nav Link 4" /></div> -->
+          </div>
         </div>
       </div>
       <div
@@ -721,6 +724,13 @@ export default defineComponent({
       app.router.push({ path: "/order-status" })
     }
 
+    const goToWishlist = () => {
+      if (isAuthenticated.value) {
+        return app.router.push({ path: "/wishlist" })
+      }
+      toggleLoginModal()
+    }
+
     onMounted(() => {
       window.addEventListener("scroll", handleScroll)
       nextTick(() => {
@@ -822,6 +832,7 @@ export default defineComponent({
       promobaner,
       totalItemsInWishlist,
       toggleWishlistSidebar,
+      goToWishlist,
     }
   },
 })
