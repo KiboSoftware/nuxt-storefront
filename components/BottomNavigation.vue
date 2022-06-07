@@ -13,13 +13,32 @@
       />
     </nuxt-link> -->
     <SfBottomNavigationItem icon="menu" size="20px" label="Menu" @click="toggleMobileMenu" />
-    <SfBottomNavigationItem icon="heart" size="20px" label="Wishlist" />
+
     <SfBottomNavigationItem
       icon="profile"
       size="20px"
       label="Account"
       @click="handleAccountClick"
     />
+
+    <SfBottomNavigationItem
+      icon="heart"
+      size="20px"
+      label="Wishlist"
+      @click="toggleWishlistSidebar"
+    >
+      <template #icon>
+        <SfButton class="sf-button--pure sf-header__action" style="margin: 0 auto">
+          <SfBadge
+            v-if="totalItemsInWishlist > 0"
+            class="sf-badge sf-badge--number-mobile kibo-mobile__item-count wishlist-count"
+            >{{ totalItemsInWishlist }}</SfBadge
+          >
+          <SfIcon icon="heart" style="top: 2px; --icon-size: 1.4rem"> </SfIcon>
+        </SfButton>
+      </template>
+    </SfBottomNavigationItem>
+
     <SfBottomNavigationItem
       label="Basket"
       icon="add_to_cart"
@@ -37,12 +56,11 @@
           </SfCircleIcon> -->
 
         <div class="kibo-mobile__header-column" v-if="totalItemsInCart > 0">
-          <SfIcon style="font-size: 1.1rem">
-            <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
-              totalItemsInCart
-            }}</SfBadge>
-            <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
-          </SfIcon>
+          <SfIcon icon="add_to_cart" style="top: 2px; --icon-size: 1.4rem"></SfIcon>
+          <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
+            totalItemsInCart
+          }}</SfBadge>
+          <!-- <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" /> -->
         </div>
       </template>
     </SfBottomNavigationItem>
@@ -50,15 +68,16 @@
 </template>
 
 <script>
-import { SfBottomNavigation, SfBadge } from "@storefront-ui/vue"
-import { useUiState, useUser, useCart } from "@/composables"
-import { userGetters, cartGetters } from "@/lib/getters"
+import { SfBottomNavigation, SfBadge, SfIcon } from "@storefront-ui/vue"
+import { useUiState, useUser, useCart, useWishlist } from "@/composables"
+import { userGetters, cartGetters, wishlistGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 
 export default {
   components: {
     SfBottomNavigation,
     SfBadge,
+    SfIcon,
   },
   setup() {
     const {
@@ -66,7 +85,10 @@ export default {
       isMobileMenuOpen,
       toggleLoginModal,
       toggleAddToCartConfirmationModal,
+      toggleWishlistSidebar,
     } = useUiState()
+
+    const { currentWishlist } = useWishlist()
     const nuxt = useNuxtApp()
     const app = nuxt.nuxt2Context.app
     const { user } = useUser()
@@ -91,6 +113,10 @@ export default {
       return count ? count.toString() : null
     })
 
+    const totalItemsInWishlist = computed(() =>
+      wishlistGetters.getTotalItems(currentWishlist.value)
+    )
+
     return {
       checkoutSteps,
       isMobileMenuOpen,
@@ -100,6 +126,8 @@ export default {
       user,
       toggleAddToCartConfirmationModal,
       totalItemsInCart,
+      toggleWishlistSidebar,
+      totalItemsInWishlist,
     }
   },
 }
@@ -155,9 +183,16 @@ export default {
     justify-content: center;
     font-size: calc(var(--spacer-2xs) * 2.25);
     right: -13px;
-    top: -7px;
+    top: -4px;
     position: absolute;
     margin-top: 2px;
   }
+}
+
+.wishlist-count {
+  position: relative;
+  top: 14px;
+  z-index: 9;
+  right: -17px;
 }
 </style>
