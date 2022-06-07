@@ -55,6 +55,16 @@
                   </div>
                 </template>
                 <template #input="{}">&nbsp;</template>
+                <template #actions>
+                  <nuxt-link :to="localePath(getProductLink(productGetters.getProductId(product)))">
+                    <SfButton
+                      class="sf-button color-primary wish-btn"
+                      @click="toggleWishlistSidebar"
+                    >
+                      {{ $t("Shop now") }}
+                    </SfButton>
+                  </nuxt-link>
+                </template>
               </SfCollectedProduct>
             </transition-group>
           </div>
@@ -100,8 +110,8 @@ import {
   SfCollectedProduct,
 } from "@storefront-ui/vue"
 import { computed, useAsync } from "@nuxtjs/composition-api"
-import { useUser, useWishlist, useUiState } from "@/composables"
-import { wishlistGetters } from "@/lib/getters"
+import { useUser, useWishlist, useUiState, useUiHelpers } from "@/composables"
+import { wishlistGetters, productGetters } from "@/lib/getters"
 
 export default {
   name: "Wishlist",
@@ -119,13 +129,13 @@ export default {
     const { currentWishlist, removeItemFromWishlist, loadWishlist, removeItemAndLoadWishlist } =
       useWishlist()
     const { isAuthenticated } = useUser()
+    const { getProductLink } = useUiHelpers()
     const products = computed(() => wishlistGetters.getItems(currentWishlist.value))
     const totals = computed(() => wishlistGetters.getTotals(currentWishlist.value))
     const totalItems = computed(() => wishlistGetters.getTotalItems(currentWishlist.value))
 
     useAsync(async () => {
       await loadWishlist()
-      console.log("Products in wishlist", products, totals, totalItems)
     }, null)
 
     return {
@@ -139,6 +149,8 @@ export default {
       totalItems,
       wishlistGetters,
       currentWishlist,
+      getProductLink,
+      productGetters,
     }
   },
 }
@@ -281,21 +293,33 @@ export default {
 
   &__configuration {
     display: flex;
+    justify-content: inherit;
   }
 }
 
-::v-deep .sf-price__regular {
-  @include for-mobile {
-    margin-left: -25px;
-  }
-}
-
-::v-deep .sf-collected-product__more-actions,
-::v-deep .sf-collected-product__actions {
+::v-deep .sf-collected-product__more-actions {
   display: none;
 }
 
-::v-deep .sf-collected-product__title-wraper {
+a {
+  text-decoration: none;
+}
+
+.wish-btn {
+  height: 60%;
+
+  @include for-desktop {
+    width: 85%;
+    top: 40%;
+  }
+
+  @include for-mobile {
+    width: 100%;
+    left: -25px;
+  }
+}
+
+::v-deep .sf-collected-product__details {
   @include for-mobile {
     margin-left: -25px;
   }

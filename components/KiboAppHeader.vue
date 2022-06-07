@@ -1361,7 +1361,7 @@ $background: #fff;
 
   ::v-deep &__menu {
     justify-content: center;
-    margin-left: -150px;
+    margin-left: -150px !important;
   }
 }
 
