@@ -34,7 +34,7 @@
             class="sf-badge sf-badge--number-mobile kibo-mobile__item-count wishlist-count"
             >{{ totalItemsInWishlist }}</SfBadge
           >
-          <SfIcon icon="heart" style="top: 2px; --icon-size: 1.4rem"> </SfIcon>
+          <SfIcon icon="heart" class="customized-icon"> </SfIcon>
         </SfButton>
       </template>
     </SfBottomNavigationItem>
@@ -44,19 +44,9 @@
       icon="add_to_cart"
       @click="toggleAddToCartConfirmationModal"
     >
-      <!-- Cart icon removed -->
       <template #icon>
-        <!-- <SfCircleIcon aria-label="Add to cart">
-            <SfIcon
-              icon="add_to_cart"
-              color="white"
-              size="25px"
-              :style="{ margin: '0 0 0 -2px' }"
-            />
-          </SfCircleIcon> -->
-
         <div class="kibo-mobile__header-column" v-if="totalItemsInCart > 0">
-          <SfIcon icon="add_to_cart" style="top: 2px; --icon-size: 1.4rem"></SfIcon>
+          <SfIcon icon="add_to_cart" class="customized-icon"></SfIcon>
           <SfBadge class="sf-badge sf-badge--number-mobile kibo-mobile__item-count">{{
             totalItemsInCart
           }}</SfBadge>
@@ -187,6 +177,12 @@ export default {
     position: absolute;
     margin-top: 2px;
   }
+}
+
+.customized-icon {
+  top: 2px;
+
+  --icon-size: 1.4rem;
 }
 
 .wishlist-count {
