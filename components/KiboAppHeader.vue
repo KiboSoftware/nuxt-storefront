@@ -75,7 +75,7 @@
           </div>
           <!-- <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div> -->
           <div class="kibo-top-bar__nav-link">
-            <!-- <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div> -->
+            <div><SfMenuItem :label="$t('Order Status')" @click="goToOrderStatus" /></div>
             <!-- <div><SfMenuItem label="Wishlist" @click="goToWishlist" /></div> -->
             <!-- <div><SfMenuItem label="Nav Link 3" /></div>
             <div><SfMenuItem label="Nav Link 4" /></div> -->
@@ -1069,7 +1069,11 @@ $background: #fff;
 
   ::v-deep .sf-menu-item {
     &__label {
-      margin-top: 13px;
+      clear: both;
+      display: inline-block;
+      white-space: nowrap;
+      margin-right: -50px;
+      margin-top: -3px;
       color: var(--menu-item-label-color, var(--_c-light-secondary));
     }
   }
