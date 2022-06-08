@@ -1486,8 +1486,8 @@ $background: #fff;
 }
 
 .order-status {
-  padding: 0.9375rem;
-  font-size: 18px;
+  padding: 20px;
+  font-size: 0.9375rem;
   font-weight: 600;
   margin-top: 20px;
 }
