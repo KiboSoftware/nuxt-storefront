@@ -508,6 +508,9 @@ export default {
       await addItemsToCart(productToAdd)
       if (cart.value) {
         toggleCartSidebar()
+        setTimeout(() => {
+          toggleCartSidebar()
+        }, 5000)
       }
       // }
     }
