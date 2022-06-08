@@ -613,7 +613,12 @@ export default defineComponent({
       )
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
-        if (cart.value) toggleCartSidebar()
+        if (cart.value) {
+          toggleCartSidebar()
+          setTimeout(() => {
+            toggleCartSidebar()
+          }, 5000)
+        }
       }
     }
 
