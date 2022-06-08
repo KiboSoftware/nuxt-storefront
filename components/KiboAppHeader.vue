@@ -403,6 +403,15 @@
               </span>
             </div>
           </div>
+          <div
+            class="order-status"
+            @click="
+              closePrimarymenu()
+              goToOrderStatus()
+            "
+          >
+            Order Status
+          </div>
         </div>
 
         <div v-if="showSubCategory" class="bottom-modal__subCategory-label">
@@ -720,7 +729,7 @@ export default defineComponent({
     }
 
     const goToOrderStatus = () => {
-      if (isMobile.value) toggleHamburger()
+      // if (isMobile.value) toggleHamburger()
       app.router.push({ path: "/order-status" })
     }
 
@@ -1474,5 +1483,12 @@ $background: #fff;
   width: 50%;
   background: white;
   text-align: center;
+}
+
+.order-status {
+  padding: 20px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-top: 20px;
 }
 </style>

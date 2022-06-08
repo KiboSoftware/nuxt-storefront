@@ -1145,7 +1145,7 @@ $checkoutBackground: #fff;
     top: 13px;
     width: 10px;
     @media screen and (min-width: 1024px) {
-      padding-left: 8%;
+      padding-left: 1%;
     }
     @include for-mobile {
       margin-top: 75px;
