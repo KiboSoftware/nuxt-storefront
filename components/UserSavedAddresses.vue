@@ -11,6 +11,7 @@
               :key="index"
               :address="address"
               :is-readonly="isReadonly"
+              :selected-address-id="selectedAddressId"
               @click:delete-address="handleDeleteAddress(address)"
               @click:edit-address="updateAddress(address)"
               @onSelect="selectAddress"
@@ -96,6 +97,7 @@ export default defineComponent({
     const isDefaultAddress = ref(false)
     const activeAddress = ref(props.defaultAddress || {})
     const isValidShippingDetails = ref(false)
+    const selectedAddressId = ref("")
 
     // Sort addresses to display Primary addresses first
     const userAddressesSorted = computed(() => {
@@ -116,8 +118,10 @@ export default defineComponent({
     }
 
     const selectAddress = (address) => {
+      selectedAddressId.value = address?.id?.toString()
+      context.emit("validateForm", true)
       activeAddress.value = address
-      context.emit("onSave", { ...activeAddress.value })
+      context.emit("onSave", { address: { ...activeAddress.value } })
     }
     const closeAddressForm = () => {
       showAddressForm.value = false
@@ -156,6 +160,7 @@ export default defineComponent({
       validateShippingDetails,
       handleDeleteAddress,
       isValidShippingDetails,
+      selectedAddressId,
     }
   },
 })
