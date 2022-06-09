@@ -1,5 +1,5 @@
 <template>
-  <div id="category">
+  <div id="category" @click="setTitle()">
     <SfBreadcrumbs class="breadcrumbs" :breadcrumbs="breadcrumbs" />
 
     <SfLoader :class="{ loading }" :loading="loader">
@@ -433,6 +433,26 @@ export default {
       loader.value = false
     }, null)
 
+    function setTitle() {
+      document.addEventListener("click", () => {
+        setTimeout(() => {
+          document.title =
+            breadcrumbs.value[breadcrumbs.value.length - 1].text +
+            " - " +
+            $nuxt.context.$config.app_title
+        }, 500)
+      })
+    }
+
+    onUpdated(() => {
+      setTimeout(() => {
+        document.title =
+          breadcrumbs.value[breadcrumbs.value.length - 1].text +
+          " - " +
+          $nuxt.context.$config.app_title
+      }, 1000)
+    })
+
     const breadcrumbs = computed(() => facetGetters.getBreadcrumbs(result?.value))
     const products = computed(() => productSearchGetters.getProducts(productSearchResult?.value))
     const facets = computed(() =>
@@ -581,6 +601,7 @@ export default {
       filterByToggle,
       isInWishlist,
       addItemToWishList,
+      setTitle,
     }
   },
 }
