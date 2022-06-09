@@ -297,6 +297,8 @@
                 <font-awesome-icon icon="map-marker-alt" class="fa-icon" color="var(--c-white)" />
               </SfIcon>
             </div>
+          </div>
+          <div class="kibo-mobile__header-column">
             <div v-if="isStoreLocatorOpen" class="kibo-mobile__search-pointer-icon">
               <SfIcon size="1.25rem">
                 <font-awesome-icon
@@ -307,16 +309,42 @@
               </SfIcon>
             </div>
           </div>
-          <!-- <div class="kibo-mobile__header-column">
-            <SfIcon size="1.25rem" @click="gotoCart">
-              <font-awesome-icon icon="shopping-cart" class="fa-icon" color="var(--c-white)" />
-              <SfBadge
-                v-if="totalItemsInCart"
-                class="sf-badge sf-badge--number-mobile kibo-mobile__item-count"
-                >{{ totalItemsInCart }}</SfBadge
-              >
+          <div class="kibo-mobile__header-column">
+            <SfIcon
+              @click.prevent="openCTA"
+              id="cta"
+              icon="info"
+              size="lg"
+              color="white"
+              viewBox="0 0 24 24"
+              :coverage="1"
+            >
             </SfIcon>
-          </div> -->
+            <div v-if="myModel">
+              <transition name="model">
+                <div class="modal-mask" id="modal-cta">
+                  <div class="modal-wrapper">
+                    <div class="modal-header">
+                      <div class="modal-title">
+                        CONTACT
+                        <div>
+                          <a @click.prevent="closeCTA"> &#10006;</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="modal-body">
+                      <p>Sunday 12pm – 6pm CST</p>
+                      <p>Monday – Friday 7am – 8pm CST</p>
+                      <p></p>
+                      <p>Saturday 10am – 6pm CST</p>
+                      <p>888-446-1788</p>
+                      <p>info@mysticoutdoors.com</p>
+                    </div>
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -403,14 +431,28 @@
               </span>
             </div>
           </div>
-          <div
-            class="order-status"
-            @click="
-              closePrimarymenu()
-              goToOrderStatus()
-            "
-          >
-            Order Status
+          <div class="bottom-modal__category order-status">
+            <div class="category-label">
+              <div
+                class="category-link"
+                @click="
+                  closePrimarymenu()
+                  goToOrderStatus()
+                "
+              >
+                Order Status
+              </div>
+              <div
+                class="sf-chevron--right sf-chevron"
+                @click="
+                  closePrimarymenu()
+                  goToOrderStatus()
+                "
+              >
+                <span class="sf-chevron__bar sf-chevron__bar--left" />
+                <span class="sf-chevron__bar sf-chevron__bar--right" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -933,6 +975,10 @@ $background: #fff;
   background-color: var(--c-white);
   box-shadow: 2px 2px 2px var(--c-innerbg-primary);
   display: flex;
+
+  @include for-mobile {
+    margin-top: 20px;
+  }
 }
 
 .modal-body {
@@ -1486,9 +1532,20 @@ $background: #fff;
 }
 
 .order-status {
-  padding: 20px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  margin-top: 20px;
+  padding: 15px;
+  font-size: 18px;
+  border-top: 2px solid var(--c-black);
+}
+
+.flex-container {
+  display: flex;
+}
+
+.flex-child {
+  flex: 1;
+}
+
+.flex-child:first-child {
+  margin-right: 20px;
 }
 </style>

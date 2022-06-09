@@ -311,7 +311,7 @@
 </template>
 
 <script lang="ts">
-import { onBeforeUnmount } from "@vue/composition-api"
+import { onBeforeUnmount, onMounted } from "@vue/composition-api"
 import {
   SfSteps,
   SfButton,
@@ -420,6 +420,14 @@ export default {
 
     onBeforeUnmount(() => {
       unMapMobileObserver()
+    })
+
+    onMounted(() => {
+      document.body.addEventListener("click", (e) => {
+        if (e.target.closest("#modal-cta") === null && e.target.closest("#cta") === null) {
+          closeCTA()
+        }
+      })
     })
 
     const stepLabels = {
