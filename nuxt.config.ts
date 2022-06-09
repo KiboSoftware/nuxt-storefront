@@ -5,7 +5,7 @@ const LOCATION_COOKIE = "kibo_purchase_location"
 
 export default defineNuxtConfig({
   head: {
-    title: "kibo-nuxt-vue-starter",
+    title: "Mystic Outdoors",
     htmlAttrs: {
       lang: "en",
     },
@@ -152,6 +152,7 @@ export default defineNuxtConfig({
     pciHost: process.env.KIBO_PCI_HOST || "payment.dev10.dev.kibocommerce.com",
     apiHost: process.env.KIBO_API_HOST || "https://t17828-s22116.dev10.kubedevext.kibo-dev.com",
     defaultWishlistName: "default-wishlist",
+    app_title: "Mystic Outdoors",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

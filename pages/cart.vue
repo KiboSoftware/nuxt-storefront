@@ -134,6 +134,12 @@ export default defineComponent({
       await searchStoreLocations({ locationCodes })
     }, null)
 
+    onUpdated(() => {
+      setTimeout(() => {
+        document.title = "Cart - " + $nuxt.context.$config.app_title
+      }, 1000)
+    })
+
     const selectedLocation = computed(() => {
       return Object.keys(purchaseLocation.value).length
         ? storeLocationGetters.getName(purchaseLocation.value)

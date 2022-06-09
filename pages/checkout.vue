@@ -1,5 +1,5 @@
 <template>
-  <div class="checkout-top">
+  <div class="checkout-top" @click="setTitle()">
     <header class="checkoutHeader">
       <template>
         <div>
@@ -417,6 +417,20 @@ export default {
         filter: `name eq logo`,
       })
     }, null)
+
+    onUpdated(() => {
+      setTimeout(() => {
+        document.title = "Checkout - " + $nuxt.context.$config.app_title
+      }, 1000)
+    })
+
+    function setTitle() {
+      document.addEventListener("click", () => {
+        setTimeout(() => {
+          document.title = "Checkout - " + $nuxt.context.$config.app_title
+        }, 500)
+      })
+    }
 
     onBeforeUnmount(() => {
       unMapMobileObserver()
@@ -874,6 +888,7 @@ export default {
       onPaymentSelect,
       isAuthenticated,
       selectedShippingMethodPrice,
+      setTitle,
     }
   },
   watch: {

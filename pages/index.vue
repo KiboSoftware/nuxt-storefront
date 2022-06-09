@@ -161,6 +161,12 @@ export default {
       getFeaturedProducts(dropzoneProductCodes.value)
     })
 
+    onUpdated(() => {
+      setTimeout(() => {
+        document.title = "HomePage - " + $nuxt.context.$config.app_title
+      }, 1000)
+    })
+
     const isInCart = (product) => {
       return (
         cart.value?.items?.find((i) => i.product.productCode === product.productCode) !== undefined

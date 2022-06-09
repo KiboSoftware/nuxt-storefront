@@ -355,6 +355,12 @@ export default defineComponent({
       }
     })
 
+    onUpdated(() => {
+      setTimeout(() => {
+        document.title = "Your Account - " + $nuxt.context.$config.app_title
+      }, 1000)
+    })
+
     return {
       logout,
       user,
