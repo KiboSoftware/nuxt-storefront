@@ -42,11 +42,7 @@
         >
           {{ $t("Cancel") }}
         </SfButton>
-        <SfButton
-          type="submit"
-          class="action-buttons__save"
-          @click="$emit('click:cancel-edit', editableField.id)"
-        >
+        <SfButton type="submit" class="action-buttons__save">
           {{ $t("Save") }}
         </SfButton>
       </div>
