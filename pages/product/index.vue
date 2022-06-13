@@ -181,7 +181,7 @@
                     productOptions.sizeOptions &&
                     productOptions.sizeOptions.values
                   "
-                  class="product__size"
+                  class="product__size desktop-only"
                 >
                   <div
                     v-for="option in productOptions.sizeOptions.values"
@@ -206,6 +206,35 @@
                     :required="option.isRequired"
                     @input="(value) => selectOption(option.attributeFQN, value)"
                     placeholder="Select variant"
+                    class="desktop-only"
+                  >
+                    <SfSelectOption
+                      v-for="optionVal in option.values"
+                      :key="optionVal.value"
+                      :value="optionVal.value"
+                    >
+                      {{ optionVal.stringValue || optionVal.value }}
+                    </SfSelectOption>
+                  </SfSelect>
+                </div>
+
+                <div
+                  v-if="
+                    productOptions &&
+                    productOptions.listOptions &&
+                    Object.keys(productOptions.listOptions).length > 1
+                  "
+                >
+                  <SfSelect
+                    v-for="option in productOptions.listOptions"
+                    :key="option.attributeFQN"
+                    data-cy="product-select_size"
+                    :value="productGetters.getOptionSelectedValue(option)"
+                    :label="productGetters.getOptionName(option)"
+                    :required="option.isRequired"
+                    @input="(value) => selectOption(option.attributeFQN, value)"
+                    placeholder="Select variant"
+                    class="smartphone-only"
                   >
                     <SfSelectOption
                       v-for="optionVal in option.values"
@@ -314,11 +343,6 @@
 
                 <div class="unavailable-product" v-if="isProductAvailable">Out of Stock!</div>
 
-                <!-- <div>
-                <h4 class="sf-heading__title h4">Product Information</h4>
-                <div class="product__description" v-html="description"></div>
-              </div> -->
-
                 <div class="smartphone-only" v-if="properties">
                   <SfAccordion
                     open=""
@@ -392,20 +416,19 @@
                 productOptions.listOptions.values
               "
             >
-              <SfButton @click="showSelector = true">Options</SfButton>
+              <SfButton
+                v-if="productOptions && productOptions.listOptions && productOptions.listOptions[0]"
+                @click="showSelector = true"
+                >Select {{ productOptions.listOptions[0].attributeDetail.name }}</SfButton
+              >
             </div>
-            <!-- <div class="size-select-button" v-show="productOptions">
-              <SfButton @click="showSelector = true">Variants</SfButton>
-            </div> -->
-            <!-- <SfButton @click="addToCart" :disabled="!isValidForAddToCart"
-            >Add to cart</SfButton -->
+
             <SfButton @click="addToCartFromMobile" :disabled="isProductAvailable"
               >Add to cart</SfButton
             >
           </div>
 
           <div class="product__bottom-modal">
-            <!-- <div class="product__bottom-modal" v-if="productOptions"> -->
             <div
               v-if="
                 productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values
@@ -421,6 +444,7 @@
                   <button
                     class="size-selector"
                     @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
+                    :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
                     v-for="option in productOptions.sizeOptions.values"
                     :key="option.value"
                   >
@@ -449,6 +473,7 @@
                     <button
                       class="size-selector"
                       v-for="(variant, id) in option.values"
+                      :class="{ 'sf-badge--active': variant.isSelected, disabled: false }"
                       :key="id"
                       @click="selectOption(option.attributeFQN, variant.value)"
                     >
@@ -459,45 +484,6 @@
               </SfBottomModal>
             </div>
           </div>
-
-          <!-- <div class="product__accordion" v-if="productOptions">
-            <div v-if="productOptions.sizeOptions">
-              <div v-if="Object.keys(productOptions.sizeOptions).length">
-                <div style="font-weight: bold">{{productOptions.sizeOptions.attributeDetail.name}}</div>
-                <div v-for="(option, id) in productOptions.sizeOptions.values" :key="id" @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)">
-                 {{ option.value }}
-                </div>
-                <SfIcon
-                  :icon="
-                    activeFilterOption === facet.label
-                      ? 'chevron_up'
-                      : 'chevron_down'
-                  "
-                  size="1.25rem"
-                />
-              </div>
-            </div>
-
-            <div v-if="productOptions.listOptions">
-                <div v-if="Object.keys(productOptions.listOptions).length">
-                  <div v-for="(option, id) in productOptions.listOptions" :key="id">
-                    <div style="font-weight: bold">{{option.attributeDetail.name}}</div>
-                      <div v-for="(variant, id) in option.values" :key="id" @click="selectOption(option.attributeFQN, variant.value)">
-                          {{ variant.value }}
-                      </div>
-                  </div>
-                <SfIcon
-                  :icon="
-                    activeFilterOption === facet.label
-                      ? 'chevron_up'
-                      : 'chevron_down'
-                  "
-                  size="1.25rem"
-                />
-                </div>
-            </div>
-
-        </div> -->
         </div>
       </div>
     </LazyHydrate>
@@ -621,7 +607,6 @@ export default defineComponent({
     const properties = computed(() => productGetters.getProperties(product.value))
     const options = computed(() => productGetters.getOptions(product.value))
     const productOptions = computed(() => productGetters.getSegregatedOptions(product.value))
-    console.log(productOptions, "productOptions")
     const productFulfillmentOptions = computed(() =>
       productGetters.getProductFulfillmentOptions(product.value, purchaseLocation.value)
     )
@@ -775,7 +760,6 @@ export default defineComponent({
         qtySelected.value,
         shopperEnteredValues
       )
-      console.log(isValidForAddToCart.value)
       if (isValidForAddToCart.value) {
         await addItemsToCart(productToAdd)
         if (cart.value) {
@@ -788,7 +772,17 @@ export default defineComponent({
         document
           .getElementById("box")
           .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
-        showSelectOptionText.value = true
+        if (
+          (productOptions &&
+            productOptions.value.listOptions &&
+            Object.keys(productOptions.value.listOptions).length === 1 &&
+            productOptions.value.listOptions.values) ||
+          (productOptions &&
+            productOptions.value.sizeOptions &&
+            productOptions.value.sizeOptions.values)
+        )
+          showSelector.value = true
+        else showSelectOptionText.value = true
 
         const collection = document.getElementsByClassName("sf-select__dropdown")
         for (let i = 0; i < collection.length; i++) {
@@ -1219,7 +1213,7 @@ export default defineComponent({
         margin: 10px;
         font-size: 16px;
         border-radius: 4px;
-        background-color: var(--c-white);
+        // background-color: var(--c-white);
         border: 2px solid var(--c-black);
       }
     }
