@@ -145,7 +145,7 @@
                   showSelectOptionText &&
                   !isProductAvailable
                 "
-                style="color: red; font-weight: bold"
+                class="option-selection"
               >
                 Select Options
               </div>
@@ -1413,7 +1413,12 @@ export default defineComponent({
   --badge-width: auto;
 }
 
+.option-selection {
+  color: var(--_c-red-primary);
+  font-weight: bold;
+}
+
 ::v-deep .highlight-red {
-  border: 2px solid red;
+  border: 2px solid var(--_c-red-primary);
 }
 </style>
