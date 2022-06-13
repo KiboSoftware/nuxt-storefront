@@ -6,7 +6,7 @@
         <div v-if="loading" class="product">
           <KiboPDPSkeletonLoading />
         </div>
-        <div v-if="!loading" class="product">
+        <div v-if="!loading" class="product" id="box">
           <div class="product__sideWrapper">
             <div class="product__gallery smartphone-only">
               <LazyHydrate when-idle>
@@ -138,6 +138,19 @@
                 </div>
               </div>
 
+              <div
+                v-show="
+                  productOptions &&
+                  !isValidForAddToCart &&
+                  showSelectOptionText &&
+                  !isProductAvailable
+                "
+                class="option-selection"
+              >
+                Select Options
+              </div>
+
+              <!-- color option -->
               <div class="product__content">
                 <div class="product__description desktop-only" v-html="shortDescription"></div>
 
@@ -161,13 +174,14 @@
                   />
                 </div>
 
+                <!-- size option -->
                 <div
                   v-if="
                     productOptions &&
                     productOptions.sizeOptions &&
                     productOptions.sizeOptions.values
                   "
-                  class="product__size"
+                  class="product__size desktop-only"
                 >
                   <div
                     v-for="option in productOptions.sizeOptions.values"
@@ -181,6 +195,7 @@
                   </div>
                 </div>
 
+                <!-- list option -->
                 <div v-if="productOptions && productOptions.listOptions">
                   <SfSelect
                     v-for="option in productOptions.listOptions"
@@ -191,6 +206,35 @@
                     :required="option.isRequired"
                     @input="(value) => selectOption(option.attributeFQN, value)"
                     placeholder="Select variant"
+                    class="desktop-only"
+                  >
+                    <SfSelectOption
+                      v-for="optionVal in option.values"
+                      :key="optionVal.value"
+                      :value="optionVal.value"
+                    >
+                      {{ optionVal.stringValue || optionVal.value }}
+                    </SfSelectOption>
+                  </SfSelect>
+                </div>
+
+                <div
+                  v-if="
+                    productOptions &&
+                    productOptions.listOptions &&
+                    Object.keys(productOptions.listOptions).length > 1
+                  "
+                >
+                  <SfSelect
+                    v-for="option in productOptions.listOptions"
+                    :key="option.attributeFQN"
+                    data-cy="product-select_size"
+                    :value="productGetters.getOptionSelectedValue(option)"
+                    :label="productGetters.getOptionName(option)"
+                    :required="option.isRequired"
+                    @input="(value) => selectOption(option.attributeFQN, value)"
+                    placeholder="Select variant"
+                    class="smartphone-only"
                   >
                     <SfSelectOption
                       v-for="optionVal in option.values"
@@ -299,11 +343,6 @@
 
                 <div class="unavailable-product" v-if="isProductAvailable">Out of Stock!</div>
 
-                <!-- <div>
-                <h4 class="sf-heading__title h4">Product Information</h4>
-                <div class="product__description" v-html="description"></div>
-              </div> -->
-
                 <div class="smartphone-only" v-if="properties">
                   <SfAccordion
                     open=""
@@ -358,6 +397,93 @@
               </SfAccordion>
             </div>
           </div>
+
+          <div class="product__cart-select">
+            <div
+              class="size-select-button"
+              v-show="
+                productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values
+              "
+            >
+              <SfButton @click="showSelector = true">Select Size</SfButton>
+            </div>
+            <div
+              class="size-select-button"
+              v-show="
+                productOptions &&
+                productOptions.listOptions &&
+                Object.keys(productOptions.listOptions).length === 1 &&
+                productOptions.listOptions.values
+              "
+            >
+              <SfButton
+                v-if="productOptions && productOptions.listOptions && productOptions.listOptions[0]"
+                @click="showSelector = true"
+                >Select {{ productOptions.listOptions[0].attributeDetail.name }}</SfButton
+              >
+            </div>
+
+            <SfButton @click="addToCartFromMobile" :disabled="isProductAvailable"
+              >Add to cart</SfButton
+            >
+          </div>
+
+          <div class="product__bottom-modal">
+            <div
+              v-if="
+                productOptions && productOptions.sizeOptions && productOptions.sizeOptions.values
+              "
+            >
+              <SfBottomModal
+                :isOpen="showSelector"
+                title="Select variants"
+                transition="sf-fade"
+                @click:close="showSelector = false"
+              >
+                <div class="size-button-list">
+                  <button
+                    class="size-selector"
+                    @click="selectOption(productOptions.sizeOptions.attributeFQN, option.value)"
+                    :class="{ 'sf-badge--active': option.isSelected, disabled: false }"
+                    v-for="option in productOptions.sizeOptions.values"
+                    :key="option.value"
+                  >
+                    {{ option.value }}
+                  </button>
+                </div>
+              </SfBottomModal>
+            </div>
+
+            <div
+              v-if="
+                productOptions &&
+                productOptions.listOptions &&
+                productOptions.listOptions.values &&
+                Object.keys(productOptions.listOptions).length === 1
+              "
+            >
+              <SfBottomModal
+                :isOpen="showSelector"
+                title="Select variants"
+                transition="sf-fade"
+                @click:close="showSelector = false"
+              >
+                <div class="size-button-list">
+                  <div v-for="(option, id) in productOptions.listOptions" :key="id">
+                    <button
+                      class="size-selector"
+                      v-for="(variant, id) in option.values"
+                      :class="{ 'sf-badge--active': variant.isSelected, disabled: false }"
+                      :key="id"
+                      @click="selectOption(option.attributeFQN, variant.value)"
+                    >
+                      {{ variant.value }}
+                    </button>
+                  </div>
+                </div>
+              </SfBottomModal>
+            </div>
+          </div>
         </div>
       </div>
     </LazyHydrate>
@@ -382,6 +508,7 @@ import {
   SfCheckbox,
   SfInput,
   SfAccordion,
+  SfBottomModal,
 } from "@storefront-ui/vue"
 
 import {
@@ -429,14 +556,17 @@ export default defineComponent({
     SfCheckbox,
     SfInput,
     SfAccordion,
+    SfBottomModal,
   },
   setup(_, context) {
+    const showSelector = ref(false)
+    const showSelectOptionText = ref(false)
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
     const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
     const { cart, addItemsToCart } = useCart()
-    const { toggleCartSidebar, toggleLoginModal } = useUiState()
+    const { toggleCartSidebar, toggleLoginModal, isCartSidebarOpen } = useUiState()
     const { purchaseLocation, load: loadPurchaseLocation, set } = usePurchaseLocation()
     const {
       loading: loadingWishlist,
@@ -548,6 +678,8 @@ export default defineComponent({
       value: string,
       shopperEnteredValue: string
     ) => {
+      showSelector.value = false
+
       updateShopperEnteredValues(attributeFQN, value, shopperEnteredValue)
       await configure(shopperEnteredValues, product.value?.productCode)
 
@@ -616,9 +748,52 @@ export default defineComponent({
         if (cart.value) {
           toggleCartSidebar()
           setTimeout(() => {
-            toggleCartSidebar()
+            if (isCartSidebarOpen.value) toggleCartSidebar()
           }, 5000)
         }
+      }
+    }
+
+    const addToCartFromMobile = async () => {
+      const productToAdd = buildAddToCartInput(
+        product.value,
+        qtySelected.value,
+        shopperEnteredValues
+      )
+      if (isValidForAddToCart.value) {
+        await addItemsToCart(productToAdd)
+        if (cart.value) {
+          toggleCartSidebar()
+          setTimeout(() => {
+            if (isCartSidebarOpen.value) toggleCartSidebar()
+          }, 5000)
+        }
+      } else {
+        document
+          .getElementById("box")
+          .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
+        if (
+          (productOptions &&
+            productOptions.value.listOptions &&
+            Object.keys(productOptions.value.listOptions).length === 1 &&
+            productOptions.value.listOptions.values) ||
+          (productOptions &&
+            productOptions.value.sizeOptions &&
+            productOptions.value.sizeOptions.values)
+        )
+          showSelector.value = true
+        else showSelectOptionText.value = true
+
+        const collection = document.getElementsByClassName("sf-select__dropdown")
+        for (let i = 0; i < collection.length; i++) {
+          collection[i].classList.add("highlight-red")
+        }
+
+        setTimeout(() => {
+          for (let i = 0; i < collection.length; i++) {
+            collection[i].classList.remove("highlight-red")
+          }
+        }, 5000)
       }
     }
 
@@ -684,6 +859,10 @@ export default defineComponent({
       wishlistLabel,
       isLoadingWishlist,
       isInWishlist,
+      showSelector,
+      isCartSidebarOpen,
+      showSelectOptionText,
+      addToCartFromMobile,
     }
   },
 })
@@ -936,6 +1115,118 @@ export default defineComponent({
     width: 80%;
     justify-content: right;
   }
+
+  &__cart-select {
+    @include for-desktop {
+      display: none;
+    }
+
+    ::v-deep .sf-button.is-disabled--button {
+      color: var(--c-black);
+    }
+
+    display: flex;
+    justify-content: space-evenly;
+    background-color: var(--c-white);
+    position: fixed;
+    text-transform: none;
+    bottom: 3.7rem;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    border-radius: 0;
+    width: 100%;
+    box-shadow: 0 0 3px var(--c-black);
+    padding: 2px 0;
+    z-index: 9;
+    transition: 0.35s ease-in;
+
+    .size-select-button {
+      width: 100%;
+    }
+
+    ::v-deep .sf-button {
+      &:first-child {
+        width: 100%;
+        background-color: var(--c-black);
+      }
+
+      &:nth-child(2) {
+        width: 100%;
+      }
+
+      &:nth-child(3) {
+        width: 100%;
+      }
+    }
+  }
+
+  &__bottom-modal {
+    @include for-desktop {
+      display: none;
+    }
+
+    ::v-deep .sf-bottom-modal {
+      z-index: 99;
+
+      &__title {
+        padding: var(--bottom-modal-title-padding, var(--spacer-sm) var(--spacer-lg));
+      }
+
+      .sf-bottom-modal__close {
+        top: 15px;
+        display: flex;
+
+        --button-background: var(--c-white);
+
+        position: absolute;
+
+        .sf-circle-icon__icon {
+          --icon-color: var(--c-black);
+          --icon-size: 14px;
+        }
+      }
+
+      .sf-bottom-modal__cancel {
+        display: none;
+      }
+
+      .sf-heading__title.h3 {
+        font-size: 18px;
+      }
+
+      &__overlay {
+        bottom: 3.75rem;
+      }
+
+      &__container {
+        bottom: 3.75rem;
+        border-radius: 15px 15px 0 0;
+      }
+    }
+
+    .size-button-list {
+      padding-bottom: 20px;
+
+      .size-selector {
+        padding: 10px;
+        margin: 10px;
+        font-size: 16px;
+        border-radius: 4px;
+        // background-color: var(--c-white);
+        border: 2px solid var(--c-black);
+      }
+    }
+
+    .oos-button {
+      font-size: 1.2rem;
+      display: flex;
+      justify-content: center;
+      font-weight: var(--font-weight--normal);
+      padding-bottom: 20px;
+      color: var(--_c-gray-primary-darken);
+    }
+  }
 }
 
 .msrp {
@@ -1120,5 +1411,14 @@ export default defineComponent({
 
 ::v-deep .sf-badge {
   --badge-width: auto;
+}
+
+.option-selection {
+  color: var(--_c-red-primary);
+  font-weight: bold;
+}
+
+::v-deep .highlight-red {
+  border: 2px solid var(--_c-red-primary);
 }
 </style>
