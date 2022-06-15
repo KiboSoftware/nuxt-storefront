@@ -4,11 +4,11 @@
       <div class="address-container__left">
         <SfRadio
           :key="id"
-          :value="id"
+          :value="id.toString()"
           :label="address1"
           name="address"
           class="sf-radio"
-          selected=""
+          :selected="selectedAddressId"
           @input="onSelect"
         >
           <template #label>
@@ -73,18 +73,20 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    selectedAddressId: {
+      type: String,
+      default: "",
+    },
   },
 
   setup(props, context) {
     const address = computed(() => shopperContactGetters.getAddressDetails(props.address))
-
     const isDefaultAddress = computed(() => {
       return (props.address?.types && props.address?.types[0]?.isPrimary) || false
     })
 
     const onSelect = () => {
       const { id, email, firstName, lastNameOrSurname, phoneNumbers, address } = props.address
-
       const selectedAddress = {
         id,
         email,

@@ -11,6 +11,7 @@
               :key="index"
               :address="address"
               :is-readonly="isReadonly"
+              :selected-address-id="selectedAddressId"
               @click:delete-address="handleDeleteAddress(address)"
               @click:edit-address="updateAddress(address)"
               @onSelect="selectAddress"
@@ -32,7 +33,7 @@
         v-if="showDefaultCheckbox && showAddressForm"
         v-model="isDefaultAddress"
         name="is-default"
-        :label="$t('makeThisMyDefaultAddress')"
+        :label="$t('makeThisMyDefaultPayment')"
         class="form__checkbox"
       />
     </div>
@@ -47,7 +48,8 @@
       {{ $t("Add New Address") }}
     </SfButton>
     <div v-if="showAddressForm" class="action-buttons-adr">
-      <SfButton class="color-light" @click="closeAddressForm"> {{ $t("Cancel") }} </SfButton
+      <SfButton class="color-light" @click="closeAddressForm">
+        {{ $t("Cancel") }} </SfButton
       >&nbsp;&nbsp;
       <SfButton class="color-primary" :disabled="!isValidShippingDetails" @click="saveAddress">
         {{ $t("Save") }}
@@ -95,6 +97,7 @@ export default defineComponent({
     const isDefaultAddress = ref(false)
     const activeAddress = ref(props.defaultAddress || {})
     const isValidShippingDetails = ref(false)
+    const selectedAddressId = ref("")
 
     // Sort addresses to display Primary addresses first
     const userAddressesSorted = computed(() => {
@@ -115,8 +118,10 @@ export default defineComponent({
     }
 
     const selectAddress = (address) => {
+      selectedAddressId.value = address?.id?.toString()
+      context.emit("validateForm", true)
       activeAddress.value = address
-      context.emit("onSave", { ...activeAddress.value })
+      context.emit("onSave", { address: { ...activeAddress.value } })
     }
     const closeAddressForm = () => {
       showAddressForm.value = false
@@ -155,6 +160,7 @@ export default defineComponent({
       validateShippingDetails,
       handleDeleteAddress,
       isValidShippingDetails,
+      selectedAddressId,
     }
   },
 })
@@ -183,7 +189,6 @@ div {
 .shipping-list {
   display: flex;
   flex-wrap: wrap;
-  //flex-direction: column;
   gap: calc(var(--spacer-2xs) * 5);
 }
 
@@ -209,11 +214,15 @@ div {
 
 .shipping {
   width: 45%;
-  border: 1px solid var(--_c-white-secondary);
+  border-bottom: 1px solid var(--_c-white-secondary);
 
   &__content {
     padding-bottom: var(--spacer-xs);
   }
+}
+
+.shipping:last-child {
+  border: none;
 }
 
 .no-shipping-address {
