@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div class="navbar section">
+    <div class="navbar section" id="nav-section-box">
       <div class="navbar__main">
         <div v-if="!productSearchLoading" class="navbar__aside">
           <SfHeading
@@ -99,20 +99,20 @@
             </SfSelectOption>
           </SfSelect>
           <SfButton class="sf-button--small smartphone-only filter-button" @click="filterByToggle">
-            {{ $t("Filter By") }}
+            <div class="filter-mobile-position">{{ $t("Filter By") }}</div>
             <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
           </SfButton>
         </div>
 
-        <div class="total-products total-products__upper-total">
+        <div class="total-products total-products__upper-total desktop-only">
           Results found: {{ totalProducts }}
         </div>
 
-        <div v-if="!showMobileFilters && productSearchLoading" class="navbar__sort">
+        <!-- <div v-if="!showMobileFilters && productSearchLoading" class="navbar__sort">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
           <KiboSkeletonLoading skeleton-class="plp-select" />
           <KiboSkeletonLoading skeleton-class="plp-select smartphone-only" />
-        </div>
+        </div> -->
         <div class="navbar__view desktop-only">
           <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
           <SfIcon
@@ -552,6 +552,9 @@ export default {
     }
 
     const filterByToggle = () => {
+      document
+        .getElementById("nav-section-box")
+        .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
       showMobileFilters.value = !showMobileFilters.value
     }
 
@@ -805,17 +808,53 @@ export default {
   }
 
   &__sort {
+    @include for-mobile {
+      left: 0;
+      position: fixed;
+      min-width: unset;
+      flex: unset;
+      justify-content: unset;
+      flex-direction: row-reverse;
+      bottom: 3.6rem;
+
+      .filter-mobile-position {
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+
+      ::v-deep .sf-select {
+        width: 50%;
+        padding: 0;
+        height: 50px;
+
+        &__dropdown {
+          border: 1px solid var(--c-black);
+          height: 50px;
+          margin: 0;
+          background: var(--c-primary);
+          font-weight: 600;
+          color: var(--c-black);
+          font-size: var(--font-size--base);
+          text-align: center;
+          border-radius: 0;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+        }
+      }
+    }
+
     display: flex;
     align-items: center;
     margin: 0;
-    min-width: 11.875rem;
-    flex: 1;
-    justify-content: space-between;
     width: 100%;
+    // flex: 1;
     @include for-desktop {
       flex: none;
       margin: 0 0 0 auto;
       width: auto;
+      min-width: 11.875rem;
+      justify-content: space-between;
     }
   }
 
@@ -1067,6 +1106,18 @@ export default {
 }
 
 .filter-button {
+  @include for-mobile {
+    height: 50px;
+    margin: 0;
+    width: 50%;
+    background: var(--c-primary);
+    font-weight: 600;
+    color: var(--c-black);
+    border-radius: 0;
+    font-size: var(--font-size--base);
+    text-align: center;
+  }
+
   background-color: #fff;
   padding: 1rem 3.125rem 1rem 0.688rem;
   border: 1px solid var(--c-black);
@@ -1077,6 +1128,9 @@ export default {
 
   &__plus-icon {
     margin: 0 -2.625rem 0 auto;
+    @include for-mobile {
+      display: none;
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 <template>
-  <SfAccordion :show-chevron="true" open="all" :multiple="false">
+  <!-- <SfAccordion :show-chevron="true" open="Best Use" :multiple="true"> -->
+  <SfAccordion open="Best Use" :multiple="true" transition="" showChevron>
     <div v-for="(facet, i) in facets" :key="i">
       <SfAccordionItem
         :key="`filter-title-${facetGetters.getFacetField(facet)}`"

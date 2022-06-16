@@ -124,6 +124,10 @@
                   />
                 </div>
 
+                <div class="unavailable-product smartphone-only" v-if="isProductAvailable">
+                  Out of Stock!
+                </div>
+
                 <div class="product__rating desktop-only">
                   <SfRating :score="3" :max="5" />
                   <a href="#" class="product__count"> ({{ totalReviews }}) </a>
@@ -341,7 +345,9 @@
                   </SfButton>
                 </div>
 
-                <div class="unavailable-product" v-if="isProductAvailable">Out of Stock!</div>
+                <div class="unavailable-product desktop-only" v-if="isProductAvailable">
+                  Out of Stock!
+                </div>
 
                 <div class="smartphone-only" v-if="properties">
                   <SfAccordion
@@ -1272,6 +1278,10 @@ export default defineComponent({
 }
 
 .unavailable-product {
+  @include for-mobile {
+    margin-left: 0;
+  }
+
   display: flex;
   flex-direction: column;
   margin-left: var(--spacer-sm);
