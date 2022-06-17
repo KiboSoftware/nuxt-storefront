@@ -124,11 +124,17 @@ export default defineComponent({
 .filter-buttons {
   display: flex;
   justify-content: space-around;
-  padding: var(--spacer-base);
+  // padding: var(--spacer-base);
+  position: fixed;
+  bottom: 3.6rem;
+  left: 0;
+  width: 100%;
 }
 
 .view {
   font-size: var(--font-size--sm);
+  width: 50%;
+  height: 50px;
 
   &__is-disabled--button {
     --button-background: #c0e3df;
@@ -140,6 +146,8 @@ export default defineComponent({
 .clear {
   font-size: var(--font-size--sm);
   color: var(--c-black);
+  width: 50%;
+  height: 50px;
 
   &__is-disabled--button {
     --button-color: var(--c-text-disabled);
@@ -153,7 +161,8 @@ export default defineComponent({
 .filter-actions-bottom {
   bottom: 0;
   padding: 2% 0;
-  position: sticky;
+  // position: sticky;
+  position: relative;
   z-index: 1;
   background-color: var(--c-white);
 }

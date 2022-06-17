@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div class="navbar section" id="nav-section-box">
+    <div class="navbar section">
       <div class="navbar__main">
         <div v-if="!productSearchLoading" class="navbar__aside">
           <SfHeading
@@ -84,7 +84,7 @@
           <SfSelect
             :required="false"
             valid
-            placeholder="Select sorting"
+            placeholder="Sort by"
             :disabled="false"
             :value="facetsFromUrl.sort"
             @input="changeSorting"
@@ -138,17 +138,22 @@
         </div>
       </div>
     </div>
-    <div v-if="showMobileFilters" class="smartphone-only">
-      <KiboMobilePLPFilterBy
-        title="Filter By"
-        :kibo-facets="facets"
-        :applied-filters="appliedFilters"
-        :total-products="totalProducts"
-        @removeFilter="selectFilter"
-        @clearFilters="clearAllFilters"
-        @close="filterByToggle"
-        @changeFilter="selectFilter"
-      />
+    <div id="nav-section-box" class="smartphone-only">
+      <div class="filter-mobile-positioning" v-if="showMobileFilters">
+        <div>
+          <div class="overlay-effect"></div>
+          <KiboMobilePLPFilterBy
+            title="Filter By"
+            :kibo-facets="facets"
+            :applied-filters="appliedFilters"
+            :total-products="totalProducts"
+            @removeFilter="selectFilter"
+            @clearFilters="clearAllFilters"
+            @close="filterByToggle"
+            @changeFilter="selectFilter"
+          />
+        </div>
+      </div>
     </div>
     <div
       v-if="!showMobileFilters && !productSearchLoading && appliedFilters.length"
@@ -158,7 +163,8 @@
       <div class="sf-link" @click="clearAllFilters">{{ $t("Clear All") }}</div>
     </div>
 
-    <div v-if="!showMobileFilters" class="main section">
+    <!-- <div v-if="!showMobileFilters" class="main section"> -->
+    <div class="main section">
       <div class="sidebar desktop-only">
         <transition-group>
           <CategoryFacet
@@ -552,10 +558,14 @@ export default {
     }
 
     const filterByToggle = () => {
+      showMobileFilters.value = !showMobileFilters.value
       document
         .getElementById("nav-section-box")
         .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
-      showMobileFilters.value = !showMobileFilters.value
+      // if(showMobileFilters.value)
+      //   document.body.classList.add("no-scroll")
+      // else
+      //   document.body.classList.remove("no-scroll")
     }
 
     const addItemToWishList = async (product) => {
@@ -1142,5 +1152,29 @@ export default {
 .add-to-compare {
   margin: 0 0 0 auto;
   display: block;
+}
+
+.overlay-effect {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  top: -50%;
+  z-index: 2;
+  display: block;
+}
+
+.filter-mobile-positioning {
+  height: 70%;
+  position: fixed;
+  background: white;
+  top: 30%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 15px;
+  border: none;
+  z-index: 99;
 }
 </style>

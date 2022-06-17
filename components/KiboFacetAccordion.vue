@@ -61,6 +61,12 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+.sf-accordion.has-chevron {
+  min-height: 300px;
+  max-height: 350px;
+  overflow-y: scroll;
+}
+
 .sf-accordion-item {
   --accordion-item-header-padding: var(--spacer-base) 0;
 
@@ -79,6 +85,13 @@ export default defineComponent({
     --accordion-item-header-border-width: 0;
     --accordion-item-content-border-width: 0;
     --accordion-item-content-padding: var(--spacer-2xs) 0;
+
+    ::v-deep &__content {
+      height: 200px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-top: var(--spacer-sm);
+    }
   }
 }
 
