@@ -559,13 +559,9 @@ export default {
 
     const filterByToggle = () => {
       showMobileFilters.value = !showMobileFilters.value
-      document
-        .getElementById("nav-section-box")
-        .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
-      // if(showMobileFilters.value)
-      //   document.body.classList.add("no-scroll")
-      // else
-      //   document.body.classList.remove("no-scroll")
+      // document
+      //   .getElementById("nav-section-box")
+      //   .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
     }
 
     const addItemToWishList = async (product) => {

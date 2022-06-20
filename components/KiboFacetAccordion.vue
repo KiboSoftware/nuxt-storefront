@@ -67,6 +67,12 @@ export default defineComponent({
   overflow-y: scroll;
 }
 
+@media only screen and (max-width: 380px) {
+  .sf-accordion.has-chevron {
+    max-height: 300px;
+  }
+}
+
 .sf-accordion-item {
   --accordion-item-header-padding: var(--spacer-base) 0;
 
