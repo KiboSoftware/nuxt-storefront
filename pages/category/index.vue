@@ -84,7 +84,7 @@
           <SfSelect
             :required="false"
             valid
-            placeholder="Select sorting"
+            placeholder="Sort by"
             :disabled="false"
             :value="facetsFromUrl.sort"
             @input="changeSorting"
@@ -99,20 +99,20 @@
             </SfSelectOption>
           </SfSelect>
           <SfButton class="sf-button--small smartphone-only filter-button" @click="filterByToggle">
-            {{ $t("Filter By") }}
+            <div class="filter-mobile-position">{{ $t("Filter By") }}</div>
             <SfIcon size="0.938rem" color="#2B2B2B" icon="plus" class="filter-button__plus-icon" />
           </SfButton>
         </div>
 
-        <div class="total-products total-products__upper-total">
+        <div class="total-products total-products__upper-total desktop-only">
           Results found: {{ totalProducts }}
         </div>
 
-        <div v-if="!showMobileFilters && productSearchLoading" class="navbar__sort">
+        <!-- <div v-if="!showMobileFilters && productSearchLoading" class="navbar__sort">
           <KiboSkeletonLoading class="navbar__label" skeleton-class="plp-sort-by sk-loading" />
           <KiboSkeletonLoading skeleton-class="plp-select" />
           <KiboSkeletonLoading skeleton-class="plp-select smartphone-only" />
-        </div>
+        </div> -->
         <div class="navbar__view desktop-only">
           <span class="navbar__view-label desktop-only">{{ $t("View") }}</span>
           <SfIcon
@@ -138,17 +138,22 @@
         </div>
       </div>
     </div>
-    <div v-if="showMobileFilters" class="smartphone-only">
-      <KiboMobilePLPFilterBy
-        title="Filter By"
-        :kibo-facets="facets"
-        :applied-filters="appliedFilters"
-        :total-products="totalProducts"
-        @removeFilter="selectFilter"
-        @clearFilters="clearAllFilters"
-        @close="filterByToggle"
-        @changeFilter="selectFilter"
-      />
+    <div id="nav-section-box" class="smartphone-only">
+      <div class="filter-mobile-positioning" v-if="showMobileFilters">
+        <div>
+          <div class="overlay-effect"></div>
+          <KiboMobilePLPFilterBy
+            title="Filter By"
+            :kibo-facets="facets"
+            :applied-filters="appliedFilters"
+            :total-products="totalProducts"
+            @removeFilter="selectFilter"
+            @clearFilters="clearAllFilters"
+            @close="filterByToggle"
+            @changeFilter="selectFilter"
+          />
+        </div>
+      </div>
     </div>
     <div
       v-if="!showMobileFilters && !productSearchLoading && appliedFilters.length"
@@ -158,7 +163,8 @@
       <div class="sf-link" @click="clearAllFilters">{{ $t("Clear All") }}</div>
     </div>
 
-    <div v-if="!showMobileFilters" class="main section">
+    <!-- <div v-if="!showMobileFilters" class="main section"> -->
+    <div class="main section">
       <div class="sidebar desktop-only">
         <transition-group>
           <CategoryFacet
@@ -553,6 +559,9 @@ export default {
 
     const filterByToggle = () => {
       showMobileFilters.value = !showMobileFilters.value
+      // document
+      //   .getElementById("nav-section-box")
+      //   .scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" })
     }
 
     const addItemToWishList = async (product) => {
@@ -805,17 +814,53 @@ export default {
   }
 
   &__sort {
+    @include for-mobile {
+      left: 0;
+      position: fixed;
+      min-width: unset;
+      flex: unset;
+      justify-content: unset;
+      flex-direction: row-reverse;
+      bottom: 3.6rem;
+
+      .filter-mobile-position {
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+
+      ::v-deep .sf-select {
+        width: 50%;
+        padding: 0;
+        height: 50px;
+
+        &__dropdown {
+          border: 1px solid var(--c-black);
+          height: 50px;
+          margin: 0;
+          background: var(--c-primary);
+          font-weight: 600;
+          color: var(--c-black);
+          font-size: var(--font-size--base);
+          text-align: center;
+          border-radius: 0;
+          -webkit-appearance: none;
+          -moz-appearance: none;
+        }
+      }
+    }
+
     display: flex;
     align-items: center;
     margin: 0;
-    min-width: 11.875rem;
-    flex: 1;
-    justify-content: space-between;
     width: 100%;
+    // flex: 1;
     @include for-desktop {
       flex: none;
       margin: 0 0 0 auto;
       width: auto;
+      min-width: 11.875rem;
+      justify-content: space-between;
     }
   }
 
@@ -1067,6 +1112,18 @@ export default {
 }
 
 .filter-button {
+  @include for-mobile {
+    height: 50px;
+    margin: 0;
+    width: 50%;
+    background: var(--c-primary);
+    font-weight: 600;
+    color: var(--c-black);
+    border-radius: 0;
+    font-size: var(--font-size--base);
+    text-align: center;
+  }
+
   background-color: #fff;
   padding: 1rem 3.125rem 1rem 0.688rem;
   border: 1px solid var(--c-black);
@@ -1077,6 +1134,9 @@ export default {
 
   &__plus-icon {
     margin: 0 -2.625rem 0 auto;
+    @include for-mobile {
+      display: none;
+    }
   }
 }
 
@@ -1088,5 +1148,29 @@ export default {
 .add-to-compare {
   margin: 0 0 0 auto;
   display: block;
+}
+
+.overlay-effect {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  top: -50%;
+  z-index: 2;
+  display: block;
+}
+
+.filter-mobile-positioning {
+  height: 70%;
+  position: fixed;
+  background: white;
+  top: 30%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 15px;
+  border: none;
+  z-index: 99;
 }
 </style>

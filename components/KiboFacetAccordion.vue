@@ -1,5 +1,6 @@
 <template>
-  <SfAccordion :show-chevron="true" open="all" :multiple="false">
+  <!-- <SfAccordion :show-chevron="true" open="Best Use" :multiple="true"> -->
+  <SfAccordion open="Best Use" :multiple="true" transition="" showChevron>
     <div v-for="(facet, i) in facets" :key="i">
       <SfAccordionItem
         :key="`filter-title-${facetGetters.getFacetField(facet)}`"
@@ -60,6 +61,18 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+.sf-accordion.has-chevron {
+  min-height: 300px;
+  max-height: 350px;
+  overflow-y: scroll;
+}
+
+@media only screen and (max-width: 380px) {
+  .sf-accordion.has-chevron {
+    max-height: 300px;
+  }
+}
+
 .sf-accordion-item {
   --accordion-item-header-padding: var(--spacer-base) 0;
 
@@ -78,6 +91,13 @@ export default defineComponent({
     --accordion-item-header-border-width: 0;
     --accordion-item-content-border-width: 0;
     --accordion-item-content-padding: var(--spacer-2xs) 0;
+
+    ::v-deep &__content {
+      height: 200px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-top: var(--spacer-sm);
+    }
   }
 }
 

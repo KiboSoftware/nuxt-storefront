@@ -57,7 +57,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .filter-by {
-  padding: calc(var(--spacer-2xs) * 8) 0 calc(var(--spacer-2xs) * 5) 0;
+  padding: calc(var(--spacer-2xs) * 3) 0 calc(var(--spacer-2xs) * 3) 0;
   display: flex;
   justify-content: space-between;
 
@@ -89,9 +89,11 @@ export default defineComponent({
 
 .filter-by-top {
   padding: 2% 0;
-  position: sticky;
-  top: calc(var(--spacer-xl) * 2.25);
-  z-index: 1;
+  // position: sticky;
+  // top: calc(var(--spacer-xl) * 2.25);
+  position: inherit;
+  top: 0;
+  z-index: 3;
   background-color: var(--c-white);
 }
 </style>
