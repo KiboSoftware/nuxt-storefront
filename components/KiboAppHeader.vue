@@ -1155,7 +1155,7 @@ $background: #fff;
     top: calc(var(--spacer-xs) * 5.75);
     position: absolute;
     z-index: 20;
-    max-width: 41.3rem;
+    max-width: 36.8rem;
   }
 
   ::v-deep .custom-search-header {
