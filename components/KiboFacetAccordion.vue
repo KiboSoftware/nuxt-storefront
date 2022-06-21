@@ -61,10 +61,12 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
-.sf-accordion.has-chevron {
-  min-height: 300px;
-  max-height: 350px;
-  overflow-y: scroll;
+@include for-mobile {
+  .sf-accordion.has-chevron {
+    min-height: 300px;
+    max-height: 350px;
+    overflow-y: scroll;
+  }
 }
 
 @media only screen and (max-width: 380px) {
