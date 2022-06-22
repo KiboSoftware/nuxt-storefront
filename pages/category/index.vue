@@ -141,7 +141,7 @@
     <div id="nav-section-box" class="smartphone-only">
       <div class="filter-mobile-positioning" v-if="showMobileFilters">
         <div>
-          <div class="overlay-effect"></div>
+          <div class="overlay-effect" @click="filterByToggle"></div>
           <KiboMobilePLPFilterBy
             title="Filter By"
             :kibo-facets="facets"
