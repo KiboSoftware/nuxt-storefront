@@ -81,6 +81,7 @@ export default {
     SfButton,
     SfProperty,
   },
+ // props: ["currentOrderObj", "completeOrder"],
   props: {
       currentOrderObj: {
       type: Object as PropType<Order>,

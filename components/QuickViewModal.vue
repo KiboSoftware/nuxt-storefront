@@ -70,7 +70,7 @@ export default {
 
   &__dialog {
     margin: 0 auto;
-    margin-top: 100px;
+    margin-top: 80px;
     max-height: 670px;
     background-color: #fff;
     position: relative;
