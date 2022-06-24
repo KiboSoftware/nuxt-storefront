@@ -1117,7 +1117,7 @@ $background: #fff;
   &__kibo-img {
     position: absolute;
     margin-top: -35px;
-    z-index: 10;
+    z-index: 2;
     top: var(--spacer-sm);
     left: -50px;
   }
