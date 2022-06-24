@@ -83,6 +83,8 @@ export const baseOrderFragment = /* GraphQL */ `
     orderNumber
     submittedDate
     status
+    fulfillmentStatus
+    returnStatus
     orderDiscounts {
       impact
       discount {

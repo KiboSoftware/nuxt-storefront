@@ -36,7 +36,22 @@ const getShippedTo = (order: Order) =>
 
 const getShippingAddress = (order) => order?.fulfillmentInfo?.fulfillmentContact
 
+const getItems = (order: Order) => order?.items || []
+
+const getItemName = (item) => item?.product?.name
+
+const getItemSku = (item) => item?.product?.productCode
+
+const getItemQty = (item) => item?.quantity
+
+const getItemPrice = (item) => item?.total || 0
+
 export const orderGetters = {
+  getItems,
+  getItemName,
+  getItemSku,
+  getItemQty,
+  getItemPrice,
   getOrderNumber,
   getId,
   getSubmittedDate,
