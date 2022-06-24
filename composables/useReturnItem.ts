@@ -12,9 +12,34 @@ export const useReturn = () => {
   const loading = useState<Boolean>(`use-user-loading`, () => false)
 
   // createReturn should consist the returned item object
-  const createReturnItem = async (returnedItem) => {
+  const createReturnItem = async (params) => {
+    const item = [
+      {
+        product: params.item.product,
+        quantityReceived: params.item.quantity,
+        quantityShipped: params.item.quantity,
+        quantityRestockable: params.item.quantity,
+        quantityRestocked: params.item.quantity,
+        quantityRefunded: 0,
+        orderLineId: 1,
+        returnType: params.returnType,
+        orderItemOptionAttributeFQN: "",
+        excludeProductExtras: false,
+        reasons: {
+          reason: params.reason,
+          quantity: params.item.quantity,
+        },
+      },
+    ]
+    const returnItemParams = {
+      returnType: params.returnType,
+      originalOrderId: params.orderId,
+      items: item,
+      locationCode: params.locationCode,
+    }
+
     const variables = {
-      returnObjInput: returnedItem,
+      returnObjInput: returnItemParams,
     }
     try {
       loading.value = true
