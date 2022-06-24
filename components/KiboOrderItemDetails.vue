@@ -1,7 +1,8 @@
 <template>
   <div>
     <modal ref="modalName">
-      <template class="modalbox">
+      <!-- eslint-disable-next-line import/prefer-default-export -->
+      <template v-slot:body>
         <Return
           :currentOrderObj="currentItem"
           :completeOrder="order"
