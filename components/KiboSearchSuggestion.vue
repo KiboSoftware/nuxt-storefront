@@ -272,5 +272,9 @@ export default defineComponent({
     line-height: calc(var(--spacer-2xs) * 2.25);
     text-align: left;
   }
+
+  .quick-view-btn {
+    display: none;
+  }
 }
 </style>
