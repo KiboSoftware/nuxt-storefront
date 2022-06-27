@@ -93,7 +93,7 @@ export default {
   },
   setup(props, context) {
     const { orders } = useUserOrder()
-    const { createReturnItem, loading } = useReturn()
+    const { returnItem,createReturnItem, loading } = useReturn()
     const currentOrder = ref(null)
     const locationCode = ref(null)
     const orderId = computed(() => orderGetters.getId(props.completeOrder))
@@ -132,7 +132,7 @@ export default {
         return false
       }
 
-      const response = await createReturnItem({
+     await createReturnItem({
         item: props.currentOrderObj,
         orderId: props.completeOrder.id,
         locationCode: locationCode.value,
@@ -140,7 +140,7 @@ export default {
         reason: chosenReason.value,
       })
 
-      const returnNumber = response.value?.createReturn?.returnNumber
+      const returnNumber = returnItem.value?.returnNumber
       if (returnNumber) {
         alert("Return Initiated succesfully !!")
         context.emit("close-modal")

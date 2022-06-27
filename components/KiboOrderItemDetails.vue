@@ -36,11 +36,6 @@
           </div>
         </div>
         <div>
-          <hr class="order-item-spacer" />
-        </div>
-        <div>
-          <h4 class="sf-heading__title h3">{{ "Product Details" }}</h4>
-
           <SfTable class="products">
             <SfTableHeading>
               <SfTableHeader class="products__name">{{ $t("Product") }}</SfTableHeader>
@@ -78,23 +73,23 @@
         </div>
         <div v-if="!isOrderStatus" class="order-summary">
           <SfProperty
-            :name="$t('Sub Total') + ' (' + numberOfOrderItems + 'items)'"
-            :value="parseInt(orderSubTotal)"
+            :name="$t('Sub Total')"
+            :value="$n(parseInt(orderSubTotal), 'currency')"
             class="sf-order-summary__property"
           />
           <SfProperty
             :name="$t('Standard Shipping')"
-            :value="orderStandardShipping"
+            :value="$n(orderStandardShipping, 'currency')"
             class="sf-order-summary__property"
           />
           <SfProperty
             :name="$t('Estimated Tax')"
-            :value="orderEstimatedTax"
+            :value="$n(orderEstimatedTax, 'currency')"
             class="sf-order-summary__property"
           />
           <SfProperty
             :name="$t('Estimated Order Total')"
-            :value="orderTotal"
+            :value="$n(orderTotal, 'currency')"
             class="sf-order-summary__property"
           />
         </div>
@@ -255,7 +250,9 @@ export default defineComponent({
 .products {
   --table-column-flex: 1;
 
-  width: 97%;
+  @include for-desktop {
+    width: 97%;
+  }
 
   &__name {
     margin-right: var(--spacer-xs);
@@ -296,6 +293,15 @@ export default defineComponent({
 
 .order-summary {
   margin-top: 1%;
+
+  .sf-property {
+    &__name {
+      font-size: var(--font-size--base);
+      font-weight: bold;
+      white-space: nowrap;
+      min-width: 200px;
+    }
+  }
 }
 
 .order-status {
@@ -345,6 +351,7 @@ export default defineComponent({
   height: 1px;
   margin: var(--spacer-sm) -7.8% 0;
   border-width: 0;
+  width: var(--table-border-heading-width, 0 0 2px 0);
   color: var(--_c-gray-middle);
   background-color: var(--_c-gray-middle);
 
@@ -360,15 +367,12 @@ export default defineComponent({
   font-size: 12px;
   width: 130px;
   height: 25px;
+  margin-right: 2%;
   background-color: var(--c-primary);
   color: var(--c-black);
 }
 
 .submitbutton:hover {
   background-color: var(--_c-gray-secondary);
-}
-
-.modalbox {
-  margin-top: -80px;
 }
 </style>
