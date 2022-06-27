@@ -54,13 +54,16 @@
               <SfTableData>{{ $n(getItemPrice(item), "currency") }}</SfTableData>
               <SfTableData>
                 <SfButton
-                  v-if="order.fulfillmentStatus == 'Fulfilled' && order.returnStatus == 'None'"
+                  v-if="
+                    order.fulfillmentStatus == 'Fulfilled' &&
+                    item.product.fulfillmentStatus !== 'Returned'
+                  "
                   class="submitbutton"
                   @click="getCurrentItem(item)"
                   >Initiate Return</SfButton
                 >
                 <span v-else>{{
-                  order.returnStatus != "None"
+                  item.product.fulfillmentStatus == "Returned"
                     ? "Return " + order.returnStatus
                     : order.fulfillmentStatus
                 }}</span>
