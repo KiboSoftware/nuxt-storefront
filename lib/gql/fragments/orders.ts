@@ -1,6 +1,7 @@
 export const orderItemProductFragment = /* GraphQL */ `
   fragment orderItemProductFragment on CrProduct {
     productCode
+    fulfillmentStatus
     name
     description
     imageUrl
@@ -64,6 +65,7 @@ export const orderItemFragment = /* GraphQL */ `
     discountTotal
     quantity
     fulfillmentLocationCode
+    lineId
     product {
       ...orderItemProductFragment
     }

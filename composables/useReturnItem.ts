@@ -21,7 +21,7 @@ export const useReturn = () => {
         quantityRestockable: params.item.quantity,
         quantityRestocked: params.item.quantity,
         quantityRefunded: 0,
-        orderLineId: 1,
+        orderLineId: params.item.lineId,
         returnType: params.returnType,
         orderItemOptionAttributeFQN: "",
         excludeProductExtras: false,
