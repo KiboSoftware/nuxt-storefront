@@ -144,7 +144,7 @@ export default defineComponent({
     const countries = nuxt.nuxt2Context.$config.countries
     const orderHistoryText = context.root.$t("Order History")
     const myAccountText = context.root.$t("My Account")
-    const orderDetailsText = context.root.$t("View Order Details")
+    const orderDetailsText = context.root.$t("Order Details")
     const barTitle = ref(myAccountText)
     const title = ref(orderHistoryText)
     const isOpenOrderList = ref(false)
