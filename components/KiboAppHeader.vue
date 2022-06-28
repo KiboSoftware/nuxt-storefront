@@ -431,6 +431,8 @@
               </span>
             </div>
           </div>
+        </div>
+        <div v-if="!showSubCategory">
           <div class="bottom-modal__category order-status">
             <div class="category-label">
               <div
@@ -442,7 +444,7 @@
               >
                 Order Status
               </div>
-              <div
+              <span
                 class="sf-chevron--right sf-chevron"
                 @click="
                   closePrimarymenu()
@@ -451,7 +453,7 @@
               >
                 <span class="sf-chevron__bar sf-chevron__bar--left" />
                 <span class="sf-chevron__bar sf-chevron__bar--right" />
-              </div>
+              </span>
             </div>
           </div>
         </div>
