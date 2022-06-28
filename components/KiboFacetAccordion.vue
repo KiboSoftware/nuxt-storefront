@@ -95,7 +95,7 @@ export default defineComponent({
     --accordion-item-content-padding: var(--spacer-2xs) 0;
 
     ::v-deep &__content {
-      height: 200px;
+      max-height: 200px;
       overflow-x: hidden;
       overflow-y: auto;
       padding-top: var(--spacer-sm);

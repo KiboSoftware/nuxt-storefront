@@ -161,6 +161,7 @@ import Modal from "./QuickViewModal.vue"
 import Return from "./KiboReturn.vue"
 import { checkoutGetters, creditCardPaymentGetters, orderGetters } from "@/lib/getters"
 import { Order } from "@/server/types/GraphQL"
+import { useNuxtApp } from "#app"
 
 export default defineComponent({
   name: "KiboOrderItemDetails",
@@ -183,6 +184,8 @@ export default defineComponent({
     },
   },
   setup(props, context) {
+    const nuxt = useNuxtApp()
+    const app = nuxt.nuxt2Context.app
     const currentItem = ref(null)
     const currentOrder = ref(null)
     const modalName = ref(null)
@@ -217,7 +220,8 @@ export default defineComponent({
 
     const closeTheModal = () => {
       context.refs.modalName.closeModal()
-      window.location.reload()
+      app.router.push({ path: "/my-account" })
+      // window.location.reload()
     }
     return {
       modalName,
