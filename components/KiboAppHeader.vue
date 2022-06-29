@@ -435,22 +435,8 @@
         <div v-if="!showSubCategory">
           <div class="bottom-modal__category order-status">
             <div class="category-label">
-              <div
-                class="category-link"
-                @click="
-                  closePrimarymenu()
-                  goToOrderStatus()
-                "
-              >
-                Order Status
-              </div>
-              <span
-                class="sf-chevron--right sf-chevron"
-                @click="
-                  closePrimarymenu()
-                  goToOrderStatus()
-                "
-              >
+              <div class="category-link" @click="goToOrderStatus()">Order Status</div>
+              <span class="sf-chevron--right sf-chevron" @click="goToOrderStatus()">
                 <span class="sf-chevron__bar sf-chevron__bar--left" />
                 <span class="sf-chevron__bar sf-chevron__bar--right" />
               </span>
@@ -775,6 +761,7 @@ export default defineComponent({
     const goToOrderStatus = () => {
       // if (isMobile.value) toggleHamburger()
       app.router.push({ path: "/order-status" })
+      closePrimarymenu()
     }
 
     const goToWishlist = () => {
