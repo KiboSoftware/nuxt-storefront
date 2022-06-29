@@ -2,6 +2,7 @@ export const orderItemProductFragment = /* GraphQL */ `
   fragment orderItemProductFragment on CrProduct {
     productCode
     fulfillmentStatus
+    variationProductCode
     name
     description
     imageUrl
