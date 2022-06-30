@@ -103,7 +103,7 @@
                     {{ error.login }}
                   </div>
 
-                  <SfButton
+                  <!-- <SfButton
                     type="submit"
                     class="form__submit login-button sf-button--text-lg color-primary"
                     data-testid="log-in-button"
@@ -111,6 +111,28 @@
                   >
                     <SfLoader :class="{ loader: loading }" :loading="loading">
                       <div>{{ $t("Log In") }}</div>
+                    </SfLoader>
+                  </SfButton> -->
+                  <SfButton
+                    v-e2e="'login-modal-submit'"
+                    type="submit"
+                    class="sf-button--full-width form__button"
+                    :disabled="loading"
+                  >
+                    <SfLoader :class="{ loader: loading }" :loading="loading">
+                      <div>{{ $t("Sign in & continue shipping") }}</div>
+                    </SfLoader>
+                  </SfButton>
+
+                  <SfButton
+                    v-e2e="'login-modal-submit'"
+                    type="submit"
+                    class="sf-button--full-width form__button"
+                    :disabled="loading"
+                    @click="handleAccountClick(handleLogin)"
+                  >
+                    <SfLoader :class="{ loader: loading }" :loading="loading">
+                      <div>{{ $t("Sign in & go to myAccount") }}</div>
                     </SfLoader>
                   </SfButton>
                 </div>
@@ -313,6 +335,13 @@ export default {
         }
       }
 
+    const handleAccountClick = async (handleLogin) => {
+      await handleLogin()
+      if (user.value) {
+        context.root.$router.push("/my-account")
+        toggleLoginModal()
+      }
+    }
     const closeModal = () => {
       setIsForgottenValue(false)
       toggleLoginModal()
@@ -387,6 +416,7 @@ export default {
       loading,
       isLogin,
       isLoginModalOpen,
+      handleAccountClick,
       toggleLoginModal,
       handleLogin,
       handleForgotPassword,
