@@ -21,16 +21,18 @@
     </div>
     <div v-show="!isOpenOrderList" class="order-history-title">
       <div class="header-text-weight" v-if="!loading">{{ title }}</div>
-      <KiboSkeletonLoading v-if="loading" skeleton-class="order-title sk-loading" />
+      <!-- Causing issue on vercel deployment -->
+      <!-- <KiboSkeletonLoading v-if="loading" skeleton-class="order-title sk-loading" /> -->
     </div>
     <hr v-show="isOpenOrderItem" class="filter-hr filter-hr--time-filter" />
     <div>
       <div v-show="!isOpenOrderList" class="order-history">
         <div v-show="!isOpenOrderItem">
-          <div v-if="loading" class="history-filter history-filter--loading">
+          <!-- Causing issue on vercel deployment -->
+          <!-- <div v-if="loading" class="history-filter history-filter--loading">
             <KiboSkeletonLoading skeleton-class="order-filter-tile sk-loading" />
             <KiboSkeletonLoading skeleton-class="filter-order-button sk-loading" />
-          </div>
+          </div> -->
           <div v-if="!loading" class="history-filter">
             <div class="history-filter__tiles">
               <KiboFilterTiles
@@ -53,7 +55,8 @@
           <div>
             <hr class="filter-hr filter-hr--time-filter" />
           </div>
-          <div v-if="loading">
+          <!-- Causing issue on vercel deployment -->
+          <!-- <div v-if="loading">
             <div v-for="i in 5" :key="i">
               <div class="order-item">
                 <div class="order-item__left">
@@ -74,13 +77,15 @@
               </div>
               <hr class="filter-hr" />
             </div>
-          </div>
-          <div v-if="!loading" class="order-history__details">
-            <div v-for="order in orders" :key="order.id" @click="gotoOrderDetails(order)">
-              <KiboOrderItem :order="order" />
-              <hr class="filter-hr" />
+          </div> -->
+          <SfLoader :class="{ loading }" :loading="loading">
+            <div v-if="!loading" class="order-history__details">
+              <div v-for="order in orders" :key="order.id" @click="gotoOrderDetails(order)">
+                <KiboOrderItem :order="order" />
+                <hr class="filter-hr" />
+              </div>
             </div>
-          </div>
+          </SfLoader>
         </div>
         <div v-if="isOpenOrderItem" class="order-details">
           <KiboOrderItemDetails :order="selectedOrder" />
@@ -123,7 +128,7 @@
   </div>
 </template>
 <script lang="ts">
-import { SfBar, SfButton, SfIcon, SfFilter } from "@storefront-ui/vue"
+import { SfBar, SfButton, SfIcon, SfFilter, SfLoader } from "@storefront-ui/vue"
 import { defineComponent, ref } from "@vue/composition-api"
 import { useAsync, computed, watch } from "@nuxtjs/composition-api"
 import { useNuxtApp } from "#app"
@@ -136,6 +141,7 @@ export default defineComponent({
     SfIcon,
     SfFilter,
     SfBar,
+    SfLoader,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -425,6 +431,19 @@ a.nuxt-link-active:link {
     flex-direction: column;
     justify-content: center;
     justify-items: flex-end;
+  }
+}
+
+.loading {
+  margin: var(--spacer-3xl) auto;
+  @include for-desktop {
+    margin-top: calc(var(--spacer-2xl) * 1.125);
+  }
+
+  &--products {
+    @include for-desktop {
+      margin-top: calc(var(--spacer-lg) * 1.0625);
+    }
   }
 }
 </style>
