@@ -499,6 +499,8 @@
       class="product-zoom"
       @closeZoomedProduct="closeZoomedProduct"
     />
+
+    <CartRecommendations :product-codes="recommendedProductCodes" :is-pdp="true" />
   </div>
 </template>
 
@@ -546,6 +548,7 @@ import {
 import { productGetters, wishlistGetters, userGetters } from "@/lib/getters"
 import { buildAddToCartInput } from "@/composables/helpers"
 import { useNuxtApp, ComputedRef, Ref } from "#app"
+import CartRecommendations from "@/components/CartRecommendations.vue"
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
@@ -563,6 +566,7 @@ export default defineComponent({
     SfInput,
     SfAccordion,
     SfBottomModal,
+    CartRecommendations,
   },
   setup(_, context) {
     const showSelector = ref(false)
@@ -589,6 +593,12 @@ export default defineComponent({
       wishlistGetters.shouldShowAddToWishlist(isInWishlist(product.value))
         ? context.root.$t("Add to Wishlist")
         : context.root.$t("RemovefromWishlist")
+    )
+    const recommendedProductCodes = computed(
+      () =>
+        product?.value?.properties
+          ?.filter((prop) => prop.attributeFQN === "tenant~product-crosssell")[0]
+          ?.values?.map((val) => val.value) || []
     )
 
     const nuxt = useNuxtApp()
@@ -869,6 +879,7 @@ export default defineComponent({
       isCartSidebarOpen,
       showSelectOptionText,
       addToCartFromMobile,
+      recommendedProductCodes,
     }
   },
 })

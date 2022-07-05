@@ -3,7 +3,7 @@
     <div class="section-title" v-if="recommendedProducts.length > 0">Products you may like</div>
     <div>
       <SfCarousel
-        v-if="recommendedProducts"
+        v-if="recommendedProducts && !isPdp"
         class="carousel"
         :settings="{
           peek: 0,
@@ -41,6 +41,46 @@
         </SfCarouselItem>
       </SfCarousel>
     </div>
+
+    <div>
+      <SfCarousel
+        v-if="recommendedProducts && isPdp"
+        class="carousel"
+        :settings="{
+          peek: 16,
+          breakpoints: { 1023: { peek: 0, perView: 1 } },
+        }"
+      >
+        <template #prev="{ go }">
+          <SfArrow aria-label="prev" class="sf-arrow--left" @click="go('prev')" />
+        </template>
+        <template #next="{ go }">
+          <SfArrow aria-label="next" class="sf-arrow--right" @click="go('next')" />
+        </template>
+        <SfCarouselItem
+          class="carousel__item"
+          v-for="product in recommendedProducts"
+          :key="`carousel-item-${product.productCode}`"
+        >
+          <div @click="closeModal">
+            <SfProductCard
+              :title="productGetters.getName(product)"
+              :image="productGetters.getCoverImage(product)"
+              wishlist-icon=""
+              is-in-wishlist-icon=""
+              :is-in-wishlist="false"
+              :show-add-to-cart-button="false"
+              :regular-price="$n(productGetters.getPrice(product).regular, 'currency')"
+              :link="localePath(getProductLink(productGetters.getProductId(product)))"
+              image-width="12.563rem"
+              image-height="12.563rem"
+              class="products__product-card related-product"
+            >
+            </SfProductCard>
+          </div>
+        </SfCarouselItem>
+      </SfCarousel>
+    </div>
   </div>
 </template>
 <script>
@@ -58,6 +98,10 @@ export default {
     title: {
       type: String,
       default: "",
+    },
+    isPdp: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
@@ -203,5 +247,9 @@ h2 {
       --product-card-title-margin: var(--spacer-sm) 0 0 0;
     }
   }
+}
+
+.related-product {
+  margin: 0 auto;
 }
 </style>
