@@ -15,11 +15,12 @@
           <KiboOrderLineItem :item="item" />
           <hr v-if="index != shipItems.length - 1" class="line-item-spacer" />
         </div> -->
-        <div>
+        <div style="margin-top: 23px">
           <div class="shipping-address">{{ $t("Shipping Address") }}</div>
           <UserAddressView :address="address" />
         </div>
-        <hr class="order-shipment__spacer" />
+
+        <!-- <hr class="order-shipment__spacer" /> -->
       </div>
 
       <div v-if="pickupItems && pickupItems.length > 0">

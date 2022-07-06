@@ -386,6 +386,9 @@ export default {
       display: flex;
       flex-direction: column;
       gap: calc(var(--spacer-base) * 0.66);
+      @include for-desktop {
+        margin-top: 18px;
+      }
     }
   }
 }

@@ -199,6 +199,8 @@ export default defineComponent({
         isValidPaymentForm:
           activePaymentMethod.value.card.isCardDetailsFilled && isValidBillingDetails.value,
       })
+      localStorage.setItem("Payment", JSON.stringify(activePaymentMethod))
+      localStorage.setItem("Address", JSON.stringify(activeAddress))
       closePaymentMethodForm()
     }
 
