@@ -73,7 +73,7 @@
           </div>
         </div>
         <div v-if="isOpenOrderItem" class="order-details">
-          <KiboOrderItemDetails :order="selectedOrder" />
+          <KiboOrderItemDetails :order="selectedOrder" @returnItems="handleReturnItems" />
         </div>
       </div>
       <div v-show="isOpenOrderList" class="filters">
@@ -134,6 +134,8 @@ export default defineComponent({
     const countries = nuxt.nuxt2Context.$config.countries
     const orderHistoryText = context.root.$t("Order History")
     const myAccountText = context.root.$t("My Account")
+    const isReturnItems = ref(false)
+
     const orderDetailsText = context.root.$t("View Order Details")
     const barTitle = ref(myAccountText)
     const title = ref(orderHistoryText)
@@ -205,6 +207,11 @@ export default defineComponent({
       }
     }
 
+    const handleReturnItems = (isReturn) => {
+      isReturnItems.value = isReturn
+      title.value = context.root.$t("chooseItemsToReturn")
+    }
+
     useAsync(async () => {
       const facetsFromURL = getFacetsFromURL()
       facetsFromURL.filters.forEach((filter) => {
@@ -245,6 +252,7 @@ export default defineComponent({
       appliedFilters,
       selectFilter,
       loading,
+      handleReturnItems,
     }
   },
 })
