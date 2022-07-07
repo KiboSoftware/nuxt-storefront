@@ -8,7 +8,7 @@ export const buildOrdersFilterInput = (params: {
   const variables = {
     filter: "",
     startIndex: 0,
-    pageSize: 20,
+    pageSize: 200,
   }
 
   const getPastDateTimestamp = (months) => {
