@@ -31,7 +31,6 @@ export const useReturnItems = (referenceKey: string) => {
           reason,
           quantity: item.quantity,
         },
-        // notes,
       }
     })
 

@@ -120,7 +120,7 @@
           :estimated-order-total="orderTotal"
         >
         </KiboOrderSummary>
-        <div class="return-items-button">
+        <div v-show="order.status === 'Completed'" class="return-items-button">
           <SfButton :aria-disabled="false" :link="null" @click="returnItems()">
             {{ $t("returnItems") }}
           </SfButton>
@@ -243,7 +243,6 @@ export default defineComponent({
     const isSelectedReturnReasonAndItems = computed(
       () => selectedReturnItemsData.value.length > 0 && selectedReturnReason.value !== ""
     )
-
     const orderNumber = computed(() => orderGetters.getOrderNumber(props.order))
     const orderId = computed(() => orderGetters.getId(props.order))
     const orderSubmittedDate = computed(() => orderGetters.getSubmittedDate(props.order, true))
