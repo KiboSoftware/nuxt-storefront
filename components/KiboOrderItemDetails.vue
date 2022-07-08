@@ -443,12 +443,12 @@ export default defineComponent({
 .return-items {
   display: flex;
   flex-direction: column;
-  padding-top: 24px;
+  padding-top: var(--spacer-base);
 
   ::v-deep .sf-select {
-    max-width: 376px;
+    max-width: 23.5rem;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: calc(var(--spacer-sm) * 1.25);
 
     &__label {
       --select-label-color: var(--c-black);
@@ -458,13 +458,13 @@ export default defineComponent({
     }
 
     &__dropdown {
-      margin-top: 7px;
+      margin-top: 0.438rem;
     }
   }
 
   ::v-deep .sf-textarea {
     textarea {
-      max-width: 342px;
+      max-width: 21.375rem;
       @include for-desktop {
         width: 100%;
       }
@@ -489,12 +489,13 @@ export default defineComponent({
   height: fit-content;
 
   ::v-deep .sf-heading {
-    padding: 28px 0 16px 23px;
+    padding: calc(var(--spacer-sm) * 1.75) 0 var(--spacer-sm) calc(var(--spacer-sm) * 1.4375);
   }
 
   ::v-deep .sf-button {
-    margin: 27px 29px 33px 23px;
-    max-width: 364px;
+    margin: calc(var(--spacer-sm) * 1.6875) calc(var(--spacer-sm) * 1.8125)
+      calc(var(--spacer-sm) * 1.4375) calc(var(--spacer-sm) * 1.4375);
+    max-width: calc(var(--spacer-3xl) * 2.275);
     width: 85%;
     @include for-desktop {
       width: 100%;
@@ -505,22 +506,17 @@ export default defineComponent({
 .products {
   display: flex;
   flex-direction: row;
-  padding: 23px;
+  padding: calc(var(--spacer-sm) * 1.4375);
 }
 
 .product-image {
-  width: 134px;
-  height: 134px;
-  margin-right: 25px;
+  width: calc(var(--spacer-2xl) * 1.675);
+  height: calc(var(--spacer-2xl) * 1.675);
+  margin-right: calc(var(--spacer-sm) * 1.5625);
 
   ::v-deep .sf-image--wrapper {
-    --image-width: 134px;
-    --image-height: 134px;
-
-    @include for-desktop {
-      --image-width: 134px;
-      --image-height: 134px;
-    }
+    --image-width: calc(var(--spacer-2xl) * 1.675);
+    --image-height: calc(var(--spacer-2xl) * 1.675);
 
     .sf-image {
       object-fit: contain;
@@ -532,7 +528,8 @@ export default defineComponent({
   .return-item-title {
     display: flex;
     justify-content: left;
-    padding: 25px 0 26px 23px;
+    padding: calc(var(--spacer-sm) * 1.5625) 0 calc(var(--spacer-sm) * 1.625)
+      calc(var(--spacer-sm) * 1.4375);
 
     @include for-mobile {
       display: flex;
@@ -541,11 +538,11 @@ export default defineComponent({
 
       ::v-deep .sf-bar {
         &__title {
-          width: 255px;
+          width: calc(var(--spacer-3xl) * 1.59375);
         }
 
         &__icon {
-          margin-left: 35px;
+          margin-left: calc(var(--spacer-sm) * 2.1875);
         }
       }
     }
@@ -562,23 +559,25 @@ export default defineComponent({
   @include for-mobile {
     ::v-deep .sf-modal {
       &__overlay {
-        top: 57px;
+        top: calc(var(--spacer-xl) * 1.425);
       }
 
       &__container {
-        top: 57px;
+        top: calc(var(--spacer-xl) * 1.425);
       }
     }
   }
 
   .return-item-heading {
     display: flex;
-    padding: 25px 0 26px 23px;
+    padding: calc(var(--spacer-sm) * 1.5625) 0 calc(var(--spacer-sm) * 1.625)
+      calc(var(--spacer-sm) * 1.4375);
     align-items: center;
   }
 
   .returned-items-reason {
-    padding: 25px 0 26px 23px;
+    padding: calc(var(--spacer-sm) * 1.5625) 0 calc(var(--spacer-sm) * 1.625)
+      calc(var(--spacer-sm) * 1.4375);
 
     .reason-title {
       font-weight: var(--font-weight--bold);
