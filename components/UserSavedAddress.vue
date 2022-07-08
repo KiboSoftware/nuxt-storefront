@@ -22,6 +22,11 @@
           </template>
         </SfRadio>
       </div>
+      <div class="address-container__right">
+        <div class="address-container__edit" @click="$emit('click:edit-address', address)">
+          {{ $t("Edit") }}
+        </div>
+      </div>
     </div>
     <div v-else class="address-container">
       <div class="address-container__left">

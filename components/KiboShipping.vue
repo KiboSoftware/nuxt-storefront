@@ -2,14 +2,16 @@
   <div class="sf-shipping" data-testid="shipping">
     <SfHeading :title="$t('Shipping')" :level="2" class="abc" />
     <div class="user-addresses">
-      <UserSavedAddresses
-        :countries="countries"
-        :default-address="shippingAddress"
-        :addresses="userShippingAddresses"
-        :is-readonly="isReadonly"
-        @onSave="saveShippingAddress"
-        @validateForm="validateShippingDetails"
-      />
+      <SfLoader :loading="loadingUserAddress">
+        <UserSavedAddresses
+          :countries="countries"
+          :default-address="shippingAddress"
+          :addresses="userShippingAddresses"
+          :is-readonly="isReadonly"
+          @onSave="saveShippingAddress"
+          @validateForm="validateShippingDetails"
+        />
+      </SfLoader>
     </div>
 
     <div class="shipping-method-title">
@@ -25,12 +27,16 @@
 </template>
 
 <script lang="ts">
-import { SfHeading } from "@storefront-ui/vue"
+import { SfHeading, SfLoader } from "@storefront-ui/vue"
+import { onMounted } from "@nuxtjs/composition-api"
+import { ref } from "@vue/composition-api"
+import { useUser, useUserAddresses } from "@/composables"
 
 export default {
   name: "KiboShipping",
   components: {
     SfHeading,
+    SfLoader,
   },
   props: {
     shippingAddress: {
@@ -47,6 +53,14 @@ export default {
     },
   },
   setup(props, context) {
+    const { user } = useUser()
+    const {
+      loading: loadingUserAddress,
+      load: loadUserAddresses,
+      addUserAddress,
+      updateUserAddress,
+    } = useUserAddresses()
+
     const isReadonly = true
     const isValidShippingDetails = ref(false)
     const shippingAddress = ref({ ...props.value })
@@ -61,17 +75,66 @@ export default {
     }
 
     const saveShippingAddress = (updatedAddress) => {
+      saveShippingAddress12(updatedAddress)
       context.emit("validateForm", isValidShippingDetails.value)
       context.emit("saveShippingAddress", {
         ...updatedAddress,
       })
     }
 
+    const saveAddress = ({ address, setAsDefault }, typeName) => {
+      const addressData = {
+        accountId: user.value.id,
+        customerContactInput: { ...address },
+      }
+      console.log("user", user)
+      if (address.id) {
+        // update scenario
+        addressData.contactId = address.id
+        address.types.find((t) => t.name === typeName).isPrimary = setAsDefault
+
+        return updateUserAddress(addressData)
+      } else {
+        // add new scenarion
+        addressData.customerContactInput.types = [
+          {
+            name: typeName,
+            isPrimary: setAsDefault,
+          },
+        ]
+        addressData.customerContactInput.accountId = user.value.id
+        return addUserAddress(addressData)
+      }
+    }
+
+    const saveShippingAddress12 = async (params) => {
+      await saveAddress(params, "Shipping")
+      await loadUserAddresses(user.value.id)
+    }
+
+    watch(
+      () => user.value,
+      async (newVal) => {
+        if (newVal.id) {
+          await loadUserAddresses(newVal.id)
+        }
+      }
+    )
+
+    onMounted(async () => {
+      if (user.value?.id) {
+        await loadUserAddresses(user.value.id)
+      }
+    })
+
     return {
+      user,
       isReadonly,
       saveShippingAddress,
       updateShippingDetails,
       validateShippingDetails,
+      saveShippingAddress12,
+      loadingUserAddress,
     }
   },
 }
