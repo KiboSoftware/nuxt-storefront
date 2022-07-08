@@ -119,7 +119,7 @@
           :standard-shipping="orderStandardShipping"
           :estimated-tax="orderEstimatedTax"
           :estimated-order-total="orderTotal"
-          :show-apply-promocode="!(order.status === 'Completed')"
+          :show-promo-code="!(order.status === 'Completed')"
         >
         </KiboOrderSummary>
         <div v-show="order.status === 'Completed'" class="return-items-button">

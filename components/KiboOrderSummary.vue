@@ -52,7 +52,7 @@
           class="sf-property--full-width sf-property--large sf-order-summary__property"
         >
           <template #value>
-            <div v-show="showApplyPromocode" class="promo-code__applied">
+            <div v-if="showPromoCode" class="promo-code__applied">
               <KiboPrice
                 :regular="
                   $n(estimatedOrderTotal !== subTotal ? subTotal : estimatedOrderTotal, 'currency')
@@ -63,7 +63,7 @@
                 $t("promo code applied")
               }}</span>
             </div>
-            <div v-show="!showApplyPromocode">
+            <div v-if="!showPromoCode">
               <KiboPrice
                 :regular="$n(estimatedOrderTotal, 'currency')"
                 class="sf-property__price"
