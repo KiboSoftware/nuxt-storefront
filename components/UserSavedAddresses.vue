@@ -47,9 +47,20 @@
       </SfIcon>
       {{ $t("Add New Address") }}
     </SfButton>
+
+    <!-- <SfButton v-if="!showAddressForm" class="action-button" @click="updateTheAddress"  >
+      <SfIcon size="2rem" display="inline-flex" class="plus-circle-icon">
+        <font-awesome-icon
+          icon="plus-circle"
+          class="fa-icon"
+          color="var(--_c-dark-white-secondary)"
+        />
+      </SfIcon>
+      {{ $t("Update the Address") }}
+    </SfButton> -->
+
     <div v-if="showAddressForm" class="action-buttons-adr">
-      <SfButton class="color-light" @click="closeAddressForm">
-        {{ $t("Cancel") }} </SfButton
+      <SfButton class="color-light" @click="closeAddressForm"> {{ $t("Cancel") }} </SfButton
       >&nbsp;&nbsp;
       <SfButton class="color-primary" :disabled="!isValidShippingDetails" @click="saveAddress">
         {{ $t("Save") }}
@@ -106,6 +117,12 @@ export default defineComponent({
 
     const addNewAddress = () => {
       isNewAddress.value = true
+      if (activeAddress.value) activeAddress.value = {}
+      showAddressForm.value = true
+    }
+
+    const updateTheAddress = () => {
+      isNewAddress.value = true
       if (!activeAddress.value) activeAddress.value = {}
       showAddressForm.value = true
     }
@@ -161,6 +178,7 @@ export default defineComponent({
       handleDeleteAddress,
       isValidShippingDetails,
       selectedAddressId,
+      updateTheAddress,
     }
   },
 })
