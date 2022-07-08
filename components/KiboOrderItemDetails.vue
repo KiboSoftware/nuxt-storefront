@@ -105,6 +105,7 @@
           <KiboOrderItemsReturn
             v-show="!isOrderStatus && isReturnItems"
             :order="order"
+            :is-return-request-success="isReturnRequestSuccess"
             @selectedReturnItems="handleSelectedReturnItems"
           ></KiboOrderItemsReturn>
         </div>
@@ -138,7 +139,9 @@
 
         <SfButton
           class="color-primary sf-button"
-          :class="!isSelectedReturnReasonAndItems && 'is-disabled--button'"
+          :class="
+            (!isSelectedReturnReasonAndItems || isReturnRequestSuccess) && 'is-disabled--button'
+          "
           :aria-disabled="true"
           :link="null"
           @click="handleConfirmReturnRequest"
@@ -293,6 +296,7 @@ export default defineComponent({
 
     const returnedItemsData = computed(() => returnItem.value?.items)
     const returnedItemsReason = computed(() => returnItem.value?.items[0]?.reasons[0].reason)
+    const isReturnRequestSuccess = computed(() => returnItem.value?.status === "Created")
 
     const handleConfirmReturnRequest = () => {
       const createReturnItemsParams = {
@@ -339,6 +343,7 @@ export default defineComponent({
       isReturnItemsModalOpen,
       returnedItemsData,
       returnedItemsReason,
+      isReturnRequestSuccess,
       closeModal,
       returnItems,
       handleSelectedReturnItems,

@@ -8,6 +8,7 @@
           class="form__checkbox"
           v-model="selectedReturnItems"
           @change="handleReturnItems"
+          :disabled="isReturnRequestSuccess"
         />
         <KiboOrderLineItem :item="item" />
       </div>
@@ -19,6 +20,7 @@
           class="form__checkbox"
           v-model="selectedReturnItems"
           @change="handleReturnItems"
+          :disabled="isReturnRequestSuccess"
         />
         <KiboOrderLineItem :item="item" />
       </div>
@@ -41,6 +43,10 @@ export default defineComponent({
       type: Object as PropType<Order>,
       default: () => ({}),
     },
+    isReturnRequestSuccess: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const pickupItems = computed(() => checkoutGetters.getPickupItems(props.order))
@@ -49,6 +55,7 @@ export default defineComponent({
     const handleReturnItems = () => {
       context.emit("selectedReturnItems", selectedReturnItems.value)
     }
+
     return {
       shipItems,
       pickupItems,
