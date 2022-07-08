@@ -2,7 +2,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
-    "types": ["@types/jest"],
+    "types": ["@types/jest","@nuxtjs/toast"],
     "allowSyntheticDefaultImports": true
   }
 }
