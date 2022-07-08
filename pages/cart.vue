@@ -3,8 +3,7 @@
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart__title-wrapper">
       <h1 class="detailed-cart__title">
-        {{ $t("Shopping Cart") }} ({{ numberOfCartItems }}
-        {{ `${numberOfCartItems === 1 ? $t("Item") : $t("Items")}` }})
+        {{ $t("Shopping Cart") }} ( {{ `${$t("Item", numberOfCartItems)}` }})
       </h1>
     </div>
     <div v-if="cartItems.length" class="detailed-cart">

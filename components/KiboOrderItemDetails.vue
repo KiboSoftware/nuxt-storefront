@@ -15,11 +15,7 @@
               <template #value>
                 <span class="sf-property__value">
                   {{ $n(orderTotal, "currency") }}
-                  <span class="items">{{
-                    `(${numberOfOrderItems} ${
-                      numberOfOrderItems > 1 ? $tc("item", 2) : $tc("item", 1)
-                    })`
-                  }}</span>
+                  <span class="items">{{ `( ${$tc("item", numberOfOrderItems)})` }}</span>
                 </span>
               </template>
             </SfProperty>

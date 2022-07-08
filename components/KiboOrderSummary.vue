@@ -36,7 +36,7 @@
           </template>
         </SfProperty>
       </div>
-      <div class="promo-code">
+      <div v-if="showPromoCode" class="promo-code">
         <KiboApplyCoupon
           :is-valid-coupon="isValidCoupon"
           :invalid-coupon-error-text="invalidCouponErrorText"
@@ -57,12 +57,9 @@
                 :regular="
                   $n(estimatedOrderTotal !== subTotal ? subTotal : estimatedOrderTotal, 'currency')
                 "
-                :special="
-                  estimatedOrderTotal !== subTotal ? $n(estimatedOrderTotal, 'currency') : null
-                "
                 class="sf-property__price"
               />
-              <span v-if="estimatedOrderTotal !== subTotal" class="promo-code__applied__text">{{
+              <span v-if="appliedCoupons.length" class="promo-code__applied__text">{{
                 $t("promo code applied")
               }}</span>
             </div>
@@ -126,6 +123,10 @@ export default {
     estimatedOrderTotal: {
       type: Number,
       default: 0,
+    },
+    showPromoCode: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props, context) {
@@ -212,6 +213,7 @@ export default {
 
     .estimated-order-total {
       align-items: flex-start;
+      padding-block: 1rem;
 
       .sf-property__name,
       .sf-property__value {

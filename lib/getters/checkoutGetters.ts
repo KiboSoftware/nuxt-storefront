@@ -1,4 +1,5 @@
 const getOrderNumber = (checkout) => checkout?.orderNumber
+const getOrderedItemCount = (checkout) => checkout?.items.length
 const getEmail = (checkout) => checkout?.email
 const getId = (checkout) => checkout?.id
 const getTotal = (checkout): number => checkout?.total
@@ -42,4 +43,5 @@ export const checkoutGetters = {
   getShipItems,
   getDeliveryItems,
   getShippingMethod,
+  getOrderedItemCount,
 }
