@@ -142,10 +142,10 @@ export default {
 
       const returnNumber = returnItem.value?.returnNumber
       if (returnNumber) {
-        alert("Return Initiated succesfully !!")
+        context.root.$toast.success('Return Initiated succesfully !!')
         context.emit("close-modal")
       } else {
-        alert("Someting wrong....")
+        context.root.$toast.error("Someting wrong....")
       }
     }
 
@@ -307,7 +307,8 @@ export default {
 .submitbutton {
   //  box-shadow: 2px 3px #a0a0a0;
   font-size: 15px;
-  margin-left: 80%;
+  margin-left: 70%;
+  margin-right: 20%;
   width: 230px;
   height: 40px;
   background-color: var(--c-primary);

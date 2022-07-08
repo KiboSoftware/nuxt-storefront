@@ -50,7 +50,19 @@ export default defineNuxtConfig({
   },
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/pwa", "nuxt-i18n", "@storefront-ui/nuxt", "cookie-universal-nuxt"],
+  modules: [
+    "@nuxtjs/pwa",
+    "nuxt-i18n",
+    "@storefront-ui/nuxt",
+    "cookie-universal-nuxt",
+    "@nuxtjs/toast",
+  ],
+  toast: {
+    position: "top-center",
+    duration: 1000,
+    iconPack: "material",
+    theme: "bubble",
+  },
   i18n: {
     currency: "USD",
     country: "US",
