@@ -84,6 +84,11 @@
                 <KiboOrderItem :order="order" />
                 <hr class="filter-hr" />
               </div>
+              <SfPagination
+                class="products__pagination desktop-only"
+                :current="pagination.currentPage"
+                :total="pagination.totalPages"
+              />
             </div>
           </SfLoader>
         </div>
@@ -128,9 +133,11 @@
   </div>
 </template>
 <script lang="ts">
-import { SfBar, SfButton, SfIcon, SfFilter, SfLoader } from "@storefront-ui/vue"
+import { SfBar, SfButton, SfIcon, SfFilter, SfLoader, SfPagination } from "@storefront-ui/vue"
+
 import { defineComponent, ref } from "@vue/composition-api"
 import { useAsync, computed, watch } from "@nuxtjs/composition-api"
+import { facetGetters } from "@/lib/getters"
 import { useNuxtApp } from "#app"
 import { useUserOrder, useUiHelpers } from "@/composables"
 
@@ -142,6 +149,7 @@ export default defineComponent({
     SfFilter,
     SfBar,
     SfLoader,
+    SfPagination,
   },
   setup(_, context) {
     const nuxt = useNuxtApp()
@@ -170,6 +178,8 @@ export default defineComponent({
     const { result: userOrderResult, getOrders, loading } = useUserOrder(`user-order`)
 
     const orders = computed(() => userOrderResult?.value?.items)
+
+    const pagination = computed(() => facetGetters.getPagination(userOrderResult?.value))
 
     const appliedFilters = computed(() => facetAllOptions.value.filter((f) => f.isApplied))
 
@@ -223,27 +233,47 @@ export default defineComponent({
 
     useAsync(async () => {
       const facetsFromURL = getFacetsFromURL()
+      let pageStartIndex
+      if (facetsFromURL.page === 0) {
+        pageStartIndex = 0
+      } else {
+        pageStartIndex = facetsFromURL.page * 10 + 1
+      }
       facetsFromURL.filters.forEach((filter) => {
         filters.value.push(filter)
         facetAllOptions.value.find((facet) => facet.filterValue === filter).isApplied = true
       })
 
-      await getOrders({ filters: facetsFromURL.filters.length ? facetsFromURL.filters : "" })
+      await getOrders({
+        filters: facetsFromURL.filters.length ? facetsFromURL.filters : "",
+        startIndex: pageStartIndex,
+      })
     }, null)
 
     watch(
       () => context.root.$route,
       async () => {
         const facetsFromURL = getFacetsFromURL()
+        let pageStartIndex
+        if (facetsFromURL.page === 0) {
+          pageStartIndex = 0
+        } else {
+          pageStartIndex = facetsFromURL.page * 10 + 1
+        }
+
         facetsFromURL?.filters?.forEach((filter) => {
           filter &&
             (facetAllOptions.value.find((facet) => facet.filterValue === filter).isApplied = true)
         })
-        await getOrders({ filters: facetsFromURL.filters[0] === "" ? "" : facetsFromURL.filters })
+        await getOrders({
+          filters: facetsFromURL.filters[0] === "" ? "" : facetsFromURL.filters,
+          startIndex: pageStartIndex,
+        })
       }
     )
 
     return {
+      pagination,
       orders,
       goBack,
       barTitle,
@@ -443,6 +473,17 @@ a.nuxt-link-active:link {
   &--products {
     @include for-desktop {
       margin-top: calc(var(--spacer-lg) * 1.0625);
+    }
+  }
+}
+
+.products {
+  @include for-desktop {
+    &__pagination {
+      display: flex;
+      justify-content: flex-start;
+      margin: var(--spacer-xl) 0 0 0;
+      float: right;
     }
   }
 }

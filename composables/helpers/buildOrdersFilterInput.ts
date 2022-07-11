@@ -1,14 +1,14 @@
 export const buildOrdersFilterInput = (params: {
   filters?: Array<string> | string
-  startIndex?: number
+  startIndex?: Number
   pageSize?: number
   orderNumber?: string
   billingEmail?: string
 }) => {
   const variables = {
     filter: "",
-    startIndex: 0,
-    pageSize: 200,
+    startIndex: params.startIndex,
+    pageSize: 10,
   }
 
   const getPastDateTimestamp = (months) => {
