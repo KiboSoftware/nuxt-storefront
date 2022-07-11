@@ -84,11 +84,13 @@
                 <KiboOrderItem :order="order" />
                 <hr class="filter-hr" />
               </div>
-              <SfPagination
-                class="products__pagination desktop-only"
-                :current="pagination.currentPage"
-                :total="pagination.totalPages"
-              />
+              <div @click="scrollToTop()">
+                <SfPagination
+                  class="products__pagination desktop-only"
+                  :current="pagination.currentPage"
+                  :total="pagination.totalPages"
+                />
+              </div>
             </div>
           </SfLoader>
         </div>
@@ -220,6 +222,10 @@ export default defineComponent({
       }
     }
 
+    const scrollToTop = () => {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+
     const selectFilter = (filterValue) => {
       const currentIndex = filters.value.indexOf(filterValue)
       if (currentIndex > -1) {
@@ -273,6 +279,7 @@ export default defineComponent({
     )
 
     return {
+      scrollToTop,
       pagination,
       orders,
       goBack,
