@@ -19,14 +19,16 @@ export const useUserOrder = (referenceKey: string) => {
     orderNumber?: string
     billingEmail?: string
     filters?: string | string[]
+    startIndex?: number
   }) => {
     try {
       loading.value = true
-      const { orderNumber, billingEmail, filters } = params
+      const { orderNumber, billingEmail, filters, startIndex } = params
       const variables = buildOrdersFilterInput({
         filters,
         orderNumber,
         billingEmail,
+        startIndex,
       })
       const ordersResponse = await fetcher({
         query: getOrdersQuery,

@@ -3,6 +3,9 @@ export const getOrdersQuery = /* GraphQL */ `
   query getOrders($filter: String, $startIndex: Int, $pageSize: Int) {
     orders(filter: $filter, startIndex: $startIndex, pageSize: $pageSize) {
       pageCount
+      startIndex
+      pageSize
+      totalCount
       items {
         ...baseOrderFragment
         items {
