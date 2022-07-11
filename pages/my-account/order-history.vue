@@ -84,15 +84,15 @@
                 <KiboOrderItem :order="order" />
                 <hr class="filter-hr" />
               </div>
-              <div @click="scrollToTop()">
-                <SfPagination
-                  class="products__pagination desktop-only"
-                  :current="pagination.currentPage"
-                  :total="pagination.totalPages"
-                />
-              </div>
             </div>
           </SfLoader>
+          <div v-if="!loading" @click="scrollToTop()">
+            <SfPagination
+              class="products__pagination desktop-only"
+              :current="pagination.currentPage"
+              :total="pagination.totalPages"
+            />
+          </div>
         </div>
         <div v-if="isOpenOrderItem" class="order-details">
           <KiboOrderItemDetails :order="selectedOrder" />
