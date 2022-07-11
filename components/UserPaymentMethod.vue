@@ -152,11 +152,13 @@ export default defineComponent({
     })
 
     const addNewPaymentMethod = () => {
-      sameAsShipping.value = false
+      if (!sameAsShipping.value) {
+        sameAsShipping.value = false
+      }
       isNewPaymentMethod.value = true
       showPaymentMethodForm.value = false
       if (activePaymentMethod.value) activePaymentMethod.value = { card: {}, paymentType: "" }
-      if (activeAddress.value) activeAddress.value = {}
+      if (!activeAddress.value) activeAddress.value = {}
       showPaymentMethodForm.value = true
     }
 
@@ -205,10 +207,8 @@ export default defineComponent({
     }
 
     const copyFromShipping = () => {
-      showPaymentMethodForm.value = false
       activeAddress.value = sameAsShipping.value ? { ...props.shipping } : {}
       activeAddress.value.id = ""
-      showPaymentMethodForm.value = true
     }
     const handleDeleteCard = (paymentMethod) => {
       context.emit("onDelete", { ...paymentMethod })
