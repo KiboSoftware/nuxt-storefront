@@ -200,6 +200,7 @@ export default defineComponent({
     const orderId = computed(() => orderGetters.getId(props.order))
     const orderSubmittedDate = computed(() => orderGetters.getSubmittedDate(props.order, true))
     const orderTotal = computed(() => orderGetters.getOrderTotal(props.order))
+    const locationCode = computed(() => orderGetters.getLocationCode(props.order))
     const numberOfOrderItems = computed(() => props.order?.items?.length)
     const returnReasons = computed(() => returnReasonsResult.value?.items)
 
@@ -237,7 +238,7 @@ export default defineComponent({
         reason: selectedReturnReason.value,
         originalOrderId: orderId.value,
         items: selectedReturnItemsData.value,
-        locationCode: props.order?.locationCode || "",
+        locationCode: locationCode.value,
       }
 
       createReturnItem(createReturnItemsParams)
@@ -328,12 +329,9 @@ export default defineComponent({
   }
 
   .order-details {
-  width: 100%;
+    width: 100%;
+  }
 }
-
-}
-
-
 
 .order-payment {
   padding-bottom: var(--spacer-base);

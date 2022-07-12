@@ -35,6 +35,7 @@ const getShippedTo = (order: Order) =>
   capitalizeWord(order?.fulfillmentInfo?.fulfillmentContact?.lastNameOrSurname)
 
 const getShippingAddress = (order) => order?.fulfillmentInfo?.fulfillmentContact
+const getLocationCode = (order) => order?.locationCode
 
 export const orderGetters = {
   getOrderNumber,
@@ -47,4 +48,5 @@ export const orderGetters = {
   getOrderPayments,
   getShippedTo,
   getShippingAddress,
+  getLocationCode,
 }
