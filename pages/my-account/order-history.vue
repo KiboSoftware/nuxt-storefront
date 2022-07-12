@@ -72,8 +72,12 @@
             </div>
           </div>
         </div>
-        <div v-if="isOpenOrderItem" class="order-details">
+        <div v-if="isOpenOrderItem && !isReturnItems" class="order-details">
           <KiboOrderItemDetails :order="selectedOrder" @returnItems="handleReturnItems" />
+        </div>
+
+        <div v-if="isReturnItems" class="order-items-return">
+          <KiboOrderItemsReturn :order="selectedOrder" />
         </div>
       </div>
       <div v-show="isOpenOrderList" class="filters">
@@ -191,6 +195,12 @@ export default defineComponent({
         isOpenOrderItem.value = false
         barTitle.value = myAccountText
         title.value = orderHistoryText
+      } else if (barTitle.value === orderDetailsText) {
+        barTitle.value = orderHistoryText
+        title.value = orderDetailsText
+        isOpenOrderList.value = false
+        isOpenOrderItem.value = true
+        isReturnItems.value = false
       } else {
         app.router.push({ path: "/" })
       }
@@ -210,6 +220,7 @@ export default defineComponent({
     const handleReturnItems = (isReturn) => {
       isReturnItems.value = isReturn
       title.value = context.root.$t("chooseItemsToReturn")
+      barTitle.value = orderDetailsText
     }
 
     useAsync(async () => {
@@ -253,6 +264,7 @@ export default defineComponent({
       selectFilter,
       loading,
       handleReturnItems,
+      isReturnItems,
     }
   },
 })

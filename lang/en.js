@@ -288,4 +288,5 @@ export default {
   chooseItemsToReturn: "Choose Items to Return",
   reasonForYourReturn: "Reason for your return",
   pleaseSelectAReasonForYourReturn: "Please select a reason for your return",
+  chooseAResponse: "Choose a response",
 }
