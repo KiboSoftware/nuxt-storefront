@@ -82,12 +82,15 @@ export default {
     }
 
     &__props {
-      padding: 2px 0 2px 0;
+      display: flex;
+      padding: calc(var(--spacer-2xs) * 0.5) 0;
       font-size: var(--font-size--sm);
 
       .title {
         font-weight: bold;
         font-size: var(--font-size--sm);
+        margin-bottom: 0;
+        padding-right: var(--spacer-2xs);
       }
     }
   }
