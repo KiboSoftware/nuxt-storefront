@@ -125,7 +125,7 @@
         @click="gotoOrderHistory()"
       >
         {{ $t("Order History") }}
-        <SfChevron class="sf-chevron--right" />
+        <SfChevron class="sf-chevron--down" />
       </SfButton>
     </div>
     <!-- <div class="vertical-space"></div> -->
