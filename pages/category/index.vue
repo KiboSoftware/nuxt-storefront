@@ -239,6 +239,8 @@
               $n(productGetters.getPrice(product).special, 'currency')
             "
             :max-rating="5"
+            v-model="qtySelected"
+            @click:add-to-cart="addToCart(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
             class="products__product-card-horizontal"
           >
@@ -310,7 +312,7 @@ import {
   userGetters,
 } from "@/lib/getters"
 
-import { useNuxtApp } from "#app"
+import { useNuxtApp, Ref } from "#app"
 import { useDropzoneContent } from "@/composables"
 import { buildAddToCartInput } from "@/composables/helpers"
 
@@ -528,10 +530,13 @@ export default {
       }
     )
 
+    const qtySelected: Ref<number> = ref(1)
+
     const addToCart = async (product) => {
-      const productToAdd = buildAddToCartInput(product, 1, [])
+      const productToAdd = buildAddToCartInput(product, qtySelected.value, [])
       // if (isValidForAddToCart.value) {
       await addItemsToCart(productToAdd)
+      qtySelected.value = 1
       if (cart.value) {
         toggleCartSidebar()
         setTimeout(() => {
@@ -575,6 +580,7 @@ export default {
     }
 
     return {
+      qtySelected,
       addToCart,
       isInCart,
       getCatLink,

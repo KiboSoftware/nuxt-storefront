@@ -305,6 +305,10 @@ export default {
 
   .products__product-card {
     padding: var(--spacer-base) var(--spacer-base);
+
+    ::v-deep .quick-view-btn {
+      display: none;
+    }
   }
 
   ::v-deep .kibo-product-card .sf-product-card__image-wrapper {
