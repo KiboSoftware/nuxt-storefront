@@ -8,9 +8,16 @@
     @include for-mobile {
       --checkbox-border-color: var(--_c-gray-primary);
     }
+
+    .is-disabled & {
+      &.is-active {
+        --checkbox-border-color: var(--_c-green-primary-disabled);
+        --checkbox-background: var(--_c-green-primary-disabled);
+      }
+    }
   }
 
-  &.is-active {        
+  &.is-active {
     --checkbox-background: var(--_c-green-primary);
   }
 

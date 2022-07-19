@@ -72,8 +72,12 @@
             </div>
           </div>
         </div>
-        <div v-if="isOpenOrderItem" class="order-details">
-          <KiboOrderItemDetails :order="selectedOrder" />
+        <div v-if="isOpenOrderItem && !isReturnItems" class="order-details">
+          <KiboOrderItemDetails :order="selectedOrder" @returnItems="handleReturnItems" />
+        </div>
+
+        <div v-if="isReturnItems" class="order-items-return">
+          <KiboOrderItemsReturn :order="selectedOrder" />
         </div>
       </div>
       <div v-show="isOpenOrderList" class="filters">
@@ -134,6 +138,8 @@ export default defineComponent({
     const countries = nuxt.nuxt2Context.$config.countries
     const orderHistoryText = context.root.$t("Order History")
     const myAccountText = context.root.$t("My Account")
+    const isReturnItems = ref(false)
+
     const orderDetailsText = context.root.$t("View Order Details")
     const barTitle = ref(myAccountText)
     const title = ref(orderHistoryText)
@@ -189,6 +195,12 @@ export default defineComponent({
         isOpenOrderItem.value = false
         barTitle.value = myAccountText
         title.value = orderHistoryText
+      } else if (barTitle.value === orderDetailsText) {
+        barTitle.value = orderHistoryText
+        title.value = orderDetailsText
+        isOpenOrderList.value = false
+        isOpenOrderItem.value = true
+        isReturnItems.value = false
       } else {
         app.router.push({ path: "/" })
       }
@@ -203,6 +215,12 @@ export default defineComponent({
         filters.value.push(filterValue)
         facetAllOptions.value.find((facet) => facet.filterValue === filterValue).isApplied = true
       }
+    }
+
+    const handleReturnItems = (isReturn) => {
+      isReturnItems.value = isReturn
+      title.value = context.root.$t("chooseItemsToReturn")
+      barTitle.value = orderDetailsText
     }
 
     useAsync(async () => {
@@ -245,6 +263,8 @@ export default defineComponent({
       appliedFilters,
       selectFilter,
       loading,
+      handleReturnItems,
+      isReturnItems,
     }
   },
 })

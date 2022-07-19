@@ -9,6 +9,7 @@ const state = reactive({
   isMobileMenuOpen: false,
   isAddToCartConfirmationOpen: false,
   isHamburgerOpen: false,
+  isReturnItemsModalOpen: false,
 })
 
 export const useUiState = () => {
@@ -58,6 +59,11 @@ export const useUiState = () => {
     state.isHamburgerOpen = !state.isHamburgerOpen
   }
 
+  const isReturnItemsModalOpen = computed(() => state.isReturnItemsModalOpen)
+  const toggleReturnItemsModal = () => {
+    state.isReturnItemsModalOpen = !state.isReturnItemsModalOpen
+  }
+
   return {
     isWishlistSidebarOpen,
     isLoginModalOpen,
@@ -66,6 +72,8 @@ export const useUiState = () => {
     isFilterSidebarOpen,
     isMobileMenuOpen,
     isHamburgerOpen,
+    isAddToCartConfirmationOpen,
+    isReturnItemsModalOpen,
     toggleWishlistSidebar,
     toggleLoginModal,
     toggleNewsletterModal,
@@ -74,7 +82,7 @@ export const useUiState = () => {
     toggleFilterSidebar,
     toggleMobileMenu,
     toggleHamburger,
-    isAddToCartConfirmationOpen,
     toggleAddToCartConfirmationModal,
+    toggleReturnItemsModal,
   }
 }

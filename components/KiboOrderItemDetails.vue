@@ -22,9 +22,11 @@
             <SfProperty v-if="isOrderStatus" :name="$t('Shipped to')" :value="orderShippedTo" />
           </div>
         </div>
+
         <div>
           <hr class="order-item-spacer" />
         </div>
+
         <div v-if="order.items" class="order-shipment">
           <KiboOrderLineItems :order="order">
             <template #ship-title>
@@ -81,6 +83,7 @@
           </div>
         </div>
       </div>
+
       <div v-if="!isOrderStatus" class="order-summary">
         <KiboOrderSummary
           v-if="numberOfOrderItems > 0"
@@ -89,15 +92,22 @@
           :standard-shipping="orderStandardShipping"
           :estimated-tax="orderEstimatedTax"
           :estimated-order-total="orderTotal"
+          :show-promo-code="!(order.status === 'Completed')"
         >
         </KiboOrderSummary>
+        <div v-show="order.status === 'Completed'" class="return-items-button">
+          <SfButton :aria-disabled="false" :link="null" @click="returnItems()">
+            {{ $t("returnItems") }}
+          </SfButton>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from "@vue/composition-api"
-import { SfProperty, SfBadge } from "@storefront-ui/vue"
+import { computed, ref, defineComponent } from "@nuxtjs/composition-api"
+import { PropType } from "@vue/composition-api"
+import { SfProperty, SfBadge, SfButton } from "@storefront-ui/vue"
 import { checkoutGetters, creditCardPaymentGetters, orderGetters } from "@/lib/getters"
 import { Order } from "@/server/types/GraphQL"
 
@@ -106,6 +116,7 @@ export default defineComponent({
   components: {
     SfProperty,
     SfBadge,
+    SfButton,
   },
   props: {
     order: {
@@ -117,7 +128,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  setup(props, context) {
     const orderNumber = computed(() => orderGetters.getOrderNumber(props.order))
     const orderId = computed(() => orderGetters.getId(props.order))
     const orderSubmittedDate = computed(() => orderGetters.getSubmittedDate(props.order, true))
@@ -136,6 +147,10 @@ export default defineComponent({
     const numberOfOrderItems = computed(() => props.order?.items?.length)
     const orderShippedTo = computed(() => orderGetters.getShippedTo(props.order))
 
+    const returnItems = () => {
+      context.emit("returnItems", true)
+    }
+
     return {
       orderNumber,
       orderId,
@@ -150,6 +165,7 @@ export default defineComponent({
       orderEstimatedTax,
       numberOfOrderItems,
       orderShippedTo,
+      returnItems,
     }
   },
 })
@@ -233,6 +249,15 @@ export default defineComponent({
 
   @include for-desktop {
     margin: var(--spacer-sm) auto 0;
+  }
+}
+
+.return-items-button {
+  margin-top: calc(var(--spacer-base) * 0.5);
+
+  ::v-deep .sf-button {
+    background-color: var(--c-black);
+    width: 100%;
   }
 }
 </style>

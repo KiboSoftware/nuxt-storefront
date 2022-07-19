@@ -279,4 +279,13 @@ export default {
   yourOrder: "Your Order",
   orderDate: "Order Date",
   weHaveSentTheOrderConfirmationDetailsTo: "We have sent the order confirmation details to",
+  returnItems: "Return Items",
+  itemsYouAreReturning: "Items you’re returning",
+  confirmReturnRequest: "Confirm Return Request",
+  reasonForYourReturn: "Reason for your return",
+  commentsOptional: "Comments (optional)",
+  returnRequestSubmitted: "Return Request Submitted",
+  chooseItemsToReturn: "Choose Items to Return",
+  pleaseSelectAReasonForYourReturn: "Please select a reason for your return",
+  chooseAResponse: "Choose a response",
 }
