@@ -88,7 +88,7 @@
           </SfLoader>
           <div v-if="!loading" @click="scrollToTop()">
             <SfPagination
-              class="products__pagination desktop-only"
+              class="products__pagination"
               :current="pagination.currentPage"
               :total="pagination.totalPages"
             />
@@ -485,13 +485,11 @@ a.nuxt-link-active:link {
 }
 
 .products {
-  @include for-desktop {
-    &__pagination {
-      display: flex;
-      justify-content: flex-start;
-      margin: var(--spacer-xl) 0 0 0;
-      float: right;
-    }
+  &__pagination {
+    display: flex;
+    justify-content: flex-start;
+    margin: var(--spacer-xl) 0 0 0;
+    float: right;
   }
 }
 </style>
