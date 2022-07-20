@@ -251,6 +251,10 @@
               />
             </template>
 
+            <template #add-to-cart>
+              <span v-if="product.options && !product.purchasableState.isPurchasable"></span>
+            </template>
+
             <template #configuration>
               <SfProperty class="desktop-only" name="Size" value="XS" style="margin: 0 0 1rem 0" />
               <SfProperty class="desktop-only" name="Color" value="white" />
@@ -361,7 +365,7 @@ export default {
     const showMobileFilters = ref(false)
 
     const { cart, addItemsToCart } = useCart()
-    const { toggleCartSidebar } = useUiState()
+    const { toggleCartSidebar, isCartSidebarOpen } = useUiState()
 
     // Determining if search page using categoryCode present in URL or not
     if (!route.value.params?.categoryCode) {
@@ -540,7 +544,9 @@ export default {
       if (cart.value) {
         toggleCartSidebar()
         setTimeout(() => {
-          toggleCartSidebar()
+          if (isCartSidebarOpen.value) {
+            toggleCartSidebar()
+          }
         }, 5000)
       }
       // }
