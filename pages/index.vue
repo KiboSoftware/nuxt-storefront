@@ -215,7 +215,7 @@ export default {
 .scheduledImage {
   width: 100%;
   height: 50%;
-  display: flex;
+  display: table-column;
   justify-content: center;
 
   ::v-deep img {
