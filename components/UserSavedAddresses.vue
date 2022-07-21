@@ -132,6 +132,7 @@ export default defineComponent({
       activeAddress.value = address
       showAddressForm.value = true
       isDefaultAddress.value = address?.types[0]?.isPrimary || false
+      window.scrollTo({ top: 1000, behavior: "smooth" })
     }
 
     const selectAddress = (address) => {
