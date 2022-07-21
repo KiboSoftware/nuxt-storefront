@@ -404,9 +404,11 @@ export default {
   box-shadow: 0 0 2px var(--_c-lightbg-primary);
   height: auto;
   display: flex;
-  max-height: 216px;
+  min-height: 176px;
+  max-height: 176px;
   overflow-y: auto;
   overflow-x: hidden;
+  align-items: center;
 
   @include for-mobile {
     max-height: 400px;
