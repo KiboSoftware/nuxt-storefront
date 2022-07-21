@@ -166,7 +166,7 @@ export default {
     height: 300px; /* Should be removed. Only for demonstration */
   }
   @include for-mobile {
-    height: 210px;
+    height: 150px;
   }
 }
 
@@ -200,10 +200,15 @@ p {
 
 ::v-deep .sf-checkbox__container {
   @include for-desktop {
+    position: relative;
     float: right;
     margin-right: -300px;
     z-index: 1;
-    margin-top: 5px;
+    margin-top: 56px;
+  }
+  @include for-mobile {
+    position: absolute;
+    bottom: 100px;
   }
 }
 </style>
