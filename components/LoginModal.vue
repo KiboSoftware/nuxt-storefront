@@ -120,7 +120,7 @@
                     :disabled="loading"
                   >
                     <SfLoader :class="{ loader: loading }" :loading="loading">
-                      <div>{{ $t("Sign in & continue shipping") }}</div>
+                      <div>{{ $t("Sign in & continue shopping") }}</div>
                     </SfLoader>
                   </SfButton>
 
