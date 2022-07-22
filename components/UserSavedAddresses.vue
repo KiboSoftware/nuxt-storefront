@@ -1,7 +1,19 @@
 <template>
   <div>
-    <div v-if="!userAddressesSorted.length" class="no-shipping-address">
+    <div v-if="!userAddressesSorted.length && !activeAddressTop" class="no-shipping-address">
       {{ $t("No saved addresses yet!") }}
+    </div>
+    <div v-if="activeAddressTop && !userAddressesSorted.length">
+      <div class="address-view">
+        <p>{{ activeAddressTop.firstName }} {{ activeAddressTop.lastNameOrSurname }}</p>
+        <p>{{ activeAddressTop.address.address1 }} {{ activeAddressTop.address.address2 }}</p>
+        <p>{{ activeAddressTop.address.postalOrZipCode }}</p>
+        <p>
+          {{ activeAddressTop.address.cityOrTown }},
+          {{ activeAddressTop.address.stateOrProvince }}
+          <span v-if="activeAddressTop.phoneNumbers">{{ activeAddressTop.phoneNumbers.home }}</span>
+        </p>
+      </div>
     </div>
     <transition-group v-if="userAddressesSorted" tag="div" name="fade" class="shipping-list">
       <div v-for="(address, index) in userAddressesSorted" :key="address.id" class="shipping">
@@ -107,6 +119,7 @@ export default defineComponent({
     const showAddressForm = ref(false)
     const isDefaultAddress = ref(false)
     const activeAddress = ref(props.defaultAddress || {})
+    const activeAddressTop = computed(() => props.defaultAddress)
     const isValidShippingDetails = ref(false)
     const selectedAddressId = ref("")
 
@@ -180,11 +193,18 @@ export default defineComponent({
       isValidShippingDetails,
       selectedAddressId,
       updateTheAddress,
+      activeAddressTop,
     }
   },
 })
 </script>
 <style lang="scss" scoped>
+.address-view {
+  p {
+    margin: 0;
+  }
+}
+
 div {
   color: var(--c-black);
   font-size: var(--font-size--base);
