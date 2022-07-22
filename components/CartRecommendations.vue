@@ -113,15 +113,20 @@ export default {
     const { search, result } = useProductSearch(`product-carousel-recommended-atc`)
     const { getProductLink } = useUiHelpers()
     const recommendedProducts = computed(() => result.value?.items || [])
-    const { productCodes } = props
-    onMounted(async () => {
-      if (productCodes?.length) {
-        const filterOperator = "productCode eq"
-        const filter = productCodes
-          ?.map((productCode) => `${filterOperator} ${productCode}`)
-          .join(" or ")
-        await search({ filter })
-      }
+
+    onMounted(() => {
+      setTimeout(() => {
+        const { productCodes } = props
+        if (productCodes?.length) {
+          const filterOperator = "productCode eq"
+          const filter = productCodes
+            ?.map((productCode) => `${filterOperator} ${productCode}`)
+            .join(" or ")
+          search({ filter })
+        } else {
+          search({})
+        }
+      }, 2000)
     })
 
     const closeModal = () => {
