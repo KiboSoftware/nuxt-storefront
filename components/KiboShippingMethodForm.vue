@@ -28,8 +28,8 @@
         </template>
       </KiboOrderLineItems>
     </div>
-    <div class="changeStore">
-      <span class="changeStore__title">{{ $t("Pickup in Store") }}: </span><br />
+    <div v-if="checkStorePickupProduct" class="changeStore">
+      <!-- <span class="changeStore__title">{{ $t("Pickup in Store check") }}: </span><br /> -->
       <span clas="changeStore_location"> {{ cartItemPurchaseLocation }} </span>
       <span class="changeStore__link" @click="handleStoreLocatorClick">
         {{ cartItemPurchaseLocation ? $t("Change Store") : $t("Select Store") }}
@@ -41,6 +41,7 @@
 <script>
 import * as yup from "yup"
 import { SfSelect } from "@storefront-ui/vue"
+import { ref, computed } from "@vue/composition-api"
 import { checkoutLineItemGetters } from "@/lib/getters"
 import { useUiValidationSchemas } from "@/composables"
 
@@ -69,6 +70,7 @@ export default {
   },
   setup(props, context) {
     const selectedShippingMethodCode = ref("")
+    const pickUpStoreProductAvailable = ref(false)
 
     const updateField = (shippingMethodCode) => {
       selectedShippingMethodCode.value = shippingMethodCode
@@ -79,6 +81,15 @@ export default {
 
       context.emit("saveShippingMethod", { shippingMethodCode, shippingMethodName, price })
     }
+
+    // getting the value for store locator if there is any product with store pickup
+    const checkStorePickupProduct = computed(() => {
+      const orderItem = props.order.items
+      const pickupProductExistence = (item) => item.fulfillmentMethod === "Pickup"
+      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+      pickUpStoreProductAvailable.value = orderItem.some(pickupProductExistence)
+      return pickUpStoreProductAvailable.value
+    })
 
     const handleStoreLocatorClick = () => {
       context.emit("handleStoreLocatorClick")
@@ -104,6 +115,7 @@ export default {
     }
 
     return {
+      checkStorePickupProduct,
       updateField,
       checkoutLineItemGetters,
       selectedShippingMethodCode,
