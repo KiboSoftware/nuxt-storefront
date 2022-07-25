@@ -114,16 +114,7 @@ export default {
       }
     }
 
-    // watch(
-    //   // () => isSearchOpen.value,
-    //   () => {
-    //     const orderItem = props.order.items
-    //     const pickupProductExistence = (item) => item.fulfillmentMethod === "Pickup"
-    //     pickUpStoreProductAvailable.value = orderItem.some(pickupProductExistence)
-    //   }
-    // )
     return {
-      //  pickUpStoreProductAvailable,
       checkStorePickupProduct,
       updateField,
       checkoutLineItemGetters,
