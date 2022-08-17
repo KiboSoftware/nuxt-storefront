@@ -53,6 +53,7 @@ export const baseCheckoutFragment = /* GraphQL */ `
     subtotal
     taxTotal
     orderNumber
+    submittedDate
     orderDiscounts {
       impact
       discount {
