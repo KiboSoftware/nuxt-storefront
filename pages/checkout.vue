@@ -297,8 +297,8 @@ export default {
       const response = await createOrder({ orderId: checkout.value?.id })
       if (response?.orderNumber) {
         showCheckoutSteps.value = false
-        order.value = response
         window.scrollTo({ top: 0, behavior: "smooth" })
+        order.value = response
         await deleteCurrentCartItems()
       }
     }
