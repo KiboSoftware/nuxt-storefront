@@ -3,8 +3,8 @@
     <div class="header-container">
       <SfHeading :title="$t('thankYou')" :level="1" class="sf-heading__title h1" />
       <div class="header-container__description">
-        <SfHeading :title="$tc('item', 1)" :level="2" class="sf-heading__title h2" />
-        <SfHeading :title="orderTotal.toString()" :level="2" class="sf-heading__title h2" />
+        <SfHeading :title="$tc('item', itemCount)" :level="2" class="sf-heading__title h2" />
+        <SfHeading :title="$n(orderTotal, 'currency')" :level="2" class="sf-heading__title h2" />
       </div>
     </div>
 
