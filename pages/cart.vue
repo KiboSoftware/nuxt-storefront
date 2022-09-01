@@ -3,7 +3,7 @@
     <SfBreadcrumbs class="breadcrumbs desktop-only" :breadcrumbs="breadcrumbs" />
     <div class="detailed-cart__title-wrapper">
       <h1 class="detailed-cart__title">
-        {{ $t("Shopping Cart") }} ( {{ `${$t("Item", numberOfCartItems)}` }})
+        {{ $t("Shopping Cart") }} ( {{ $tc("item", numberOfCartItems) }})
       </h1>
     </div>
     <div v-if="cartItems.length" class="detailed-cart">
@@ -135,7 +135,7 @@ export default defineComponent({
     const standardShipping = computed(() => cartGetters.getShippingPrice(cart.value))
     const estimatedTax = computed(() => cartGetters.getTaxTotal(cart.value))
 
-    const numberOfCartItems = computed(() => cartItems.value.length)
+    const numberOfCartItems = computed(() => cartItems.value?.length)
 
     const cartItemFulfillmentLocation = (cartItem) =>
       cartGetters.getFulfillmentLocation(cartItem, locations.value)

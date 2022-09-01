@@ -1,6 +1,9 @@
 <template>
   <div id="checkout">
-    <div class="checkout">
+    <div v-if="!showCheckoutSteps">
+      <KiboOrderConfirmationUI :order="order" />
+    </div>
+    <div v-else class="checkout">
       <div class="checkout__main">
         <SfSteps :active="currentStep" :steps="steps" @change="updateStep">
           <SfStep name="Details">
@@ -59,6 +62,22 @@
                     </div>
                   </template>
                 </SfCheckbox>
+                <SfButton
+                  class="sf-button--full-width actions__button button-space"
+                  data-testid="apply-button"
+                  :disabled="!isTermsAndConditionsAccepted"
+                  @click="confirmAndCreateOrder"
+                >
+                  {{ steps[currentStep] }}
+                </SfButton>
+                <SfButton
+                  v-if="currentStep !== 0"
+                  class="sf-button--full-width actions__button color-light"
+                  data-testid="apply-button"
+                  @click="currentStep--"
+                >
+                  {{ $t("Go Back") }}
+                </SfButton>
               </template>
             </KiboConfirmOrder>
           </SfStep>
@@ -139,6 +158,7 @@ import {
   usePurchaseLocation,
   useUserAddresses,
   useCustomerCreditCards,
+  useCreateOrder,
 } from "@/composables"
 import { buildPaymentMethodInput } from "@/composables/helpers"
 import {
@@ -167,7 +187,7 @@ export default {
     const currencyCode = context.root.$i18n.getNumberFormat(locale)?.currency?.currency
 
     const currentStep = ref(0)
-    const { cart } = useCart()
+    const { cart, deleteCurrentCartItems } = useCart()
     const {
       checkout,
       load: loadCheckout,
@@ -185,6 +205,7 @@ export default {
       loading: loadingUserAddress,
     } = useUserAddresses()
     const { load: loadShippingMethods, shippingMethods } = useShippingMethods()
+    const { createOrder } = useCreateOrder()
     const isTermsAndConditionsAccepted = ref(false)
     const { toggleLoginModal } = useUiState()
     const { user, createAccountAndLogin } = useUser()
@@ -198,6 +219,8 @@ export default {
     const transition = "sf-fade"
     const enableCurrentStep = ref(false)
     const enableNextStep = ref(false)
+    const order = ref({})
+    const showCheckoutSteps = ref(true)
     const isAuthenticated = computed(() => {
       return userGetters.isLoggedInUser(user.value)
     })
@@ -269,6 +292,17 @@ export default {
       personalDetails.value = { ...newPersonalDetails }
     }
 
+    const confirmAndCreateOrder = async () => {
+      if (!checkout.value?.id) return null
+      const response = await createOrder({ orderId: checkout.value?.id })
+      if (response?.orderNumber) {
+        showCheckoutSteps.value = false
+        window.scrollTo({ top: 0, behavior: "smooth" })
+        order.value = response
+        await deleteCurrentCartItems()
+      }
+    }
+
     const savePersonalDetails = async () => {
       const updatedCheckoutInput = {
         ...checkout?.value,
@@ -326,9 +360,9 @@ export default {
             ...checkout.value?.fulfillmentInfo?.fulfillmentContact,
             email: personalDetails.value?.email,
           },
+          shippingMethodCode: shippingRates.shippingMethodCode,
+          shippingMethodName: shippingRates.shippingMethodName,
         },
-        shippingMethodCode: shippingRates.shippingMethodCode,
-        shippingMethodName: shippingRates.shippingMethodName,
       }
 
       await setShippingInfo(params)
@@ -369,7 +403,7 @@ export default {
         false
       )
 
-      await savePaymentMethodToOrder(paymentAction, selectedPaymentInfo.billingAddress)
+      await savePaymentMethodToOrder(paymentAction, selectedPaymentInfo.address)
     }
 
     const isValidPaymentDetails = ref(false)
@@ -533,20 +567,24 @@ export default {
 
         case stepLabels.PAY_FOR_ORDER: {
           if (!isValidPaymentDetails.value) return
+          enableNextStep.value = false
           break
         }
 
         case stepLabels.CONFIRM_AND_PAY: {
-          if (typeof selectedStep !== "number") {
+          if (
+            typeof selectedStep !== "number" &&
+            !isAuthenticated &&
+            personalDetails.value?.password
+          ) {
             await createUserAccount()
           }
-
           break
         }
       }
 
       // prevent to move nextStep by SfStep header
-      if (nextStep < steps.length) {
+      if (nextStep < steps?.length) {
         // TODO: Add  && enableNextStep.value on condition once other checkout validations are done
         currentStep.value = nextStep
       }
@@ -612,6 +650,10 @@ export default {
       cards,
       isLoadingPaymentMethods,
       onPaymentSelect,
+
+      showCheckoutSteps,
+      order,
+      confirmAndCreateOrder,
     }
   },
   watch: {
@@ -818,5 +860,9 @@ export default {
   &__title {
     --heading-title-font-weight: var(--font-weight--medium);
   }
+}
+
+.button-space {
+  margin-bottom: 12px;
 }
 </style>

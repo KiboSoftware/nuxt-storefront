@@ -62,12 +62,11 @@ const getPaymentMethods = (payments) => {
   if (!payments) return []
   const paymentsMethods = payments
     .filter((p) => p?.billingInfo?.card)
-    .map((c) => {
+    .map((item) => {
       return {
-        cardType: c.paymentOrCardType,
-        cardNumber: c.cardNumberPartOrMask,
-        expiry: c.expireMonth + " / " + c.expireYear,
-        cvv: c.ccLastFour,
+        cardType: item?.billingInfo?.card?.paymentOrCardType,
+        cardNumberPartOrMask: item?.billingInfo?.card?.cardNumberPartOrMask,
+        expiry: item?.billingInfo?.card?.expireMonth + " / " + item?.billingInfo?.card?.expireYear,
       }
     })
 

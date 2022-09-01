@@ -27,6 +27,7 @@ export * from "./useCategoryTree"
 export * from "./useCheckout"
 export * from "./useShippingMethods"
 export * from "./useUserAddresses"
+export * from "./useCreateOrder"
 
 export * from "./useDropzoneContent"
 export * from "./useCustomerCreditCards"
