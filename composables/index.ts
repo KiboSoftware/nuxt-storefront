@@ -38,3 +38,5 @@ export * from "./useUserOrder"
 export * from "./useWishlist"
 export * from "./useReturnReasons"
 export * from "./useReturnItems"
+
+export * from "./useCMSContent"
