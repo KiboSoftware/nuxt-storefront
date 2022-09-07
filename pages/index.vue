@@ -15,7 +15,7 @@
         <SfHeroItem
           v-for="(img, index) in heroCarousel"
           :key="index"
-          :image="img.image.desktop"
+          :image="img.image"
           :title="img.title"
           :subtitle="img.subtitle"
           :button-text="img.buttonText"
@@ -237,6 +237,7 @@ export default {
     line-height: calc(var(--spacer-2xs) * 7.125);
     text-align: left;
     font-weight: bold;
+    min-width: 289px;
 
     @include for-desktop {
       margin: auto;
