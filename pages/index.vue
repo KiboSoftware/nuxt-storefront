@@ -128,7 +128,7 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: #a12e87;
-  height: 4rem;
+  height: calc(var(--spacer-base) * 2.5);
 
   @include for-desktop {
     flex-direction: row;
@@ -138,17 +138,17 @@ export default {
 
   &__title {
     font-weight: bold;
-    font-size: 1.25rem;
+    font-size: var(--font-size--xl);
 
     @include for-desktop {
-      font-size: 1.4rem;
+      font-size: var(--font-size--3xl);
     }
   }
 
   &__container {
     display: flex;
     color: #fff;
-    font-size: 0.8rem;
+    font-size: var(--h5-font-size);
     gap: 5px;
 
     a {
