@@ -104,7 +104,7 @@ export default {
     const homePageProducts = computed(() => cmsGetters.getHomePageProducts({ ...result.value }))
 
     useAsync(async () => {
-      await load()
+      if (process.server) await load()
     }, null)
 
     return {
