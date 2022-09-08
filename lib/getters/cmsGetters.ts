@@ -1,4 +1,4 @@
-const smallBanner = (cmsData) => {
+const getSmallBanner = (cmsData) => {
   const result = cmsData?.components?.find(
     (data) => Object.keys(data)[0] === "small_banner"
   )?.small_banner
@@ -13,7 +13,7 @@ const smallBanner = (cmsData) => {
   }
 }
 
-const heroCarousel = (cmsData) => {
+const getHeroCarousel = (cmsData) => {
   const result = cmsData?.components?.find(
     (data) => Object.keys(data)[0] === "hero_carousel"
   )?.hero_carousel
@@ -51,7 +51,20 @@ const getTiles = (item) => {
   }
 }
 
-const promoBlocks = (cmsData) => {
+const getHomePageProducts = (cmsData) => {
+  const result = cmsData?.components?.find(
+    (data) => Object.keys(data)[0] === "home_page_products"
+  )?.home_page_products
+
+  const productList = result?.reference?.map((obj) => ({
+    title: obj.title,
+    productCodes: obj.home_page_products.map((product) => product.productCode),
+  }))
+
+  return productList
+}
+
+const getPromoBlocks = (cmsData) => {
   const largePromoBlock = cmsData?.components?.find(
     (data) => Object.keys(data)[0] === "large_promo_blocks"
   )?.large_promo_blocks
@@ -71,7 +84,8 @@ const promoBlocks = (cmsData) => {
 }
 
 export const cmsGetters = {
-  smallBanner,
-  heroCarousel,
-  promoBlocks,
+  getSmallBanner,
+  getHeroCarousel,
+  getPromoBlocks,
+  getHomePageProducts,
 }

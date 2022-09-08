@@ -45,16 +45,12 @@
     </div>
     <div class="product-carousels">
       <KiboProductCarousel
+        v-for="(product, index) in homePageProducts"
+        :key="index"
         class="carousels"
-        :title="$t('recentlyViewed')"
-        :product-codes="relatedProducts"
-        carousel-name="related-products"
-      />
-      <KiboProductCarousel
-        class="carousels"
-        :title="$t('recommendedForYou')"
-        :product-codes="recommendedProducts"
-        carousel-name="recommended-products"
+        :title="product.title"
+        :product-codes="product.productCodes"
+        :carousel-name="product.title"
       />
     </div>
     <div class="large-and-medium-content">
@@ -105,9 +101,10 @@ export default {
     const relatedProducts = ["MS-CAM-001", "xxx", "MS-EYE-004", "MS-BTL-004", "MS-GIFT-002"]
     const recommendedProducts = ["MS-BTL-003", "xxx", "MS-EYE-005", "MS-BTL-001", "MS-EYE-003"]
 
-    const smallBanner = computed(() => cmsGetters.smallBanner({ ...result.value }))
-    const heroCarousel = computed(() => cmsGetters.heroCarousel({ ...result.value }))
-    const promoBlocks = computed(() => cmsGetters.promoBlocks({ ...result.value }))
+    const smallBanner = computed(() => cmsGetters.getSmallBanner({ ...result.value }))
+    const heroCarousel = computed(() => cmsGetters.getHeroCarousel({ ...result.value }))
+    const promoBlocks = computed(() => cmsGetters.getPromoBlocks({ ...result.value }))
+    const homePageProducts = computed(() => cmsGetters.getHomePageProducts({ ...result.value }))
 
     useAsync(async () => {
       await load()
@@ -121,6 +118,7 @@ export default {
       smallBanner,
       heroCarousel,
       promoBlocks,
+      homePageProducts,
     }
   },
 }
