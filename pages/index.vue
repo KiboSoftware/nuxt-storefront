@@ -98,9 +98,6 @@ export default {
     const pageName = "home-page"
     const { load, result } = useCMSContent()
 
-    const relatedProducts = ["MS-CAM-001", "xxx", "MS-EYE-004", "MS-BTL-004", "MS-GIFT-002"]
-    const recommendedProducts = ["MS-BTL-003", "xxx", "MS-EYE-005", "MS-BTL-001", "MS-EYE-003"]
-
     const smallBanner = computed(() => cmsGetters.getSmallBanner({ ...result.value }))
     const heroCarousel = computed(() => cmsGetters.getHeroCarousel({ ...result.value }))
     const promoBlocks = computed(() => cmsGetters.getPromoBlocks({ ...result.value }))
@@ -112,8 +109,6 @@ export default {
 
     return {
       pageName,
-      relatedProducts,
-      recommendedProducts,
       cmsPageResult,
       smallBanner,
       heroCarousel,
