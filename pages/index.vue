@@ -128,7 +128,7 @@ export default {
   align-items: center;
   justify-content: center;
   background-color: #a12e87;
-  height: 60px;
+  height: 4rem;
 
   @include for-desktop {
     flex-direction: row;

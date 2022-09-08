@@ -41,12 +41,10 @@ const getTiles = (item) => {
     content: {
       header: item?.title,
       subHeader: item?.subtitle,
-      links: item?.links?.map((link) => {
-        return {
-          label: link?.title,
-          url: link?.href,
-        }
-      }),
+      links: item?.links?.map((link) => ({
+        label: link?.title,
+        url: link?.href,
+      })),
     },
   }
 }
@@ -77,7 +75,6 @@ const getPromoBlocks = (cmsData) => {
   const mediumTiles = smallPromoBlock?.small_promo_blocks?.map((item) => getTiles(item))
 
   return {
-    largeHeaderTitle: "The Latest Lineup",
     largeTiles,
     mediumTiles,
   }
