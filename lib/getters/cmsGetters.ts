@@ -75,6 +75,7 @@ const getPromoBlocks = (cmsData) => {
   const mediumTiles = smallPromoBlock?.small_promo_blocks?.map((item) => getTiles(item))
 
   return {
+    largeHeaderTitle: "",
     largeTiles,
     mediumTiles,
   }

@@ -1,7 +1,7 @@
 import { computed } from "@vue/composition-api"
 
 import { useState } from "#app"
-import { getPage } from "@/lib/operations/get-page"
+import { getPage, GetPageProps } from "@/lib/operations/get-page"
 
 export const useCMSContent = () => {
   const result = useState(`use-cms-content`, () => {
@@ -21,7 +21,8 @@ export const useCMSContent = () => {
           "page_components.large_promo_blocks.large_promo_blocks",
           "page_components.small_promo_blocks.small_promo_blocks",
         ],
-      })
+        entryUrl: "",
+      } as GetPageProps)
     } catch (error) {
       console.error(error)
     } finally {

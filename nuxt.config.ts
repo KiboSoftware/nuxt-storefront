@@ -157,6 +157,7 @@ export default defineNuxtConfig({
       CONTENTSTACK_DELIVERY_TOKEN: process.env.NUXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN,
       CONTENTSTACK_ENVIRONMENT: process.env.NUXT_PUBLIC_CONTENTSTACK_ENVIRONMENT,
     },
+    cms: "contentstack",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

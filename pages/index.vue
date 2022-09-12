@@ -11,7 +11,7 @@
     </div>
 
     <div>
-      <SfHero class="hero" :slider-options="{ autoplay: false }">
+      <SfHero v-if="heroCarousel" class="hero" :slider-options="{ autoplay: false }">
         <SfHeroItem
           v-for="(img, index) in heroCarousel"
           :key="index"
