@@ -1,4 +1,4 @@
-import Stack from "../../cms/content-stack/index"
+import getContentStackObj from "../../cms/content-stack/index"
 import { useNuxtApp } from "#app"
 
 export interface GetPageProps {
@@ -8,6 +8,8 @@ export interface GetPageProps {
 }
 
 const getContentStackPage = async (params: GetPageProps) => {
+  const Stack = getContentStackObj()
+
   const response = await Stack.getEntry(params)
 
   return {

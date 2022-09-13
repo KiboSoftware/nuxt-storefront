@@ -1,17 +1,17 @@
 <template>
   <div>
-    <div class="small-banner">
+    <div v-if="smallBanner" class="small-banner">
       <span class="small-banner__title" sx="{styles.titleStyle}">
         {{ smallBanner.title }} &nbsp;
       </span>
       <div class="small-banner__container">
         <span>{{ smallBanner.subTitle }} </span>
-        <a href="{{" smallBanner.callToAction.url }}>{{ smallBanner.callToAction.title }}</a>
+        <a :href="smallBanner.callToAction.url">{{ smallBanner.callToAction.title }}</a>
       </div>
     </div>
 
-    <div>
-      <SfHero v-if="heroCarousel" class="hero" :slider-options="{ autoplay: false }">
+    <div v-if="heroCarousel">
+      <SfHero class="hero" :slider-options="{ autoplay: false }">
         <SfHeroItem
           v-for="(img, index) in heroCarousel"
           :key="index"
@@ -43,7 +43,8 @@
         </SfHeroItem>
       </SfHero>
     </div>
-    <div class="product-carousels">
+
+    <div v-if="homePageProducts" class="product-carousels">
       <KiboProductCarousel
         v-for="(product, index) in homePageProducts"
         :key="index"
@@ -53,7 +54,8 @@
         :carousel-name="product.title"
       />
     </div>
-    <div class="large-and-medium-content">
+
+    <div v-if="promoBlocks" class="large-and-medium-content">
       <div class="large-content">
         <div class="large-content__header">
           {{ $t("theLatestLineup") }}
@@ -104,7 +106,7 @@ export default {
     const homePageProducts = computed(() => cmsGetters.getHomePageProducts({ ...result.value }))
 
     useAsync(async () => {
-      if (process.server) await load()
+      await load()
     }, null)
 
     return {

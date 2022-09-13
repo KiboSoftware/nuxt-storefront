@@ -153,9 +153,9 @@ export default defineNuxtConfig({
     apiHost: process.env.KIBO_API_HOST || "https://t17828-s22116.dev10.kubedevext.kibo-dev.com",
     defaultWishlistName: "default-wishlist",
     contentStack: {
-      CONTENTSTACK_API_KEY: process.env.NUXT_PUBLIC_CONTENTSTACK_API_KEY,
-      CONTENTSTACK_DELIVERY_TOKEN: process.env.NUXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN,
-      CONTENTSTACK_ENVIRONMENT: process.env.NUXT_PUBLIC_CONTENTSTACK_ENVIRONMENT,
+      contentstack_api_key: process.env.NUXT_PUBLIC_CONTENTSTACK_API_KEY,
+      contentstack_delivery_token: process.env.NUXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN,
+      contentstack_environment: process.env.NUXT_PUBLIC_CONTENTSTACK_ENVIRONMENT,
     },
     cms: "contentstack",
   },
