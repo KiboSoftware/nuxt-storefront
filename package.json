@@ -13,7 +13,7 @@
     "prettier:check": "prettier --check .",
     "prettier:format": "prettier --write .",
     "lint": "yarn lint:js && yarn lint:style && yarn prettier:format",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "generate-types": "graphql-codegen --config codegen.yml",
     "prebuild": "node ./.build/preBuild.js",
     "predev": "yarn prebuild"
@@ -34,6 +34,8 @@
   },
   "dependencies": {
     "@coddicat/vue-pinch-scroll-zoom": "^3.3.4",
+    "@contentstack/live-preview-utils": "^1.1.0",
+    "@contentstack/utils": "^1.1.2",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@kibocommerce/graphql-client": "^1.0.3-beta.7",
     "@nuxtjs/pwa": "^3.3.5",
@@ -42,6 +44,7 @@
     "@storefront-ui/vue": "^0.11.5",
     "apollo-client": "^2.6.10",
     "apollo-link": "^1.2.14",
+    "contentstack": "^3.15.3",
     "cookie-universal-nuxt": "^2.1.5",
     "core-js": "^3.15.1",
     "credit-card-type": "^9.1.0",

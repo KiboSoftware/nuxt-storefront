@@ -1,9 +1,19 @@
 <template>
   <div>
-    <div>
+    <div v-if="smallBanner" class="small-banner">
+      <span class="small-banner__title" sx="{styles.titleStyle}">
+        {{ smallBanner.title }} &nbsp;
+      </span>
+      <div class="small-banner__container">
+        <span>{{ smallBanner.subTitle }} </span>
+        <a :href="smallBanner.callToAction.url">{{ smallBanner.callToAction.title }}</a>
+      </div>
+    </div>
+
+    <div v-if="heroCarousel">
       <SfHero class="hero" :slider-options="{ autoplay: false }">
         <SfHeroItem
-          v-for="(img, index) in heroes"
+          v-for="(img, index) in heroCarousel"
           :key="index"
           :image="img.image"
           :title="img.title"
@@ -33,26 +43,26 @@
         </SfHeroItem>
       </SfHero>
     </div>
-    <div class="product-carousels">
+
+    <div v-if="homePageProducts" class="product-carousels">
       <KiboProductCarousel
+        v-for="(product, index) in homePageProducts"
+        :key="index"
         class="carousels"
-        :title="$t('recentlyViewed')"
-        :product-codes="relatedProducts"
-        carousel-name="related-products"
-      />
-      <KiboProductCarousel
-        class="carousels"
-        :title="$t('recommendedForYou')"
-        :product-codes="recommendedProducts"
-        carousel-name="recommended-products"
+        :title="product.title"
+        :product-codes="product.productCodes"
+        :carousel-name="product.title"
       />
     </div>
-    <div class="large-and-medium-content">
+
+    <div v-if="promoBlocks" class="large-and-medium-content">
       <div class="large-content">
-        <div class="large-content__header">{{ contentTiles.largeHeaderTitle }}</div>
+        <div class="large-content__header">
+          {{ $t("theLatestLineup") }}
+        </div>
         <div class="large-tiles">
           <div
-            v-for="(tile, index) in contentTiles.largeTiles"
+            v-for="(tile, index) in promoBlocks.largeTiles"
             :key="'medium' + index"
             class="large-tiles__tiles"
           >
@@ -63,7 +73,7 @@
       <div class="medium-content">
         <div class="medium-tiles">
           <div
-            v-for="(tile, index) in contentTiles.mediumTiles"
+            v-for="(tile, index) in promoBlocks.mediumTiles"
             :key="'medium' + index"
             class="medium-tiles__tiles"
           >
@@ -77,189 +87,35 @@
 
 <script>
 import { SfHero, SfButton } from "@storefront-ui/vue"
-import CarouselImage1 from "@/assets/images/Mobile-Homepage-HeroBanner.png"
-import nikeGearImg from "@/assets/images/Mobile-Homepage-50OffNikeGear.png"
-import runningGearImg from "@/assets/images/Mobile-Homepage-50OffRunningGear.png"
-import hoodieImg from "@/assets/images/Mobile-Homepage-Hoodie.png"
-import outdoorGearImg from "@/assets/images/Mobile-Homepage-OutdoorGear.png"
-import gymImg from "@/assets/images/Mobile-Homepage-Gym.png"
-import golfImg from "@/assets/images/Mobile-Homepage-Golf.png"
+import { useAsync, computed } from "@nuxtjs/composition-api"
 import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
+import { cmsGetters } from "@/lib/getters"
+import { useCMSContent } from "@/composables"
 
 export default {
   components: { SfHero, SfButton, KiboProductCarousel },
   layout: "full-width",
   setup() {
+    const cmsPageResult = ref({})
     const pageName = "home-page"
-    const heroes = [
-      {
-        title: "Save upto 50%",
-        subtitle: "Check Off Your List Event",
-        description: "Shop early to get your holiday gifts on time.",
-        buttonText: "Shop Holiday Items on Sale",
-        background: "rgb(236, 239, 241)",
-        image: CarouselImage1,
-      },
-      {
-        title: "Save upto 70%",
-        subtitle: "Check Off Your List Event",
-        description: "Shop early to get your holiday gifts on time.",
-        buttonText: "Shop Holiday Items on Sale",
-        background: "rgb(236, 239, 241)",
-        image: "https://i.pinimg.com/474x/ac/0f/38/ac0f388b725f5c24d4f0b63c547be9f5.jpg",
-      },
-      {
-        title: "Save upto 30%",
-        subtitle: "Check Off Your List Event",
-        description: "Shop early to get your holiday gifts on time.",
-        buttonText: "Shop Holiday Items on Sale",
-        background: "rgb(236, 239, 241)",
-        image: "https://i.pinimg.com/736x/04/96/05/04960532dffffe5e551b3fab6015a874.jpg",
-      },
-    ]
-    const contentTiles = {
-      largeHeaderTitle: "The Latest Lineup",
-      largeTiles: [
-        {
-          imgUrl: runningGearImg,
-          content: {
-            header: "Up to 50% off running gear",
-            subHeader: "Save on selected footwear,equipment and more",
-            links: [
-              {
-                label: "TOP DEALS",
-                url: "/",
-              },
-              {
-                label: "CLUB DEALS",
-                url: "/",
-              },
-              {
-                label: "FOOTWARE DEALS",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: nikeGearImg,
-          content: {
-            header: "Up to 50% off Nike gear",
-            subHeader: "Save big on clothing and footwear from Nike",
-            links: [
-              {
-                label: "SHOP MEN'S",
-                url: "/",
-              },
-              {
-                label: "SHOP WOMEN'S",
-                url: "/",
-              },
-              {
-                label: "SHOP KID'S",
-                url: "/",
-              },
-            ],
-          },
-        },
-      ],
-      mediumTiles: [
-        {
-          imgUrl: hoodieImg,
-          content: {
-            header: "Hoodies and Fleece",
-            subHeader: "Warm wishes for everyone on your list",
-            links: [
-              {
-                label: "MEN’S",
-                url: "/",
-              },
-              {
-                label: "WOMEN'S",
-                url: "/",
-              },
-              {
-                label: "KID'S",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: outdoorGearImg,
-          content: {
-            header: "Up to 30% off outdoor gear",
-            subHeader: "Including 25% off select jackets, pants, and more",
-            links: [
-              {
-                label: "JACKETS",
-                url: "/",
-              },
-              {
-                label: "PANTS",
-                url: "/",
-              },
-              {
-                label: "FOOTWEAR",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: gymImg,
-          content: {
-            header: "Up to 40% off gym essentials",
-            subHeader: "Clothing and gear for strength and cardio",
-            links: [
-              {
-                label: "STRENGTH TRAINING",
-                url: "/",
-              },
-              {
-                label: "CARDIO WORKOUT",
-                url: "/",
-              },
-              {
-                label: "FITNESS DEALS",
-                url: "/",
-              },
-            ],
-          },
-        },
-        {
-          imgUrl: golfImg,
-          content: {
-            header: "Up to 50% off golf gear",
-            subHeader: "Save on select apparel, equipment, and more",
-            links: [
-              {
-                label: "GOLF SHIRTS",
-                url: "/",
-              },
-              {
-                label: "GOLD PANTS",
-                url: "/",
-              },
-              {
-                label: "GOLF FOOTWEAR",
-                url: "/",
-              },
-            ],
-          },
-        },
-      ],
-    }
+    const { load, result } = useCMSContent()
 
-    const relatedProducts = ["MS-CAM-001", "xxx", "MS-EYE-004", "MS-BTL-004", "MS-GIFT-002"]
-    const recommendedProducts = ["MS-BTL-003", "xxx", "MS-EYE-005", "MS-BTL-001", "MS-EYE-003"]
+    const smallBanner = computed(() => cmsGetters.getSmallBanner({ ...result.value }))
+    const heroCarousel = computed(() => cmsGetters.getHeroCarousel({ ...result.value }))
+    const promoBlocks = computed(() => cmsGetters.getPromoBlocks({ ...result.value }))
+    const homePageProducts = computed(() => cmsGetters.getHomePageProducts({ ...result.value }))
+
+    useAsync(async () => {
+      await load()
+    }, null)
 
     return {
       pageName,
-      heroes,
-      contentTiles,
-      relatedProducts,
-      recommendedProducts,
+      cmsPageResult,
+      smallBanner,
+      heroCarousel,
+      promoBlocks,
+      homePageProducts,
     }
   },
 }
@@ -267,6 +123,41 @@ export default {
 
 <style lang="scss" scoped>
 @import "~@storefront-ui/shared/styles/components/organisms/SfHero.scss";
+
+.small-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #a12e87;
+  height: calc(var(--spacer-base) * 2.5);
+
+  @include for-desktop {
+    flex-direction: row;
+  }
+
+  color: #fff;
+
+  &__title {
+    font-weight: bold;
+    font-size: var(--font-size--xl);
+
+    @include for-desktop {
+      font-size: var(--font-size--3xl);
+    }
+  }
+
+  &__container {
+    display: flex;
+    color: #fff;
+    font-size: var(--h5-font-size);
+    gap: 5px;
+
+    a {
+      color: #fff;
+    }
+  }
+}
 
 ::v-deep .sf-hero {
   &__slides {
@@ -340,6 +231,13 @@ export default {
     font-size: var(--spacer-base);
     line-height: calc(var(--spacer-2xs) * 7.125);
     text-align: left;
+    font-weight: bold;
+    min-width: 289px;
+
+    @include for-desktop {
+      margin: auto;
+      width: 15%;
+    }
   }
 }
 
@@ -354,6 +252,10 @@ export default {
 
     @include for-desktop {
       width: 48%;
+    }
+
+    ::v-deep .sf-image {
+      height: 400px;
     }
   }
 }
@@ -370,6 +272,10 @@ export default {
 
     @include for-desktop {
       width: 24%;
+    }
+
+    ::v-deep .sf-image {
+      height: 260px;
     }
   }
 }

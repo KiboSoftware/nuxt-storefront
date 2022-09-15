@@ -27,6 +27,14 @@ jest.mock("#app", () => ({
   }),
 }))
 
+jest.mock("@/lib/operations/get-page", () => {
+  return {
+    getPage: () => {
+      return Promise.resolve({ components: [] })
+    },
+  }
+})
+
 describe("[composable] usePaymentMethods", () => {
   const { tokenizeCard, addPaymentMethodByTokenizeCard, loading, error } = usePaymentMethods()
 

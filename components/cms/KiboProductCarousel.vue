@@ -1,5 +1,5 @@
 <template>
-  <div class="carousel-wrapper" v-if="!loading && products.length > 0">
+  <div v-if="!loading && products.length > 0" class="carousel-wrapper">
     <div class="header">
       <p class="title">{{ title }}</p>
       <SfLink :link="shopAllLink">{{ $t("Shop All") }}</SfLink>
@@ -58,7 +58,7 @@ export default {
   setup(props) {
     const { search, result, loading } = useProductSearch(`product-carousel-${props.carouselName}`)
     const { getProductLink } = useUiHelpers()
-    const products = computed(() => result.value?.items || [])
+    const products = computed(() => result?.value?.items || [])
     const { productCodes } = props
 
     onMounted(async () => {
@@ -67,6 +67,7 @@ export default {
         const filter = productCodes
           ?.map((productCode) => `${filterOperator} ${productCode}`)
           .join(" or ")
+
         await search({ filter })
       }
     })

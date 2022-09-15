@@ -1,5 +1,13 @@
 import { useUiState } from "@/composables"
 
+jest.mock("@/lib/operations/get-page", () => {
+  return {
+    getPage: () => {
+      return Promise.resolve({ components: [] })
+    },
+  }
+})
+
 describe("[composable] useUiState", () => {
   test("toggleMobileMenu", () => {
     const { isMobileMenuOpen, toggleMobileMenu } = useUiState()

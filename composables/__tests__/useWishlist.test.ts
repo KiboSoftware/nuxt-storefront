@@ -120,6 +120,14 @@ jest.mock("#app", () => ({
   }),
 }))
 
+jest.mock("@/lib/operations/get-page", () => {
+  return {
+    getPage: () => {
+      return Promise.resolve({ components: [] })
+    },
+  }
+})
+
 describe("[composable] useWishlist", () => {
   const { currentWishlist, loadWishlist, addToWishlist, removeItemAndLoadWishlist, isInWishlist } =
     useWishlist()

@@ -6,6 +6,14 @@ const mockGetPaymentCardsQuery = getCustomerAccountCards
 const mockUpdatePaymentCardMutation = updateCustomerAccountCard
 const mockDeletePaymentCardMutation = deleteCustomerAccountCard
 
+jest.mock("@/lib/operations/get-page", () => {
+  return {
+    getPage: () => {
+      return Promise.resolve({ components: [] })
+    },
+  }
+})
+
 // Response
 const getPaymentCardsQueryResponse = {
   items: [

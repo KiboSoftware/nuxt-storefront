@@ -1224,6 +1224,22 @@
   dependencies:
     chalk "^4.0.0"
 
+"@contentstack/live-preview-utils@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@contentstack/live-preview-utils/-/live-preview-utils-1.1.0.tgz#6ef252555bfbfc660238906a22862858e3305871"
+  integrity sha512-Yd/XV6heXRIbwlk63zDMTUTaZSrRH72oGTiLE1DE5/DHDeZb9y8HHRBNFqjaaq0fZRuHGgVy1176B4aGw5VK+Q==
+  dependencies:
+    just-camel-case "^4.0.2"
+    morphdom "^2.6.1"
+    uuid "^8.3.2"
+
+"@contentstack/utils@^1.1.1", "@contentstack/utils@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@contentstack/utils/-/utils-1.1.2.tgz#b97785427ae1543d69918d7aca7a858608703045"
+  integrity sha512-gIqL3oEuI9uPRkC4dMKHTrBGs0JXyfM6HJjT9KGtxFO6HjTz9e0TWGMzqIgTiHkSBdgww3ne5/UTtVjZuJNHbA==
+  dependencies:
+    node-html-parser "^1.4.9"
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
@@ -6136,6 +6152,16 @@ content-type@~1.0.4:
   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.4.tgz#e138cc75e040c727b1966fe5e5f8c9aee256fe3b"
   integrity sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA==
 
+contentstack@^3.15.3:
+  version "3.15.3"
+  resolved "https://registry.yarnpkg.com/contentstack/-/contentstack-3.15.3.tgz#9c04854a6a0d2421fe62fa9678f1ff9912905ef4"
+  integrity sha512-+IvB9AkjE8bs3QqWnh/UbQ+5fdImbswsQEiWEOGWZZFXj5s0NNP6MbVNMtIssn1fOhOZ9wZWGdn95QHQ0oU4SQ==
+  dependencies:
+    "@contentstack/utils" "^1.1.1"
+    es6-promise "^4.1.1"
+    isomorphic-fetch "^3.0.0"
+    localStorage "1.0.3"
+
 conventional-changelog-angular@^5.0.11:
   version "5.0.13"
   resolved "https://registry.yarnpkg.com/conventional-changelog-angular/-/conventional-changelog-angular-5.0.13.tgz#896885d63b914a70d4934b59d2fe7bde1832b28c"
@@ -7332,6 +7358,11 @@ es-to-primitive@^1.2.1:
     is-callable "^1.1.4"
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
+
+es6-promise@^4.1.1:
+  version "4.2.8"
+  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-4.2.8.tgz#4eb21594c972bc40553d276e510539143db53e0a"
+  integrity sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==
 
 esbuild-android-arm64@0.13.15:
   version "0.13.15"
@@ -10899,6 +10930,11 @@ jsprim@^1.2.2:
     json-schema "0.4.0"
     verror "1.10.0"
 
+just-camel-case@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/just-camel-case/-/just-camel-case-4.0.2.tgz#dc1e9e19e4200bb91f482716726135c35e901ac3"
+  integrity sha512-df6QI/EIq+6uHe/wtaa9Qq7/pp4wr4pJC/r1+7XhVL6m5j03G6h9u9/rIZr8rDASX7CxwDPQnZjffCo2e6PRLw==
+
 jwa@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/jwa/-/jwa-1.4.1.tgz#743c32985cb9e98655530d53641b66c8645b039a"
@@ -11157,6 +11193,11 @@ loader-utils@^2.0.0:
     big.js "^5.2.2"
     emojis-list "^3.0.0"
     json5 "^2.1.2"
+
+localStorage@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/localStorage/-/localStorage-1.0.3.tgz#e6b89a57bb760a156a38cc87e0f2550f6ed413d8"
+  integrity sha512-EzXxy/WMOcBAmnBEdivxWgL50itdRmRWdlcnCFGlmXghc4NbOTjRFUIML1Obf0VXw8Jca0YAY0CzAc8KiPBAkQ==
 
 locate-path@^2.0.0:
   version "2.0.0"
@@ -11867,6 +11908,11 @@ mlly@^0.3.10, mlly@^0.3.16, mlly@^0.3.6:
   resolved "https://registry.yarnpkg.com/mlly/-/mlly-0.3.16.tgz#b3d92015eb1fcf481a808d39e817c7cb98ac2f33"
   integrity sha512-DVydmuR8fmiMetH39kp8VXYslN0XDh+OxULuU/ov8TMwVIxDGQ8PsJIrNi6cZZaHiIYL6wtO6+sjGpVc7msKUg==
 
+morphdom@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/morphdom/-/morphdom-2.6.1.tgz#e868e24f989fa3183004b159aed643e628b4306e"
+  integrity sha512-Y8YRbAEP3eKykroIBWrjcfMw7mmwJfjhqdpSvoqinu8Y702nAwikpXcNFDiIkyvfCLxLM9Wu95RZqo4a9jFBaA==
+
 move-concurrently@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/move-concurrently/-/move-concurrently-1.0.1.tgz#be2c005fda32e0b29af1f05d7c4b33214c701f92"
@@ -12071,6 +12117,13 @@ node-gyp@^7.1.0:
     semver "^7.3.2"
     tar "^6.0.2"
     which "^2.0.2"
+
+node-html-parser@^1.4.9:
+  version "1.4.9"
+  resolved "https://registry.yarnpkg.com/node-html-parser/-/node-html-parser-1.4.9.tgz#3c8f6cac46479fae5800725edb532e9ae8fd816c"
+  integrity sha512-UVcirFD1Bn0O+TSmloHeHqZZCxHjvtIeGdVdGMhyZ8/PWlEiZaZ5iJzR189yKZr8p0FXN58BUeC7RHRkf/KYGw==
+  dependencies:
+    he "1.2.0"
 
 node-html-parser@^5.1.0:
   version "5.1.0"
@@ -17023,6 +17076,11 @@ uuid@^3.3.2:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3, v8-compile-cache@^2.3.0:
   version "2.3.0"

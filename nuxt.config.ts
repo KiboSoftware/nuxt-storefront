@@ -152,6 +152,12 @@ export default defineNuxtConfig({
     pciHost: process.env.KIBO_PCI_HOST || "payment.dev10.dev.kibocommerce.com",
     apiHost: process.env.KIBO_API_HOST || "https://t17828-s22116.dev10.kubedevext.kibo-dev.com",
     defaultWishlistName: "default-wishlist",
+    contentStack: {
+      contentstack_api_key: process.env.NUXT_PUBLIC_CONTENTSTACK_API_KEY,
+      contentstack_delivery_token: process.env.NUXT_PUBLIC_CONTENTSTACK_DELIVERY_TOKEN,
+      contentstack_environment: process.env.NUXT_PUBLIC_CONTENTSTACK_ENVIRONMENT,
+    },
+    cms: "contentstack",
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

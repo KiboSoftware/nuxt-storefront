@@ -68,6 +68,13 @@ jest.mock("#app", () => ({
     },
   }),
 }))
+jest.mock("@/lib/operations/get-page", () => {
+  return {
+    getPage: () => {
+      return Promise.resolve({ components: [] })
+    },
+  }
+})
 describe("[composable] useUserAddresses", () => {
   const { load, userShippingAddresses, loading, error } = useUserAddresses()
   test("useUserAddresses : should return user addresses ", async () => {
