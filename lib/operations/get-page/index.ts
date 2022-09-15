@@ -1,5 +1,4 @@
 import getContentStackObj from "../../cms/content-stack/index"
-import { useNuxtApp } from "#app"
 
 export interface GetPageProps {
   contentTypeUid: string
@@ -7,8 +6,9 @@ export interface GetPageProps {
   entryUrl: string
 }
 
-const getContentStackPage = async (params: GetPageProps) => {
-  const Stack = getContentStackObj()
+const getContentStackPage = async (params) => {
+  const { config } = params
+  const Stack = getContentStackObj(config)
 
   const response = await Stack.getEntry(params)
 
@@ -17,11 +17,9 @@ const getContentStackPage = async (params: GetPageProps) => {
   }
 }
 
-export const getPage = async (params: GetPageProps) => {
-  const nuxt = useNuxtApp()
-  const currentcms = nuxt.nuxt2Context.$config.cms || ""
-
-  if (currentcms === "contentstack") {
+export const getPage = async (params) => {
+  const { cms } = params.config
+  if (cms === "contentstack") {
     return await getContentStackPage(params)
   }
   return {

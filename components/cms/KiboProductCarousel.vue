@@ -1,6 +1,6 @@
 <template>
   <div v-if="!loading && products.length > 0" class="carousel-wrapper">
-    <div class="header">
+    <div :class="`${currentPage === 'home-page' ? 'header-home' : 'header'}`">
       <p class="title">{{ title }}</p>
       <SfLink :link="shopAllLink">{{ $t("Shop All") }}</SfLink>
     </div>
@@ -17,7 +17,7 @@
         :title="productGetters.getName(product)"
         :image="productGetters.getCoverImage(product)"
         :show-add-to-cart-button="false"
-        :regular-price="`$${productGetters.getPrice(product).regular}`"
+        :regular-price="productGetters.getPrice(product).regular"
         :special-price="
           productGetters.getPrice(product).special && productGetters.getPrice(product).special
         "
@@ -51,6 +51,10 @@ export default {
       default: "",
     },
     carouselName: {
+      type: String,
+      default: "",
+    },
+    currentPage: {
       type: String,
       default: "",
     },
@@ -93,6 +97,12 @@ export default {
 }
 
 .header {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 var(--spacer-base) 0;
+}
+
+.header-home {
   display: flex;
   justify-content: space-between;
   margin: 0 var(--spacer-base) var(--spacer-base);

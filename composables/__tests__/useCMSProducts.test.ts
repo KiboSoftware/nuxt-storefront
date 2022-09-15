@@ -1,4 +1,4 @@
-import { useCMSContent } from "../useCMSContent"
+import { useCMSProducts } from "../useCMSProducts"
 
 jest.mock("#app", () => ({
   useState: jest.fn((_, init) => {
@@ -14,11 +14,10 @@ jest.mock("@/lib/operations/get-page", () => {
   }
 })
 
-describe("[composable] useCMSContent", () => {
-  const { load, result, loading, error } = useCMSContent()
-
-  test("should return CMS content", async () => {
-    await load({ config: {} })
+describe("[composable] useCMSProducts", () => {
+  const { load, result, loading, error } = useCMSProducts("BackP_024")
+  test("should return CMS products", async () => {
+    await load({ productCode: "", config: {} })
 
     expect(result.value).toStrictEqual({ components: [] })
     expect(loading.value).toBeFalsy()

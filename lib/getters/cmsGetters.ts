@@ -81,9 +81,35 @@ const getPromoBlocks = (cmsData) => {
   }
 }
 
+const getProductRecommendations = (cmsData) => {
+  const result = cmsData?.value?.components?.find(
+    (data) => Object.keys(data)[0] === "recommendations"
+  )?.recommendations
+  const productList = {
+    title: result?.title,
+    productCodes: result?.product_recommendations?.map((product) => product.productCode),
+  }
+
+  return productList || {}
+}
+
+const getCustomersAlsoBought = (cmsData) => {
+  const result = cmsData?.value?.components?.find(
+    (data) => Object.keys(data)[0] === "customers_also_bought"
+  )?.customers_also_bought
+
+  const productList = {
+    title: result?.title,
+    productCodes: result?.customer_also_bought?.map((product) => product.productCode),
+  }
+  return productList || {}
+}
+
 export const cmsGetters = {
   getSmallBanner,
   getHeroCarousel,
   getPromoBlocks,
   getHomePageProducts,
+  getCustomersAlsoBought,
+  getProductRecommendations,
 }

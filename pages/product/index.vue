@@ -251,6 +251,22 @@
             </div>
           </div>
         </div>
+        <div>
+          <KiboProductCarousel
+            v-if="productRecommendations.productCodes"
+            class="carousels"
+            :title="productRecommendations.title"
+            :product-codes="productRecommendations.productCodes"
+            :carousel-name="productRecommendations.title"
+          />
+          <KiboProductCarousel
+            v-if="customersAlsoBought.productCodes"
+            class="carousels"
+            :title="customersAlsoBought.title"
+            :product-codes="customersAlsoBought.productCodes"
+            :carousel-name="customersAlsoBought.title"
+          />
+        </div>
       </div>
     </LazyHydrate>
 
@@ -285,6 +301,7 @@ import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
+import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import {
   useProduct,
@@ -294,8 +311,9 @@ import {
   useProductLocationInventory,
   useWishlist,
   useUser,
+  useCMSProducts,
 } from "@/composables"
-import { productGetters, wishlistGetters, userGetters } from "@/lib/getters"
+import { productGetters, wishlistGetters, userGetters, cmsGetters } from "@/lib/getters"
 import { buildAddToCartInput } from "@/composables/helpers"
 import { ComputedRef, Ref, useNuxtApp } from "#app"
 
@@ -314,11 +332,13 @@ export default defineComponent({
     SfCheckbox,
     SfInput,
     SfAccordion,
+    KiboProductCarousel,
   },
   setup(_, context) {
     const isProductZoomed = ref(false)
     const { productCode } = context.root.$route.params
     const { load, product, configure, setFulfillment, loading, error } = useProduct(productCode)
+    const { load: loadCMSProducts, result: cmsProducts } = useCMSProducts(productCode)
 
     const { load: loadProductLocationInventory, productInventory } = useProductLocationInventory()
     const { cart, addItemsToCart } = useCart()
@@ -342,10 +362,13 @@ export default defineComponent({
     )
     const nuxt = useNuxtApp()
     const modal = nuxt.nuxt2Context.$modal
+    // @ts-ignore:next-line
+    const config = context.root.context.$config
 
     useAsync(async () => {
       await load(productCode)
       await loadProductLocationInventory(productCode, purchaseLocation?.value?.code)
+      await loadCMSProducts({ productCode, config })
       await loadWishlist()
     }, null)
 
@@ -354,6 +377,8 @@ export default defineComponent({
     const shortDescription = computed(() => productGetters.getShortDescription(product.value))
     const breadcrumbs = computed(() => productGetters.getBreadcrumbs(product.value))
     const productGallery = computed(() => productGetters.getSFProductGallery(product.value))
+    const productRecommendations = computed(() => cmsGetters.getProductRecommendations(cmsProducts))
+    const customersAlsoBought = computed(() => cmsGetters.getCustomersAlsoBought(cmsProducts))
 
     const rating = computed(() => productGetters.getRating(product.value))
     const totalReviews = computed(() => productGetters.getProductTotalReviews())
@@ -541,6 +566,8 @@ export default defineComponent({
       wishlistLabel,
       isLoadingWishlist,
       isInWishlist,
+      productRecommendations,
+      customersAlsoBought,
     }
   },
 })

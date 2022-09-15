@@ -144,8 +144,7 @@
             :is-in-wishlist="isInWishlist(product)"
             :regular-price="productGetters.getPrice(product).regular"
             :special-price="
-              productGetters.getPrice(product).special &&
-              $n(productGetters.getPrice(product).special, 'currency')
+              productGetters.getPrice(product).special && productGetters.getPrice(product).special
             "
             :price-range="productGetters.getPriceRange(product)"
             :link="localePath(getProductLink(productGetters.getProductId(product)))"
