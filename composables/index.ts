@@ -40,3 +40,4 @@ export * from "./useReturnReasons"
 export * from "./useReturnItems"
 
 export * from "./useCMSContent"
+export * from "./useCMSProducts"

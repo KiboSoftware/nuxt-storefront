@@ -49,6 +49,7 @@
         v-for="(product, index) in homePageProducts"
         :key="index"
         class="carousels"
+        :current-page="pageName"
         :title="product.title"
         :product-codes="product.productCodes"
         :carousel-name="product.title"
@@ -85,7 +86,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { SfHero, SfButton } from "@storefront-ui/vue"
 import { useAsync, computed } from "@nuxtjs/composition-api"
 import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
@@ -95,7 +96,9 @@ import { useCMSContent } from "@/composables"
 export default {
   components: { SfHero, SfButton, KiboProductCarousel },
   layout: "full-width",
-  setup() {
+  setup(_, context) {
+    // @ts-ignore:next-line
+    const config = context.root.context.$config
     const cmsPageResult = ref({})
     const pageName = "home-page"
     const { load, result } = useCMSContent()
@@ -106,7 +109,7 @@ export default {
     const homePageProducts = computed(() => cmsGetters.getHomePageProducts({ ...result.value }))
 
     useAsync(async () => {
-      await load()
+      await load({ config })
     }, null)
 
     return {
