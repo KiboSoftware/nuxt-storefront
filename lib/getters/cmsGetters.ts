@@ -1,24 +1,16 @@
 const getSmallBanner = (cmsData) => {
-  const result = cmsData?.components?.find(
-    (data) => Object.keys(data)[0] === "small_banner"
-  )?.small_banner
-
   return {
-    title: result?.title || "",
-    subTitle: result?.subtitle || "",
+    title: cmsData?.title || "",
+    subTitle: cmsData?.subtitle || "",
     callToAction: {
-      title: result?.call_to_action_link?.title || "",
-      url: result?.call_to_action_link?.href || "",
+      title: cmsData?.call_to_action_link?.title || "",
+      url: cmsData?.call_to_action_link?.href || "",
     },
   }
 }
 
 const getHeroCarousel = (cmsData) => {
-  const result = cmsData?.components?.find(
-    (data) => Object.keys(data)[0] === "hero_carousel"
-  )?.hero_carousel
-
-  const heroCarouselList = result?.hero_carousel_items?.map((item) => {
+  const heroCarouselList = cmsData?.hero_carousel_items?.map((item) => {
     return {
       title: item?.title || "",
       subtitle: item?.subtitle || "",
@@ -50,57 +42,42 @@ const getTiles = (item) => {
 }
 
 const getHomePageProducts = (cmsData) => {
-  const result = cmsData?.components?.find(
-    (data) => Object.keys(data)[0] === "home_page_products"
-  )?.home_page_products
-
-  const productList = result?.reference?.map((obj) => ({
-    title: obj.title,
-    productCodes: obj.home_page_products.map((product) => product.productCode),
-  }))
-
-  return productList
+  return {
+    recentlyViewed: {
+      title: cmsData?.reference[0].title,
+      productCodes: cmsData?.reference[0]?.home_page_products,
+    },
+    topSelling: {
+      title: cmsData?.reference[1].title,
+      productCodes: cmsData?.reference[1]?.home_page_products,
+    },
+  }
 }
 
 const getPromoBlocks = (cmsData) => {
-  const largePromoBlock = cmsData?.components?.find(
-    (data) => Object.keys(data)[0] === "large_promo_blocks"
-  )?.large_promo_blocks
-
-  const smallPromoBlock = cmsData?.components?.find(
-    (data) => Object.keys(data)[0] === "small_promo_blocks"
-  )?.small_promo_blocks
-
-  const largeTiles = largePromoBlock?.large_promo_blocks?.map((item) => getTiles(item))
-  const mediumTiles = smallPromoBlock?.small_promo_blocks?.map((item) => getTiles(item))
+  const largeTiles = cmsData?.large_promo_blocks?.map((item) => getTiles(item))
+  const mediumTiles = cmsData?.small_promo_blocks?.map((item) => getTiles(item))
 
   return {
-    largeHeaderTitle: "",
+    title: cmsData?.title,
     largeTiles,
     mediumTiles,
   }
 }
 
 const getProductRecommendations = (cmsData) => {
-  const result = cmsData?.value?.components?.find(
-    (data) => Object.keys(data)[0] === "recommendations"
-  )?.recommendations
   const productList = {
-    title: result?.title,
-    productCodes: result?.product_recommendations?.map((product) => product.productCode),
+    title: cmsData?.title,
+    productCodes: cmsData?.product_recommendations?.map((product) => product.productCode),
   }
 
   return productList || {}
 }
 
 const getCustomersAlsoBought = (cmsData) => {
-  const result = cmsData?.value?.components?.find(
-    (data) => Object.keys(data)[0] === "customers_also_bought"
-  )?.customers_also_bought
-
   const productList = {
-    title: result?.title,
-    productCodes: result?.customer_also_bought?.map((product) => product.productCode),
+    title: cmsData?.title,
+    productCodes: cmsData?.customer_also_bought?.map((product) => product.productCode),
   }
   return productList || {}
 }

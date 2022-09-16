@@ -251,21 +251,8 @@
             </div>
           </div>
         </div>
-        <div>
-          <KiboProductCarousel
-            v-if="productRecommendations.productCodes"
-            class="carousels"
-            :title="productRecommendations.title"
-            :product-codes="productRecommendations.productCodes"
-            :carousel-name="productRecommendations.title"
-          />
-          <KiboProductCarousel
-            v-if="customersAlsoBought.productCodes"
-            class="carousels"
-            :title="customersAlsoBought.title"
-            :product-codes="customersAlsoBought.productCodes"
-            :carousel-name="customersAlsoBought.title"
-          />
+        <div v-for="(data, index) in cmsProducts.components" :key="index">
+          <CmsComponent :content="data" />
         </div>
       </div>
     </LazyHydrate>
@@ -301,7 +288,6 @@ import {
   mapMobileObserver,
   unMapMobileObserver,
 } from "@storefront-ui/vue/src/utilities/mobile-observer.js"
-import KiboProductCarousel from "@/components/cms/KiboProductCarousel.vue"
 import StoreLocatorModal from "@/components/StoreLocatorModal.vue"
 import {
   useProduct,
@@ -332,7 +318,6 @@ export default defineComponent({
     SfCheckbox,
     SfInput,
     SfAccordion,
-    KiboProductCarousel,
   },
   setup(_, context) {
     const isProductZoomed = ref(false)
@@ -533,6 +518,7 @@ export default defineComponent({
       loading,
       error,
       current: 1,
+      cmsProducts,
       quantityLeft,
       qtySelected,
       addToCart,

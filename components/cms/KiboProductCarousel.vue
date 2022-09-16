@@ -64,7 +64,7 @@ export default {
     const { getProductLink } = useUiHelpers()
     const products = computed(() => result?.value?.items || [])
     const { productCodes } = props
-
+    console.log("products", loading, products)
     onMounted(async () => {
       if (productCodes?.length) {
         const filterOperator = `productCode eq`
