@@ -1,23 +1,21 @@
 <template>
-  <div>
-    <div v-if="recentlyViewed.productCodes" class="product-carousels">
-      <KiboProductCarousel
-        class="carousels"
-        current-page="home-page"
-        :title="recentlyViewed.title"
-        :product-codes="recentlyViewed.productCodes"
-        :carousel-name="recentlyViewed.title"
-      />
-    </div>
-    <div v-if="topSelling.productCodes" class="product-carousels">
-      <KiboProductCarousel
-        class="carousels"
-        current-page="home-page"
-        :title="topSelling.title"
-        :product-codes="topSelling.productCodes"
-        :carousel-name="topSelling.title"
-      />
-    </div>
+  <div class="product-carousels">
+    <KiboProductCarousel
+      v-if="recentlyViewed.productCodes"
+      class="carousels"
+      current-page="home-page"
+      :title="recentlyViewed.title"
+      :product-codes="recentlyViewed.productCodes"
+      :carousel-name="recentlyViewed.title"
+    />
+    <KiboProductCarousel
+      v-if="topSelling.productCodes"
+      class="carousels"
+      current-page="home-page"
+      :title="topSelling.title"
+      :product-codes="topSelling.productCodes"
+      :carousel-name="topSelling.title"
+    />
   </div>
 </template>
 
@@ -37,7 +35,6 @@ export default {
   setup(props) {
     const recentlyViewed = props.homePageProduct?.recentlyViewed
     const topSelling = props.homePageProduct?.topSelling
-
     return {
       recentlyViewed,
       topSelling,
@@ -52,6 +49,9 @@ export default {
   margin-top: calc(var(--spacer-sm) * 2);
   @include for-desktop {
     margin: 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 }
 

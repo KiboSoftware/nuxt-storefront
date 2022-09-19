@@ -251,8 +251,10 @@
             </div>
           </div>
         </div>
-        <div v-for="(data, index) in cmsProducts.components" :key="index">
-          <CmsComponent :content="data" />
+        <div v-if="cmsProducts">
+          <div v-for="(data, index) in cmsProducts.components" :key="index">
+            <CmsComponent :content="data" />
+          </div>
         </div>
       </div>
     </LazyHydrate>

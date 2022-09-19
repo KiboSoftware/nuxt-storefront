@@ -17,10 +17,8 @@ export default {
   setup(_, context) {
     // @ts-ignore:next-line
     const config = context.root.context.$config
-    let cmsPageResult = ref({})
     const pageName = "home-page"
-    const { load, result } = useCMSContent()
-    cmsPageResult = { ...result.value }
+    const { load, result: cmsPageResult } = useCMSContent()
 
     useAsync(async () => {
       await load({ config })

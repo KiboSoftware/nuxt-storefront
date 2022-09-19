@@ -68,7 +68,8 @@ const getPromoBlocks = (cmsData) => {
 const getProductRecommendations = (cmsData) => {
   const productList = {
     title: cmsData?.title,
-    productCodes: cmsData?.product_recommendations?.map((product) => product.productCode),
+    carouselName: cmsData?.title,
+    productCodes: cmsData?.product_recommendations,
   }
 
   return productList || {}
@@ -77,7 +78,8 @@ const getProductRecommendations = (cmsData) => {
 const getCustomersAlsoBought = (cmsData) => {
   const productList = {
     title: cmsData?.title,
-    productCodes: cmsData?.customer_also_bought?.map((product) => product.productCode),
+    carouselName: cmsData?.title,
+    productCodes: cmsData?.customer_also_bought,
   }
   return productList || {}
 }
