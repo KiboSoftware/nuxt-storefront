@@ -1,10 +1,10 @@
 <template>
   <div>
-    <component :is="Component" v-bind="{ ...cmsProps }" />
+    <component :is="component" v-bind="{ ...cmsProps }" />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import SmallBanner from "@/components/SmallBanner.vue"
 import HeroCarousel from "@/components/HeroCarousel.vue"
 import HomePageProducts from "@/components/HomePageProducts.vue"
@@ -28,46 +28,36 @@ export default {
   setup(props) {
     const { content } = props
 
-    const DefaultComponentMap = {
+    const defaultComponentMap = {
       small_banner: {
         component: SmallBanner,
-        mapDataToProps: (data) => {
-          return {
-            bannerProps: cmsGetters.getSmallBanner(data),
-          }
-        },
+        mapDataToProps: (data) => ({
+          bannerProps: cmsGetters.getSmallBanner(data),
+        }),
       },
       home_page_products: {
         component: HomePageProducts,
-        mapDataToProps: (data) => {
-          return {
-            homePageProduct: cmsGetters.getHomePageProducts(data),
-          }
-        },
+        mapDataToProps: (data) => ({
+          homePageProduct: cmsGetters.getHomePageProducts(data),
+        }),
       },
       hero_carousel: {
         component: HeroCarousel,
-        mapDataToProps: (data) => {
-          return {
-            carouselItem: cmsGetters.getHeroCarousel(data),
-          }
-        },
+        mapDataToProps: (data) => ({
+          carouselItem: cmsGetters.getHeroCarousel(data),
+        }),
       },
       large_promo_blocks: {
         component: PromoBlocks,
-        mapDataToProps: (data) => {
-          return {
-            promoBlocks: cmsGetters.getPromoBlocks(data),
-          }
-        },
+        mapDataToProps: (data) => ({
+          promoBlocks: cmsGetters.getPromoBlocks(data),
+        }),
       },
       small_promo_blocks: {
         component: PromoBlocks,
-        mapDataToProps: (data) => {
-          return {
-            promoBlocks: cmsGetters.getPromoBlocks(data),
-          }
-        },
+        mapDataToProps: (data) => ({
+          promoBlocks: cmsGetters.getPromoBlocks(data),
+        }),
       },
       recommendations: {
         component: KiboProductCarousel,
@@ -80,13 +70,13 @@ export default {
     }
 
     const name = Object.keys(content)[0]
-    const ComponentMapping = props.ComponentMap || DefaultComponentMap
-    const mapping = ComponentMapping[name]
-    const Component = mapping?.component
+    const componentMapping = props.ComponentMap || defaultComponentMap
+    const mapping = componentMapping[name]
+    const component = mapping?.component
     const cmsProps = mapping?.mapDataToProps(content[name])
 
     return {
-      Component,
+      component,
       cmsProps,
       name,
     }

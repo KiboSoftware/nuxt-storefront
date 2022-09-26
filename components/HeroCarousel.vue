@@ -77,7 +77,7 @@ export default {
       display: flex;
       align-items: center;
       background-color: var(--c-white);
-      margin: 2rem 1.5rem;
+      margin: var(--spacer-lg) var(--spacer-base);
       height: auto;
       min-height: auto;
       padding: var(--spacer-lg);
@@ -85,8 +85,8 @@ export default {
     }
 
     &__subtitle {
-      --hero-item-subtitle-font-size: 2rem;
-      --hero-item-subtitle-font-weight: 500;
+      --hero-item-subtitle-font-size: var(--spacer-lg);
+      --hero-item-subtitle-font-weight: var(--font-weight--medium);
 
       width: 100%;
       color: var(--c-black);
@@ -95,7 +95,7 @@ export default {
 
     &__title {
       --hero-item-title-font-size: 2.25rem;
-      --hero-item-title-font-weight: 700;
+      --hero-item-title-font-weight: --font-weight--bold;
 
       width: 100%;
       color: var(--c-black);
@@ -104,13 +104,13 @@ export default {
 
     &__description {
       color: var(--c-black);
-      margin-top: 0.5rem;
+      margin-top: var(--spacer-xs);
     }
 
     &__button {
       display: flex;
       background-color: var(--_c-green-primary);
-      margin-top: 1rem;
+      margin-top: var(--spacer-sm);
     }
   }
 }

@@ -5,7 +5,7 @@
     </span>
     <div class="small-banner__container">
       <span>{{ smallBanner.subTitle }} </span>
-      <a :href="smallBanner.callToAction.url">{{ smallBanner.callToAction.title }}</a>
+      <SfLink link="smallBanner.callToAction.url">{{ smallBanner.callToAction.title }}</SfLink>
     </div>
   </div>
 </template>
@@ -43,7 +43,7 @@ export default {
     flex-direction: row;
   }
 
-  color: #fff;
+  color: var(--c-white);
 
   &__title {
     font-weight: bold;
@@ -56,12 +56,12 @@ export default {
 
   &__container {
     display: flex;
-    color: #fff;
+    color: var(--c-white);
     font-size: var(--h5-font-size);
     gap: 5px;
 
     a {
-      color: #fff;
+      color: var(--c-white);
     }
   }
 }
