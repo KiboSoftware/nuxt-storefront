@@ -8,7 +8,7 @@ export const useUiHelpers = (): uiHelpersReturnType => {
   const nuxt = useNuxtApp()
   const instance = nuxt.nuxt2Context.app
   const getCatLink = (category: PrCategory) => {
-    return `/c/${category.categoryCode}`
+    return `/category/${category.categoryCode}`
   }
 
   const reduceFilters = (query: Record<string, string>) => (prev: {}, curr: string) => {
@@ -79,7 +79,7 @@ export const useUiHelpers = (): uiHelpersReturnType => {
     if (isSearchPage) {
       instance.router.push({ query: { ...query, categoryCode: facetValue.value } })
     } else {
-      instance.router.push({ path: `/c/${facetValue.value}`, query })
+      instance.router.push({ path: `/category/${facetValue.value}`, query })
     }
   }
 

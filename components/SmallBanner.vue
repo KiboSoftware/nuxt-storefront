@@ -5,14 +5,19 @@
     </span>
     <div class="small-banner__container">
       <span>{{ smallBanner.subTitle }} </span>
-      <SfLink link="smallBanner.callToAction.url">{{ smallBanner.callToAction.title }}</SfLink>
+      <SfLink :link="smallBanner.callToAction.url">{{ smallBanner.callToAction.title }}</SfLink>
     </div>
   </div>
 </template>
 
 <script>
+import { SfLink } from "@storefront-ui/vue"
+
 export default {
   name: "SmallBanner",
+  components: {
+    SfLink,
+  },
   layout: "full-width",
   props: {
     bannerProps: {

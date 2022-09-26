@@ -65,8 +65,8 @@ export default {
     font-size: var(--spacer-base);
     line-height: calc(var(--spacer-2xs) * 7.125);
     text-align: left;
-    font-weight: bold;
-    min-width: 289px;
+    font-weight: var(--font-weight--bold);
+    min-width: calc(var(--spacer-3xl) * 1.806);
 
     @include for-desktop {
       margin: auto;
@@ -89,7 +89,7 @@ export default {
     }
 
     ::v-deep .sf-image {
-      height: 400px;
+      height: calc(var(--spacer-2xl) * 5);
     }
   }
 }
@@ -109,7 +109,7 @@ export default {
     }
 
     ::v-deep .sf-image {
-      height: 260px;
+      height: calc(var(--spacer-3xl) * 1.625);
     }
   }
 }

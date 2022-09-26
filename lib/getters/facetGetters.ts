@@ -17,7 +17,7 @@ const getBreadcrumbs = (searchData: {
   }
   const categoryCrumbs = buildBreadcrumbs(searchData?.categories[0]).map((b) => ({
     ...b,
-    link: `/c/${b.link}`,
+    link: `/category/${b.link}`,
   }))
 
   return [...homeCrumb, ...categoryCrumbs]

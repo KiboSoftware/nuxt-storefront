@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="cmsPageResult">
     <div v-for="(data, index) in cmsPageResult.components" :key="index">
       <CmsComponent :content="data" />
     </div>
