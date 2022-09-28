@@ -62,7 +62,7 @@ describe("[composable] useUiHelpers", () => {
 
   test("getCatlink", () => {
     const catLink = getCatLink(category)
-    expect(catLink).toEqual("/c/mens")
+    expect(catLink).toEqual("/category/mens")
   })
 
   test("setTermForUrl", () => {

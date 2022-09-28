@@ -188,7 +188,7 @@ export default defineNuxtConfig({
       })
       routes.push({
         name: "categories",
-        path: "/c/:categoryCode",
+        path: "/category/:categoryCode",
         component: resolve(__dirname, "pages/category/index.vue"),
       })
       routes.push({
