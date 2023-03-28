@@ -36,7 +36,7 @@
     "@coddicat/vue-pinch-scroll-zoom": "^3.3.4",
     "@contentstack/live-preview-utils": "^1.1.0",
     "@contentstack/utils": "^1.1.2",
-    "@fortawesome/free-regular-svg-icons": "^5.15.4",
+    "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@kibocommerce/graphql-client": "^1.0.3-beta.7",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/style-resources": "^1.2.1",
