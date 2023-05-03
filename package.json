@@ -64,7 +64,7 @@
     "yup": "^0.32.11"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.14.7",
+    "@babel/eslint-parser": "^7.21.8",
     "@babel/preset-typescript": "^7.15.0",
     "@commitlint/cli": "^15.0.0",
     "@commitlint/config-conventional": "^15.0.0",
